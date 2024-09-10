@@ -1,0 +1,2 @@
+cmd /K git pull
+
