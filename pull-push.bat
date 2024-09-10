@@ -1,4 +1,4 @@
-git pull -b eugene
+git pull origin eugene
 git add .
 git commit -m "update"
-cmd /K git push eugene
+cmd /K git push origin eugene
