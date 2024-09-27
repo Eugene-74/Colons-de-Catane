@@ -37,7 +37,6 @@ type
   THexagone = record
     TypeRessource: TRessource;
     Numero: Integer;
-    Position: TCoord;
   end;
 
   // Définition de TGrille (tableau dynamique de THexagones à 2 dimensions)
