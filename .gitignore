@@ -1,2 +1,45 @@
-.o
-.ppu
+# Ignore compiled files
+*.exe
+*.dll
+*.so
+*.o
+*.a
+*.out
+
+# Lazarus and Free Pascal IDE specific files
+*.bak
+*.ppu
+*.compiled
+*.cfg
+*.log
+*.rsj
+*.rst
+*.s
+
+# Lazarus project files
+backup/
+lib/
+bin/
+
+# Lazarus build files
+*.exe
+*.unitstate
+*.testresult
+*.compiled
+*.rst
+*.log
+
+# Lazarus session files
+*.lps
+*.lpi
+*.or
+*.rst
+
+# Lazarus editor backups
+*.~pas
+*.~inc
+*.~pp
+
+# OS generated files
+.DS_Store
+Thumbs.db

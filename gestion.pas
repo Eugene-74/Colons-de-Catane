@@ -1,0 +1,6 @@
+program gestion;
+
+begin
+
+
+end.
