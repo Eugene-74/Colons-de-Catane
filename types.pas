@@ -2,9 +2,11 @@ unit Types;
 
 interface
 
+uses SDL2, SDL2_image;
+
 type
   // Définition du type TRessource
-  TRessource = (Mathematiques, Physique, Informatique, Chimie, Humanites);
+  TRessource = (Aucune, Physique, Informatique, Chimie, Humanites,Mathematiques);
 
   // Définition de TCoord
   TCoord = record
@@ -18,7 +20,7 @@ type
 //   end;
 
   // Définition de TRessources (tableau dynamique de TRessourceValeur)
-  TRessources = array [Mathematiques..Humanites] of Integer;
+  TRessources = array [Aucune..Mathematiques] of Integer;
 
   // Définition de TJoueur
   TJoueur = record
@@ -72,13 +74,18 @@ type
     Personnes: TPersonnes;
     Connexions: TConnexions;
   end;
+  
+  Type PWindow = PSDL_Window;
+
+  Type PRenderer = PSDL_Renderer;
 
   // Définition de TAffichage (pour les transferts et mises à jour via SDL)
   TAffichage = record
-    // Contenu à définir selon les besoins d'affichage avec SDL
-    tset : integer;
+    fenetre: PWindow;
+    renderer: PRenderer;
+    xGrid: Integer;
+    yGrid: Integer;
   end;
-
 
 // end;
 
