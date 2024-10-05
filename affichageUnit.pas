@@ -42,8 +42,8 @@ procedure initialisationPlateau(var plat: TPlateau;var affichage: TAffichage);
 var grid: TGrille;
     q,r,gridSize: Integer;
 begin
-    affichage.xGrid := 200;
-    affichage.yGrid := 200;
+    affichage.xGrid := 250;
+    affichage.yGrid := 125;
 
     gridSize := 3;
 
@@ -99,8 +99,8 @@ var destination_rect: TSDL_RECT;
     taille : Integer;
     x,y: Integer;
 begin
-    taille := 100;
-    texture := chargerTexture(affichage.renderer, 'hexagone');
+    taille := 150;
+    texture := chargerTexture(affichage.renderer, 'Mathematiques');
 
     hexaToCard(q,r,x,y);
 	

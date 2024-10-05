@@ -6,7 +6,7 @@ uses SDL2, SDL2_image;
 
 type
   // Définition du type TRessource
-  TRessource = (Aucune, Physique, Informatique, Chimie, Humanites,Mathematiques);
+  TRessource = (Aucune, Physique, Informatique, Chimie, Humanites, Mathematiques);
 
   // Définition de TCoord
   TCoord = record

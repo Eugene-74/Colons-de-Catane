@@ -6,7 +6,7 @@ procedure hexaToCard(q,r:Integer; var x,y:Integer);
 
 implementation
 
-Const TAILLE = 50;
+Const TAILLE = 74;
 
 procedure hexaToCard(q,r:Integer; var x,y:Integer);
 begin
