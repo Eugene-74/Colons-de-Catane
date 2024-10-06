@@ -7,6 +7,8 @@ var
     plateau: TPlateau;
 
 begin
-    initialisationAffichagePlateau(plateau, affichage);
+    initialisationAffichage(plateau, affichage);
     affichageGrille(plateau, affichage);
+    clicHexagone(plateau, affichage);
+    writeln('Fin du programme');
 end.

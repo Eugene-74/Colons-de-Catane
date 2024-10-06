@@ -37,7 +37,7 @@ type
 
   // Définition de THexagone
   THexagone = record
-    TypeRessource: TRessource;
+    ressource: TRessource;
     Numero: Integer;
   end;
 
@@ -75,9 +75,13 @@ type
     Connexions: TConnexions;
   end;
   
-  Type PWindow = PSDL_Window;
+  PWindow = PSDL_Window;
 
-  Type PRenderer = PSDL_Renderer;
+  PRenderer = PSDL_Renderer;
+
+  TTexturePlateau = record
+    textureRessource: array[Physique..Mathematiques] of PSDL_Texture;
+  end;
 
   // Définition de TAffichage (pour les transferts et mises à jour via SDL)
   TAffichage = record
@@ -85,6 +89,7 @@ type
     renderer: PRenderer;
     xGrid: Integer;
     yGrid: Integer;
+    texturePlateau : TTexturePlateau;
   end;
 
 // end;

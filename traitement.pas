@@ -2,22 +2,22 @@ unit traitement;
 
 interface
 
-procedure hexaToCard(q,r:Integer; var x,y:Integer);
+procedure hexaToCard(q,r,taille:Integer; var x,y:Integer);
+procedure cardToHexa(x,y,taille:Integer; var q,r:Integer);
 
 implementation
 
-Const TAILLE = 74;
-
-procedure hexaToCard(q,r:Integer; var x,y:Integer);
+//TODO Refaire l'arrondi
+procedure hexaToCard(q,r,taille:Integer; var x,y:Integer);
 begin
-    x:= Round(TAILLE*(sqrt(3)*q+sqrt(3)/2*r));
-    y:= Round(TAILLE*(3/2*r));
+    x:= Round(taille*(sqrt(3)*q+sqrt(3)/2*r));
+    y:= Round(taille*(3/2*r));
 end;
 
-procedure cardToHexa(x,y:Integer; var q,r:Integer);
+procedure cardToHexa(x,y,taille:Integer; var q,r:Integer);
 begin
-    q:= Round((x*sqrt(3)/3-y/3)/(TAILLE*sqrt(3)/2));
-    r:= Round((y*2/3)/TAILLE);
+    q:= Round((x*sqrt(3)/3-y/3)/taille);
+    r:= Round((y*2/3)/taille);
 end;
 
 end.
