@@ -1,8 +1,9 @@
 unit affichageUnit;
 
+
 interface
 
-uses sdl2, sdl2_image, sdl2_ttf, types, sysutils, TypInfo, traitement;
+uses sdl2, sdl2_image, sdl2_ttf, types, sysutils, TypInfo, traitement,gestion;
 
 procedure initialisationSDL(var affichage: TAffichage);
 procedure initialisationAffichage(var plat: TPlateau; var affichage: TAffichage);
@@ -85,23 +86,24 @@ begin
 
     Randomize();
 
-    for q := 0 to gridSize*2 do
-        for r := 0 to gridSize*2 do
-            if abs(q+r)<=gridSize*2*2 then
-            begin
-                if ((q+r<gridSize) or (q+r>gridSize*gridSize)) then
-                begin
-                    grid[q,r].ressource := Aucune;
-                    grid[q,r].Numero := 0;
-                end
-                else
-                begin
-                    grid[q,r].ressource := ressourceAleatoire();
-                    grid[q,r].Numero := 1;
-                end;
-            end;
+    // for q := 0 to gridSize*2 do
+    //     for r := 0 to gridSize*2 do
+    //         if abs(q+r)<=gridSize*2*2 then
+    //         begin
+    //             if ((q+r<gridSize) or (q+r>gridSize*gridSize)) then
+    //             begin
+    //                 grid[q,r].ressource := Aucune;
+    //                 grid[q,r].Numero := 0;
+    //             end
+    //             else
+    //             begin
+    //                 grid[q,r].ressource := ressourceAleatoire();
+    //                 grid[q,r].Numero := 1;
+    //             end;
+    //         end;
 
-    plat.Grille := grid;
+    // plat.Grille := grid;
+    plat.Grille := chagerGrille();
 
     testAffichagePlateau(plat);
 end;
