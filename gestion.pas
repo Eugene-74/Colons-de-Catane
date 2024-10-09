@@ -24,10 +24,10 @@ begin
   grille[0][6].ressource := Aucune; grille[0][6].Numero := -1;
 
   // Ligne 2
-  grille[1][0].ressource := Aucune; grille[1][0].Numero := -1;
-  grille[1][1].ressource := Aucune; grille[1][1].Numero := -1;
-  grille[1][2].ressource := Aucune; grille[1][2].Numero := -1;
-  grille[1][3].ressource := Aucune; grille[1][3].Numero := -1;
+  grille[1][0].ressource := Mathematiques; grille[1][0].Numero := -1;
+  grille[1][1].ressource := Mathematiques; grille[1][1].Numero := -1;
+  grille[1][2].ressource := Mathematiques; grille[1][2].Numero := -1;
+  grille[1][3].ressource := Mathematiques; grille[1][3].Numero := -1;
   grille[1][4].ressource := Mathematiques; grille[1][4].Numero := 12;
   grille[1][5].ressource := Mathematiques; grille[1][5].Numero := 0;
   grille[1][6].ressource := Mathematiques; grille[1][6].Numero := 0;
