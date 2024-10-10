@@ -56,6 +56,7 @@ begin
         for q:=0 to taille-1 do
         begin
             write(plat.Grille[q,r].ressource);
+            write(plat.Grille[q,r].Numero);
             write(' ');
         end;
         writeln();
@@ -75,35 +76,12 @@ begin
     affichage.xGrid := 500;
     affichage.yGrid := 125;
 
-    gridSize := 3;
+    // gridSize := 3;
 
     for i:=Physique to Mathematiques do
     begin
         affichage.texturePlateau.textureRessource[i] := chargerTexture(affichage.renderer, GetEnumName(TypeInfo(TRessource), Ord(i)));
     end;
-
-    setLength(grid, gridSize*2+1,gridSize*2+1);
-
-    Randomize();
-
-    // for q := 0 to gridSize*2 do
-    //     for r := 0 to gridSize*2 do
-    //         if abs(q+r)<=gridSize*2*2 then
-    //         begin
-    //             if ((q+r<gridSize) or (q+r>gridSize*gridSize)) then
-    //             begin
-    //                 grid[q,r].ressource := Aucune;
-    //                 grid[q,r].Numero := 0;
-    //             end
-    //             else
-    //             begin
-    //                 grid[q,r].ressource := ressourceAleatoire();
-    //                 grid[q,r].Numero := 1;
-    //             end;
-    //         end;
-
-    // plat.Grille := grid;
-    plat.Grille := chagerGrille();
 
     testAffichagePlateau(plat);
 end;

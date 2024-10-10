@@ -2,7 +2,9 @@ unit gestion;
 
 interface
 uses Types;
-function chagerGrille():TGrille;
+// function chagerGrille():TGrille;
+function chargementPlateau(): TPlateau;
+
 
 
 implementation
@@ -11,7 +13,6 @@ function chagerGrille():TGrille;
 var
   grille: TGrille;
 begin
-  // Initialisation de la grille 3x3 (3 lignes, 3 colonnes)
   SetLength(grille, 7, 7);
 
   grille[0][0].ressource := Aucune; grille[0][0].Numero := -1;
@@ -78,9 +79,11 @@ end;
 function chargementPlateau(): TPlateau;
 var
   grille: TGrille;
+  plat : TPlateau;
 begin
     grille := chagerGrille();
-
+    plat.Grille := grille;
+    chargementPlateau := plat;
 end;
 
 procedure initialisationPartie(var joueurs : TJoueurs; plateau : TPlateau; affichage : TAffichage);
