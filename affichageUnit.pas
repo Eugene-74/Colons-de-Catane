@@ -3,13 +3,16 @@ unit affichageUnit;
 
 interface
 
-uses sdl2, sdl2_image, sdl2_ttf, types, sysutils, TypInfo, traitement,gestion;
+uses sdl2, sdl2_image, sdl2_ttf, types, sysutils, TypInfo, traitement;
 
 procedure initialisationSDL(var affichage: TAffichage);
 procedure initialisationAffichage(var plat: TPlateau; var affichage: TAffichage);
 procedure affichageGrille(plat: TPlateau; var affichage: TAffichage);
 procedure testAffichagePlateau(plat: TPlateau);
 procedure clicHexagone(var plat: TPlateau; var affichage: TAffichage);
+procedure affichageText(text : string;taille : integer;coord : Tcoord;affichage :TAffichage);
+procedure miseAJourRender(affichage :TAffichage);
+
 
 implementation
 
@@ -172,6 +175,16 @@ begin
             end;
         end;
     end;
+end;
+
+procedure affichageText(text : string;taille : integer;coord : Tcoord;affichage :TAffichage);
+begin
+  writeln(text);
+end;
+
+procedure miseAJourRender(affichage :TAffichage);
+begin
+  writeln('miseAJourRender activer')
 end;
 
 end.
