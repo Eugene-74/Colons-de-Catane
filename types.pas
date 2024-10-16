@@ -27,7 +27,7 @@ type
     Ressources: TRessources;
     Points: Integer;
     Nom: String;
-    // Id: Integer;
+    // Id: Integ er;
   end;
 
   // Définition de TJoueurs (tableau dynamique de TJoueur)
