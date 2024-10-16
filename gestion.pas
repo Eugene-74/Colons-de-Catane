@@ -30,6 +30,7 @@ begin
   num :=1;
   if(num = 1) then 
     begin
+
     ressources[0] := [Aucune, Aucune, Aucune, Aucune, Aucune, Aucune, Aucune];
     ressources[1] := [Aucune, Aucune, Aucune, Humanites, Mathematiques, Chimie, Aucune];
     ressources[2] := [Aucune, Aucune, Mathematiques, Chimie, Informatique, Physique, Aucune];
