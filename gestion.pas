@@ -12,71 +12,68 @@ procedure partie(joueurs: TJoueurs;plateau:TPlateau;affichage:TAffichage);
 
 implementation
 
-function chagerGrille():TGrille;
-var
+function chagerGrille(): TGrille;
+var 
   grille: TGrille;
+  numeros: array of array of Integer;
+  ressources: array of array of TRessource;
+  i, j: Integer;
+  num : Integer;
 begin
+// Tableau static pose des problème
   SetLength(grille, 7, 7);
 
-  grille[0][0].ressource := Aucune; grille[0][0].Numero := -1;
-  grille[1][0].ressource := Aucune; grille[1][0].Numero := -1;
-  grille[2][0].ressource := Aucune; grille[2][0].Numero := -1;
-  grille[3][0].ressource := Aucune; grille[3][0].Numero := -1;
-  grille[4][0].ressource := Aucune; grille[4][0].Numero := -1;
-  grille[5][0].ressource := Aucune; grille[5][0].Numero := -1;
-  grille[6][0].ressource := Aucune; grille[6][0].Numero := -1;
+  SetLength(ressources, 7, 7);
+  SetLength(numeros, 7, 7);
 
-  grille[0][1].ressource := Aucune; grille[0][1].Numero := -1;
-  grille[1][1].ressource := Aucune; grille[1][1].Numero := -1;
-  grille[2][1].ressource := Aucune; grille[2][1].Numero := -1;
-  grille[3][1].ressource := Humanites; grille[3][1].Numero := 6;
-  grille[4][1].ressource := Physique; grille[4][1].Numero := 3;
-  grille[5][1].ressource := Physique; grille[5][1].Numero := 8;
-  grille[6][1].ressource := Aucune; grille[6][1].Numero := -1;
-
-  grille[0][2].ressource := Aucune; grille[0][2].Numero := -1;
-  grille[1][2].ressource := Aucune; grille[1][2].Numero := -1;
-  grille[2][2].ressource := Mathematiques; grille[2][2].Numero := 2;
-  grille[3][2].ressource := Informatique; grille[3][2].Numero := 4;
-  grille[4][2].ressource := Mathematiques; grille[4][2].Numero := 5;
-  grille[5][2].ressource := Humanites; grille[5][2].Numero := 10;
-  grille[6][2].ressource := Aucune; grille[6][2].Numero := -1;
-
-  grille[0][3].ressource := Aucune; grille[0][3].Numero := -1;
-  grille[1][3].ressource := Humanites; grille[1][3].Numero := 5;
-  grille[2][3].ressource := Chimie; grille[2][3].Numero := 9;
-  grille[3][3].ressource := Aucune; grille[3][3].Numero := 0;
-  grille[4][3].ressource := Informatique; grille[4][3].Numero := 6;
-  grille[5][3].ressource := Mathematiques; grille[5][3].Numero := 9;
-  grille[6][3].ressource := Aucune; grille[6][3].Numero := 61;
-
-  grille[0][4].ressource := Aucune; grille[0][4].Numero := -1;
-  grille[1][4].ressource := Mathematiques; grille[1][4].Numero := 10;
-  grille[2][4].ressource := Informatique; grille[2][4].Numero := 11;
-  grille[3][4].ressource := Humanites; grille[3][4].Numero := 3;
-  grille[4][4].ressource := Physique; grille[4][4].Numero := 12;
-  grille[5][4].ressource := Aucune; grille[5][4].Numero := -1;
-  grille[6][4].ressource := Aucune; grille[6][4].Numero := -1;
-
-  grille[0][5].ressource := Aucune; grille[0][5].Numero := -1;
-  grille[1][5].ressource := Chimie; grille[1][5].Numero := 8;
-  grille[2][5].ressource := Physique; grille[2][5].Numero := 4;
-  grille[3][5].ressource := Chimie; grille[3][5].Numero := 11;
-  grille[4][5].ressource := Aucune; grille[4][5].Numero := -1;
-  grille[5][5].ressource := Aucune; grille[5][5].Numero := -1;
-  grille[6][5].ressource := Aucune; grille[6][5].Numero := -1;
-
-  grille[0][6].ressource := Aucune; grille[0][6].Numero := -1;
-  grille[1][6].ressource := Aucune; grille[1][6].Numero := -1;
-  grille[2][6].ressource := Aucune; grille[2][6].Numero := -1;
-  grille[3][6].ressource := Aucune; grille[3][6].Numero := -1;
-  grille[4][6].ressource := Aucune; grille[4][6].Numero := -1;
-  grille[5][6].ressource := Aucune; grille[5][6].Numero := -1;
-  grille[6][6].ressource := Aucune; grille[6][6].Numero := -1;
+// INITIALISER PLUSIEUR TABLEAU
+  num :=1;
+  if(num = 1) then 
+    begin
+    ressources[0] := [Aucune, Aucune, Aucune, Aucune, Aucune, Aucune, Aucune];
+    ressources[1] := [Aucune, Aucune, Aucune, Humanites, Mathematiques, Chimie, Aucune];
+    ressources[2] := [Aucune, Aucune, Mathematiques, Chimie, Informatique, Physique, Aucune];
+    ressources[3] := [Aucune, Humanites, Informatique, Aucune, Humanites, Chimie, Aucune];
+    ressources[4] := [Aucune, Physique, Mathematiques, Informatique, Physique, Aucune, Aucune];
+    ressources[5] := [Aucune, Physique, Humanites, Mathematiques, Aucune, Aucune, Aucune];
+    ressources[6] := [Aucune, Aucune, Aucune, Aucune, Aucune, Aucune, Aucune];
+    numeros[0] := [-1, -1, -1, -1, -1, -1, -1];
+    numeros[1] := [-1, -1, -1, 6, 3, 8, -1];
+    numeros[2] := [-1, -1, 2, 9, 11, 4, -1];
+    numeros[3] := [-1, 5, 4, 0, 3, 11, -1];
+    numeros[4] := [-1, 10, 5, 6, 12, -1, -1];
+    numeros[5] := [-1, 8, 10, 9, -1, -1, -1];
+    numeros[6] := [-1, -1, -1, -1, -1, -1, -1];
+    end
+  else 
+    begin
+    ressources[0] := [Physique, Physique, Physique, Physique, Physique, Physique, Physique];
+    ressources[1] := [Physique, Physique, Physique, Physique, Physique, Physique, Physique];
+    ressources[2] := [Physique, Physique, Physique, Physique, Physique, Physique, Physique];
+    ressources[3] := [Physique, Physique, Physique, Physique, Physique, Physique, Physique];
+    ressources[4] := [Physique, Physique, Physique, Physique, Physique, Physique, Physique];
+    ressources[5] := [Physique, Physique, Physique, Physique, Physique, Physique, Physique];
+    ressources[6] := [Physique, Physique, Physique, Physique, Physique, Physique, Physique];
+    numeros[0] := [-1, -1, -1, -1, -1, -1, -1];
+    numeros[1] := [-1, -1, -1, -1, -1, -1, -1];
+    numeros[2] := [-1, -1, -1, -1, -1, -1, -1];
+    numeros[3] := [-1, -1, -1, -1, -1, -1, -1];
+    numeros[4] := [-1, -1, -1, -1, -1, -1, -1];
+    numeros[5] := [-1, -1, -1, -1, -1, -1, -1];
+    numeros[6] := [-1, -1, -1, -1, -1, -1, -1];
+    end;
 
 
-  chagerGrille:=grille;
+  for i := 0 to 6 do
+    for j := 0 to 6 do
+    begin
+      grille[i, j].ressource := ressources[i][j];
+      grille[i, j].numero := numeros[i][j];
+    end;
+
+  chagerGrille := grille;
 end;
+
 
 
 function chargementPlateau(): TPlateau;
@@ -227,12 +224,12 @@ end;
 
 procedure partie(joueurs: TJoueurs;plateau:TPlateau;affichage:TAffichage);
 var gagnant : integer;
-  gagener : boolean;
+  gagner : boolean;
 begin
   // repeat
   tour(joueurs,plateau,affichage);
 
-  verificationPointsVictoire(joueurs,gagener,gagnant);
+  verificationPointsVictoire(joueurs,gagner,gagnant);
   // until (gagener);
   affichageGagnant(joueurs[gagnant],affichage);
 
