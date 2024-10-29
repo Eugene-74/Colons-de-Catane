@@ -27,7 +27,7 @@ type
     Ressources: TRessources;
     Points: Integer;
     Nom: String;
-    // Id: Integ er;
+    Id: Integer;
   end;
 
   // Définition de TJoueurs (tableau dynamique de TJoueur)
@@ -41,6 +41,7 @@ type
     ressource: TRessource;
     Numero: Integer;
   end;
+
 
   // Définition de TGrille (tableau dynamique de THexagones à 2 dimensions)
   TGrille = array of array of THexagone;
@@ -57,6 +58,7 @@ type
   // Définition de TPersonne
   TPersonne = record
     Position: array of TCoord;  // Tableau dynamique de 3 TCoord
+    estEleve: Boolean;
     IdJoueur: Integer;
   end;
 

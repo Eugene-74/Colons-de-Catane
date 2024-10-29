@@ -126,16 +126,16 @@ begin
     begin
     text := 'Le joueur '+IntToStr(i)+' joue et place une connexion puis un élève';
     affichageText(text,0,coord,affichage);
-    placementConnexion(plateau,affichage);
-    placementEleve(plateau,affichage);
+    placementConnexion(plateau,affichage,joueurs[i-1]);
+    placementEleve(plateau,affichage,joueurs[i-1]);
     end;
 
   for i:=3 downto 1 do
     begin
     text := 'Le joueur '+IntToStr(i)+' rejoue et replace une connexion puis un élève';
     affichageText(text,0,coord,affichage);
-    placementConnexion(plateau,affichage);
-    placementEleve(plateau,affichage);
+    placementConnexion(plateau,affichage,joueurs[i-1]);
+    placementEleve(plateau,affichage,joueurs[i-1]);
 
     end;
   plateau := chargementPlateau();
