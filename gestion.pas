@@ -3,7 +3,11 @@ unit gestion;
 interface
 uses Types,affichageUnit,SysUtils,achat;
 // function chagerGrille():TGrille;
+<<<<<<< Updated upstream
 function chargementPlateau(): TPlateau;
+=======
+ function chargementPlateau(): TPlateau;
+>>>>>>> Stashed changes
 procedure initialisationPartie(var joueurs : TJoueurs; plateau : TPlateau; affichage : TAffichage);
 procedure partie(joueurs: TJoueurs;plateau:TPlateau;affichage:TAffichage);
 
