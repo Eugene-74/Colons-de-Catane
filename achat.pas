@@ -176,37 +176,57 @@ end;
 
 procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 var
-  hexagoneSelectionne: THexagone;
-  i: Integer;
+  hexagonesSelectionnes: THexagones;
+  i, j: Integer;
+  estConverti: Boolean;
 begin
-  hexagoneSelectionne := ClicPersonne(plateau, affichage, False); 
-  if PersonneValide(plateau, hexagoneSelectionne, False, joueurActuel) then
-  
+  // Appeler ClicPersonne pour récupérer les hexagones sélectionnés
+  hexagonesSelectionnes := ClicPersonne(False); 
+
+  // Vérifie si les hexagones sont adjacents
+  if enContact(hexagonesSelectionnes.Positions) then
+  begin
+    estConverti := False;
+    // Convertir l'élève en professeur sur le plateau
+    for i := 0 to High(plateau.Personnes) do
     begin
-      joueurActuel.Ressources[Mathematiques] := joueurActuel.Ressources[Mathematiques] - 2;
-      joueurActuel.Ressources[Physique] := joueurActuel.Ressources[Physique] - 1;
-
-      // Convertir l'élève en professeur sur le plateau
-      for i := 0 to High(plateau.Personnes) do
+      if (plateau.Personnes[i].IdJoueur = joueurActuel.Id) and
+         (plateau.Personnes[i].estEleve) then
       begin
-        if (plateau.Personnes[i].IdJoueur = joueurActuel.Id) and
-           (plateau.Personnes[i].estEleve) and
-           (plateau.Personnes[i].Position[0].x =0 )and// ********A faire: recuperer les coordonnée****************************
-           (plateau.Personnes[i].Position[0].y = 0) then
+      
+        for j := 0 to High(hexagonesSelectionnes.Positions) do
         begin
-          plateau.Personnes[i].estEleve := False; // Changer l'élève en professeur
-          WriteLn('Élève converti en professeur avec succès !');
-          Break;
+          // Vérifie si les coordonnées de l'élève correspondent à l'un des hexagones sélectionnés
+           if (plateau.Personnes[i].Position[0].x = hexagonesSelectionnes.Positions[j].x) and
+             (plateau.Personnes[i].Position[0].y = hexagonesSelectionnes.Positions[j].y) or
+             (plateau.Personnes[i].Position[1].x = hexagonesSelectionnes.Positions[j].x) and
+             (plateau.Personnes[i].Position[1].y = hexagonesSelectionnes.Positions[j].y) or
+             (plateau.Personnes[i].Position[2].x = hexagonesSelectionnes.Positions[j].x) and
+             (plateau.Personnes[i].Position[2].y = hexagonesSelectionnes.Positions[j].y) then
+          begin
+            // Déduction des ressources nécessaires pour la conversion
+            joueurActuel.Ressources[Mathematiques] := joueurActuel.Ressources[Mathematiques] - 2;
+            joueurActuel.Ressources[Physique] := joueurActuel.Ressources[Physique] - 1;
+            plateau.Personnes[i].estEleve := False; // Changer l'élève en professeur
+            estConverti := True;
+            WriteLn('Élève converti en professeur avec succès !');
+            Break; // Sortir de la boucle des hexagones
+          end;
         end;
+        if estConverti then
+          Break; // Sortir de la boucle des élèves si conversion réussie
       end;
+    end;
 
-     
-      affichageGrille(plateau, affichage);
-    end
-    
+    if not estConverti then
+      WriteLn('Aucun élève trouvé à convertir sur les hexagones sélectionnés.');
+
+    affichageGrille(plateau, affichage); // Met à jour l'affichage de la grille
+  end
   else
-    WriteLn('Conversion invalide. Vérifiez les conditions de placement.');
+    WriteLn('Conversion invalide. Les hexagones sélectionnés ne sont pas adjacents.');
 end;
+
 
 procedure verificationPointsVictoire(var joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer);
 var
