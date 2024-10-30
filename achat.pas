@@ -124,24 +124,36 @@ begin
 end;
 
 
-function ClicPersonne(var plateau: TPlateau; var affichage: TAffichage; estEleve: Boolean): THexagone;
+function ClicPersonne(estEleve: Boolean): THexagones;
 var
-  hexagoneSelectionne: THexagone;
+  i: Integer;
   coord: TCoord;
+  selections: THexagones;
+  plateau: TPlateau;
+  affichage: TAffichage; 
 begin
+  
   if estEleve then
-    writeln('Cliquez sur l''endroit où vous voulez placer l''élève')
+    writeln('Cliquez sur trois hexagones entre lesquels vous voulez placer l''élève')
   else
-    writeln('Cliquez sur l''endroit où vous voulez placer le professeur');
+    writeln('Cliquez sur troistrois hexagones entre lesquels vous voulez placer le professeur');
 
-  
-  clicHexagone(plateau, affichage, coord);
-  
-  hexagoneSelectionne := plateau.Grille[affichage.xGrid, affichage.yGrid];
-  
- 
-  ClicPersonne:= hexagoneSelectionne;
+  selections.Taille := 3;
+  SetLength(selections.Positions, selections.Taille);
+
+  for i := 0 to selections.Taille - 1 do
+  begin
+    clicHexagone(plateau, affichage, coord); 
+    selections.Positions[i] := coord; 
+  end;
+  SetLength(selections.hexagones, selections.Taille);
+  for i := 0 to selections.Taille - 1 do
+  begin
+    selections.hexagones[i].Numero := i;// A faire donnée le numero de l'hexagone coorespondant****************
+  end;
+  ClicPersonne := selections;
 end;
+
 
 
 function CountPersonnes(personnes: array of TPersonne; estEleve: Boolean; joueur: TJoueur): Integer;
