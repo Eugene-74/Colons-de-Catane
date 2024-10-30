@@ -8,6 +8,7 @@ procedure hexaToCard(q,r,taille:Integer; var x,y:Integer);
 procedure cardToHexa(x,y,taille:Integer; var q,r:Integer);
 procedure round_hexa(q_f,r_f:Real; var q,r:Integer);
 function enContact(hexagones: TCoords): Boolean;
+function sontAdjacentes(coord1, coord2: TCoord): Boolean;
 
 implementation
 

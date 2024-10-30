@@ -74,33 +74,36 @@ begin
   end;
 end;
 
-function PersonneValide(plateau: TPlateau; hexagoneSelectionne: THexagone; estEleve: Boolean; joueurActuel: TJoueur): Boolean;
+function PersonneValide(plateau: TPlateau; hexagonesSelectionnes: THexagones; estEleve: Boolean; joueurActuel: TJoueur): Boolean;
 var
   i: Integer;
-  personneAdjacente, ressourcesSuffisantes, Result: Boolean;
+  personneAdjacente: Boolean;
+  ressourcesSuffisantes: Boolean;
 begin
   personneAdjacente := False;
   ressourcesSuffisantes := False;
+  if not enContact(hexagonesSelectionnes.Positions) then
+  begin
+    PersonneValide := False;
+    Exit;
+  end;
 
   // Vérifie la présence d'une personne adjacente
   for i := 0 to High(plateau.Personnes) do
   begin
-    if enContact(hexagoneSelectionne) then
+    if sontAdjacentes(hexagonesSelectionnes.Positions[0], plateau.Personnes[i].Position[i]) or
+       sontAdjacentes(hexagonesSelectionnes.Positions[1], plateau.Personnes[i].Position[i]) or
+       sontAdjacentes(hexagonesSelectionnes.Positions[2], plateau.Personnes[i].Position[i]) then
     begin
-      // Vérifie que la personne adjacente n'est pas un élève ou un professeur du même joueur
-      if plateau.Personnes[i].IdJoueur = joueurActuel.Id then
+  
+      if (plateau.Personnes[i].estEleve) or (not plateau.Personnes[i].estEleve and not estEleve) then
       begin
-        if plateau.Personnes[i].estEleve = estEleve then
-        begin
-          Result := False; // Ne peut pas être adjacent à une personne du même type
-          Exit;
-        end;
+        PersonneValide := False; // Ne peut pas être adjacent à un élève ou à un professeur
+        Exit;
       end;
       personneAdjacente := True; // Marque la case comme ayant une personne adjacente
     end;
   end;
-
-  // Vérifie les ressources et la limite d'unités pour l'élève ou le professeur
   if estEleve then
   begin
     // Conditions de ressources et limite pour un élève
@@ -108,19 +111,17 @@ begin
                              (joueurActuel.Ressources[Humanites] >= 1) and
                              (joueurActuel.Ressources[Chimie] >= 1) and
                              (joueurActuel.Ressources[Physique] >= 1) and
-                             (CountPersonnes(plateau.Personnes, True, joueurActuel) <= 5);
+                             (CountPersonnes(plateau.Personnes, True, joueurActuel) < 5);
   end
   else // Cas du professeur
   begin
     // Conditions de ressources et limite pour un professeur
     ressourcesSuffisantes := (joueurActuel.Ressources[Mathematiques] >= 2) and
                              (joueurActuel.Ressources[Physique] >= 1) and
-                             (CountPersonnes(plateau.Personnes, False, joueurActuel) <= 3);
+                             (CountPersonnes(plateau.Personnes, False, joueurActuel) < 3);
   end;
+  PersonneValide := ressourcesSuffisantes and personneAdjacente;
 
-
-  Result := ressourcesSuffisantes and personneAdjacente;
-  PersonneValide:=result
 end;
 
 
