@@ -9,7 +9,7 @@ procedure initialisationSDL(var affichage: TAffichage);
 procedure initialisationAffichage(var plat: TPlateau; var affichage: TAffichage);
 procedure affichageGrille(plat: TPlateau; var affichage: TAffichage);
 procedure testAffichagePlateau(plat: TPlateau);
-procedure clicHexagone(var plat: TPlateau; var affichage: TAffichage);
+procedure clicHexagone(var plat: TPlateau; var affichage: TAffichage; var coord: Tcoord);
 procedure affichageText(text : string;taille : integer;coord : Tcoord;affichage :TAffichage);
 procedure miseAJourRender(affichage :TAffichage);
 
@@ -72,14 +72,10 @@ begin
 end;
 
 procedure initialisationPlateau(var plat: TPlateau;var affichage: TAffichage);
-var grid: TGrille;
-    q,r,gridSize: Integer;
-    i: TRessource;
+var i: TRessource;
 begin
-    affichage.xGrid := 500;
-    affichage.yGrid := 125;
-
-    // gridSize := 3;
+    affichage.xGrid := 0;
+    affichage.yGrid := 0;
 
     for i:=Physique to Mathematiques do
     begin
@@ -98,20 +94,18 @@ end;
 procedure affichageHexagone(plat: TPlateau; var affichage: TAffichage; q, r: Integer);
 var destination_rect: TSDL_RECT;
     texture: PSDL_Texture;
-    taille : Integer;
     x,y: Integer;
 begin
-    taille := 150;
 
     texture := affichage.texturePlateau.textureRessource[plat.Grille[q,r].ressource];
 
-    hexaToCard(q,r,taille div 2-1,x,y);
+    hexaToCard(q,r,tailleHexagone div 2,x,y);
 	
 	// Définit le carre de destination pour l'affichage de la carte
-	destination_rect.x:=affichage.xGrid+x;
-	destination_rect.y:=affichage.yGrid+y;
-	destination_rect.w:=taille;
-	destination_rect.h:=taille;
+	destination_rect.x:=affichage.xGrid+x-(tailleHexagone div 2);
+	destination_rect.y:=affichage.yGrid+y-(tailleHexagone div 2);
+	destination_rect.w:=tailleHexagone;
+	destination_rect.h:=tailleHexagone;
 
 	SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect);
 end;
@@ -123,12 +117,13 @@ begin
 end;
 
 procedure affichageGrille(plat: TPlateau; var affichage: TAffichage);
-var q,r,taille,gridSize: Integer;
+var q,r,taille: Integer;
+    //gridSize: Integer;
 begin
     affichageFond(affichage);
 
     taille := length(plat.Grille);
-    gridSize := taille div 2;
+    //gridSize := taille div 2;
 
     //and not ((q+r<=gridSize) or (q+r>=gridSize*gridSize))
     for q:=0 to taille-1 do
@@ -144,7 +139,7 @@ begin
     //TODO
 end;
 
-procedure clicHexagone(var plat: TPlateau; var affichage: TAffichage);
+procedure clicHexagone(var plat: TPlateau; var affichage: TAffichage; var coord: Tcoord);
 var event: TSDL_Event;
     running: Boolean;
     x,y,q,r: Integer;
@@ -163,13 +158,16 @@ begin
                 end;
                 SDL_MOUSEBUTTONDOWN:
                 begin
-                    x := event.button.x-affichage.xGrid;
-                    y := event.button.y-affichage.yGrid;
-                    cardToHexa(x,y,150 div 2-1,q,r);
-                    writeln(q-1,' ',r-1);
+                    x := event.button.x;
+                    y := event.button.y;
+
+                    cardToHexa(x,y,tailleHexagone div 2,q,r);
+
                     if not((q-1 < 0) or (r-1 < 0) or (q-1 >= length(plat.Grille)-1) or (r-1 >= length(plat.Grille)-1)) then
                     begin
-                        writeln(plat.Grille[q-1,r-1].ressource);
+                        running := False;
+                        coord.x := q;
+                        coord.y := r;
                     end;
                 end;
             end;

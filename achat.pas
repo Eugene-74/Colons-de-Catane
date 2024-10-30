@@ -128,6 +128,7 @@ end;
 function ClicPersonne(var plateau: TPlateau; var affichage: TAffichage; estEleve: Boolean): THexagone;
 var
   hexagoneSelectionne: THexagone;
+  coord: TCoord;
 begin
   if estEleve then
     writeln('Cliquez sur l''endroit où vous voulez placer l''élève')
@@ -135,7 +136,7 @@ begin
     writeln('Cliquez sur l''endroit où vous voulez placer le professeur');
 
   
-  clicHexagone(plateau, affichage);
+  clicHexagone(plateau, affichage, coord);
   
   hexagoneSelectionne := plateau.Grille[affichage.xGrid, affichage.yGrid];
   
@@ -257,11 +258,11 @@ end;
 function ClicConnexion(var plateau: TPlateau; var affichage: TAffichage): THexagone;
 var
   hexagoneSelectionne: THexagone;
-
+  coord: TCoord;
 begin
   writeln('Cliquez sur l''endroit où vous voulez placer la connexion');
 
-  clicHexagone(plateau, affichage);
+  clicHexagone(plateau, affichage, coord);
 
   hexagoneSelectionne := plateau.Grille[affichage.xGrid, affichage.yGrid];
 
