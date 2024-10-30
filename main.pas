@@ -10,7 +10,7 @@ var
     coord : Tcoord;
 
 begin
-  testYann := True;
+  testYann := False;
   if not testYann then
   begin
     initialisationPartie(joueurs,plateau,affichage);
