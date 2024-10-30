@@ -15,6 +15,8 @@ type
     x, y: Integer;
   end;
 
+  TCoords = array of TCoord;
+
   // Définition de TRessourceValeur
 //   TRessourceValeur = record
 //     Ressource: TRessource;

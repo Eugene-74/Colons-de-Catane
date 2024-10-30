@@ -3,7 +3,7 @@ unit ACHAT;
 interface
 
 uses
-  Types, affichageUnit;
+  Types, affichageUnit,traitement;
 
 procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage);
@@ -16,7 +16,6 @@ function connexionValide(hex: THexagone; plateau: TPlateau; joueur: TJoueur): Bo
 function ClicPersonne(var plateau: TPlateau; var affichage: TAffichage; estEleve: Boolean): THexagone;
 function CountPersonnes(personnes: array of TPersonne; estEleve: Boolean; joueur: TJoueur): Integer;
 function PersonneValide(plateau: TPlateau; hexagoneSelectionne: THexagone; estEleve: Boolean; joueurActuel: TJoueur): Boolean;
-function enContact(hex: THexagone; plateau: TPlateau): Boolean;
 
 implementation
 
@@ -86,7 +85,7 @@ begin
   // Vérifie la présence d'une personne adjacente
   for i := 0 to High(plateau.Personnes) do
   begin
-    if enContact(hexagoneSelectionne,plateau) then
+    if enContact(hexagoneSelectionne) then
     begin
       // Vérifie que la personne adjacente n'est pas un élève ou un professeur du même joueur
       if plateau.Personnes[i].IdJoueur = joueurActuel.Id then
@@ -236,7 +235,7 @@ begin
   // Vérifie s'il y a des connexions adjacentes dans la zone de l'hexagone sélectionné
   for i := 0 to High(plateau.Connexions) do
   begin
-    if enContact( hex,plateau) then
+    if enContact(hex) then
     begin
       if plateau.Connexions[i].IdJoueur = joueur.Id then
       begin
@@ -297,10 +296,7 @@ begin
     WriteLn('Placement de la connexion invalide. Vérifiez les conditions.');
   end;
 end;
-function enContact(hex: THexagone; plateau: TPlateau): Boolean;
-begin
-  enContact:=False;
-end;
+
 end.
 
 
