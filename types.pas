@@ -46,6 +46,12 @@ type
     Numero: Integer;
   end;
 
+  THexagones = record
+    hexagones: array of THexagone; // Tableau d'hexagones
+    Positions: TCoords; // Tableau de listes de coordonnées associées
+    Taille: Integer;             // Nombre d'hexagones
+  end;
+
 
   // Définition de TGrille (tableau dynamique de THexagones à 2 dimensions)
   TGrille = array of array of THexagone;
