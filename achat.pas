@@ -13,9 +13,9 @@ procedure verificationPointsVictoire(var joueurs: TJoueurs; var gagner: Boolean;
 procedure affichageGagnant(joueur: TJoueur; affichage: TAffichage);
 function ClicConnexion(var plateau: TPlateau; var affichage: TAffichage): THexagone;
 function connexionValide(hex: THexagone; plateau: TPlateau; joueur: TJoueur): Boolean;
-function ClicPersonne(var plateau: TPlateau; var affichage: TAffichage; estEleve: Boolean): THexagone;
+function ClicPersonne(estEleve: Boolean): THexagones;
 function CountPersonnes(personnes: array of TPersonne; estEleve: Boolean; joueur: TJoueur): Integer;
-function PersonneValide(plateau: TPlateau; hexagoneSelectionne: THexagone; estEleve: Boolean; joueurActuel: TJoueur): Boolean;
+function PersonneValide(plateau: TPlateau; hexagonesSelectionnes: THexagones; estEleve: Boolean; joueurActuel: TJoueur): Boolean;
 
 implementation
 
@@ -41,13 +41,13 @@ end;
 
 procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 var
-  hexagoneSelectionne: THexagone;
+  hexagonesSelectionnes: THexagones;
 begin
-  hexagoneSelectionne := ClicPersonne(plateau,affichage,True);
+  hexagonesSelectionnes := ClicPersonne(True); 
 
-  if PersonneValide(plateau, hexagoneSelectionne, True, joueurActuel) then
+  if PersonneValide(plateau, hexagonesSelectionnes, True, joueurActuel) then
   begin
-    
+    // Déduction des ressources
     joueurActuel.Ressources[Mathematiques] := joueurActuel.Ressources[Mathematiques] - 1;
     joueurActuel.Ressources[Humanites] := joueurActuel.Ressources[Humanites] - 1;
     joueurActuel.Ressources[Chimie] := joueurActuel.Ressources[Chimie] - 1;
@@ -57,15 +57,17 @@ begin
     SetLength(plateau.Personnes, Length(plateau.Personnes) + 1);
     with plateau.Personnes[High(plateau.Personnes)] do
     begin
-      // Positionner l'élève sur le numéro de l'hexagone sélectionné
-      SetLength(Position, 1);
-      Position[0].x := 0; // A faire***********************************************************************
-      Position[0].y := 0;// 
-      
+      // Assigner les coordonnées des hexagones sélectionnés à l'élève
+      SetLength(Position, 3); 
+      Position[0] := hexagonesSelectionnes.Positions[0]; 
+      Position[1] := hexagonesSelectionnes.Positions[1]; 
+      Position[2] := hexagonesSelectionnes.Positions[2]; 
+
       estEleve := True;
-      IdJoueur := joueurActuel.Id;
+      IdJoueur := joueurActuel.Id; 
     end;
-    affichageGrille(plateau, affichage);
+
+    affichageGrille(plateau, affichage); 
     WriteLn('Élève placé avec succès !');
   end
   else
@@ -73,6 +75,7 @@ begin
     WriteLn('Placement invalide. Vérifiez les conditions de placement.');
   end;
 end;
+
 
 function PersonneValide(plateau: TPlateau; hexagonesSelectionnes: THexagones; estEleve: Boolean; joueurActuel: TJoueur): Boolean;
 var
