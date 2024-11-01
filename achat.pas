@@ -8,11 +8,11 @@ uses
 procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage);
 procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
-procedure PlacementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
+procedure PlacementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 procedure verificationPointsVictoire(var joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer);
 procedure affichageGagnant(joueur: TJoueur; affichage: TAffichage);
-function ClicConnexion(var plateau: TPlateau; var affichage: TAffichage): THexagone;
-function connexionValide(hex: THexagone; plateau: TPlateau; joueur: TJoueur): Boolean;
+function ClicConnexion(): THexagones;
+function connexionValide(hexagonesSelectionnes: THexagones; plateau: TPlateau; joueur: TJoueur): Boolean;
 function ClicPersonne(estEleve: Boolean): THexagones;
 function CountPersonnes(personnes: array of TPersonne; estEleve: Boolean; joueur: TJoueur): Integer;
 function PersonneValide(plateau: TPlateau; hexagonesSelectionnes: THexagones; estEleve: Boolean; joueurActuel: TJoueur): Boolean;
@@ -257,81 +257,103 @@ end;
 
 
 
-function connexionValide(hex: THexagone; plateau: TPlateau; joueur: TJoueur): Boolean;
+function connexionValide(hexagonesSelectionnes: THexagones; plateau: TPlateau; joueur: TJoueur): Boolean;
 var
-  i: Integer;
-  ressourcesSuffisantes, positionDisponible,Result: Boolean;
+  i, j: Integer;
+  ressourcesSuffisantes, positionDisponible: Boolean;
 begin
+  // Vérifie si le joueur a suffisamment de ressources pour acheter une connexion
   ressourcesSuffisantes := (joueur.Ressources[Mathematiques] >= 1) and
                            (joueur.Ressources[Physique] >= 1) and
                            (joueur.Ressources[Chimie] >= 1);
 
   positionDisponible := True;
 
-  // Vérifie s'il y a des connexions adjacentes dans la zone de l'hexagone sélectionné
+  // Parcourt les connexions pour vérifier si l'une des positions de hexagonesSelectionnes est déjà occupée
   for i := 0 to High(plateau.Connexions) do
   begin
-    if enContact(hex) then
+    for j := 0 to High(hexagonesSelectionnes.Positions) do
     begin
-      if plateau.Connexions[i].IdJoueur = joueur.Id then
+      if ((plateau.Connexions[i].Position[0].x = hexagonesSelectionnes.Positions[j].x) and
+          (plateau.Connexions[i].Position[0].y = hexagonesSelectionnes.Positions[j].y)) or
+         ((plateau.Connexions[i].Position[1].x = hexagonesSelectionnes.Positions[j].x) and
+          (plateau.Connexions[i].Position[1].y = hexagonesSelectionnes.Positions[j].y)) then
       begin
-        positionDisponible := False; // La connexion ne peut pas être placée ici
+        positionDisponible := False; 
         Break;
       end;
     end;
+    if not positionDisponible then
+      Break; 
   end;
 
-  // La connexion est valide si les ressources sont suffisantes et la position disponible
-  Result := ressourcesSuffisantes and positionDisponible;
-  connexionValide:=Result;
+ connexionValide := ressourcesSuffisantes and positionDisponible;
 end;
 
 
-
-
-
-function ClicConnexion(var plateau: TPlateau; var affichage: TAffichage): THexagone;
+function ClicConnexion(): THexagones;
 var
-  hexagoneSelectionne: THexagone;
+  i: Integer;
   coord: TCoord;
+  selections: THexagones;
+  plateau: TPlateau;
+  affichage: TAffichage;
 begin
-  writeln('Cliquez sur l''endroit où vous voulez placer la connexion');
+  writeln('Cliquez sur deux hexagones entre lesquels vous voulez placer la connexion');
 
-  clicHexagone(plateau, affichage, coord);
+  selections.Taille := 2;
+  SetLength(selections.Positions, selections.Taille);
+  for i := 0 to selections.Taille - 1 do
+  begin
+    clicHexagone(plateau, affichage,coord); 
+    selections.Positions[i] := coord;
+  end;
+  // SetLength(selections.hexagones, selections.Taille);
+  // for i := 0 to selections.Taille - 1 do
+  // begin
+  //   selections.hexagones[i] := 0;
+  // end;
+  // A faire recuperer le numero de l'hexagone si necessaire****************************************************************
 
-  hexagoneSelectionne := plateau.Grille[affichage.xGrid, affichage.yGrid];
-
-  ClicConnexion := hexagoneSelectionne;
+  ClicConnexion := selections;
 end;
 
 
-procedure PlacementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
+procedure PlacementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 var
-  hexagoneSelectionne: THexagone;
+  hexagonesSelectionnes: THexagones;
+  i: Integer;
 begin
-  hexagoneSelectionne := ClicConnexion(plateau, affichage);
+  // Demande à l'utilisateur de sélectionner deux hexagones pour la connexion
+  hexagonesSelectionnes := ClicConnexion();
 
-  if ConnexionValide( hexagoneSelectionne,plateau, joueurActuel) then
+  // Vérifie si la connexion est valide avec les hexagones sélectionnés
+  if connexionValide(hexagonesSelectionnes, plateau, joueur) then
   begin
-    joueurActuel.Ressources[Humanites] := joueurActuel.Ressources[Humanites] - 1; 
-    joueurActuel.Ressources[Mathematiques] := joueurActuel.Ressources[Mathematiques] - 1; 
-    // Ajouter la connexion sur le plateau
+    // Ajoute la connexion au plateau
     SetLength(plateau.Connexions, Length(plateau.Connexions) + 1);
-    with plateau.Connexions[High(plateau.Connexions)] do
+    plateau.Connexions[High(plateau.Connexions)].IdJoueur := joueur.Id;
+
+    // Enregistre les positions des hexagones pour la connexion
+    for i := 0 to High(hexagonesSelectionnes.Positions) do
     begin
-      SetLength(Position, 1); 
-      Position[0].x := 0; //A faire**************************************************************************
-      Position[0].y := 0;
-      IdJoueur := joueurActuel.Id;
+      plateau.Connexions[High(plateau.Connexions)].Position[i] := hexagonesSelectionnes.Positions[i];
     end;
+
+    // Déduit les ressources nécessaires au joueur
+    joueur.Ressources[Mathematiques] := joueur.Ressources[Mathematiques] - 1;
+    joueur.Ressources[Physique] := joueur.Ressources[Physique] - 1;
+    joueur.Ressources[Chimie] := joueur.Ressources[Chimie] - 1;
 
     WriteLn('Connexion placée avec succès !');
   end
   else
   begin
-    WriteLn('Placement de la connexion invalide. Vérifiez les conditions.');
+    WriteLn('Impossible de placer la connexion : vérifiez les ressources ou la position choisie.');
   end;
+    affichageGrille(plateau, affichage); 
 end;
+
 
 end.
 

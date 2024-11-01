@@ -3,11 +3,9 @@ unit gestion;
 interface
 uses Types,affichageUnit,SysUtils,achat;
 // function chagerGrille():TGrille;
-<<<<<<< Updated upstream
+//<<<<<<< Updated upstream
 function chargementPlateau(): TPlateau;
-=======
- function chargementPlateau(): TPlateau;
->>>>>>> Stashed changes
+//>>>>>>> Stashed changes
 procedure initialisationPartie(var joueurs : TJoueurs; plateau : TPlateau; affichage : TAffichage);
 procedure partie(joueurs: TJoueurs;plateau:TPlateau;affichage:TAffichage);
 
@@ -219,7 +217,7 @@ begin
   for j in joueurs do 
     begin
     // TODO choisir l'ordre grace à des clicks
-    //achatElements(j,plateau,affichage);
+   // achatElements(j,plateau,affichage);
     miseAJourRender(affichage);  
     gestionDes(joueurs,plateau,affichage);
     end;
