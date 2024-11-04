@@ -52,7 +52,6 @@ begin
     dr := coord1.y - coord2.y;
 
     sontAdjacentes := ((Abs(dq) = 1) and (dr = 0)) or ((Abs(dr) = 1) and (dq = 0)) or ((dq = -1) and (dr = 1)) or ((dq = 1) and (dr = -1));
-
 end;
 
 function enContact(hexagones: TCoords): Boolean;

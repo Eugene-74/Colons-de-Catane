@@ -127,7 +127,7 @@ begin
   for i:=1 to 3 do
     begin
     text := 'Le joueur '+IntToStr(i)+' joue et place une connexion puis un élève';
-    affichageText(text,0,coord,affichage);
+    affichageTexte(text,0,coord,affichage);
     placementConnexion(plateau,affichage,joueurs[i-1]);
     placementEleve(plateau,affichage,joueurs[i-1]);
     end;
@@ -135,7 +135,7 @@ begin
   for i:=3 downto 1 do
     begin
     text := 'Le joueur '+IntToStr(i)+' rejoue et replace une connexion puis un élève';
-    affichageText(text,0,coord,affichage);
+    affichageTexte(text,0,coord,affichage);
     placementConnexion(plateau,affichage,joueurs[i-1]);
     placementEleve(plateau,affichage,joueurs[i-1]);
 
@@ -218,7 +218,7 @@ begin
     begin
     // TODO choisir l'ordre grace à des clicks
    // achatElements(j,plateau,affichage);
-    miseAJourRender(affichage);  
+    miseAJourRenderer(affichage);  
     gestionDes(joueurs,plateau,affichage);
     end;
 

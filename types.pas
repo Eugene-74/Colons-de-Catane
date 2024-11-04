@@ -4,8 +4,6 @@ interface
 
 uses SDL2, SDL2_image;
 
-Const tailleHexagone = 150;
-
 type
   // Définition du type TRessource
   TRessource = (Aucune, Physique, Informatique, Chimie, Humanites, Mathematiques);
@@ -104,6 +102,8 @@ type
     yGrid: Integer;
     texturePlateau : TTexturePlateau;
   end;
+
+  Uint8 = Byte;
 
 // end;
 
