@@ -30,50 +30,52 @@ begin
   ReadLn(choix);
 
   case choix of
-    1: PlacementEleve(plateau, affichage, joueur);
-    2: PlacementConnexion(plateau, affichage, joueur);
-    3: ChangementProfesseur(plateau, affichage, joueur);
+    1: placementEleve(plateau, affichage, joueur);
+    2: placementConnexion(plateau, affichage, joueur);
+    3: changementProfesseur(plateau, affichage, joueur);
   else
     WriteLn('Choix invalide.');  // Affiche si le choix n'est pas valide
   end;
 end;
 
 
-procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
+procedure placementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 var
   hexagonesSelectionnes: THexagones;
 begin
-  hexagonesSelectionnes := ClicPersonne(True); 
+  // hexagonesSelectionnes := ClicPersonne(True); 
 
-  if PersonneValide(plateau, hexagonesSelectionnes, True, joueurActuel) then
-  begin
-    // Déduction des ressources
-    joueurActuel.Ressources[Mathematiques] := joueurActuel.Ressources[Mathematiques] - 1;
-    joueurActuel.Ressources[Humanites] := joueurActuel.Ressources[Humanites] - 1;
-    joueurActuel.Ressources[Chimie] := joueurActuel.Ressources[Chimie] - 1;
-    joueurActuel.Ressources[Physique] := joueurActuel.Ressources[Physique] - 1;
+  // if PersonneValide(plateau, hexagonesSelectionnes, True, joueurActuel) then
+  // begin
+  //   // Déduction des ressources
+
+    // TODO deplacer dans verificationRessouce / achatElement
+    // joueurActuel.Ressources[Mathematiques] := joueurActuel.Ressources[Mathematiques] - 1;
+    // joueurActuel.Ressources[Humanites] := joueurActuel.Ressources[Humanites] - 1;
+    // joueurActuel.Ressources[Chimie] := joueurActuel.Ressources[Chimie] - 1;
+    // joueurActuel.Ressources[Physique] := joueurActuel.Ressources[Physique] - 1;
 
     
-    SetLength(plateau.Personnes, Length(plateau.Personnes) + 1);
-    with plateau.Personnes[High(plateau.Personnes)] do
-    begin
-      // Assigner les coordonnées des hexagones sélectionnés à l'élève
-      SetLength(Position, 3); 
-      Position[0] := hexagonesSelectionnes.Positions[0]; 
-      Position[1] := hexagonesSelectionnes.Positions[1]; 
-      Position[2] := hexagonesSelectionnes.Positions[2]; 
+    // SetLength(plateau.Personnes, Length(plateau.Personnes) + 1);
+    // with plateau.Personnes[High(plateau.Personnes)] do
+    // begin
+    //   // Assigner les coordonnées des hexagones sélectionnés à l'élève
+    //   SetLength(Position, 3); 
+    //   Position[0] := hexagonesSelectionnes.Positions[0]; 
+    //   Position[1] := hexagonesSelectionnes.Positions[1]; 
+    //   Position[2] := hexagonesSelectionnes.Positions[2]; 
 
-      estEleve := True;
-      IdJoueur := joueurActuel.Id; 
-    end;
+    //   estEleve := True;
+    //   IdJoueur := joueurActuel.Id; 
+    // end;
 
-    affichageGrille(plateau, affichage); 
+    // affichageGrille(plateau, affichage); 
     WriteLn('Élève placé avec succès !');
-  end
-  else
-  begin
-    WriteLn('Placement invalide. Vérifiez les conditions de placement.');
-  end;
+  // end
+  // else
+  // begin
+  //   WriteLn('Placement invalide. Vérifiez les conditions de placement.');
+  // end;
 end;
 
 
@@ -296,6 +298,7 @@ var
   i: Integer;
   coord: TCoord;
   selections: THexagones;
+  // TODO mettre dans la signature
   plateau: TPlateau;
   affichage: TAffichage;
 begin
@@ -319,39 +322,44 @@ begin
 end;
 
 
-procedure PlacementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
+// TODO il faut renvoyer un tempPlateau et pas modifier l'ancien
+procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 var
   hexagonesSelectionnes: THexagones;
   i: Integer;
 begin
-  // Demande à l'utilisateur de sélectionner deux hexagones pour la connexion
-  hexagonesSelectionnes := ClicConnexion();
 
-  // Vérifie si la connexion est valide avec les hexagones sélectionnés
-  if connexionValide(hexagonesSelectionnes, plateau, joueur) then
-  begin
-    // Ajoute la connexion au plateau
-    SetLength(plateau.Connexions, Length(plateau.Connexions) + 1);
-    plateau.Connexions[High(plateau.Connexions)].IdJoueur := joueur.Id;
+  // // Demande à l'utilisateur de sélectionner deux hexagones pour la connexion
+  // hexagonesSelectionnes := ClicConnexion();
 
-    // Enregistre les positions des hexagones pour la connexion
-    for i := 0 to High(hexagonesSelectionnes.Positions) do
-    begin
-      plateau.Connexions[High(plateau.Connexions)].Position[i] := hexagonesSelectionnes.Positions[i];
-    end;
+  // // Vérifie si la connexion est valide avec les hexagones sélectionnés
+  // if connexionValide(hexagonesSelectionnes, plateau, joueur) then
+  // begin
+  //   // Ajoute la connexion au plateau
+  //   SetLength(plateau.Connexions, Length(plateau.Connexions) + 1);
+  //   plateau.Connexions[High(plateau.Connexions)].IdJoueur := joueur.Id;
 
-    // Déduit les ressources nécessaires au joueur
-    joueur.Ressources[Mathematiques] := joueur.Ressources[Mathematiques] - 1;
-    joueur.Ressources[Physique] := joueur.Ressources[Physique] - 1;
-    joueur.Ressources[Chimie] := joueur.Ressources[Chimie] - 1;
+  //   // Enregistre les positions des hexagones pour la connexion
+  //   for i := 0 to High(hexagonesSelectionnes.Positions) do
+  //   begin
+  //     plateau.Connexions[High(plateau.Connexions)].Position[i] := hexagonesSelectionnes.Positions[i];
+  //   end;
+
+  //   // Déduit les ressources nécessaires au joueur
+
+    // TODO deplacer dans verificationRessouce / achatElement
+    // joueur.Ressources[Mathematiques] := joueur.Ressources[Mathematiques] - 1;
+    // joueur.Ressources[Physique] := joueur.Ressources[Physique] - 1;
+    // joueur.Ressources[Chimie] := joueur.Ressources[Chimie] - 1;
 
     WriteLn('Connexion placée avec succès !');
-  end
-  else
-  begin
-    WriteLn('Impossible de placer la connexion : vérifiez les ressources ou la position choisie.');
-  end;
-    affichageGrille(plateau, affichage); 
+  // end
+  // else
+  // begin
+  //   WriteLn('Impossible de placer la connexion : vérifiez les ressources ou la position choisie.');
+  // end;
+  //TODO ne pas reafficher tout l'affichage de 0 mais afficher que la nouvelle connexion
+    // affichageGrille(plateau, affichage);
 end;
 
 

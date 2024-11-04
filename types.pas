@@ -103,8 +103,6 @@ type
     texturePlateau : TTexturePlateau;
   end;
 
-  Uint8 = Byte;
-
 // end;
 
 implementation
