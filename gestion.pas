@@ -11,7 +11,7 @@ procedure partie(var joueurs: TJoueurs;plateau:TPlateau;affichage:TAffichage);
 
 implementation
 
-function chagerGrille(num : Integer): TGrille;
+function chargerGrille(num : Integer): TGrille;
 var 
   grille: TGrille;
   numeros: array of array of Integer;
@@ -68,7 +68,7 @@ begin
       grille[i, j].numero := numeros[i][j];
     end;
 
-  chagerGrille := grille;
+  chargerGrille := grille;
 end;
 
 
@@ -81,7 +81,7 @@ var
 begin
   num :=1;
 
-  grille := chagerGrille(num);
+  grille := chargerGrille(num);
   if(num = 1) then
   begin
     plat.Grille := grille;
@@ -93,14 +93,113 @@ begin
     
 end;
 
-procedure initialisationPartie(var joueurs : TJoueurs; plateau : TPlateau; affichage : TAffichage);
+function tirerCarteTutorat(var cartesTutorat : TCartesTutorat):TCarteTutorat;
+var carteTutorat : TCarteTutorat;
+  i: Integer;
+begin
+  carteTutorat.nom := '';
+  carteTutorat.description := '';
+  carteTutorat.nbr := 0;
+  Randomize();
+  i := Random(50) + 1;
+  if (i >= 1) and (i <= cartesTutorat.carte1.nbr) then
+    begin
+    carteTutorat.nom := cartesTutorat.carte1.nom;
+    carteTutorat.description := cartesTutorat.carte1.description;
+    carteTutorat.nbr := 1;
+
+    cartesTutorat.carte1.nbr := cartesTutorat.carte1.nbr - 1; 
+    end
+  else if (i > cartesTutorat.carte1.nbr) and (i <= cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr) then
+    begin
+    carteTutorat.nom := cartesTutorat.carte2.nom;
+    carteTutorat.description := cartesTutorat.carte2.description;
+    carteTutorat.nbr := 1;
+
+    cartesTutorat.carte2.nbr := cartesTutorat.carte2.nbr - 1; 
+    end
+  else if (i > cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr) and (i <= cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr + cartesTutorat.carte3.nbr) then
+    begin
+    carteTutorat.nom := cartesTutorat.carte3.nom;
+    carteTutorat.description := cartesTutorat.carte3.description;
+    carteTutorat.nbr := 1;
+
+    cartesTutorat.carte3.nbr := cartesTutorat.carte3.nbr - 1;
+    end
+  else if (i > cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr + cartesTutorat.carte3.nbr) and (i <= cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr + cartesTutorat.carte3.nbr + cartesTutorat.carte4.nbr) then
+    begin
+    carteTutorat.nom := cartesTutorat.carte4.nom;
+    carteTutorat.description := cartesTutorat.carte4.description;
+    carteTutorat.nbr := 1;
+
+    cartesTutorat.carte4.nbr := cartesTutorat.carte4.nbr - 1;
+    end
+  else
+    begin
+    carteTutorat.nom := cartesTutorat.carte5.nom;
+    carteTutorat.description := cartesTutorat.carte5.description;
+    carteTutorat.nbr := 1;
+
+    cartesTutorat.carte5.nbr := cartesTutorat.carte5.nbr - 1;
+    end;
+
+
+
+  tirerCarteTutorat := carteTutorat;
+end;
+
+
+
+function intialisationTutorat():TCartesTutorat;
+var cartesTutorat : TCartesTutorat;
+  carteTutorat : TCarteTutorat;
+  i : Integer;
+begin
+
+
+carteTutorat.nom := 'discution';
+carteTutorat.description := 'discution';
+carteTutorat.nbr := 10;
+cartesTutorat.carte1 := carteTutorat;
+
+carteTutorat.nom := 'WordReference';
+carteTutorat.description := 'discution';
+carteTutorat.nbr := 12;
+cartesTutorat.carte2 := carteTutorat;
+
+carteTutorat.nom := 'Voler';
+carteTutorat.description := 'discution';
+carteTutorat.nbr := 8;
+cartesTutorat.carte3 := carteTutorat;
+
+carteTutorat.nom := 'Choisir 2 connaissances';
+carteTutorat.description := 'discution';
+carteTutorat.nbr := 16;
+cartesTutorat.carte4 := carteTutorat;
+
+carteTutorat.nom := 'Choisir 2 connaissances';
+carteTutorat.description := 'discution';
+carteTutorat.nbr := 4;
+cartesTutorat.carte5 := carteTutorat;
+
+intialisationTutorat := cartesTutorat;
+end;
+
+procedure 
+
+initialisationPartie(var joueurs : TJoueurs; plateau : TPlateau; affichage : TAffichage);
 var i : integer;
   coord : Tcoord;
   text : string;
   stop : Boolean;
   res : TRessources;
   r : Tressource;
+  cartesTutorat : TCartesTutorat;
 begin
+
+  cartesTutorat := intialisationTutorat();
+
+  writeln(tirerCarteTutorat(cartesTutorat).nom);
 
   for r := Aucune to Mathematiques do
     res[r] := 0;

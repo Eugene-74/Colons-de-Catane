@@ -4,6 +4,7 @@ interface
 
 uses SDL2, SDL2_image;
 
+
 type
   // Définition du type TRessource
   TRessource = (Aucune, Physique, Informatique, Chimie, Humanites, Mathematiques);
@@ -78,12 +79,28 @@ type
     Position: TCoord;
   end;
 
+  TCarteTutorat = record
+    nom : String;
+    description : String;
+    nbr : Integer;
+  end;
+
+  TCartesTutorat = record
+    carte1 : TCarteTutorat;
+    carte2 : TCarteTutorat;
+    carte3 : TCarteTutorat;
+    carte4 : TCarteTutorat;
+    carte5 : TCarteTutorat;
+
+  end;
+
   // Définition de TPlateau
   TPlateau = record
     Grille: TGrille;
     Souillard: TSouillard;
     Personnes: TPersonnes;
     Connexions: TConnexions;
+    CartesTutorat: TCartesTutorat;
   end;
   
   PWindow = PSDL_Window;
@@ -103,6 +120,7 @@ type
     texturePlateau : TTexturePlateau;
   end;
 
+  
 // end;
 
 implementation
