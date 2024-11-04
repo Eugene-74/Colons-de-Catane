@@ -15,6 +15,7 @@ procedure affichageTexte(text:String; taille:Integer; coord:Tcoord; var affichag
 procedure affichagePersonne(personne: TPersonne; var affichage: TAffichage);
 procedure affichageSouillard(plat: TPlateau; var affichage: TAffichage);
 procedure affichageConnexion(connexion : TConnexion; var affichage : TAffichage);
+procedure affichageTour(plat: TPlateau; var affichage: TAffichage);
 
 implementation
 
@@ -26,6 +27,12 @@ const
     tailleSouillard = tailleHexagone div 2;
 
 // Permet de charger la texture de l'image
+{Permet de charger la texture de l'image
+Préconditions :
+    - affichage : la structure contenant le renderer
+    - filename : le nom du fichier image (sans l'extension, de type .png)
+Postconditions :
+    - PSDL_Texture : la texture de l'image}
 function chargerTexture(affichage : TAffichage;filename : String): PSDL_Texture;
 var image : PSDL_Texture;
 	chemin : AnsiString;
@@ -81,9 +88,6 @@ Postconditions :
 procedure initialisationTextures(var affichage: TAffichage);
 var i: TRessource;
 begin
-    affichage.xGrid := 100;
-    affichage.yGrid := 25;
-
     for i:=Physique to Mathematiques do
     begin
         affichage.texturePlateau.textureRessource[i] := chargerTexture(affichage, GetEnumName(TypeInfo(TRessource), Ord(i)));
@@ -100,6 +104,10 @@ Postconditions :
 procedure initialisationAffichage(var affichage: TAffichage);
 begin
     initialisationSDL(affichage);
+
+    affichage.xGrid := 100;
+    affichage.yGrid := 25;
+
     initialisationTextures(affichage);
 end;
 
@@ -458,6 +466,27 @@ begin
 	TTF_CloseFont(police);
 	TTF_Quit();
 	SDL_DestroyTexture(texteTexture);
+end;
+
+{Affiche le tour à l'écran
+Préconditions :
+    - plat : le plateau de jeu
+    - affichage : la structure contenant le renderer
+Postconditions :
+    - affichage : la structure contenant le renderer}
+procedure affichageTour(plat: TPlateau; var affichage: TAffichage);
+var i: Integer;
+begin
+    affichageGrille(plat,affichage);
+    affichageSouillard(plat,affichage);
+
+    for i:=0 to length(plat.Connexions)-1 do
+        affichageConnexion(plat.Connexions[i],affichage);
+    
+    for i:=0 to length(plat.Personnes)-1 do
+        affichagePersonne(plat.Personnes[i],affichage);
+
+    miseAJourRenderer(affichage);
 end;
 
 {Met à jour l'affichage
