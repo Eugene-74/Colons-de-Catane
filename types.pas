@@ -10,6 +10,21 @@ type
   // Définition du type TRessource
   TRessource = (Aucune, Physique, Informatique, Chimie, Humanites, Mathematiques);
 
+ TCarteTutorat = record
+    nom : String;
+    description : String;
+    nbr : Integer;
+  end;
+
+  TCartesTutorat = record
+    carte1 : TCarteTutorat;
+    carte2 : TCarteTutorat;
+    carte3 : TCarteTutorat;
+    carte4 : TCarteTutorat;
+    carte5 : TCarteTutorat;
+
+  end;
+
   // Définition de TCoord
   TCoord = record
     x, y: Integer;
@@ -32,6 +47,8 @@ type
     Points: Integer;
     Nom: String;
     Id: Integer;
+    CartesTutorat: TCartesTutorat;
+
   end;
 
   // Définition de TJoueurs (tableau dynamique de TJoueur)
@@ -80,20 +97,7 @@ type
     Position: TCoord;
   end;
 
-  TCarteTutorat = record
-    nom : String;
-    description : String;
-    nbr : Integer;
-  end;
-
-  TCartesTutorat = record
-    carte1 : TCarteTutorat;
-    carte2 : TCarteTutorat;
-    carte3 : TCarteTutorat;
-    carte4 : TCarteTutorat;
-    carte5 : TCarteTutorat;
-
-  end;
+ 
 
   // Définition de TPlateau
   TPlateau = record

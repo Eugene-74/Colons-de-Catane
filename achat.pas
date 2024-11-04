@@ -9,7 +9,7 @@ procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage;
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage);
 procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 procedure PlacementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
-procedure verificationPointsVictoire(var joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer);
+procedure verificationPointsVictoire(plateau : TPlateau; joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer);
 procedure affichageGagnant(joueur: TJoueur; affichage: TAffichage);
 function ClicConnexion(): THexagones;
 function connexionValide(hexagonesSelectionnes: THexagones; plateau: TPlateau; joueur: TJoueur): Boolean;
@@ -231,23 +231,81 @@ begin
 end;
 
 
-procedure verificationPointsVictoire(var joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer);
+function compterRouteSuite(plateau : TPlateau; joueur : Tjoueur):Integer;
+var connexions,connexionsJ : TConnexions;
+  connexion : TConnexion;
+  i,j,nbr,max : Integer;
+
+begin
+connexions := plateau.Connexions;
+for connexion in connexions do
+  begin
+  if (connexion.idJoueur = joueur.id) then
+    begin
+    SetLength(connexionsJ,length(connexionsJ)+1);
+    connexionsJ[length(connexionsJ)] := connexion;
+    end;
+  end;
+
+for i := 0 to length(connexionsJ) -1 do 
+  begin
+  for j := i to length(connexionsJ) -1 do 
+    begin 
+    if ( ((connexionsJ[i].Position[0].x = connexionsJ[j].Position[0].x) and (connexionsJ[i].Position[0].y = connexionsJ[j].Position[0].y)) 
+        or ((connexionsJ[i].Position[1].x = connexionsJ[j].Position[1].x) and (connexionsJ[i].Position[1].y = connexionsJ[j].Position[1].y)) ) then
+        nbr := nbr +1;
+    end;
+  if (nbr > max) then
+    max := nbr;
+  nbr := 0;
+  end;
+
+  compterRouteSuite := max;
+end;
+
+
+procedure verificationPointsVictoire(plateau : TPlateau;joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer);
 var
-  i: Integer;
+  joueur : TJoueur;
+  plusGrandeRoute,plusDeplacementSouillard : Boolean;
+  i,j : Integer;
+  points : array of Integer;
+
 begin
   gagner := False; 
   gagnant := -1;    
 
-  
-  for i := 0 to High(joueurs) do
+  SetLength(points,Length(joueurs));
+  j:=0;
+  for joueur in joueurs do
   begin
-    if joueurs[i].Points > 10 then
+    j := j+1;
+    plusGrandeRoute := True;
+    if (compterRouteSuite(plateau,joueur) >= 5) then
+    begin
+    for i := 0 to High(joueurs) do
+      if(compterRouteSuite(plateau,joueur) < compterRouteSuite(plateau,joueurs[i])) then
+        plusGrandeRoute := False;
+    if plusGrandeRoute then
+      points[j] := points[j] + 2;
+    end;
+    
+    if(joueur.CartesTutorat.carte2.nbr >= 3) then
+      for i := 0 to High(joueurs) do
+        if(joueur.CartesTutorat.carte1.nbr < joueurs[i].CartesTutorat.carte1.nbr) then
+          plusDeplacementSouillard := False;
+    if(plusDeplacementSouillard) then
+      points[j] := points[j] + 2;
+    
+    if points[j] > 10 then
     begin
       gagner := True;       
-      gagnant := joueurs[i].Id; 
+      gagnant := j+1; 
       Break;
     end;
   end;
+
+
 end;
 
 
