@@ -86,7 +86,12 @@ var
 begin
     grille := chagerGrille();
     plat.Grille := grille;
+
+    plat.Souillard.Position.x := 4;
+    plat.Souillard.Position.y := 3;
+
     chargementPlateau := plat;
+    
 end;
 
 procedure initialisationPartie(var joueurs : TJoueurs; plateau : TPlateau; affichage : TAffichage);
@@ -97,6 +102,7 @@ var i : integer;
   res : TRessources;
   r : Tressource;
 begin
+
   for r := Aucune to Mathematiques do
     res[r] := 0;
   stop := false;
@@ -122,6 +128,14 @@ begin
       end;
   until ((i>4) or (stop));
 
+
+  SetLength(plateau.Connexions, 1);
+  SetLength(plateau.Connexions[0].Position, 2);
+
+  initialisationAffichage(plateau, affichage);
+  plateau := chargementPlateau();
+  affichageGrille(plateau, affichage);
+  miseAJourRenderer(affichage);
   
 
   for i:=1 to 3 do
@@ -140,10 +154,10 @@ begin
     placementEleve(plateau,affichage,joueurs[i-1]);
 
     end;
-  plateau := chargementPlateau();
 
-  initialisationAffichage(plateau, affichage);
   affichageGrille(plateau, affichage);
+  miseAJourRenderer(affichage);
+
 
 end;
 

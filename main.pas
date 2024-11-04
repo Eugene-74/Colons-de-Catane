@@ -17,7 +17,7 @@ begin
     // plateau := chargementPlateau();
     // initialisationAffichage(plateau, affichage);
 
-    partie(joueurs,plateau,affichage);
+    // partie(joueurs,plateau,affichage);
     clicHexagone(plateau, affichage, coord);
 
 
@@ -30,6 +30,8 @@ begin
 
     plateau := chargementPlateau();
     initialisationAffichage(plateau, affichage);
+    writeln('initialisation fini');
+
 
     affichageGrille(plateau, affichage);
 
