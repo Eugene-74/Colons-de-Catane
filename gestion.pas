@@ -95,13 +95,17 @@ end;
 
 function tirerCarteTutorat(var cartesTutorat : TCartesTutorat):TCarteTutorat;
 var carteTutorat : TCarteTutorat;
-  i: Integer;
+  i,nbrTotal: Integer;
 begin
   carteTutorat.nom := '';
   carteTutorat.description := '';
   carteTutorat.nbr := 0;
   Randomize();
-  i := Random(50) + 1;
+
+  // TODO penser à verif que il en reste avant d'accepter l'achat 
+  nbrTotal := cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr + cartesTutorat.carte3.nbr + cartesTutorat.carte4.nbr + cartesTutorat.carte5.nbr;
+
+  i := Random(nbrTotal) + 1;
   if (i >= 1) and (i <= cartesTutorat.carte1.nbr) then
     begin
     carteTutorat.nom := cartesTutorat.carte1.nom;
@@ -151,38 +155,11 @@ end;
 
 
 function intialisationTutorat():TCartesTutorat;
-var cartesTutorat : TCartesTutorat;
-  carteTutorat : TCarteTutorat;
+var carteTutorat : TCarteTutorat;
   i : Integer;
 begin
 
-
-carteTutorat.nom := 'discution';
-carteTutorat.description := 'discution';
-carteTutorat.nbr := 10;
-cartesTutorat.carte1 := carteTutorat;
-
-carteTutorat.nom := 'WordReference';
-carteTutorat.description := 'discution';
-carteTutorat.nbr := 12;
-cartesTutorat.carte2 := carteTutorat;
-
-carteTutorat.nom := 'Voler';
-carteTutorat.description := 'discution';
-carteTutorat.nbr := 8;
-cartesTutorat.carte3 := carteTutorat;
-
-carteTutorat.nom := 'Choisir 2 connaissances';
-carteTutorat.description := 'discution';
-carteTutorat.nbr := 16;
-cartesTutorat.carte4 := carteTutorat;
-
-carteTutorat.nom := 'Choisir 2 connaissances';
-carteTutorat.description := 'discution';
-carteTutorat.nbr := 4;
-cartesTutorat.carte5 := carteTutorat;
-
-intialisationTutorat := cartesTutorat;
+intialisationTutorat := CARTES_TUTORAT;
 end;
 
 procedure 
@@ -198,8 +175,6 @@ var i : integer;
 begin
 
   cartesTutorat := intialisationTutorat();
-
-  writeln(tirerCarteTutorat(cartesTutorat).nom);
 
   for r := Aucune to Mathematiques do
     res[r] := 0;
@@ -353,5 +328,81 @@ begin
 end;
 
 
+procedure utiliserCarte1(plateau : TPlateau; affichage : TAffichage; joueur : Tjoueur);
+begin
+placementConnexion(plateau,affichage,joueur);
+placementConnexion(plateau,affichage,joueur);
+
+end;
+
+procedure utiliserCarte2(plateau : TPlateau;affichage : TAffichage;joueur : Tjoueur);
+begin
+affichageTexte('Deplacement du souillard par le joueur '+joueur.nom,0,plateau.Souillard.Position,affichage);
+deplacementSouillard(plateau, affichage);
+
+end;
+
+procedure utiliserCarte3(joueur : Tjoueur);
+var joueurAVoler : TJoueur;
+begin
+// VOLER UNE CONNAISSANCE
+
+// choix du joueur
+
+// choix du type de ressources a voler
+// ON EST PAS SENCER CONNAITER LES CARTES DES AUTRES
+end;
+
+procedure utiliserCarte4(joueur : Tjoueur);
+begin
+// CHOISIR 2 CONNAISSANCE
+
+
+
+end;
+
+procedure utiliserCarte5(joueur : Tjoueur);
+begin
+joueur.Points := joueur.Points + 1;
+
+end;
+
+procedure utiliserCarteTutorat(plateau : TPlateau; affichage : TAffichage; joueur : Tjoueur;nom : String);
+begin
+  if nom = plateau.cartesTutorat.carte1.nom then
+  begin
+    writeln('Utilisation de la carte ', plateau.cartesTutorat.carte1.nom);
+    utiliserCarte1(plateau,affichage,joueur);
+
+  end
+  else if nom = plateau.cartesTutorat.carte2.nom then
+  begin
+    writeln('Utilisation de la carte ', plateau.cartesTutorat.carte2.nom);
+    utiliserCarte2(plateau, affichage, joueur);
+
+  end
+  else if nom = plateau.cartesTutorat.carte3.nom then
+  begin
+    writeln('Utilisation de la carte ', plateau.cartesTutorat.carte3.nom);
+    utiliserCarte3(joueur);
+
+  end
+  else if nom = plateau.cartesTutorat.carte4.nom then
+  begin
+    writeln('Utilisation de la carte ', plateau.cartesTutorat.carte4.nom);
+    utiliserCarte4(joueur);
+
+  end
+  else if nom = plateau.cartesTutorat.carte5.nom then
+  begin
+    writeln('Utilisation de la carte ', plateau.cartesTutorat.carte5.nom);
+    utiliserCarte5(joueur);
+
+  end
+  else
+  begin
+    writeln('Carte inconnue');
+  end;
+end;
 
 end.

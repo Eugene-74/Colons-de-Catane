@@ -5,6 +5,7 @@ interface
 uses SDL2, SDL2_image;
 
 
+
 type
   // Définition du type TRessource
   TRessource = (Aucune, Physique, Informatique, Chimie, Humanites, Mathematiques);
@@ -122,6 +123,15 @@ type
 
   
 // end;
+
+const
+  CARTES_TUTORAT: TCartesTutorat = (
+    carte1: (nom: 'discution'; description: 'discution'; nbr: 10);
+    carte2: (nom: 'WordReference'; description: 'discution'; nbr: 12);
+    carte3: (nom: 'Voler'; description: 'discution'; nbr: 8);
+    carte4: (nom: 'Choisir 2 connaissances'; description: 'discution'; nbr: 16);
+    carte5: (nom: 'le dernier'; description: 'discution'; nbr: 4)
+  );
 
 implementation
 

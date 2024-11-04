@@ -23,6 +23,7 @@ procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichag
 var
   choix: Integer;
 begin
+  // TODO ajouter l'achat des cartes tutorat
   WriteLn('Choisissez l''élément à acheter : ');
   WriteLn('1. Élève');
   WriteLn('2. Connexion');
