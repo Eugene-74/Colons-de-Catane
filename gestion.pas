@@ -3,8 +3,8 @@ unit gestion;
 interface
 uses Types,affichageUnit,SysUtils,achat;
 function chargementPlateau(): TPlateau;
-procedure initialisationPartie(var joueurs : TJoueurs; plateau : TPlateau; affichage : TAffichage);
-procedure partie(var joueurs: TJoueurs;plateau:TPlateau;affichage:TAffichage);
+procedure initialisationPartie(var joueurs : TJoueurs;var  plateau : TPlateau;var affichage : TAffichage);
+procedure partie(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 
 
 
@@ -164,7 +164,7 @@ end;
 
 procedure 
 
-initialisationPartie(var joueurs : TJoueurs; plateau : TPlateau; affichage : TAffichage);
+initialisationPartie(var joueurs : TJoueurs;var plateau : TPlateau;var affichage : TAffichage);
 var i : integer;
   coord : Tcoord;
   text : string;
@@ -190,6 +190,8 @@ begin
       joueurs[i-1].Nom:= text;
       joueurs[i-1].Points :=0;
       joueurs[i-1].Ressources := res;
+      joueurs[i-1].Id := i;
+      
       i := i + 1;
       end
     else 
@@ -240,13 +242,13 @@ begin
 end;
 
     
-procedure deplacementSouillard(plateau : TPlateau;affichage : TAffichage);
+procedure deplacementSouillard(var plateau : TPlateau; var affichage : TAffichage);
 begin
   writeln('deplacementSouillard activer');
 end;
 
 
-procedure distributionConnaissance(joueurs : TJoueurs;plateau : TPlateau;des : integer);
+procedure distributionConnaissance(var joueurs : TJoueurs;var plateau : TPlateau;des : integer);
 var q,r : integer;
   res : Tressource;
   perso : TPersonne;
@@ -274,7 +276,7 @@ begin
 
 end;
 
-procedure gestionDes(joueurs: TJoueurs;plateau:TPlateau;affichage:TAffichage);
+procedure gestionDes(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 var
   des,des1, des2: Integer;
   j : Tjoueur;
@@ -296,7 +298,7 @@ begin
 
 end;
 
-procedure tour(var joueurs: TJoueurs;plateau:TPlateau;affichage:TAffichage);
+procedure tour(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 var j : Tjoueur;
     coord : Tcoord;
   
@@ -314,35 +316,35 @@ begin
 
 end;
 
-procedure partie(var joueurs: TJoueurs;plateau:TPlateau;affichage:TAffichage);
+procedure partie(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 var gagnant : integer;
   gagner : boolean;
 begin
   // repeat
     tour(joueurs,plateau,affichage);
 
-    verificationPointsVictoire(joueurs,gagner,gagnant);
+    verificationPointsVictoire(plateau,joueurs,gagner,gagnant);
   // until (gagner);
   // affichageGagnant(joueurs[gagnant],affichage);
 
 end;
 
 
-procedure utiliserCarte1(plateau : TPlateau; affichage : TAffichage; joueur : Tjoueur);
+procedure utiliserCarte1(var plateau : TPlateau; var affichage : TAffichage;joueur : Tjoueur);
 begin
 placementConnexion(plateau,affichage,joueur);
 placementConnexion(plateau,affichage,joueur);
 
 end;
 
-procedure utiliserCarte2(plateau : TPlateau;affichage : TAffichage;joueur : Tjoueur);
+procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueur : Tjoueur);
 begin
 affichageTexte('Deplacement du souillard par le joueur '+joueur.nom,0,plateau.Souillard.Position,affichage);
 deplacementSouillard(plateau, affichage);
 
 end;
 
-procedure utiliserCarte3(joueur : Tjoueur);
+procedure utiliserCarte3(var plateau : TPlateau; joueur : Tjoueur);
 var joueurAVoler : TJoueur;
 begin
 // VOLER UNE CONNAISSANCE
@@ -353,7 +355,7 @@ begin
 // ON EST PAS SENCER CONNAITER LES CARTES DES AUTRES
 end;
 
-procedure utiliserCarte4(joueur : Tjoueur);
+procedure utiliserCarte4(var plateau : TPlateau; joueur : Tjoueur);
 begin
 // CHOISIR 2 CONNAISSANCE
 
@@ -361,13 +363,17 @@ begin
 
 end;
 
-procedure utiliserCarte5(joueur : Tjoueur);
+procedure utiliserCarte5(var joueurs : TJoueurs;joueur : Tjoueur);
+var j : Tjoueur;
 begin
-joueur.Points := joueur.Points + 1;
+for j in joueurs do
+  if(j.Id = joueur.Id) then
+    joueur.Points := joueur.Points + 1;
+
 
 end;
 
-procedure utiliserCarteTutorat(plateau : TPlateau; affichage : TAffichage; joueur : Tjoueur;nom : String);
+procedure utiliserCarteTutorat(var plateau : TPlateau;var affichage : TAffichage;var joueurs : TJoueurs; joueur : Tjoueur;nom : String);
 begin
   if nom = plateau.cartesTutorat.carte1.nom then
   begin
@@ -384,19 +390,19 @@ begin
   else if nom = plateau.cartesTutorat.carte3.nom then
   begin
     writeln('Utilisation de la carte ', plateau.cartesTutorat.carte3.nom);
-    utiliserCarte3(joueur);
+    utiliserCarte3(plateau,joueur);
 
   end
   else if nom = plateau.cartesTutorat.carte4.nom then
   begin
     writeln('Utilisation de la carte ', plateau.cartesTutorat.carte4.nom);
-    utiliserCarte4(joueur);
+    utiliserCarte4(plateau,joueur);
 
   end
   else if nom = plateau.cartesTutorat.carte5.nom then
   begin
     writeln('Utilisation de la carte ', plateau.cartesTutorat.carte5.nom);
-    utiliserCarte5(joueur);
+    utiliserCarte5(joueurs,joueur);
 
   end
   else
