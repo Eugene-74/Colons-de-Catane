@@ -59,7 +59,6 @@ begin
     plateau.Souillard.Position.y := 3;
 
     affichageTour(plateau, affichage);
-    miseAJourRenderer(affichage);
     clicHexagone(plateau, affichage, coord);
     writeln('Coord x : ', coord.x, ' Coord y : ', coord.y);
   end;
