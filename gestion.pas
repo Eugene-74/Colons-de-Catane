@@ -14,13 +14,12 @@ procedure partie(joueurs: TJoueurs;plateau:TPlateau;affichage:TAffichage);
 
 implementation
 
-function chagerGrille(): TGrille;
+function chagerGrille(num : Integer): TGrille;
 var 
   grille: TGrille;
   numeros: array of array of Integer;
   ressources: array of array of TRessource;
   i, j: Integer;
-  num : Integer;
 begin
 // Tableau static pose des problème
   SetLength(grille, 7, 7);
@@ -28,8 +27,6 @@ begin
   SetLength(ressources, 7, 7);
   SetLength(numeros, 7, 7);
 
-// INITIALISER PLUSIEUR TABLEAU
-  num :=1;
   if(num = 1) then 
     begin
 
@@ -83,14 +80,19 @@ function chargementPlateau(): TPlateau;
 var
   grille: TGrille;
   plat : TPlateau;
+  num : Integer;
 begin
-    grille := chagerGrille();
-    plat.Grille := grille;
+  num :=1;
 
+  grille := chagerGrille(num);
+  if(num = 1) then
+  begin
+    plat.Grille := grille;
     plat.Souillard.Position.x := 4;
     plat.Souillard.Position.y := 3;
+  end;
 
-    chargementPlateau := plat;
+  chargementPlateau := plat;
     
 end;
 
