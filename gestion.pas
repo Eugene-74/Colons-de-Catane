@@ -205,7 +205,7 @@ begin
   SetLength(plateau.Connexions, 1);
   SetLength(plateau.Connexions[0].Position, 2);
 
-  initialisationAffichage(plateau, affichage);
+  initialisationAffichage(affichage);
   plateau := chargementPlateau();
   affichageGrille(plateau, affichage);
   miseAJourRenderer(affichage);
@@ -233,9 +233,9 @@ begin
 end;
 
 
-function nombreAleatoire(n : Integer):integer;
+function nombreAleatoire(n : Integer): Integer;
 begin
-  Randomize;  
+  Randomize;
   nombreAleatoire := Random(n) + 1;
 end;
 
