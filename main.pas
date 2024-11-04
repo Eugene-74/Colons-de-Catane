@@ -14,11 +14,12 @@ begin
   if not testYann then
   begin
     initialisationPartie(joueurs,plateau,affichage);
+
+    partie(joueurs,plateau,affichage);
+
     // plateau := chargementPlateau();
     // initialisationAffichage(plateau, affichage);
 
-    // partie(joueurs,plateau,affichage);
-    clicHexagone(plateau, affichage, coord);
 
 
     // affichageGrille(plateau, affichage);
