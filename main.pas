@@ -42,9 +42,9 @@ begin
     SetLength(plateau.Connexions, 1);
     SetLength(plateau.Connexions[0].Position, 2);
     plateau.Connexions[0].Position[0].x := 3;
-    plateau.Connexions[0].Position[0].y := 3;
-    plateau.Connexions[0].Position[1].x := 3;
-    plateau.Connexions[0].Position[1].y := 4;
+    plateau.Connexions[0].Position[0].y := 1;
+    plateau.Connexions[0].Position[1].x := 2;
+    plateau.Connexions[0].Position[1].y := 2;
 
     affichageConnexion(plateau.Connexions[0], affichage);
 

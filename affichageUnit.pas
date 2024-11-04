@@ -167,6 +167,9 @@ begin
     dx := coord2.x - coord.x;
     dy := coord2.y - coord.y;
 
+    coord.x := (coord.x + coord2.x) div 2;
+    coord.y := (coord.y + coord2.y) div 2;
+
     longueur := tailleHexagone div 2;
     angle := RadToDeg(arctan2(dy,dx)+PI/2);
 end;
@@ -180,29 +183,28 @@ var r,g,b: Byte;
     colorTexture: PSDL_Texture;
     centerX: Double;
 begin
-    epaisseur := 3;
+    epaisseur := 6;
 
     recupererCouleurJoueur(connexion.IdJoueur,r,g,b);
 
     calculPosConnexion(connexion,coord,longueur,angle);
 
-    destination_rect.x:=affichage.xGrid+coord.x;
-    destination_rect.y:=affichage.yGrid+coord.y;
+    destination_rect.x:=affichage.xGrid + coord.x - Round(epaisseur*abs(Sin(angle)) / 2) - tailleHexagone div 4 + epaisseur div 2;
+    destination_rect.y:=affichage.yGrid + coord.y - Round(epaisseur*abs(Cos(angle)) / 2) - epaisseur div 3;
     destination_rect.w:=Round(longueur);
     destination_rect.h:=epaisseur;
 
     writeln('longueur : ',longueur);
     writeln('angle : ', angle);
-    writeln('x : ',coord.x);
-    writeln('y : ',coord.y);
+    writeln('sdfms x : ',coord.x,' y : ',coord.y);
 
-    centerX := 0; // Pose le centre de rotation
+    //centerX := 0; // Pose le centre de rotation
 
     //TODO Voir pour le placement + l'angle de rotation (si besoin faire une condition pour le sens de la rotation)
 
     colorTexture := creerTextureCouleur(affichage,r,g,b);
 
-    SDL_RenderCopyEx(affichage.renderer, colorTexture, nil, @destination_rect, angle, @centerX, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(affichage.renderer, colorTexture, nil, @destination_rect, angle, nil, SDL_FLIP_NONE);
 
     SDL_DestroyTexture(colorTexture);
 end;
@@ -304,6 +306,7 @@ begin
                 begin
                     x := event.button.x;
                     y := event.button.y;
+                    writeln('x : ',x,' y : ',y);
 
                     cardToHexa(x,y,tailleHexagone div 2,q,r);
 
@@ -312,6 +315,8 @@ begin
                         running := False;
                         coord.x := q;
                         coord.y := r;
+                        hexaToCard(q,r,tailleHexagone div 2,x,y);
+                        writeln('x : ',x,' y : ',y);
                     end;
                 end;
             end;
