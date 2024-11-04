@@ -4,7 +4,7 @@ interface
 uses Types,affichageUnit,SysUtils,achat;
 function chargementPlateau(): TPlateau;
 procedure initialisationPartie(var joueurs : TJoueurs; plateau : TPlateau; affichage : TAffichage);
-procedure partie(joueurs: TJoueurs;plateau:TPlateau;affichage:TAffichage);
+procedure partie(var joueurs: TJoueurs;plateau:TPlateau;affichage:TAffichage);
 
 
 
@@ -222,30 +222,34 @@ begin
 
 end;
 
-procedure tour(joueurs: TJoueurs;plateau:TPlateau;affichage:TAffichage);
-var j : Tjoueur; 
+procedure tour(var joueurs: TJoueurs;plateau:TPlateau;affichage:TAffichage);
+var j : Tjoueur;
+    coord : Tcoord;
+  
 begin
   for j in joueurs do 
     begin
+    clicHexagone(plateau, affichage, coord);
+
+
     // TODO choisir l'ordre grace à des clicks
-   // achatElements(j,plateau,affichage);
-    miseAJourRenderer(affichage);  
-    gestionDes(joueurs,plateau,affichage);
+    // achatElements(j,plateau,affichage);
+    // gestionDes(joueurs,plateau,affichage);
     end;
 
 
 end;
 
-procedure partie(joueurs: TJoueurs;plateau:TPlateau;affichage:TAffichage);
+procedure partie(var joueurs: TJoueurs;plateau:TPlateau;affichage:TAffichage);
 var gagnant : integer;
   gagner : boolean;
 begin
   // repeat
-  tour(joueurs,plateau,affichage);
+    tour(joueurs,plateau,affichage);
 
-  verificationPointsVictoire(joueurs,gagner,gagnant);
-  // until (gagener);
-  affichageGagnant(joueurs[gagnant],affichage);
+    verificationPointsVictoire(joueurs,gagner,gagnant);
+  // until (gagner);
+  // affichageGagnant(joueurs[gagnant],affichage);
 
 end;
 
