@@ -244,12 +244,6 @@ begin
   
   for i:=1 to length(joueurs) do
     begin
-    // coord.x := 0;
-    // coord.y := 0;
-    // text := 'Le joueur '+IntToStr(i)+' joue et place une connexion puis un élève';
-    // affichageTexte(text,200,coord,affichage);
-    // affichageTour(plateau, affichage);
-    // affichageTexte('test', 35, coord, affichage);
 
     placementConnexion(plateau,affichage,joueurs[i-1]);
     affichageTour(plateau, affichage);

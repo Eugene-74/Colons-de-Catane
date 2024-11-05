@@ -325,7 +325,17 @@ var i,j : Integer;
 begin
   connexionValide := True;
 
-  // FAUX
+// TODO verifier si il y une connexion en contact ou si le joueur na pas encore 2 elve / prof (debut de partie)
+  if(joueur.Points < 2)then
+    begin
+    // Début de partie
+    connexionValide := False;
+    exit;
+    end;
+
+
+  // ICI CA MARCHE PAS
+  // verifie si il y a une connexion en contact
   // for i := 0 to length(plateau.Connexions)-1 do
   // begin
   //   for j := 0 to length(coords)-1 do
@@ -334,13 +344,14 @@ begin
   //         (plateau.Connexions[i].Position[0].y = coords[j].y)) or
   //        ((plateau.Connexions[i].Position[1].x = coords[j].x) and
   //         (plateau.Connexions[i].Position[1].y = coords[j].y)) then
-  // RENVOIE SI LES CONNEXION SON EN CONTACT ET C'EST PAS CE QUE L'ON VEUX ...
   //     begin 
-  //       // connexionValide := False; 
+  //       connexionValide := True; 
   //       exit(False);
   //     end;
   //   end;
   // end;
+
+  // Verifie si il n'y a pas deja une connexion
   for i := 0 to length(plateau.Connexions)-1 do
     begin
     // On veux exactement les 2 meme coordonées mais sans prendre l'ordre en compte
@@ -349,6 +360,7 @@ begin
       or ((plateau.Connexions[i].Position[0].x = coords[1].x) and (plateau.Connexions[i].Position[0].y = coords[1].y) 
         and (plateau.Connexions[i].Position[1].x = coords[0].x) and (plateau.Connexions[i].Position[1].y = coords[0].y))) then
       begin
+      
       // connespond à un return (pour fonction)
       connexionValide := False;
       exit;
