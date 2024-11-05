@@ -247,10 +247,10 @@ begin
 
 
     // joueurs[i-1].Points := joueurs[i-1].Points + 1;
-    placementEleve(plateau,affichage,joueurs[i-1],False);
+    placementEleve(plateau,affichage,joueurs[i-1]);
     affichageTour(plateau, affichage);
 
-    placementConnexion(plateau,affichage,joueurs[i-1],False);
+    placementConnexion(plateau,affichage,joueurs[i-1]);
     affichageTour(plateau, affichage);
 
     end;
@@ -259,10 +259,10 @@ begin
     begin
 
     // joueurs[i-1].Points := joueurs[i-1].Points + 1;
-    placementEleve(plateau,affichage,joueurs[i-1],False);
+    placementEleve(plateau,affichage,joueurs[i-1]);
     affichageTour(plateau, affichage);
 
-    placementConnexion(plateau,affichage,joueurs[i-1],False);
+    placementConnexion(plateau,affichage,joueurs[i-1]);
     affichageTour(plateau, affichage);
     end;
 
@@ -335,7 +335,7 @@ begin
   for j in joueurs do 
     begin
 
-    placementConnexion(plateau,affichage,joueurs[0],False);
+    placementConnexion(plateau,affichage,joueurs[0]);
     // TODO choisir l'ordre grace à des clicks
     // achatElements(j,plateau,affichage);
     // gestionDes(joueurs,plateau,affichage);
@@ -360,8 +360,8 @@ end;
 
 procedure utiliserCarte1(var plateau : TPlateau; var affichage : TAffichage;joueur : Tjoueur);
 begin
-placementConnexion(plateau,affichage,joueur,False);
-placementConnexion(plateau,affichage,joueur,False);
+placementConnexion(plateau,affichage,joueur);
+placementConnexion(plateau,affichage,joueur);
 
 end;
 

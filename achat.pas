@@ -5,10 +5,10 @@ interface
 uses
   Types, affichageUnit,traitement;
 
-procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur;retraitRessources:Boolean);
+procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage);
-procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur;retraitRessources:Boolean);
-procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur;retraitRessources:Boolean);
+procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
+procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 procedure verificationPointsVictoire(plateau : TPlateau; joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer);
 procedure affichageGagnant(joueur: TJoueur; affichage: TAffichage);
 function ClicConnexion(var plateau : TPlateau; var affichage : TAffichage): TCoords;
@@ -39,7 +39,12 @@ begin
          (joueur.Ressources[Chimie] >= 1) and 
          (joueur.Ressources[Physique] >= 1) then
       begin
-        placementEleve(plateau, affichage, joueur,True);
+        placementEleve(plateau, affichage, joueur);
+
+        joueur.Ressources[Mathematiques] := joueur.Ressources[Mathematiques] - 1;
+        joueur.Ressources[Humanites] := joueur.Ressources[Humanites] - 1;
+        joueur.Ressources[Chimie] := joueur.Ressources[Chimie] - 1;
+        joueur.Ressources[Physique] := joueur.Ressources[Physique] - 1;
       end
       else
         WriteLn('Vous n''avez pas les ressources nécessaires pour acheter un élève.');
@@ -49,7 +54,10 @@ begin
       if (joueur.Ressources[Humanites] >= 1) and 
          (joueur.Ressources[Physique] >= 1) then
       begin
-        placementConnexion(plateau, affichage, joueur,True);
+        placementConnexion(plateau, affichage, joueur);
+
+        joueur.Ressources[Physique] := joueur.Ressources[Physique] - 1;
+        joueur.Ressources[Chimie] := joueur.Ressources[Chimie] - 1;
       end
       else
         WriteLn('Vous n''avez pas les ressources nécessaires pour acheter une connexion.');
@@ -59,7 +67,7 @@ begin
       if (joueur.Ressources[Mathematiques] >= 2) and 
          (joueur.Ressources[Physique] >= 1) then
       begin
-        changementProfesseur(plateau, affichage, joueur,True);
+        changementProfesseur(plateau, affichage, joueur);
       end
       else
         WriteLn('Vous n''avez pas les ressources nécessaires pour changer un élève en professeur.');
@@ -71,7 +79,7 @@ end;
 
 
 
-procedure placementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur;retraitRessources:Boolean);
+procedure placementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 var
  HexagonesCoords: TCoords;
 begin
@@ -95,18 +103,12 @@ begin
     end;
 
     affichageTour(plateau, affichage); 
-    if retraitRessources then
-    begin
-        joueurActuel.Ressources[Mathematiques] := joueurActuel.Ressources[Mathematiques] - 1;
-        joueurActuel.Ressources[Humanites] := joueurActuel.Ressources[Humanites] - 1;
-        joueurActuel.Ressources[Chimie] := joueurActuel.Ressources[Chimie] - 1;
-        joueurActuel.Ressources[Physique] := joueurActuel.Ressources[Physique] - 1;
-    end;
     WriteLn('Élève placé avec succès !');
   end
   else
   begin
     WriteLn('Placement invalide. Vérifiez les conditions de placement.');
+    placementEleve(plateau,  affichage, joueurActuel);
   end;
 end;
 
@@ -201,7 +203,7 @@ begin
   CountPersonnes:= Result;
 end;
 
-procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur;retraitRessources:Boolean);
+procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 var
   HexagonesCoords: TCoords;
   i, j, k, compteur: Integer;
@@ -240,11 +242,11 @@ begin
         // Si toutes les positions de la personne correspondent aux hexagones sélectionnés, effectuer la conversion
         if compteur = 3 then
         begin
-          if(retraitRessources) then
-          begin
-            joueurActuel.Ressources[Mathematiques] := joueurActuel.Ressources[Mathematiques] - 2;
-            joueurActuel.Ressources[Physique] := joueurActuel.Ressources[Physique] - 1;
-          end;
+          // if(retraitRessources) then
+          // begin
+          //   joueurActuel.Ressources[Mathematiques] := joueurActuel.Ressources[Mathematiques] - 2;
+          //   joueurActuel.Ressources[Physique] := joueurActuel.Ressources[Physique] - 1;
+          // end;
           plateau.Personnes[i].estEleve := False; // Convertir l'élève en professeur
           estConverti := True;
           WriteLn('Élève converti en professeur avec succès !');
@@ -258,7 +260,7 @@ begin
   //   if not estConverti then
   //     WriteLn('Aucun élève trouvé à convertir sur les hexagones sélectionnés.');
 
-    affichageGrille(plateau, affichage);
+    affichageTour(plateau, affichage);
   end
   else
   begin
@@ -397,7 +399,7 @@ begin
   ClicConnexion := coords;
 end;
 
-procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur;retraitRessources:Boolean);
+procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 var
   coords: TCoords;
   i: Integer;
@@ -418,12 +420,7 @@ begin
     plateau.Connexions[length(plateau.Connexions)-1].Position[0] := coords[0];
     plateau.Connexions[length(plateau.Connexions)-1].Position[1] := coords[1];
 
-    if retraitRessources then
-    begin
-      joueur.Ressources[Mathematiques] := joueur.Ressources[Mathematiques] - 1;
-      joueur.Ressources[Physique] := joueur.Ressources[Physique] - 1;
-      joueur.Ressources[Chimie] := joueur.Ressources[Chimie] - 1;
-    end;
+    
 
 
     WriteLn('Connexion placée avec succès !');
@@ -432,7 +429,7 @@ begin
     begin
     WriteLn('Impossible de placer la connexion : vérifiez la position choisie.');
     // Si la connexionn n'est pas valide, on rappelle la fonction
-    placementConnexion(plateau,affichage,joueur,retraitRessources);
+    placementConnexion(plateau,affichage,joueur);
     end;
   affichageTour(plateau, affichage);
 end;
