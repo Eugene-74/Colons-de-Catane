@@ -11,11 +11,11 @@ procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var j
 procedure PlacementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 procedure verificationPointsVictoire(plateau : TPlateau; joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer);
 procedure affichageGagnant(joueur: TJoueur; affichage: TAffichage);
-function ClicConnexion(): THexagones;
-function connexionValide(hexagonesSelectionnes: THexagones; plateau: TPlateau; joueur: TJoueur): Boolean;
-function ClicPersonne(estEleve: Boolean): THexagones;
+function ClicConnexion(plateau : TPlateau; affichage : TAffichage): TCoords;
+function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur): Boolean;
+function ClicPersonne(estEleve: Boolean): TCoords;
 function CountPersonnes(personnes: array of TPersonne; estEleve: Boolean; joueur: TJoueur): Integer;
-function PersonneValide(plateau: TPlateau; hexagonesSelectionnes: THexagones; estEleve: Boolean; joueurActuel: TJoueur): Boolean;
+function PersonneValide(plateau: TPlateau; coords: TCoords; estEleve: Boolean; joueurActuel: TJoueur): Boolean;
 
 implementation
 
@@ -41,8 +41,8 @@ end;
 
 
 procedure placementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
-var
-  hexagonesSelectionnes: THexagones;
+// var
+  // hexagonesSelectionnes: TCoords;
 begin
   // hexagonesSelectionnes := ClicPersonne(True); 
 
@@ -80,85 +80,85 @@ begin
 end;
 
 
-function PersonneValide(plateau: TPlateau; hexagonesSelectionnes: THexagones; estEleve: Boolean; joueurActuel: TJoueur): Boolean;
+function PersonneValide(plateau: TPlateau; coords: TCoords; estEleve: Boolean; joueurActuel: TJoueur): Boolean;
 var
   i: Integer;
   personneAdjacente: Boolean;
   ressourcesSuffisantes: Boolean;
 begin
-  personneAdjacente := False;
-  ressourcesSuffisantes := False;
-  if not enContact(hexagonesSelectionnes.Positions) then
-  begin
-    PersonneValide := False;
-    Exit;
-  end;
+  // personneAdjacente := False;
+  // ressourcesSuffisantes := False;
+  // if not enContact(hexagonesSelectionnes.Positions) then
+  // begin
+  //   PersonneValide := False;
+  //   Exit;
+  // end;
 
-  // Vérifie la présence d'une personne adjacente
-  for i := 0 to High(plateau.Personnes) do
-  begin
-    if sontAdjacentes(hexagonesSelectionnes.Positions[0], plateau.Personnes[i].Position[i]) or
-       sontAdjacentes(hexagonesSelectionnes.Positions[1], plateau.Personnes[i].Position[i]) or
-       sontAdjacentes(hexagonesSelectionnes.Positions[2], plateau.Personnes[i].Position[i]) then
-    begin
+  // // Vérifie la présence d'une personne adjacente
+  // for i := 0 to High(plateau.Personnes) do
+  // begin
+  //   if sontAdjacentes(coords[0], plateau.Personnes[i].Position[i]) or
+  //      sontAdjacentes(coords[1], plateau.Personnes[i].Position[i]) or
+  //      sontAdjacentes(coords[2], plateau.Personnes[i].Position[i]) then
+  //   begin
   
-      if (plateau.Personnes[i].estEleve) or (not plateau.Personnes[i].estEleve and not estEleve) then
-      begin
-        PersonneValide := False; // Ne peut pas être adjacent à un élève ou à un professeur
-        Exit;
-      end;
-      personneAdjacente := True; // Marque la case comme ayant une personne adjacente
-    end;
-  end;
-  if estEleve then
-  begin
-    // Conditions de ressources et limite pour un élève
-    ressourcesSuffisantes := (joueurActuel.Ressources[Mathematiques] >= 1) and
-                             (joueurActuel.Ressources[Humanites] >= 1) and
-                             (joueurActuel.Ressources[Chimie] >= 1) and
-                             (joueurActuel.Ressources[Physique] >= 1) and
-                             (CountPersonnes(plateau.Personnes, True, joueurActuel) < 5);
-  end
-  else // Cas du professeur
-  begin
-    // Conditions de ressources et limite pour un professeur
-    ressourcesSuffisantes := (joueurActuel.Ressources[Mathematiques] >= 2) and
-                             (joueurActuel.Ressources[Physique] >= 1) and
-                             (CountPersonnes(plateau.Personnes, False, joueurActuel) < 3);
-  end;
-  PersonneValide := ressourcesSuffisantes and personneAdjacente;
+  //     if (plateau.Personnes[i].estEleve) or (not plateau.Personnes[i].estEleve and not estEleve) then
+  //     begin
+  //       PersonneValide := False; // Ne peut pas être adjacent à un élève ou à un professeur
+  //       Exit;
+  //     end;
+  //     personneAdjacente := True; // Marque la case comme ayant une personne adjacente
+  //   end;
+  // end;
+  // if estEleve then
+  // begin
+  //   // Conditions de ressources et limite pour un élève
+  //   ressourcesSuffisantes := (joueurActuel.Ressources[Mathematiques] >= 1) and
+  //                            (joueurActuel.Ressources[Humanites] >= 1) and
+  //                            (joueurActuel.Ressources[Chimie] >= 1) and
+  //                            (joueurActuel.Ressources[Physique] >= 1) and
+  //                            (CountPersonnes(plateau.Personnes, True, joueurActuel) < 5);
+  // end
+  // else // Cas du professeur
+  // begin
+  //   // Conditions de ressources et limite pour un professeur
+  //   ressourcesSuffisantes := (joueurActuel.Ressources[Mathematiques] >= 2) and
+  //                            (joueurActuel.Ressources[Physique] >= 1) and
+  //                            (CountPersonnes(plateau.Personnes, False, joueurActuel) < 3);
+  // end;
+  // PersonneValide := ressourcesSuffisantes and personneAdjacente;
 
 end;
 
 
-function ClicPersonne(estEleve: Boolean): THexagones;
+function ClicPersonne(estEleve: Boolean): TCoords;
 var
   i: Integer;
   coord: TCoord;
-  selections: THexagones;
+  selections: TCoords;
   plateau: TPlateau;
   affichage: TAffichage; 
 begin
   
-  if estEleve then
-    writeln('Cliquez sur trois hexagones entre lesquels vous voulez placer l''élève')
-  else
-    writeln('Cliquez sur troistrois hexagones entre lesquels vous voulez placer le professeur');
+  // if estEleve then
+  //   writeln('Cliquez sur trois hexagones entre lesquels vous voulez placer l''élève')
+  // else
+  //   writeln('Cliquez sur troistrois hexagones entre lesquels vous voulez placer le professeur');
 
-  selections.Taille := 3;
-  SetLength(selections.Positions, selections.Taille);
+  // selections.Taille := 3;
+  // SetLength(selections.Positions, selections.Taille);
 
-  for i := 0 to selections.Taille - 1 do
-  begin
-    clicHexagone(plateau, affichage, coord); 
-    selections.Positions[i] := coord; 
-  end;
-  SetLength(selections.hexagones, selections.Taille);
-  for i := 0 to selections.Taille - 1 do
-  begin
-    selections.hexagones[i].Numero := i;// A faire donnée le numero de l'hexagone coorespondant****************
-  end;
-  ClicPersonne := selections;
+  // for i := 0 to selections.Taille - 1 do
+  // begin
+  //   clicHexagone(plateau, affichage, coord); 
+  //   selections.Positions[i] := coord; 
+  // end;
+  // SetLength(selections.hexagones, selections.Taille);
+  // for i := 0 to selections.Taille - 1 do
+  // begin
+  //   selections.hexagones[i].Numero := i;// A faire donnée le numero de l'hexagone coorespondant****************
+  // end;
+  // ClicPersonne := selections;
 end;
 
 
@@ -179,55 +179,55 @@ end;
 
 procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 var
-  hexagonesSelectionnes: THexagones;
+  hexagonesSelectionnes: TCoords;
   i, j: Integer;
   estConverti: Boolean;
 begin
-  // Appeler ClicPersonne pour récupérer les hexagones sélectionnés
-  hexagonesSelectionnes := ClicPersonne(False); 
+  // // Appeler ClicPersonne pour récupérer les hexagones sélectionnés
+  // hexagonesSelectionnes := ClicPersonne(False); 
 
-  // Vérifie si les hexagones sont adjacents
-  if enContact(hexagonesSelectionnes.Positions) then
-  begin
-    estConverti := False;
-    // Convertir l'élève en professeur sur le plateau
-    for i := 0 to High(plateau.Personnes) do
-    begin
-      if (plateau.Personnes[i].IdJoueur = joueurActuel.Id) and
-         (plateau.Personnes[i].estEleve) then
-      begin
+  // // Vérifie si les hexagones sont adjacents
+  // if enContact(hexagonesSelectionnes.Positions) then
+  // begin
+  //   estConverti := False;
+  //   // Convertir l'élève en professeur sur le plateau
+  //   for i := 0 to High(plateau.Personnes) do
+  //   begin
+  //     if (plateau.Personnes[i].IdJoueur = joueurActuel.Id) and
+  //        (plateau.Personnes[i].estEleve) then
+  //     begin
       
-        for j := 0 to High(hexagonesSelectionnes.Positions) do
-        begin
-          // Vérifie si les coordonnées de l'élève correspondent à l'un des hexagones sélectionnés
-           if (plateau.Personnes[i].Position[0].x = hexagonesSelectionnes.Positions[j].x) and
-             (plateau.Personnes[i].Position[0].y = hexagonesSelectionnes.Positions[j].y) or
-             (plateau.Personnes[i].Position[1].x = hexagonesSelectionnes.Positions[j].x) and
-             (plateau.Personnes[i].Position[1].y = hexagonesSelectionnes.Positions[j].y) or
-             (plateau.Personnes[i].Position[2].x = hexagonesSelectionnes.Positions[j].x) and
-             (plateau.Personnes[i].Position[2].y = hexagonesSelectionnes.Positions[j].y) then
-          begin
-            // Déduction des ressources nécessaires pour la conversion
-            joueurActuel.Ressources[Mathematiques] := joueurActuel.Ressources[Mathematiques] - 2;
-            joueurActuel.Ressources[Physique] := joueurActuel.Ressources[Physique] - 1;
-            plateau.Personnes[i].estEleve := False; // Changer l'élève en professeur
-            estConverti := True;
-            WriteLn('Élève converti en professeur avec succès !');
-            Break; // Sortir de la boucle des hexagones
-          end;
-        end;
-        if estConverti then
-          Break; // Sortir de la boucle des élèves si conversion réussie
-      end;
-    end;
+  //       for j := 0 to High(hexagonesSelectionnes.Positions) do
+  //       begin
+  //         // Vérifie si les coordonnées de l'élève correspondent à l'un des hexagones sélectionnés
+  //          if (plateau.Personnes[i].Position[0].x = hexagonesSelectionnes.Positions[j].x) and
+  //            (plateau.Personnes[i].Position[0].y = hexagonesSelectionnes.Positions[j].y) or
+  //            (plateau.Personnes[i].Position[1].x = hexagonesSelectionnes.Positions[j].x) and
+  //            (plateau.Personnes[i].Position[1].y = hexagonesSelectionnes.Positions[j].y) or
+  //            (plateau.Personnes[i].Position[2].x = hexagonesSelectionnes.Positions[j].x) and
+  //            (plateau.Personnes[i].Position[2].y = hexagonesSelectionnes.Positions[j].y) then
+  //         begin
+  //           // Déduction des ressources nécessaires pour la conversion
+  //           joueurActuel.Ressources[Mathematiques] := joueurActuel.Ressources[Mathematiques] - 2;
+  //           joueurActuel.Ressources[Physique] := joueurActuel.Ressources[Physique] - 1;
+  //           plateau.Personnes[i].estEleve := False; // Changer l'élève en professeur
+  //           estConverti := True;
+  //           WriteLn('Élève converti en professeur avec succès !');
+  //           Break; // Sortir de la boucle des hexagones
+  //         end;
+  //       end;
+  //       if estConverti then
+  //         Break; // Sortir de la boucle des élèves si conversion réussie
+  //     end;
+  //   end;
 
-    if not estConverti then
-      WriteLn('Aucun élève trouvé à convertir sur les hexagones sélectionnés.');
+  //   if not estConverti then
+  //     WriteLn('Aucun élève trouvé à convertir sur les hexagones sélectionnés.');
 
-    affichageGrille(plateau, affichage); // Met à jour l'affichage de la grille
-  end
-  else
-    WriteLn('Conversion invalide. Les hexagones sélectionnés ne sont pas adjacents.');
+  //   affichageGrille(plateau, affichage); // Met à jour l'affichage de la grille
+  // end
+  // else
+  //   WriteLn('Conversion invalide. Les hexagones sélectionnés ne sont pas adjacents.');
 end;
 
 
@@ -280,15 +280,17 @@ begin
   for joueur in joueurs do
   begin
     j := j+1;
-    plusGrandeRoute := True;
-    if (compterRouteSuite(plateau,joueur) >= 5) then
-    begin
-    for i := 0 to High(joueurs) do
-      if(compterRouteSuite(plateau,joueur) < compterRouteSuite(plateau,joueurs[i])) then
-        plusGrandeRoute := False;
-    if plusGrandeRoute then
-      points[j] := points[j] + 2;
-    end;
+
+    // TODO erreur acces violation
+    // plusGrandeRoute := True;
+    // if (compterRouteSuite(plateau,joueur) >= 5) then
+    // begin
+    // for i := 0 to High(joueurs) do
+    //   if(compterRouteSuite(plateau,joueur) < compterRouteSuite(plateau,joueurs[i])) then
+    //     plusGrandeRoute := False;
+    // if plusGrandeRoute then
+    //   points[j] := points[j] + 2;
+    // end;
     
     if(joueur.CartesTutorat.carte2.nbr >= 3) then
       for i := 0 to High(joueurs) do
@@ -317,111 +319,124 @@ end;
 
 
 
-
-function connexionValide(hexagonesSelectionnes: THexagones; plateau: TPlateau; joueur: TJoueur): Boolean;
-var
-  i, j: Integer;
-  ressourcesSuffisantes, positionDisponible: Boolean;
+// ENLEVER LES TCoords ILS NEXISTE PAS !!!
+function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur): Boolean;
+var i,j : Integer;
 begin
-  // Vérifie si le joueur a suffisamment de ressources pour acheter une connexion
-  ressourcesSuffisantes := (joueur.Ressources[Mathematiques] >= 1) and
-                           (joueur.Ressources[Physique] >= 1) and
-                           (joueur.Ressources[Chimie] >= 1);
-
-  positionDisponible := True;
 
   // Parcourt les connexions pour vérifier si l'une des positions de hexagonesSelectionnes est déjà occupée
   for i := 0 to High(plateau.Connexions) do
   begin
-    for j := 0 to High(hexagonesSelectionnes.Positions) do
+    for j := 0 to High(coords) do
     begin
-      if ((plateau.Connexions[i].Position[0].x = hexagonesSelectionnes.Positions[j].x) and
-          (plateau.Connexions[i].Position[0].y = hexagonesSelectionnes.Positions[j].y)) or
-         ((plateau.Connexions[i].Position[1].x = hexagonesSelectionnes.Positions[j].x) and
-          (plateau.Connexions[i].Position[1].y = hexagonesSelectionnes.Positions[j].y)) then
-      begin
-        positionDisponible := False; 
+      if ((plateau.Connexions[i].Position[0].x = coords[j].x) and
+          (plateau.Connexions[i].Position[0].y = coords[j].y)) or
+         ((plateau.Connexions[i].Position[1].x = coords[j].x) and
+          (plateau.Connexions[i].Position[1].y = coords[j].y)) then
+      begin 
+        connexionValide := False; 
         Break;
       end;
     end;
-    if not positionDisponible then
-      Break; 
   end;
 
- connexionValide := ressourcesSuffisantes and positionDisponible;
+  if(enContact (coords)) then
+    connexionValide := True   
+  else 
+    connexionValide := False;
+
 end;
 
 
-function ClicConnexion(): THexagones;
+function ClicConnexion(plateau : TPlateau; affichage : TAffichage): TCoords;
 var
   i: Integer;
-  coord: TCoord;
-  selections: THexagones;
-  // TODO mettre dans la signature
-  plateau: TPlateau;
-  affichage: TAffichage;
+  coords: TCoords;
+  selections: TCoords;
 begin
-  writeln('Cliquez sur deux hexagones entre lesquels vous voulez placer la connexion');
+  // writeln('Cliquez sur deux hexagones entre lesquels vous voulez placer la connexion');
 
-  selections.Taille := 2;
-  SetLength(selections.Positions, selections.Taille);
-  for i := 0 to selections.Taille - 1 do
-  begin
-    clicHexagone(plateau, affichage,coord); 
-    selections.Positions[i] := coord;
-  end;
-  // SetLength(selections.hexagones, selections.Taille);
+  // selections.Taille := 2;
+  // SetLength(selections.Positions, selections.Taille);
   // for i := 0 to selections.Taille - 1 do
   // begin
-  //   selections.hexagones[i] := 0;
+  //   clicHexagone(plateau, affichage,coord); 
+  //   selections.Positions[i] := coord;
   // end;
-  // A faire recuperer le numero de l'hexagone si necessaire****************************************************************
+  // // SetLength(selections.hexagones, selections.Taille);
+  // // for i := 0 to selections.Taille - 1 do
+  // // begin
+  // //   selections.hexagones[i] := 0;
+  // // end;
+  // // A faire recuperer le numero de l'hexagone si necessaire****************************************************************
 
-  ClicConnexion := selections;
+  SetLength(coords, 2);
+
+  clicHexagone(plateau, affichage,coords[0]);
+  clicHexagone(plateau, affichage,coords[1]);
+
+
+
+  ClicConnexion := coords;
 end;
 
 
 // TODO il faut renvoyer un tempPlateau et pas modifier l'ancien
 procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 var
-  hexagonesSelectionnes: THexagones;
+  coords: TCoords;
   i: Integer;
 begin
 
-  // // Demande à l'utilisateur de sélectionner deux hexagones pour la connexion
-  // hexagonesSelectionnes := ClicConnexion();
+  // Demande à l'utilisateur de sélectionner deux hexagones pour la connexion
+  coords := ClicConnexion(plateau,affichage);
+  writeln('coords 1');
+  write(coords[0].x);
+  write(' : ');
+  writeln(coords[0].y);
+  writeln('coords 2');
+  write(coords[1].x);
+  write(' : ');
+  writeln(coords[1].y);
 
-  // // Vérifie si la connexion est valide avec les hexagones sélectionnés
-  // if connexionValide(hexagonesSelectionnes, plateau, joueur) then
-  // begin
-  //   // Ajoute la connexion au plateau
-  //   SetLength(plateau.Connexions, Length(plateau.Connexions) + 1);
-  //   plateau.Connexions[High(plateau.Connexions)].IdJoueur := joueur.Id;
 
-  //   // Enregistre les positions des hexagones pour la connexion
-  //   for i := 0 to High(hexagonesSelectionnes.Positions) do
-  //   begin
-  //     plateau.Connexions[High(plateau.Connexions)].Position[i] := hexagonesSelectionnes.Positions[i];
-  //   end;
+  writeln('working');
 
-  //   // Déduit les ressources nécessaires au joueur
+  // Vérifie si la connexion est valide avec les hexagones sélectionnés
+  if connexionValide(coords, plateau, joueur) then
+    begin
+    // Ajoute la connexion au plateau
+    writeln('working');
 
-    // TODO deplacer dans verificationRessouce / achatElement
-    // joueur.Ressources[Mathematiques] := joueur.Ressources[Mathematiques] - 1;
-    // joueur.Ressources[Physique] := joueur.Ressources[Physique] - 1;
-    // joueur.Ressources[Chimie] := joueur.Ressources[Chimie] - 1;
+
+    // Enregistre les positions des hexagones pour la connexion
+    // for i := 0 to High(coords) do
+    // begin
+    //   writeln('working');
+    
+    //   plateau.Connexions[High(plateau.Connexions)].Position[i] := coords[i];
+    //   writeln('working bis');
+
+    // end;
+    SetLength(plateau.Connexions, Length(plateau.Connexions) + 1);
+    plateau.Connexions[High(plateau.Connexions)].IdJoueur := joueur.Id;
+
+    setLength(plateau.Connexions[High(plateau.Connexions)].Position,2);
+
+    plateau.Connexions[High(plateau.Connexions)].Position[0] := coords[0];
+    plateau.Connexions[High(plateau.Connexions)].Position[1] := coords[1];
+
+
 
     WriteLn('Connexion placée avec succès !');
-  // end
-  // else
-  // begin
-  //   WriteLn('Impossible de placer la connexion : vérifiez les ressources ou la position choisie.');
-  // end;
-  //TODO ne pas reafficher tout l'affichage de 0 mais afficher que la nouvelle connexion
-    // affichageGrille(plateau, affichage);
+    end
+  else
+    begin
+    WriteLn('Impossible de placer la connexion : vérifiez les ressources ou la position choisie.');
+    placementConnexion(plateau,affichage,joueur);
+    end;
+  affichageTour(plateau, affichage);
 end;
 
 
 end.
-
-

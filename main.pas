@@ -16,6 +16,7 @@ begin
     initialisationPartie(joueurs,plateau,affichage);
 
     partie(joueurs,plateau,affichage);
+    clicHexagone(plateau, affichage, coord);
 
     // plateau := chargementPlateau();
     // initialisationAffichage(affichage);

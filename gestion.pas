@@ -209,29 +209,35 @@ begin
 
   initialisationAffichage(affichage);
   plateau := chargementPlateau();
-  affichageGrille(plateau, affichage);
-  miseAJourRenderer(affichage);
+  affichageTour(plateau, affichage);
   
-
+  writeln('start');
   for i:=1 to 3 do
     begin
     text := 'Le joueur '+IntToStr(i)+' joue et place une connexion puis un élève';
     affichageTexte(text,0,coord,affichage);
     placementConnexion(plateau,affichage,joueurs[i-1]);
+    affichageTour(plateau, affichage);
+
     placementEleve(plateau,affichage,joueurs[i-1]);
+    affichageTour(plateau, affichage);
+
     end;
+  writeln('start 1');
 
   for i:=3 downto 1 do
     begin
     text := 'Le joueur '+IntToStr(i)+' rejoue et replace une connexion puis un élève';
     affichageTexte(text,0,coord,affichage);
     placementConnexion(plateau,affichage,joueurs[i-1]);
+    affichageTour(plateau, affichage);
+
     placementEleve(plateau,affichage,joueurs[i-1]);
+    affichageTour(plateau, affichage);
 
     end;
+    writeln('start 2');
 
-  affichageGrille(plateau, affichage);
-  miseAJourRenderer(affichage);
 end;
 
 
@@ -305,7 +311,6 @@ var j : Tjoueur;
 begin
   for j in joueurs do 
     begin
-    clicHexagone(plateau, affichage, coord);
 
 
     // TODO choisir l'ordre grace à des clicks
