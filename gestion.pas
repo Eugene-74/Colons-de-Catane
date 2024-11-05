@@ -245,24 +245,25 @@ begin
   for i:=1 to length(joueurs) do
     begin
 
-    placementConnexion(plateau,affichage,joueurs[i-1],False);
+
+    // joueurs[i-1].Points := joueurs[i-1].Points + 1;
+    placementEleve(plateau,affichage,joueurs[i-1],False);
     affichageTour(plateau, affichage);
 
-    placementEleve(plateau,affichage,joueurs[i-1],False);
+    placementConnexion(plateau,affichage,joueurs[i-1],False);
     affichageTour(plateau, affichage);
 
     end;
 
   for i:=length(joueurs) downto 1 do
     begin
-    text := 'Le joueur '+IntToStr(i)+' rejoue et replace une connexion puis un élève';
-    affichageTexte(text,0,coord,affichage);
-    placementConnexion(plateau,affichage,joueurs[i-1],False);
-    affichageTour(plateau, affichage);
 
+    // joueurs[i-1].Points := joueurs[i-1].Points + 1;
     placementEleve(plateau,affichage,joueurs[i-1],False);
     affichageTour(plateau, affichage);
 
+    placementConnexion(plateau,affichage,joueurs[i-1],False);
+    affichageTour(plateau, affichage);
     end;
 
 end;
@@ -334,7 +335,7 @@ begin
   for j in joueurs do 
     begin
 
-
+    placementConnexion(plateau,affichage,joueurs[0],False);
     // TODO choisir l'ordre grace à des clicks
     // achatElements(j,plateau,affichage);
     // gestionDes(joueurs,plateau,affichage);
@@ -347,12 +348,12 @@ procedure partie(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffic
 var gagnant : integer;
   gagner : boolean;
 begin
-  // repeat
+  repeat
     tour(joueurs,plateau,affichage);
 
     verificationPointsVictoire(plateau,joueurs,gagner,gagnant);
-  // until (gagner);
-  // affichageGagnant(joueurs[gagnant],affichage);
+  until (gagner);
+  affichageGagnant(joueurs[gagnant],affichage);
 
 end;
 

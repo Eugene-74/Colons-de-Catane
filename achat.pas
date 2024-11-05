@@ -7,12 +7,12 @@ uses
 
 procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur;retraitRessources:Boolean);
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage);
-procedure PlacementEleve(plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur;retraitRessources:Boolean);
+procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur;retraitRessources:Boolean);
 procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur;retraitRessources:Boolean);
 procedure verificationPointsVictoire(plateau : TPlateau; joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer);
 procedure affichageGagnant(joueur: TJoueur; affichage: TAffichage);
-function ClicConnexion(var affichage: TAffichage; plateau: TPlateau): TCoords;
-function connexionValide(hexagonesSelectionnes: TCoords; plateau: TPlateau; joueur: TJoueur): Boolean;
+function ClicConnexion(var plateau : TPlateau; var affichage : TAffichage): TCoords;
+function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur): Boolean;
 function ClicPersonne(affichage: TAffichage; plateau: TPlateau; estEleve: Boolean): TCoords;
 function CountPersonnes(personnes: array of TPersonne; estEleve: Boolean; joueur: TJoueur): Integer;
 function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur): Boolean;
@@ -71,7 +71,7 @@ end;
 
 
 
-procedure placementEleve( plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur;retraitRessources:Boolean);
+procedure placementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur;retraitRessources:Boolean);
 var
  HexagonesCoords: TCoords;
 begin
@@ -94,7 +94,7 @@ begin
       IdJoueur := joueurActuel.Id; 
     end;
 
-    affichageGrille(plateau, affichage); 
+    affichageTour(plateau, affichage); 
     if retraitRessources then
     begin
         joueurActuel.Ressources[Mathematiques] := joueurActuel.Ressources[Mathematiques] - 1;
@@ -163,7 +163,7 @@ var
   i, j, k, nombreAdjacents: Integer;
 begin
    VerifierAdjacencePersonnes:= False;
-  for i := 0 to High(plateau.Personnes-1) do
+  for i := 0 to High(plateau.Personnes)-1 do
   begin
     nombreAdjacents := 0;
     for j := 0 to High(HexagonesCoords)-1 do
@@ -356,24 +356,22 @@ end;
 
 
 
-function connexionValide(hexagonesSelectionnes: TCoords; plateau: TPlateau; joueur: TJoueur): Boolean;
-var
-  i, j: Integer;
-  positionDisponible: Boolean;
+function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur): Boolean;
+var i,j : Integer;
 begin
+  connexionValide := True;
+
+// TODO verifier si il y une connexion en contact avec une autre connexion du joueur ou en contact avec un elve / prof
 
 
-  positionDisponible := True;
-
-  // Parcourt les connexions pour vérifier si l'une des positions de hexagonesSelectionnes est déjà occupée
-  for i := 0 to High(plateau.Connexions) do
-  begin
-    for j := 0 to High(hexagonesSelectionnes.Positions) do
+  // Verifie si il n'y a pas deja une connexion
+  for i := 0 to length(plateau.Connexions)-1 do
     begin
-      if ((plateau.Connexions[i].Position[0].x = hexagonesSelectionnes[j].x) and
-          (plateau.Connexions[i].Position[0].y = hexagonesSelectionnes[j].y)) or
-         ((plateau.Connexions[i].Position[1].x = hexagonesSelectionnes[j].x) and
-          (plateau.Connexions[i].Position[1].y = hexagonesSelectionnes[j].y)) then
+    // On veux exactement les 2 meme coordonées mais sans prendre l'ordre en compte
+    if (((plateau.Connexions[i].Position[0].x = coords[0].x) and (plateau.Connexions[i].Position[0].y = coords[0].y) 
+        and (plateau.Connexions[i].Position[1].x = coords[1].x) and (plateau.Connexions[i].Position[1].y = coords[1].y))
+      or ((plateau.Connexions[i].Position[0].x = coords[1].x) and (plateau.Connexions[i].Position[0].y = coords[1].y) 
+        and (plateau.Connexions[i].Position[1].x = coords[0].x) and (plateau.Connexions[i].Position[1].y = coords[0].y))) then
       begin
       
       // connespond à un return (pour fonction)
@@ -381,48 +379,45 @@ begin
       exit;
       end; 
     end;
-    if not positionDisponible then
-      Break; 
-  end;
 
-  connexionValide :=positionDisponible;
+  if(not enContact (coords)) then
+    connexionValide := False;
 end;
 
-function ClicConnexion(var affichage: TAffichage; plateau: TPlateau): TCoords;
+function ClicConnexion(var plateau : TPlateau; var affichage : TAffichage): TCoords;
 var
   i: Integer;
+  coords: TCoords;
   selections: TCoords;
 begin
-  writeln('Cliquez sur deux hexagones entre lesquels vous voulez placer la connexion');
-  SetLength(selections, 2); 
+  SetLength(coords, 2);
+  clicHexagone(plateau, affichage,coords[0]);
+  clicHexagone(plateau, affichage,coords[1]);
 
-  for i := 0 to 1 do
-  begin
-    clicHexagone(plateau, affichage, selections[i]);
-  end;
-
-  ClicConnexion := selections;
+  ClicConnexion := coords;
 end;
 
 procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur;retraitRessources:Boolean);
 var
-  hexagonesSelectionnes: TCoords;
+  coords: TCoords;
   i: Integer;
 begin
-  hexagonesSelectionnes := ClicConnexion(affichage, plateau);
 
-  if connexionValide(hexagonesSelectionnes, plateau, joueur) then
-  begin
-    // Agrandit le tableau des connexions pour ajouter une nouvelle entrée
-    SetLength(plateau.Connexions,1);
-    plateau.Connexions[0].IdJoueur := joueur.Id;
+  // Demande à l'utilisateur de sélectionner deux hexagones pour la connexion
+  coords := ClicConnexion(plateau,affichage);
 
-    // Définit la taille du tableau Position pour la nouvelle connexion et enregistre les positions
-    SetLength(plateau.Connexions[0].Position, 2);
-    for i := 0 to Length(hexagonesSelectionnes) - 1 do
+  // Vérifie si la connexion est valide avec les hexagones sélectionnés
+  if connexionValide(coords, plateau, joueur) then
     begin
-      plateau.Connexions[0].Position[i] := hexagonesSelectionnes[i];
-    end;
+
+    SetLength(plateau.Connexions, Length(plateau.Connexions) + 1);
+    plateau.Connexions[length(plateau.Connexions)-1].IdJoueur := joueur.Id;
+
+    setLength(plateau.Connexions[length(plateau.Connexions)-1].Position,2);
+
+    plateau.Connexions[length(plateau.Connexions)-1].Position[0] := coords[0];
+    plateau.Connexions[length(plateau.Connexions)-1].Position[1] := coords[1];
+
     if retraitRessources then
     begin
       joueur.Ressources[Mathematiques] := joueur.Ressources[Mathematiques] - 1;
@@ -430,16 +425,18 @@ begin
       joueur.Ressources[Chimie] := joueur.Ressources[Chimie] - 1;
     end;
 
-    WriteLn('Connexion placée avec succès !');
-  end
-  else
-  begin
-    WriteLn('Impossible de placer la connexion : vérifiez les ressources ou la position choisie.');
-  end;
 
-  // Affiche seulement la nouvelle connexion dans la grille pour éviter une réinitialisation complète
-  affichageGrille(plateau, affichage);
+    WriteLn('Connexion placée avec succès !');
+    end
+  else
+    begin
+    WriteLn('Impossible de placer la connexion : vérifiez la position choisie.');
+    // Si la connexionn n'est pas valide, on rappelle la fonction
+    placementConnexion(plateau,affichage,joueur,retraitRessources);
+    end;
+  affichageTour(plateau, affichage);
 end;
+
 
 
 
