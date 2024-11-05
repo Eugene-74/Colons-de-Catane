@@ -255,8 +255,8 @@ begin
         Break;
     end;
 
-    if not estConverti then
-      WriteLn('Aucun élève trouvé à convertir sur les hexagones sélectionnés.');
+  //   if not estConverti then
+  //     WriteLn('Aucun élève trouvé à convertir sur les hexagones sélectionnés.');
 
     affichageGrille(plateau, affichage);
   end
@@ -316,15 +316,17 @@ begin
   for joueur in joueurs do
   begin
     j := j+1;
-    plusGrandeRoute := True;
-    if (compterRouteSuite(plateau,joueur) >= 5) then
-    begin
-    for i := 0 to High(joueurs) do
-      if(compterRouteSuite(plateau,joueur) < compterRouteSuite(plateau,joueurs[i])) then
-        plusGrandeRoute := False;
-    if plusGrandeRoute then
-      points[j] := points[j] + 2;
-    end;
+
+    // TODO erreur acces violation
+    // plusGrandeRoute := True;
+    // if (compterRouteSuite(plateau,joueur) >= 5) then
+    // begin
+    // for i := 0 to High(joueurs) do
+    //   if(compterRouteSuite(plateau,joueur) < compterRouteSuite(plateau,joueurs[i])) then
+    //     plusGrandeRoute := False;
+    // if plusGrandeRoute then
+    //   points[j] := points[j] + 2;
+    // end;
     
     if(joueur.CartesTutorat.carte2.nbr >= 3) then
       for i := 0 to High(joueurs) do
@@ -373,9 +375,11 @@ begin
          ((plateau.Connexions[i].Position[1].x = hexagonesSelectionnes[j].x) and
           (plateau.Connexions[i].Position[1].y = hexagonesSelectionnes[j].y)) then
       begin
-        positionDisponible := False; 
-        Break;
-      end;
+      
+      // connespond à un return (pour fonction)
+      connexionValide := False;
+      exit;
+      end; 
     end;
     if not positionDisponible then
       Break; 
@@ -440,5 +444,3 @@ end;
 
 
 end.
-
-

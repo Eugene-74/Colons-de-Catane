@@ -2,7 +2,7 @@ unit gestion;
 
 interface
 uses Types,affichageUnit,SysUtils,achat;
-function chargementPlateau(): TPlateau;
+function chargementPlateau(num : Integer): TPlateau;
 procedure initialisationPartie(var joueurs : TJoueurs;var  plateau : TPlateau;var affichage : TAffichage);
 procedure partie(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 
@@ -19,31 +19,55 @@ var
   i, j: Integer;
 begin
 // Tableau static pose des problème
-  SetLength(grille, 7, 7);
-
-  SetLength(ressources, 7, 7);
-  SetLength(numeros, 7, 7);
 
   if(num = 1) then 
     begin
+    SetLength(grille, 7, 7);
+    SetLength(ressources, 7, 7);
+    SetLength(numeros, 7, 7);
 
     ressources[0] := [Aucune, Aucune, Aucune, Aucune, Aucune, Aucune, Aucune];
     ressources[1] := [Aucune, Aucune, Aucune, Humanites, Mathematiques, Chimie, Aucune];
     ressources[2] := [Aucune, Aucune, Mathematiques, Chimie, Informatique, Physique, Aucune];
-    ressources[3] := [Aucune, Humanites, Informatique, Aucune, Humanites, Chimie, Aucune];
+    ressources[3] := [Aucune, Humanites, Informatique, Rien, Humanites, Chimie, Aucune];
     ressources[4] := [Aucune, Physique, Mathematiques, Informatique, Physique, Aucune, Aucune];
     ressources[5] := [Aucune, Physique, Humanites, Mathematiques, Aucune, Aucune, Aucune];
     ressources[6] := [Aucune, Aucune, Aucune, Aucune, Aucune, Aucune, Aucune];
     numeros[0] := [-1, -1, -1, -1, -1, -1, -1];
     numeros[1] := [-1, -1, -1, 6, 3, 8, -1];
     numeros[2] := [-1, -1, 2, 9, 11, 4, -1];
-    numeros[3] := [-1, 5, 4, 0, 3, 11, -1];
+    numeros[3] := [-1, 5, 4, -1, 3, 11, -1];
     numeros[4] := [-1, 10, 5, 6, 12, -1, -1];
     numeros[5] := [-1, 8, 10, 9, -1, -1, -1];
     numeros[6] := [-1, -1, -1, -1, -1, -1, -1];
     end
+  else if(num = 2) then 
+    begin
+    SetLength(grille, 5, 5);
+    SetLength(ressources, 5, 5);
+    SetLength(numeros, 5, 5);
+
+    // ressources[0] := [Aucune, Aucune, Aucune, Aucune, Aucune, Aucune, Aucune];
+    ressources[0] := [Aucune, Aucune, Humanites, Mathematiques, Chimie];
+    ressources[1] := [Aucune, Mathematiques, Chimie, Informatique, Physique];
+    ressources[2] := [Humanites, Informatique, Rien, Humanites, Chimie];
+    ressources[3] := [Physique, Mathematiques, Informatique, Physique, Aucune];
+    ressources[4] := [Physique, Humanites, Mathematiques, Aucune, Aucune];
+    // ressources[6] := [Aucune, Aucune, Aucune, Aucune, Aucune, Aucune, Aucune];
+    // numeros[0] := [-1, -1, -1, -1, -1, -1, -1];
+    numeros[0] := [-1, -1, 6, 3, 8];
+    numeros[1] := [-1, 2, 9, 11, 4];
+    numeros[2] := [5, 4, -1, 3, 11];
+    numeros[3] := [10, 5, 6, 12, -1];
+    numeros[4] := [8, 10, 9, -1, -1];
+    // numeros[6] := [-1, -1, -1, -1, -1, -1, -1];
+    end
   else 
     begin
+    SetLength(grille, 7, 7);
+    SetLength(ressources, 7, 7);
+    SetLength(numeros, 7, 7);
+
     ressources[0] := [Physique, Physique, Physique, Physique, Physique, Physique, Physique];
     ressources[1] := [Physique, Physique, Physique, Physique, Physique, Physique, Physique];
     ressources[2] := [Physique, Physique, Physique, Physique, Physique, Physique, Physique];
@@ -73,21 +97,26 @@ end;
 
 
 
-function chargementPlateau(): TPlateau;
+function chargementPlateau(num : Integer): TPlateau;
 var
   grille: TGrille;
   plat : TPlateau;
-  num : Integer;
 begin
-  num :=1;
 
   grille := chargerGrille(num);
   if(num = 1) then
-  begin
+    begin
     plat.Grille := grille;
-    plat.Souillard.Position.x := 4;
+    plat.Souillard.Position.x := 3;
     plat.Souillard.Position.y := 3;
-  end;
+    end
+   else if(num = 2) then
+    begin
+      plat.Grille := grille;
+      plat.Souillard.Position.x := 2;
+      plat.Souillard.Position.y := 2;
+    end;
+  
 
   chargementPlateau := plat;
     
@@ -155,8 +184,6 @@ end;
 
 
 function intialisationTutorat():TCartesTutorat;
-var carteTutorat : TCarteTutorat;
-  i : Integer;
 begin
 
 intialisationTutorat := CARTES_TUTORAT;
@@ -165,7 +192,7 @@ end;
 procedure 
 
 initialisationPartie(var joueurs : TJoueurs;var plateau : TPlateau;var affichage : TAffichage);
-var i : integer;
+var i,num : integer;
   coord : Tcoord;
   text : string;
   stop : Boolean;
@@ -175,6 +202,7 @@ var i : integer;
 begin
 
   cartesTutorat := intialisationTutorat();
+  plateau.cartesTutorat := cartesTutorat;
 
   for r := Aucune to Mathematiques do
     res[r] := 0;
@@ -208,30 +236,35 @@ begin
   SetLength(plateau.Connexions[0].Position, 2);
 
   initialisationAffichage(affichage);
-  plateau := chargementPlateau();
-  affichageGrille(plateau, affichage);
-  miseAJourRenderer(affichage);
-  
 
-  for i:=1 to 3 do
+  num :=1;
+
+  plateau := chargementPlateau(num);
+  affichageTour(plateau, affichage);
+  
+  for i:=1 to length(joueurs) do
     begin
-    text := 'Le joueur '+IntToStr(i)+' joue et place une connexion puis un élève';
-    affichageTexte(text,0,coord,affichage);
+
     placementConnexion(plateau,affichage,joueurs[i-1],False);
+    affichageTour(plateau, affichage);
+
     placementEleve(plateau,affichage,joueurs[i-1],False);
+    affichageTour(plateau, affichage);
+
     end;
 
-  for i:=3 downto 1 do
+  for i:=length(joueurs) downto 1 do
     begin
     text := 'Le joueur '+IntToStr(i)+' rejoue et replace une connexion puis un élève';
     affichageTexte(text,0,coord,affichage);
     placementConnexion(plateau,affichage,joueurs[i-1],False);
+    affichageTour(plateau, affichage);
+
     placementEleve(plateau,affichage,joueurs[i-1],False);
+    affichageTour(plateau, affichage);
 
     end;
 
-  affichageGrille(plateau, affichage);
-  miseAJourRenderer(affichage);
 end;
 
 
@@ -279,9 +312,6 @@ end;
 procedure gestionDes(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 var
   des,des1, des2: Integer;
-  j : Tjoueur;
-
-
 begin
 
   des1 := nombreAleatoire(6);
@@ -300,12 +330,9 @@ end;
 
 procedure tour(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 var j : Tjoueur;
-    coord : Tcoord;
-  
 begin
   for j in joueurs do 
     begin
-    clicHexagone(plateau, affichage, coord);
 
 
     // TODO choisir l'ordre grace à des clicks
@@ -345,7 +372,7 @@ deplacementSouillard(plateau, affichage);
 end;
 
 procedure utiliserCarte3(var plateau : TPlateau; joueur : Tjoueur);
-var joueurAVoler : TJoueur;
+// var joueurAVoler : TJoueur;
 begin
 // VOLER UNE CONNAISSANCE
 

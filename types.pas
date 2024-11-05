@@ -8,7 +8,7 @@ uses SDL2, SDL2_image;
 
 type
   // Définition du type TRessource
-  TRessource = (Aucune, Physique, Informatique, Chimie, Humanites, Mathematiques);
+  TRessource = (Aucune, Physique, Informatique, Chimie, Humanites,Rien, Mathematiques);
 
  TCarteTutorat = record
     nom : String;
@@ -61,12 +61,6 @@ type
   THexagone = record
     ressource: TRessource;
     Numero: Integer;
-  end;
-
-  THexagones = record
-    hexagones: array of THexagone; // Tableau d'hexagones
-    Positions: TCoords; // Tableau de listes de coordonnées associées
-    Taille: Integer;             // Nombre d'hexagones
   end;
 
 
