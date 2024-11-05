@@ -377,8 +377,8 @@ begin
                 end;
                 SDL_MOUSEBUTTONDOWN:
                 begin
-                    coord.x := event.button.x-affichage.xGrid;
-                    coord.y := event.button.y-affichage.yGrid;
+                    coord.x := event.button.x;
+                    coord.y := event.button.y;
                     running := False;
                     break;
                 end;
@@ -402,7 +402,7 @@ begin
     while running do
     begin
         clicCart(affichage,coord);
-        cardToHexa(coord.x,coord.y,tailleHexagone div 2,q,r);
+        cardToHexa(coord.x-affichage.xGrid,coord.y-affichage.yGrid,tailleHexagone div 2,q,r);
 
       // TODO modifier pour pouvoir poser des routes au bords de la grille
         writeln(q,' ',r);
