@@ -404,7 +404,9 @@ begin
         clicCart(affichage,coord);
         cardToHexa(coord.x,coord.y,tailleHexagone div 2,q,r);
 
-        if not((q-1 < 0) or (r-1 < 0) or (q-1 >= length(plat.Grille)-1) or (r-1 >= length(plat.Grille)-1)) then
+      // TODO modifier pour pouvoir poser des routes au bords de la grille
+        writeln(q,' ',r);
+        if not((q < 0) or (r < 0) or (q-1 >= length(plat.Grille)-1) or (r-1 >= length(plat.Grille)-1)) then
         begin
             running := False;
             coord.x := q;

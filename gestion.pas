@@ -30,7 +30,7 @@ begin
     ressources[0] := [Aucune, Aucune, Aucune, Aucune, Aucune, Aucune, Aucune];
     ressources[1] := [Aucune, Aucune, Aucune, Humanites, Mathematiques, Chimie, Aucune];
     ressources[2] := [Aucune, Aucune, Mathematiques, Chimie, Informatique, Physique, Aucune];
-    ressources[3] := [Aucune, Humanites, Informatique, Aucune, Humanites, Chimie, Aucune];
+    ressources[3] := [Aucune, Humanites, Informatique, Rien, Humanites, Chimie, Aucune];
     ressources[4] := [Aucune, Physique, Mathematiques, Informatique, Physique, Aucune, Aucune];
     ressources[5] := [Aucune, Physique, Humanites, Mathematiques, Aucune, Aucune, Aucune];
     ressources[6] := [Aucune, Aucune, Aucune, Aucune, Aucune, Aucune, Aucune];
@@ -85,7 +85,7 @@ begin
   if(num = 1) then
   begin
     plat.Grille := grille;
-    plat.Souillard.Position.x := 4;
+    plat.Souillard.Position.x := 3;
     plat.Souillard.Position.y := 3;
   end;
 
