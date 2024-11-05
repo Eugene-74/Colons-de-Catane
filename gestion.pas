@@ -217,16 +217,16 @@ begin
     begin
     text := 'Le joueur '+IntToStr(i)+' joue et place une connexion puis un élève';
     affichageTexte(text,0,coord,affichage);
-    placementConnexion(plateau,affichage,joueurs[i-1]);
-    placementEleve(plateau,affichage,joueurs[i-1]);
+    placementConnexion(plateau,affichage,joueurs[i-1],False);
+    placementEleve(plateau,affichage,joueurs[i-1],False);
     end;
 
   for i:=3 downto 1 do
     begin
     text := 'Le joueur '+IntToStr(i)+' rejoue et replace une connexion puis un élève';
     affichageTexte(text,0,coord,affichage);
-    placementConnexion(plateau,affichage,joueurs[i-1]);
-    placementEleve(plateau,affichage,joueurs[i-1]);
+    placementConnexion(plateau,affichage,joueurs[i-1],False);
+    placementEleve(plateau,affichage,joueurs[i-1],False);
 
     end;
 
@@ -332,8 +332,8 @@ end;
 
 procedure utiliserCarte1(var plateau : TPlateau; var affichage : TAffichage;joueur : Tjoueur);
 begin
-placementConnexion(plateau,affichage,joueur);
-placementConnexion(plateau,affichage,joueur);
+placementConnexion(plateau,affichage,joueur,False);
+placementConnexion(plateau,affichage,joueur,False);
 
 end;
 
