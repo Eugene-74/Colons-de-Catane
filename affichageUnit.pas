@@ -377,8 +377,8 @@ begin
                 end;
                 SDL_MOUSEBUTTONDOWN:
                 begin
-                    coord.x := event.button.x;
-                    coord.y := event.button.y;
+                    coord.x := event.button.x-affichage.xGrid;
+                    coord.y := event.button.y-affichage.yGrid;
                     running := False;
                     break;
                 end;
