@@ -212,7 +212,7 @@ begin
   affichageTour(plateau, affichage);
   
   writeln('start');
-  for i:=1 to 3 do
+  for i:=1 to length(joueurs) do
     begin
     text := 'Le joueur '+IntToStr(i)+' joue et place une connexion puis un élève';
     affichageTexte(text,0,coord,affichage);
@@ -225,7 +225,7 @@ begin
     end;
   writeln('start 1');
 
-  for i:=3 downto 1 do
+  for i:=length(joueurs) downto 1 do
     begin
     text := 'Le joueur '+IntToStr(i)+' rejoue et replace une connexion puis un élève';
     affichageTexte(text,0,coord,affichage);
