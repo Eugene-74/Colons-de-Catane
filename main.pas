@@ -8,6 +8,8 @@ var
     joueurs: TJoueurs;
     testYann : Boolean;
     coord : Tcoord;
+    ressources1,ressources2 : TRessources;
+    id1,id2 : Integer;
 
 begin
   testYann := False;
@@ -54,6 +56,15 @@ begin
     plateau.Souillard.Position.y := 3;
 
     affichageTour(plateau,joueurs, affichage);
+
+    id1 := 0;
+    id2 := 0;
+    setLength(joueurs, 2);
+    joueurs[0].Nom := 'n1';
+    joueurs[0].Id := 0;
+    joueurs[1].Nom := 'n2';
+
+    echangeRessources(joueurs,id1,id2,ressources1,ressources2,affichage);
     affichageDes(1,2,affichage);
     miseAJourRenderer(affichage);
 

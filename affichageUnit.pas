@@ -16,6 +16,7 @@ procedure affichagePersonne(personne: TPersonne; var affichage: TAffichage);
 procedure affichageSouillard(plat: TPlateau; var affichage: TAffichage);
 procedure affichageConnexion(connexion : TConnexion; var affichage : TAffichage);
 procedure affichageDes(de1,de2:Integer;var affichage: TAffichage);
+procedure echangeRessources(joueurs: TJoueurs; id:Integer; var id2: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
 procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; var affichage: TAffichage);
 
 implementation
@@ -496,29 +497,31 @@ begin
     affichage.boutonsAction[length(affichage.boutonsAction)-1].valeur := valeur;
 end;
 
+procedure affichageZone(x,y,w,h,epaisseurBord: Integer; var affichage: TAffichage);
+var bordure,interieur: TSDL_Rect;
+begin
+    SDL_SetRenderDrawColor(affichage.renderer, 0, 0, 0, 255);
+    bordure.x := x;
+    bordure.y := y;
+    bordure.w := w;
+    bordure.h := h;
+    SDL_RenderFillRect(affichage.renderer, @bordure);
+
+    SDL_SetRenderDrawColor(affichage.renderer, 255, 255, 255, 255);
+    interieur.x := x+epaisseurBord;
+    interieur.y := y+epaisseurBord;
+    interieur.w := w-epaisseurBord*2;
+    interieur.h := h-epaisseurBord*2;
+    SDL_RenderFillRect(affichage.renderer, @interieur);
+end;
+
 procedure affichageBouton(bouton: TBouton; var affichage: TAffichage);
 var bordure,interieur: TSDL_Rect;
     epaisseurBord: Integer;
 begin
-    //STEPS
-    //Faire un rectangle noir de taille w,h
-    //Faire un rectangle blanc de taille w-3;h-3
-    //Ecrire le texte au milieu du rectangle blanc
     epaisseurBord := 2;
 
-    SDL_SetRenderDrawColor(affichage.renderer, 0, 0, 0, 255);
-    bordure.x := bouton.coord.x;
-    bordure.y := bouton.coord.y;
-    bordure.w := bouton.w;
-    bordure.h := bouton.h;
-    SDL_RenderFillRect(affichage.renderer, @bordure);
-
-    SDL_SetRenderDrawColor(affichage.renderer, 255, 255, 255, 255);
-    interieur.x := bouton.coord.x+epaisseurBord;
-    interieur.y := bouton.coord.y+epaisseurBord;
-    interieur.w := bouton.w-epaisseurBord*2;
-    interieur.h := bouton.h-epaisseurBord*2;
-    SDL_RenderFillRect(affichage.renderer, @interieur);
+    affichageZone(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,epaisseurBord,affichage);
 
     affichageTexte(' '+bouton.texte, 25, bouton.coord, affichage);
 end;
@@ -552,6 +555,92 @@ begin
         
         SDL_Delay(10);
     end;
+end;
+
+procedure affichageIntegerInput(coord:TCoord; ressource: String; var affichage: TAffichage);
+var bouton: TBouton;
+begin
+    bouton.coord := coord;
+    bouton.w := 30;
+    bouton.h := 33;
+
+    bouton.coord.x := coord.x + 120;
+    bouton.texte := '+';
+    affichageBouton(bouton,affichage);
+
+    bouton.coord.x := coord.x + 155;
+    bouton.texte := ' -';
+    affichageBouton(bouton,affichage);
+
+    coord.x := coord.x + 200;
+    affichageTexte(ressource + ' : 0', 25, coord, affichage);
+end;
+
+procedure affichageJoueurInput(joueurs: TJoueurs; id: Integer; coord:TCoord; var affichage: TAffichage);
+var bouton: TBouton;
+begin
+    bouton.coord := coord;
+    bouton.w := 30;
+    bouton.h := 33;
+
+    bouton.coord.x := coord.x + 120;
+    bouton.texte := '<';
+    affichageBouton(bouton,affichage);
+
+    bouton.coord.x := coord.x + 155;
+    bouton.texte := '>';
+    affichageBouton(bouton,affichage);
+
+    coord.x := coord.x + 200;
+    affichageTexte(joueurs[id].Nom, 25, coord, affichage);
+end;
+
+procedure affichageEchangeRessources(joueurs: TJoueurs; id: Integer; var affichage: TAffichage);
+var coord: Tcoord;
+    button: TBouton;
+begin
+    affichageFond(affichage);
+    miseAJourRenderer(affichage);
+    
+    coord.x := 450;
+    coord.y := 70;
+    affichageZone(coord.x,coord.y,1050,930,3,affichage);
+
+    coord.x := 890;
+    coord.y := 90;
+    affichageTexte('Echange', 35, coord, affichage);
+
+    coord.x := 750;
+    coord.y := 160;
+    affichageJoueurInput(joueurs,id,coord,affichage);
+
+    coord.x := 750;
+    coord.y := 250;
+    affichageIntegerInput(coord,'M',affichage);
+    coord.x := 750;
+    coord.y := 285;
+    affichageIntegerInput(coord,'P',affichage);
+    coord.x := 750;
+    coord.y := 320;
+    affichageIntegerInput(coord,'C',affichage);
+    coord.x := 750;
+    coord.y := 355;
+    affichageIntegerInput(coord,'I',affichage);
+    coord.x := 750;
+    coord.y := 390;
+    affichageIntegerInput(coord,'H',affichage);
+
+    button.coord.x := 900;
+    button.coord.y := 450;
+    button.w := 95;
+    button.h := 45;
+    button.texte := 'Valider';
+    affichageBouton(button,affichage);
+end;
+
+procedure echangeRessources(joueurs: TJoueurs; id:Integer; var id2: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
+begin
+    affichageEchangeRessources(joueurs,id,affichage);
 end;
 
 {Affiche le tour à l'écran
@@ -589,6 +678,8 @@ Postconditions :
 procedure miseAJourRenderer(var affichage :TAffichage);
 begin
     SDL_RenderPresent(affichage.renderer);
+    if SDL_GetError() <> '' then
+        WriteLn('Erreur SDL: ', SDL_GetError());
 end;
 
 procedure initialisationBoutonsAction(var affichage: TAffichage);
@@ -597,17 +688,20 @@ begin
     setLength(affichage.boutonsAction, 0);
 
     coord.x := 25;
-    coord.y := WINDOW_H - 310;
+    coord.y := WINDOW_H - 370;
     ajouterBoutonAction('Achat connexion', 'achat_connexion', coord, 270, 50, affichage);
 
-    coord.y := WINDOW_H - 250;
+    coord.y := WINDOW_H - 310;
     ajouterBoutonAction('Achat eleve', 'achat_eleve', coord, 270, 50, affichage);
 
-    coord.y := WINDOW_H - 190;
+    coord.y := WINDOW_H - 250;
     ajouterBoutonAction('Achat carte tutorat', 'achat_carte_tutorat', coord, 270, 50, affichage);
 
-    coord.y := WINDOW_H - 130;
+    coord.y := WINDOW_H - 190;
     ajouterBoutonAction('Changement en prof', 'changement_en_prof', coord, 270, 50, affichage);
+
+    coord.y := WINDOW_H - 130;
+    ajouterBoutonAction('Echange', 'echange', coord, 270, 50, affichage);
 
     coord.y := WINDOW_H - 70;
     ajouterBoutonAction('Fin de tour', 'fin_tour', coord, 270, 50, affichage);
