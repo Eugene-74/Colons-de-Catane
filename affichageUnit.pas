@@ -652,6 +652,8 @@ Postconditions :
 procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; var affichage: TAffichage);
 var i: Integer;
 begin
+    affichageFond(affichage);
+
     affichageGrille(plat,affichage);
     affichageSouillard(plat,affichage);
 
