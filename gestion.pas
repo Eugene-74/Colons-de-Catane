@@ -189,9 +189,7 @@ begin
 intialisationTutorat := CARTES_TUTORAT;
 end;
 
-procedure 
-
-initialisationPartie(var joueurs : TJoueurs;var plateau : TPlateau;var affichage : TAffichage);
+procedure initialisationPartie(var joueurs : TJoueurs;var plateau : TPlateau;var affichage : TAffichage);
 var i,num : integer;
   coord : Tcoord;
   text : string;
@@ -240,30 +238,22 @@ begin
   num :=1;
 
   plateau := chargementPlateau(num);
-  affichageTour(plateau, affichage);
+  affichageTour(plateau, joueurs, affichage);
   
   for i:=1 to length(joueurs) do
     begin
-
-
     // joueurs[i-1].Points := joueurs[i-1].Points + 1;
     placementEleve(plateau,affichage,joueurs[i-1]);
-    affichageTour(plateau, affichage);
 
     placementConnexion(plateau,affichage,joueurs[i-1]);
-    affichageTour(plateau, affichage);
-
     end;
 
   for i:=length(joueurs) downto 1 do
     begin
-
     // joueurs[i-1].Points := joueurs[i-1].Points + 1;
     placementEleve(plateau,affichage,joueurs[i-1]);
-    affichageTour(plateau, affichage);
 
     placementConnexion(plateau,affichage,joueurs[i-1]);
-    affichageTour(plateau, affichage);
     end;
 
 end;

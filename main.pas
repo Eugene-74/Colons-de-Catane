@@ -53,7 +53,10 @@ begin
     plateau.Souillard.Position.x := 4;
     plateau.Souillard.Position.y := 3;
 
-    affichageTour(plateau, affichage);
+    affichageTour(plateau,joueurs, affichage);
+    affichageDes(1,2,affichage);
+    miseAJourRenderer(affichage);
+
     clicHexagone(plateau, affichage, coord);
     writeln('Coord x : ', coord.x, ' Coord y : ', coord.y);
   end;

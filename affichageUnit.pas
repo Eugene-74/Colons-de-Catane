@@ -15,7 +15,8 @@ procedure affichageTexte(text:String; taille:Integer; coord:Tcoord; var affichag
 procedure affichagePersonne(personne: TPersonne; var affichage: TAffichage);
 procedure affichageSouillard(plat: TPlateau; var affichage: TAffichage);
 procedure affichageConnexion(connexion : TConnexion; var affichage : TAffichage);
-procedure affichageTour(plat: TPlateau; var affichage: TAffichage);
+procedure affichageDes(de1,de2:Integer;var affichage: TAffichage);
+procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; var affichage: TAffichage);
 
 implementation
 
@@ -92,23 +93,11 @@ begin
     begin
         affichage.texturePlateau.textureRessource[i] := chargerTexture(affichage, GetEnumName(TypeInfo(TRessource), Ord(i)));
     end;
-end;
 
-{Initialise l'affichage
-Préconditions :
-    - plat : le plateau de jeu
-    - affichage : la structure contenant le renderer
-Postconditions :
-    - plat : le plateau de jeu
-    - affichage : la structure contenant le renderer}
-procedure initialisationAffichage(var affichage: TAffichage);
-begin
-    initialisationSDL(affichage);
-
-    affichage.xGrid := 100;
-    affichage.yGrid := 25;
-
-    initialisationTextures(affichage);
+    affichage.texturePlateau.textureContourHexagone := chargerTexture(affichage, 'hexagoneCercle');
+    affichage.texturePlateau.textureEleve := chargerTexture(affichage, 'person');
+    affichage.texturePlateau.textureSouillard := chargerTexture(affichage, 'souillard');
+    affichage.texturePlateau.textureProfesseur := chargerTexture(affichage, 'person');
 end;
 
 {Affiche un hexagone à l'écran
@@ -123,17 +112,10 @@ var destination_rect: TSDL_RECT;
     texture,texturebis: PSDL_Texture;
     x,y: Integer;
 begin
-
-    if(plat.Grille[q,r].ressource <> Rien)then
-    begin
-        texture := affichage.texturePlateau.textureRessource[plat.Grille[q,r].ressource];
-        texturebis := chargerTexture(affichage, 'hexagoneCercle');
-    end
-    else
-    begin
-        // texture := chargerTexture(affichage, 'hexagoneVide');
-        texturebis := chargerTexture(affichage, 'hexagone');
-    end;
+    if (plat.Grille[q,r].ressource = Rien) then
+        exit;
+    texture := affichage.texturePlateau.textureRessource[plat.Grille[q,r].ressource];
+    texturebis := affichage.texturePlateau.textureContourHexagone;
 
     hexaToCard(q,r,tailleHexagone div 2,x,y);
 	
@@ -144,8 +126,13 @@ begin
 	destination_rect.h:=tailleHexagone;
 
 	SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect);
-	SDL_RenderCopy(affichage.renderer,texturebis,nil,@destination_rect);
 
+    destination_rect.x:=affichage.xGrid+x-(Round(tailleHexagone * 1.05) div 2);
+    destination_rect.y:=affichage.yGrid+y-(Round(tailleHexagone * 1.05) div 2);
+    destination_rect.w:=Round(tailleHexagone * 1.05);
+    destination_rect.h:=Round(tailleHexagone * 1.05);
+
+	SDL_RenderCopy(affichage.renderer,texturebis,nil,@destination_rect);
 end;
 
 {Affiche le fond de l'écran en blanc
@@ -320,7 +307,11 @@ begin
     coord.x := affichage.xGrid + coord.x;
     coord.y := affichage.yGrid + coord.y;
 
-    texture := chargerTexture(affichage, 'person');
+    if personne.estEleve then
+        texture := affichage.texturePlateau.textureEleve
+    else
+        texture := affichage.texturePlateau.textureProfesseur;
+
     recupererCouleurJoueur(personne.IdJoueur,couleur);
     SDL_SetTextureColorMod(texture, couleur.r, couleur.g, couleur.b);
 	
@@ -349,7 +340,7 @@ begin
     coord.x := affichage.xGrid + x;
     coord.y := affichage.yGrid + y;
 
-    texture := chargerTexture(affichage, 'souillard');
+    texture := affichage.texturePlateau.textureSouillard;
     
     // Définit le carre de destination pour l'affichage de la carte
     destination_rect.x:=coord.x-(tailleSouillard div 2);
@@ -477,13 +468,99 @@ begin
 	SDL_DestroyTexture(texteTexture);
 end;
 
+procedure affichageDes(de1,de2:Integer;var affichage: TAffichage);
+var coord: Tcoord;
+begin
+    coord.x := 1600;
+    coord.y := 500;
+    affichageTexte('Des : ' + IntToStr(de1) + ';' + IntToStr(de2), 25, coord, affichage);
+end;
+
+procedure affichageScore(joueurs: TJoueurs; id: Integer; var affichage: TAffichage);
+var coord: Tcoord;
+begin
+    coord.x := 25;
+    coord.y := 25 + id*75;
+    affichageTexte(joueurs[id].Nom + ': ' + IntToStr(joueurs[id].Points) + ' points', 25, coord, affichage);
+    coord.y := coord.y + 25;
+    affichageTexte('M: '+IntToStr(joueurs[id].Ressources[Mathematiques])+'  P: '+IntToStr(joueurs[id].Ressources[Physique])+'  C: '+IntToStr(joueurs[id].Ressources[Chimie])+'  I: '+IntToStr(joueurs[id].Ressources[Informatique])+'  H: '+IntToStr(joueurs[id].Ressources[Humanites]), 25, coord, affichage);
+end;
+
+procedure ajouterBoutonAction(texte: String; valeur: String; coord: Tcoord; w,h:Integer; var affichage: TAffichage);
+begin
+    setLength(affichage.boutonsAction, length(affichage.boutonsAction)+1);
+    affichage.boutonsAction[length(affichage.boutonsAction)-1].coord := coord;
+    affichage.boutonsAction[length(affichage.boutonsAction)-1].w := w;
+    affichage.boutonsAction[length(affichage.boutonsAction)-1].h := h;
+    affichage.boutonsAction[length(affichage.boutonsAction)-1].texte := texte;
+    affichage.boutonsAction[length(affichage.boutonsAction)-1].valeur := valeur;
+end;
+
+procedure affichageBouton(bouton: TBouton; var affichage: TAffichage);
+var bordure,interieur: TSDL_Rect;
+    epaisseurBord: Integer;
+begin
+    //STEPS
+    //Faire un rectangle noir de taille w,h
+    //Faire un rectangle blanc de taille w-3;h-3
+    //Ecrire le texte au milieu du rectangle blanc
+    epaisseurBord := 2;
+
+    SDL_SetRenderDrawColor(affichage.renderer, 0, 0, 0, 255);
+    bordure.x := bouton.coord.x;
+    bordure.y := bouton.coord.y;
+    bordure.w := bouton.w;
+    bordure.h := bouton.h;
+    SDL_RenderFillRect(affichage.renderer, @bordure);
+
+    SDL_SetRenderDrawColor(affichage.renderer, 255, 255, 255, 255);
+    interieur.x := bouton.coord.x+epaisseurBord;
+    interieur.y := bouton.coord.y+epaisseurBord;
+    interieur.w := bouton.w-epaisseurBord*2;
+    interieur.h := bouton.h-epaisseurBord*2;
+    SDL_RenderFillRect(affichage.renderer, @interieur);
+
+    affichageTexte(' '+bouton.texte, 25, bouton.coord, affichage);
+end;
+
+procedure clicAction(var affichage: TAffichage; var valeur: String);
+var running: Boolean;
+    i: Integer;
+    coord: Tcoord;
+begin
+    running := True;
+    valeur := '';
+
+    if length(affichage.boutonsAction) = 0 then
+    begin
+        running := False;
+        writeln('Pas de boutons');
+    end;
+
+    while running do
+    begin
+        clicCart(affichage,coord);
+        
+        for i:=0 to length(affichage.boutonsAction)-1 do
+        begin
+            if (coord.x >= affichage.boutonsAction[i].coord.x) and (coord.x <= affichage.boutonsAction[i].coord.x + affichage.boutonsAction[i].w) and (coord.y >= affichage.boutonsAction[i].coord.y) and (coord.y <= affichage.boutonsAction[i].coord.y + affichage.boutonsAction[i].h) then
+            begin
+                valeur := affichage.boutonsAction[i].valeur;
+                running := False;
+            end;
+        end;
+        
+        SDL_Delay(10);
+    end;
+end;
+
 {Affiche le tour à l'écran
 Préconditions :
     - plat : le plateau de jeu
     - affichage : la structure contenant le renderer
 Postconditions :
     - affichage : la structure contenant le renderer}
-procedure affichageTour(plat: TPlateau; var affichage: TAffichage);
+procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; var affichage: TAffichage);
 var i: Integer;
 begin
     affichageGrille(plat,affichage);
@@ -494,6 +571,12 @@ begin
     
     for i:=0 to length(plat.Personnes)-1 do
         affichagePersonne(plat.Personnes[i],affichage);
+    
+    for i:=0 to length(affichage.boutonsAction)-1 do
+        affichageBouton(affichage.boutonsAction[i],affichage);
+    
+    for i:=0 to length(joueurs)-1 do
+        affichageScore(joueurs,i,affichage);
 
     miseAJourRenderer(affichage);
 end;
@@ -506,6 +589,46 @@ Postconditions :
 procedure miseAJourRenderer(var affichage :TAffichage);
 begin
     SDL_RenderPresent(affichage.renderer);
+end;
+
+procedure initialisationBoutonsAction(var affichage: TAffichage);
+var coord: Tcoord;
+begin
+    setLength(affichage.boutonsAction, 0);
+
+    coord.x := 25;
+    coord.y := WINDOW_H - 310;
+    ajouterBoutonAction('Achat connexion', 'achat_connexion', coord, 270, 50, affichage);
+
+    coord.y := WINDOW_H - 250;
+    ajouterBoutonAction('Achat eleve', 'achat_eleve', coord, 270, 50, affichage);
+
+    coord.y := WINDOW_H - 190;
+    ajouterBoutonAction('Achat carte tutorat', 'achat_carte_tutorat', coord, 270, 50, affichage);
+
+    coord.y := WINDOW_H - 130;
+    ajouterBoutonAction('Changement en prof', 'changement_en_prof', coord, 270, 50, affichage);
+
+    coord.y := WINDOW_H - 70;
+    ajouterBoutonAction('Fin de tour', 'fin_tour', coord, 270, 50, affichage);
+end;
+
+{Initialise l'affichage
+Préconditions :
+    - plat : le plateau de jeu
+    - affichage : la structure contenant le renderer
+Postconditions :
+    - plat : le plateau de jeu
+    - affichage : la structure contenant le renderer}
+procedure initialisationAffichage(var affichage: TAffichage);
+begin
+    initialisationSDL(affichage);
+
+    affichage.xGrid := 100;
+    affichage.yGrid := 25;
+
+    initialisationTextures(affichage);
+    initialisationBoutonsAction(affichage);
 end;
 
 end.

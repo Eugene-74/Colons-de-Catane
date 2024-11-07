@@ -4,11 +4,9 @@ interface
 
 uses SDL2, SDL2_image;
 
-
-
 type
   // Définition du type TRessource
-  TRessource = (Aucune, Physique, Informatique, Chimie, Humanites,Rien, Mathematiques);
+  TRessource = (Aucune, Physique, Informatique, Chimie, Humanites, Mathematiques, Rien);
 
  TCarteTutorat = record
     nom : String;
@@ -39,7 +37,7 @@ type
 //   end;
 
   // Définition de TRessources (tableau dynamique de TRessourceValeur)
-  TRessources = array [Aucune..Mathematiques] of Integer;
+  TRessources = array [Aucune..Rien] of Integer;
 
   // Définition de TJoueur
   TJoueur = record
@@ -91,8 +89,6 @@ type
     Position: TCoord;
   end;
 
- 
-
   // Définition de TPlateau
   TPlateau = record
     Grille: TGrille;
@@ -108,6 +104,17 @@ type
 
   TTexturePlateau = record
     textureRessource: array[Physique..Mathematiques] of PSDL_Texture;
+    textureContourHexagone: PSDL_Texture;
+    textureEleve: PSDL_Texture;
+    textureSouillard: PSDL_Texture;
+    textureProfesseur: PSDL_Texture;
+  end;
+
+  TBouton = record
+    coord: TCoord;
+    w, h: Integer;
+    texte: String;
+    valeur: String;
   end;
 
   // Définition de TAffichage (pour les transferts et mises à jour via SDL)
@@ -117,10 +124,8 @@ type
     xGrid: Integer;
     yGrid: Integer;
     texturePlateau : TTexturePlateau;
+    boutonsAction: array of TBouton;
   end;
-
-  
-// end;
 
 const
   CARTES_TUTORAT: TCartesTutorat = (

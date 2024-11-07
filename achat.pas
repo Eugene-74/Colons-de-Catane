@@ -94,15 +94,16 @@ begin
     begin
       // Assigner les coordonnées des hexagones sélectionnés à l'élève
       SetLength(Position, 3); 
-      Position[0] := HexagonesCoords[0]; 
-      Position[1] := HexagonesCoords[1]; 
-      Position[2] := HexagonesCoords[2]; 
+      Position[0] := HexagonesCoords[0];
+      Position[1] := HexagonesCoords[1];
+      Position[2] := HexagonesCoords[2];
 
       estEleve := True;
-      IdJoueur := joueurActuel.Id; 
+      IdJoueur := joueurActuel.Id;
     end;
 
-    affichageTour(plateau, affichage); 
+    affichagePersonne(plateau.Personnes[High(plateau.Personnes)], affichage);
+    miseAJourRenderer(affichage);
     WriteLn('Élève placé avec succès !');
   end
   else
@@ -208,7 +209,7 @@ var
   HexagonesCoords: TCoords;
   i, j, k, compteur: Integer;
   estConverti: Boolean;
-begin
+  begin
   // Appeler ClicPersonne pour récupérer les hexagones sélectionnés
   HexagonesCoords := ClicPersonne(affichage, plateau, False); 
   compteur := 0;
@@ -260,7 +261,8 @@ begin
   //   if not estConverti then
   //     WriteLn('Aucun élève trouvé à convertir sur les hexagones sélectionnés.');
 
-    affichageTour(plateau, affichage);
+    affichagePersonne(plateau.Personnes[i], affichage);
+    miseAJourRenderer(affichage);
   end
   else
   begin
@@ -431,7 +433,8 @@ begin
     // Si la connexionn n'est pas valide, on rappelle la fonction
     placementConnexion(plateau,affichage,joueur);
     end;
-  affichageTour(plateau, affichage);
+  affichageConnexion(plateau.Connexions[length(plateau.Connexions)-1], affichage);
+  miseAJourRenderer(affichage);
 end;
 
 
