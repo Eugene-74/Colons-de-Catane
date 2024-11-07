@@ -120,11 +120,20 @@ Postconditions :
     - affichage : la structure contenant le renderer}
 procedure affichageHexagone(plat: TPlateau; var affichage: TAffichage; q, r: Integer);
 var destination_rect: TSDL_RECT;
-    texture: PSDL_Texture;
+    texture,texturebis: PSDL_Texture;
     x,y: Integer;
 begin
 
-    texture := affichage.texturePlateau.textureRessource[plat.Grille[q,r].ressource];
+    if(plat.Grille[q,r].ressource <> Rien)then
+    begin
+        texture := affichage.texturePlateau.textureRessource[plat.Grille[q,r].ressource];
+        texturebis := chargerTexture(affichage, 'hexagoneCercle');
+    end
+    else
+    begin
+        // texture := chargerTexture(affichage, 'hexagoneVide');
+        texturebis := chargerTexture(affichage, 'hexagone');
+    end;
 
     hexaToCard(q,r,tailleHexagone div 2,x,y);
 	
@@ -135,6 +144,8 @@ begin
 	destination_rect.h:=tailleHexagone;
 
 	SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect);
+	SDL_RenderCopy(affichage.renderer,texturebis,nil,@destination_rect);
+
 end;
 
 {Affiche le fond de l'écran en blanc
@@ -377,8 +388,8 @@ begin
                 end;
                 SDL_MOUSEBUTTONDOWN:
                 begin
-                    coord.x := event.button.x-affichage.xGrid;
-                    coord.y := event.button.y-affichage.yGrid;
+                    coord.x := event.button.x;
+                    coord.y := event.button.y;
                     running := False;
                     break;
                 end;
@@ -402,11 +413,11 @@ begin
     while running do
     begin
         clicCart(affichage,coord);
-        cardToHexa(coord.x,coord.y,tailleHexagone div 2,q,r);
+        cardToHexa(coord.x-affichage.xGrid,coord.y-affichage.yGrid,tailleHexagone div 2,q,r);
 
-            running := False;
-            coord.x := q;
-            coord.y := r;
+        running := False;
+        coord.x := q;
+        coord.y := r;
         
         SDL_Delay(10);
     end;

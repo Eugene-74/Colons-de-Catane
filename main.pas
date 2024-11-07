@@ -16,20 +16,15 @@ begin
     initialisationPartie(joueurs,plateau,affichage);
 
     partie(joueurs,plateau,affichage);
+    // clicHexagone(plateau, affichage, coord);
 
-    // plateau := chargementPlateau();
-    // initialisationAffichage(affichage);
-
-
-
-    // affichageGrille(plateau, affichage);
-    // clicHexagone(plateau, affichage);
   end
   else
   begin
     writeln('Test Yann');
 
-    plateau := chargementPlateau();
+  // 1 plateau normal 2 plateau sans bord
+    plateau := chargementPlateau(1);
     initialisationAffichage(affichage);
     writeln('initialisation fini');
 
