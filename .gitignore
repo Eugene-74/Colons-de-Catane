@@ -44,3 +44,6 @@ bin/
 .DS_Store
 Thumbs.db
 main
+GPATH
+GRTAGS
+GTAGS

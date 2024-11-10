@@ -16,7 +16,7 @@ procedure affichagePersonne(personne: TPersonne; var affichage: TAffichage);
 procedure affichageSouillard(plat: TPlateau; var affichage: TAffichage);
 procedure affichageConnexion(connexion : TConnexion; var affichage : TAffichage);
 procedure affichageDes(de1,de2:Integer;var affichage: TAffichage);
-procedure echangeRessources(joueurs: TJoueurs; id:Integer; var id2: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
+procedure echangeRessources(joueurs: TJoueurs; idJoueurActuel:Integer; var idJoueurEchange: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
 procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; var affichage: TAffichage);
 
 implementation
@@ -62,6 +62,12 @@ begin
     //TODO Check si tout est bien initialisé
     affichage.fenetre := SDL_CreateWindow('Catan', SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, SDL_WINDOW_SHOWN);
     affichage.renderer := SDL_CreateRenderer(affichage.fenetre, -1, SDL_RENDERER_ACCELERATED);
+end;
+
+
+procedure nettoyageAffichage(var affichage: TAffichage);
+begin
+    SDL_RenderClear(affichage.renderer);
 end;
 
 {procedure testAffichagePlateau(plat: TPlateau);
@@ -359,11 +365,6 @@ begin
         WriteLn('Erreur SDL: ', SDL_GetError());
 end;
 
-procedure nettoyageAffichage(var affichage: TAffichage);
-begin
-    //TODO
-end;
-
 {Retourne les coordonnées du clic de la souris (système cartésien)
 Préconditions :
     - affichage : la structure contenant le renderer
@@ -495,14 +496,14 @@ begin
     affichageTexte('M: '+IntToStr(joueurs[id].Ressources[Mathematiques])+'  P: '+IntToStr(joueurs[id].Ressources[Physique])+'  C: '+IntToStr(joueurs[id].Ressources[Chimie])+'  I: '+IntToStr(joueurs[id].Ressources[Informatique])+'  H: '+IntToStr(joueurs[id].Ressources[Humanites]), 25, coord, affichage);
 end;
 
-procedure ajouterBoutonAction(texte: String; valeur: String; coord: Tcoord; w,h:Integer; var affichage: TAffichage);
+procedure ajouterBoutonTableau(texte: String; valeur: String; coord: Tcoord; w,h:Integer; var boutons: TBoutons);
 begin
-    setLength(affichage.boutonsAction, length(affichage.boutonsAction)+1);
-    affichage.boutonsAction[length(affichage.boutonsAction)-1].coord := coord;
-    affichage.boutonsAction[length(affichage.boutonsAction)-1].w := w;
-    affichage.boutonsAction[length(affichage.boutonsAction)-1].h := h;
-    affichage.boutonsAction[length(affichage.boutonsAction)-1].texte := texte;
-    affichage.boutonsAction[length(affichage.boutonsAction)-1].valeur := valeur;
+    setLength(boutons, length(boutons)+1);
+    boutons[length(boutons)-1].coord := coord;
+    boutons[length(boutons)-1].w := w;
+    boutons[length(boutons)-1].h := h;
+    boutons[length(boutons)-1].texte := texte;
+    boutons[length(boutons)-1].valeur := valeur;
 end;
 
 procedure affichageZone(x,y,w,h,epaisseurBord: Integer; var affichage: TAffichage);
@@ -535,15 +536,15 @@ begin
     affichageTexte(' '+bouton.texte, 25, bouton.coord, affichage);
 end;
 
-procedure clicAction(var affichage: TAffichage; var valeur: String);
+procedure clicBouton(var affichage: TAffichage; var boutons: TBoutons; var valeurBouton: String);
 var running: Boolean;
     i: Integer;
     coord: Tcoord;
 begin
     running := True;
-    valeur := '';
+    valeurBouton := '';
 
-    if length(affichage.boutonsAction) = 0 then
+    if length(boutons) = 0 then
     begin
         running := False;
         writeln('Pas de boutons');
@@ -553,12 +554,13 @@ begin
     begin
         clicCart(affichage,coord);
         
-        for i:=0 to length(affichage.boutonsAction)-1 do
+        for i:=0 to length(boutons)-1 do
         begin
-            if (coord.x >= affichage.boutonsAction[i].coord.x) and (coord.x <= affichage.boutonsAction[i].coord.x + affichage.boutonsAction[i].w) and (coord.y >= affichage.boutonsAction[i].coord.y) and (coord.y <= affichage.boutonsAction[i].coord.y + affichage.boutonsAction[i].h) then
+            if (coord.x >= boutons[i].coord.x) and (coord.x <= boutons[i].coord.x + boutons[i].w) and (coord.y >= boutons[i].coord.y) and (coord.y <= boutons[i].coord.y + boutons[i].h) then
             begin
-                valeur := affichage.boutonsAction[i].valeur;
+                valeurBouton := boutons[i].valeur;
                 running := False;
+                break;
             end;
         end;
         
@@ -566,7 +568,7 @@ begin
     end;
 end;
 
-procedure affichageIntegerInput(coord:TCoord; ressource: String; var affichage: TAffichage);
+procedure affichageIntegerInput(coord:TCoord; ressource: String; var affichage: TAffichage; var boutons: TBoutons);
 var bouton: TBouton;
 begin
     bouton.coord := coord;
@@ -576,16 +578,18 @@ begin
     bouton.coord.x := coord.x + 120;
     bouton.texte := '+';
     affichageBouton(bouton,affichage);
+    ajouterBoutonTableau('+', ressource + '_plus', bouton.coord, 30, 33, boutons);
 
     bouton.coord.x := coord.x + 155;
     bouton.texte := ' -';
     affichageBouton(bouton,affichage);
+    ajouterBoutonTableau('-', ressource + '_moins', bouton.coord, 30, 33, boutons);
 
     coord.x := coord.x + 200;
     affichageTexte(ressource + ' : 0', 25, coord, affichage);
 end;
 
-procedure affichageJoueurInput(joueurs: TJoueurs; id: Integer; coord:TCoord; var affichage: TAffichage);
+procedure affichageJoueurInput(joueurs: TJoueurs; id: Integer; coord:TCoord; var affichage: TAffichage; var boutons: TBoutons);
 var bouton: TBouton;
 begin
     bouton.coord := coord;
@@ -595,18 +599,22 @@ begin
     bouton.coord.x := coord.x + 120;
     bouton.texte := '<';
     affichageBouton(bouton,affichage);
+    ajouterBoutonTableau('<', 'joueur_precedent', bouton.coord, 30, 33, boutons);
 
     bouton.coord.x := coord.x + 155;
     bouton.texte := '>';
     affichageBouton(bouton,affichage);
+    ajouterBoutonTableau('>', 'joueur_suivant', bouton.coord, 30, 33, boutons);
 
     coord.x := coord.x + 200;
     affichageTexte(joueurs[id].Nom, 25, coord, affichage);
 end;
 
-procedure affichageEchangeRessources(joueurs: TJoueurs; id: Integer; var affichage: TAffichage);
+procedure affichageEchangeRessources(joueurs: TJoueurs; idJoueurActuel,idJoueurEchange: Integer; var affichage: TAffichage; var boutons: TBoutons);
 var coord: Tcoord;
-    button: TBouton;
+    bouton: TBouton;
+    baseCoord: Tcoord;
+    ressource: TRessource;
 begin
     affichageFond(affichage);
     miseAJourRenderer(affichage);
@@ -621,37 +629,61 @@ begin
     coord.y := 90;
     affichageTexte('Echange', 35, coord, affichage);
 
-    coord.x := 750;
+    coord.x := 650;
     coord.y := 160;
-    affichageJoueurInput(joueurs,id,coord,affichage);
+    affichageTexte(joueurs[idJoueurActuel].Nom, 25, coord, affichage);
+    
+    coord.x := 450;
+    for ressource := Physique to Mathematiques do
+    begin
+        coord.y := coord.y + 35;
+        affichageIntegerInput(coord,GetEnumName(TypeInfo(TRessource), Ord(ressource)),affichage,boutons);
+    end;
 
-    coord.x := 750;
-    coord.y := 250;
-    affichageIntegerInput(coord,'M',affichage);
-    coord.x := 750;
-    coord.y := 285;
-    affichageIntegerInput(coord,'P',affichage);
-    coord.x := 750;
-    coord.y := 320;
-    affichageIntegerInput(coord,'C',affichage);
-    coord.x := 750;
-    coord.y := 355;
-    affichageIntegerInput(coord,'I',affichage);
-    coord.x := 750;
-    coord.y := 390;
-    affichageIntegerInput(coord,'H',affichage);
+    coord.x := 950;
+    coord.y := 160;
+    affichageJoueurInput(joueurs,idJoueurEchange,coord,affichage,boutons);
 
-    button.coord.x := 900;
-    button.coord.y := 450;
-    button.w := 95;
-    button.h := 45;
-    button.texte := 'Valider';
-    affichageBouton(button,affichage);
+    for ressource := Physique to Mathematiques do
+    begin
+        coord.y := coord.y + 35;
+        affichageIntegerInput(coord,GetEnumName(TypeInfo(TRessource), Ord(ressource)),affichage,boutons);
+    end;
+
+    bouton.coord.x := 900;
+    bouton.coord.y := 450;
+    bouton.w := 95;
+    bouton.h := 45;
+    bouton.texte := 'Valider';
+    affichageBouton(bouton,affichage);
+    ajouterBoutonTableau('Valider', 'valider_echange', bouton.coord, 95, 45, affichage.boutonsAction);
 end;
 
-procedure echangeRessources(joueurs: TJoueurs; id:Integer; var id2: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
+procedure echangeRessources(joueurs: TJoueurs; idJoueurActuel:Integer; var idJoueurEchange: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
+var boutons: Array of TBouton;
+    valeurBouton: String;
+    i: Integer;
+    ressource: TRessource;
+    stringTab: TStringTab;
 begin
-    affichageEchangeRessources(joueurs,id,affichage);
+    nettoyageAffichage(affichage);
+    SDL_Delay(66);
+
+    affichageEchangeRessources(joueurs,idJoueurActuel,idJoueurEchange,affichage,boutons);
+    miseAJourRenderer(affichage);
+    
+    for ressource := Physique to Mathematiques do
+    begin
+        ressources1[ressource] := 0;
+        ressources2[ressource] := 0;
+    end;
+
+    clicBouton(affichage,boutons,valeurBouton);
+    while valeurBouton <> 'valider_echange' do
+    begin
+        writeln(splitValeur(valeurBouton)[0]);
+        clicBouton(affichage,boutons,valeurBouton);
+    end;
 end;
 
 {Affiche le tour à l'écran
@@ -663,6 +695,8 @@ Postconditions :
 procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; var affichage: TAffichage);
 var i: Integer;
 begin
+    nettoyageAffichage(affichage);
+
     affichageFond(affichage);
 
     affichageGrille(plat,affichage);
@@ -691,7 +725,6 @@ Postconditions :
 procedure miseAJourRenderer(var affichage :TAffichage);
 begin
     SDL_RenderPresent(affichage.renderer);
-    SDL_RenderClear(affichage.renderer);
 end;
 
 procedure initialisationBoutonsAction(var affichage: TAffichage);
@@ -701,22 +734,22 @@ begin
 
     coord.x := 25;
     coord.y := WINDOW_H - 370;
-    ajouterBoutonAction('Achat connexion', 'achat_connexion', coord, 270, 50, affichage);
+    ajouterBoutonTableau('Achat connexion', 'achat_connexion', coord, 270, 50, affichage.boutonsAction);
 
     coord.y := WINDOW_H - 310;
-    ajouterBoutonAction('Achat eleve', 'achat_eleve', coord, 270, 50, affichage);
+    ajouterBoutonTableau('Achat eleve', 'achat_eleve', coord, 270, 50, affichage.boutonsAction);
 
     coord.y := WINDOW_H - 250;
-    ajouterBoutonAction('Achat carte tutorat', 'achat_carte_tutorat', coord, 270, 50, affichage);
+    ajouterBoutonTableau('Achat carte tutorat', 'achat_carte_tutorat', coord, 270, 50, affichage.boutonsAction);
 
     coord.y := WINDOW_H - 190;
-    ajouterBoutonAction('Changement en prof', 'changement_en_prof', coord, 270, 50, affichage);
+    ajouterBoutonTableau('Changement en prof', 'changement_en_prof', coord, 270, 50, affichage.boutonsAction);
 
     coord.y := WINDOW_H - 130;
-    ajouterBoutonAction('Echange', 'echange', coord, 270, 50, affichage);
+    ajouterBoutonTableau('Echange', 'echange', coord, 270, 50, affichage.boutonsAction);
 
     coord.y := WINDOW_H - 70;
-    ajouterBoutonAction('Fin de tour', 'fin_tour', coord, 270, 50, affichage);
+    ajouterBoutonTableau('Fin de tour', 'fin_tour', coord, 270, 50, affichage.boutonsAction);
 end;
 
 {Initialise l'affichage

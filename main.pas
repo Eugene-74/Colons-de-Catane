@@ -58,11 +58,14 @@ begin
     affichageTour(plateau,joueurs, affichage);
 
     id1 := 0;
-    id2 := 0;
-    setLength(joueurs, 2);
-    joueurs[0].Nom := 'n1';
+    id2 := 1;
+    setLength(joueurs, 3);
+    joueurs[0].Nom := 'Patrick';
     joueurs[0].Id := 0;
-    joueurs[1].Nom := 'n2';
+    joueurs[1].Nom := 'Michel';
+    joueurs[1].Id := 1;
+    joueurs[2].Nom := 'Bob';
+    joueurs[2].Id := 2;
 
     echangeRessources(joueurs,id1,id2,ressources1,ressources2,affichage);
     //affichageDes(1,2,affichage);

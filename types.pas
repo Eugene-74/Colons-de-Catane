@@ -8,7 +8,9 @@ type
   // Définition du type TRessource
   TRessource = (Aucune, Physique, Informatique, Chimie, Humanites, Mathematiques, Rien);
 
- TCarteTutorat = record
+  TStringTab = array of String;
+
+  TCarteTutorat = record
     nom : String;
     description : String;
     nbr : Integer;
@@ -117,6 +119,8 @@ type
     valeur: String;
   end;
 
+  TBoutons = array of TBouton;
+
   // Définition de TAffichage (pour les transferts et mises à jour via SDL)
   TAffichage = record
     fenetre: PWindow;
@@ -124,7 +128,7 @@ type
     xGrid: Integer;
     yGrid: Integer;
     texturePlateau : TTexturePlateau;
-    boutonsAction: array of TBouton;
+    boutonsAction: TBoutons;
   end;
 
 const

@@ -9,6 +9,7 @@ procedure cardToHexa(x,y,taille:Integer; var q,r:Integer);
 procedure round_hexa(q_f,r_f:Real; var q,r:Integer);
 function enContact(hexagones: TCoords): Boolean;
 function sontAdjacentes(coord1, coord2: TCoord): Boolean;
+function splitValeur(texte: String): TStringTab;
 
 implementation
 
@@ -63,6 +64,25 @@ begin
         if not sontAdjacentes(hexagones[i], hexagones[i+1]) then
             enContact := False;
     end;
+end;
+
+function splitValeur(texte: String): TStringTab;
+var i : Integer;
+    tab: TStringTab;
+begin
+    i := 0;
+    setLength(tab, 2);
+    while i <= Length(texte) do
+    begin
+        if texte[i] = '_' then
+        begin
+            tab[0] := Copy(texte, 1, i-1);
+            tab[1] := Copy(texte, i+1, Length(texte)-i);
+            break;
+        end;
+        i := i + 1;
+    end;
+    splitValeur := tab;
 end;
 
 end.
