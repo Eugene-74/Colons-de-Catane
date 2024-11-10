@@ -126,14 +126,16 @@ begin
 	destination_rect.w:=tailleHexagone;
 	destination_rect.h:=tailleHexagone;
 
-	SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect);
+	if SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect)<>0 then
+        WriteLn('Erreur SDL: ', SDL_GetError());
 
     destination_rect.x:=affichage.xGrid+x-(Round(tailleHexagone * 1.05) div 2);
     destination_rect.y:=affichage.yGrid+y-(Round(tailleHexagone * 1.05) div 2);
     destination_rect.w:=Round(tailleHexagone * 1.05);
     destination_rect.h:=Round(tailleHexagone * 1.05);
 
-	SDL_RenderCopy(affichage.renderer,texturebis,nil,@destination_rect);
+	if SDL_RenderCopy(affichage.renderer,texturebis,nil,@destination_rect)<>0 then
+        WriteLn('Erreur SDL: ', SDL_GetError());
 end;
 
 {Affiche le fond de l'écran en blanc
@@ -142,7 +144,8 @@ Préconditions :
 procedure affichageFond(var affichage: TAffichage);
 begin
     SDL_SetRenderDrawColor(affichage.renderer, 255, 255, 255, 255);
-    SDL_RenderClear(affichage.renderer);
+    if SDL_RenderClear(affichage.renderer) <> 0 then
+        WriteLn('Erreur SDL: ', SDL_GetError());
 end;
 
 {Affiche la grille à l'écran
@@ -201,7 +204,8 @@ var surface : PSDL_Surface;
     texture : PSDL_Texture;
 begin
     surface := SDL_CreateRGBSurface(0, 1, 1, 32, 0, 0, 0, 0);
-    SDL_FillRect(surface, nil, SDL_MapRGB(surface^.format, couleur.r, couleur.g, couleur.b));
+    if SDL_FillRect(surface, nil, SDL_MapRGB(surface^.format, couleur.r, couleur.g, couleur.b)) <> 0 then
+        WriteLn('Erreur SDL: ', SDL_GetError());
 
     texture := SDL_CreateTextureFromSurface(affichage.renderer, surface);
 
@@ -261,7 +265,8 @@ begin
 
     colorTexture := creerTextureCouleur(affichage,couleur);
 
-    SDL_RenderCopyEx(affichage.renderer, colorTexture, nil, @destination_rect, angle, nil, SDL_FLIP_NONE);
+    if SDL_RenderCopyEx(affichage.renderer, colorTexture, nil, @destination_rect, angle, nil, SDL_FLIP_NONE) <> 0 then
+        WriteLn('Erreur SDL: ', SDL_GetError());
 
     SDL_DestroyTexture(colorTexture);
 end;
@@ -322,7 +327,8 @@ begin
 	destination_rect.w:=taillePersonne;
 	destination_rect.h:=taillePersonne;
 
-	SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect);
+	if SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect) <> 0 then
+        WriteLn('Erreur SDL: ', SDL_GetError());
 end;
 
 {Affiche le souillard à l'écran
@@ -349,7 +355,8 @@ begin
     destination_rect.w:=tailleSouillard;
     destination_rect.h:=Round(tailleSouillard*1.3);
 
-    SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect);
+    if SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect)<>0 then
+        WriteLn('Erreur SDL: ', SDL_GetError());
 end;
 
 procedure nettoyageAffichage(var affichage: TAffichage);
@@ -370,7 +377,7 @@ begin
 
     while running do
     begin
-        SDL_Delay(10);
+        SDL_Delay(66);
         while SDL_PollEvent(@event) <> 0 do
         begin
             case event.type_ of
@@ -411,7 +418,7 @@ begin
         coord.x := q;
         coord.y := r;
         
-        SDL_Delay(10);
+        SDL_Delay(66);
     end;
 end;
 
@@ -462,7 +469,8 @@ begin
 	texteTexture := LoadTextureFromText(affichage.renderer,police,text,couleur);
 	SDL_QueryTexture(texteTexture,nil,nil,@textRect.w,@textRect.h);
 	
-	SDL_RenderCopy(affichage.renderer,texteTexture,nil,@textRect);
+	if SDL_RenderCopy(affichage.renderer,texteTexture,nil,@textRect)<>0 then
+        WriteLn('Erreur SDL: ', SDL_GetError());
 	
 	TTF_CloseFont(police);
 	TTF_Quit();
@@ -505,19 +513,20 @@ begin
     bordure.y := y;
     bordure.w := w;
     bordure.h := h;
-    SDL_RenderFillRect(affichage.renderer, @bordure);
+    if SDL_RenderFillRect(affichage.renderer, @bordure) <> 0 then
+        WriteLn('Erreur SDL: ', SDL_GetError());
 
     SDL_SetRenderDrawColor(affichage.renderer, 255, 255, 255, 255);
     interieur.x := x+epaisseurBord;
     interieur.y := y+epaisseurBord;
     interieur.w := w-epaisseurBord*2;
     interieur.h := h-epaisseurBord*2;
-    SDL_RenderFillRect(affichage.renderer, @interieur);
+    if SDL_RenderFillRect(affichage.renderer, @interieur) <> 0 then
+        WriteLn('Erreur SDL: ', SDL_GetError());
 end;
 
 procedure affichageBouton(bouton: TBouton; var affichage: TAffichage);
-var bordure,interieur: TSDL_Rect;
-    epaisseurBord: Integer;
+var epaisseurBord: Integer;
 begin
     epaisseurBord := 2;
 
@@ -553,7 +562,7 @@ begin
             end;
         end;
         
-        SDL_Delay(10);
+        SDL_Delay(66);
     end;
 end;
 
@@ -601,6 +610,8 @@ var coord: Tcoord;
 begin
     affichageFond(affichage);
     miseAJourRenderer(affichage);
+
+    SDL_Delay(66);
     
     coord.x := 450;
     coord.y := 70;
@@ -680,8 +691,7 @@ Postconditions :
 procedure miseAJourRenderer(var affichage :TAffichage);
 begin
     SDL_RenderPresent(affichage.renderer);
-    if SDL_GetError() <> '' then
-        WriteLn('Erreur SDL: ', SDL_GetError());
+    SDL_RenderClear(affichage.renderer);
 end;
 
 procedure initialisationBoutonsAction(var affichage: TAffichage);

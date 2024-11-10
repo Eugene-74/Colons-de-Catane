@@ -12,7 +12,7 @@ var
     id1,id2 : Integer;
 
 begin
-  testYann := False;
+  testYann := True;
   if not testYann then
   begin
     initialisationPartie(joueurs,plateau,affichage);
@@ -65,7 +65,7 @@ begin
     joueurs[1].Nom := 'n2';
 
     echangeRessources(joueurs,id1,id2,ressources1,ressources2,affichage);
-    affichageDes(1,2,affichage);
+    //affichageDes(1,2,affichage);
     miseAJourRenderer(affichage);
 
     clicHexagone(plateau, affichage, coord);
