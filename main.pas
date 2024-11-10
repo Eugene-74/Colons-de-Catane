@@ -11,6 +11,7 @@ var
     ressources1,ressources2 : TRessources;
     id1,id2 : Integer;
     ressource : TRessource;
+    valeurBouton : String;
 
 begin
   testYann := False;
@@ -73,11 +74,14 @@ begin
         joueurs[1].ressources[ressource] := 3;
     end;
 
+    writeln('Clic action');
+    clicAction(affichage,valeurBouton);
+    writeln('Valeur bouton : ', valeurBouton);
+
     writeln('Echange de ressources');
+    echangeRessources(joueurs,id1,id2,ressources1,ressources2,affichage);
 
-    //echangeRessources(joueurs,id1,id2,ressources1,ressources2,affichage);
-
-    //affichageTour(plateau,joueurs, affichage);
+    affichageTour(plateau,joueurs, affichage);
 
     clicHexagone(plateau, affichage, coord);
     writeln('Coord x : ', coord.x, ' Coord y : ', coord.y);

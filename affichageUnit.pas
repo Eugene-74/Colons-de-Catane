@@ -18,6 +18,7 @@ procedure affichageConnexion(connexion : TConnexion; var affichage : TAffichage)
 procedure affichageDes(de1,de2:Integer;var affichage: TAffichage);
 procedure echangeRessources(joueurs: TJoueurs; idJoueurActuel:Integer; var idJoueurEchange: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
 procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; var affichage: TAffichage);
+procedure clicAction(var affichage: TAffichage; var valeurBouton: String);
 
 implementation
 
@@ -658,6 +659,14 @@ begin
     ajouterBoutonTableau('Valider', 'valider_echange', bouton.coord, 95, 45, boutons);
 end;
 
+{Affiche l'écran d'échange de ressources
+Préconditions :
+    - joueurs : les joueurs de la partie
+    - idJoueurActuel : l'identifiant du joueur actuel
+    - idJoueurEchange : l'identifiant du joueur avec qui échanger
+    - ressources1 : les ressources à échanger du joueur actuel
+    - ressources2 : les ressources à échanger du joueur avec qui échanger
+    - affichage : la structure contenant le renderer}
 procedure echangeRessources(joueurs: TJoueurs; idJoueurActuel:Integer; var idJoueurEchange: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
 var boutons: Array of TBouton;
     valeurBouton: String;
@@ -705,12 +714,18 @@ begin
                     ressources2[ressource] := max(0,ressources2[ressource] - 1);
             end;
         end;
+        //TODO Voir pour pas tout refresh à chaque fois
         nettoyageAffichage(affichage);
         affichageEchangeRessources(joueurs,idJoueurActuel,idJoueurEchange,ressources1,ressources2,affichage,boutons);
         miseAJourRenderer(affichage);
 
         clicBouton(affichage,boutons,valeurBouton);
     end;
+end;
+
+procedure clicAction(var affichage: TAffichage; var valeurBouton: String);
+begin
+    clicBouton(affichage,affichage.boutonsAction,valeurBouton);
 end;
 
 {Affiche le tour à l'écran
