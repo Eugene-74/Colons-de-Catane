@@ -10,6 +10,7 @@ var
     coord : Tcoord;
     ressources1,ressources2 : TRessources;
     id1,id2 : Integer;
+    ressource : TRessource;
 
 begin
   testYann := True;
@@ -66,10 +67,17 @@ begin
     joueurs[1].Id := 1;
     joueurs[2].Nom := 'Bob';
     joueurs[2].Id := 2;
+    for ressource := Physique to Mathematiques do
+    begin
+        joueurs[0].ressources[ressource] := 5;
+        joueurs[1].ressources[ressource] := 3;
+    end;
 
-    echangeRessources(joueurs,id1,id2,ressources1,ressources2,affichage);
-    //affichageDes(1,2,affichage);
-    miseAJourRenderer(affichage);
+    writeln('Echange de ressources');
+
+    //echangeRessources(joueurs,id1,id2,ressources1,ressources2,affichage);
+
+    //affichageTour(plateau,joueurs, affichage);
 
     clicHexagone(plateau, affichage, coord);
     writeln('Coord x : ', coord.x, ' Coord y : ', coord.y);

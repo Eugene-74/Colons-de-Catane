@@ -568,7 +568,7 @@ begin
     end;
 end;
 
-procedure affichageIntegerInput(coord:TCoord; ressource: String; var affichage: TAffichage; var boutons: TBoutons);
+procedure affichageIntegerInput(coord:TCoord; ressource: String; id: String; ressources: TRessources; var affichage: TAffichage; var boutons: TBoutons);
 var bouton: TBouton;
 begin
     bouton.coord := coord;
@@ -578,15 +578,15 @@ begin
     bouton.coord.x := coord.x + 120;
     bouton.texte := '+';
     affichageBouton(bouton,affichage);
-    ajouterBoutonTableau('+', ressource + '_plus', bouton.coord, 30, 33, boutons);
+    ajouterBoutonTableau('+', ressource + '_plus_' + id, bouton.coord, 30, 33, boutons);
 
     bouton.coord.x := coord.x + 155;
     bouton.texte := ' -';
     affichageBouton(bouton,affichage);
-    ajouterBoutonTableau('-', ressource + '_moins', bouton.coord, 30, 33, boutons);
+    ajouterBoutonTableau('-', ressource + '_moins_' + id, bouton.coord, 30, 33, boutons);
 
     coord.x := coord.x + 200;
-    affichageTexte(ressource + ' : 0', 25, coord, affichage);
+    affichageTexte(ressource + ' : ' + IntToStr(ressources[TRessource(GetEnumValue(TypeInfo(TRessource), ressource))]), 25, coord, affichage);
 end;
 
 procedure affichageJoueurInput(joueurs: TJoueurs; id: Integer; coord:TCoord; var affichage: TAffichage; var boutons: TBoutons);
@@ -610,10 +610,9 @@ begin
     affichageTexte(joueurs[id].Nom, 25, coord, affichage);
 end;
 
-procedure affichageEchangeRessources(joueurs: TJoueurs; idJoueurActuel,idJoueurEchange: Integer; var affichage: TAffichage; var boutons: TBoutons);
+procedure affichageEchangeRessources(joueurs: TJoueurs; idJoueurActuel,idJoueurEchange: Integer; ressources1,ressources2: TRessources;var affichage: TAffichage; var boutons: TBoutons);
 var coord: Tcoord;
     bouton: TBouton;
-    baseCoord: Tcoord;
     ressource: TRessource;
 begin
     affichageFond(affichage);
@@ -637,7 +636,7 @@ begin
     for ressource := Physique to Mathematiques do
     begin
         coord.y := coord.y + 35;
-        affichageIntegerInput(coord,GetEnumName(TypeInfo(TRessource), Ord(ressource)),affichage,boutons);
+        affichageIntegerInput(coord,GetEnumName(TypeInfo(TRessource), Ord(ressource)),'1',ressources1,affichage,boutons);
     end;
 
     coord.x := 950;
@@ -647,7 +646,7 @@ begin
     for ressource := Physique to Mathematiques do
     begin
         coord.y := coord.y + 35;
-        affichageIntegerInput(coord,GetEnumName(TypeInfo(TRessource), Ord(ressource)),affichage,boutons);
+        affichageIntegerInput(coord,GetEnumName(TypeInfo(TRessource), Ord(ressource)),'2',ressources2,affichage,boutons);
     end;
 
     bouton.coord.x := 900;
@@ -656,32 +655,60 @@ begin
     bouton.h := 45;
     bouton.texte := 'Valider';
     affichageBouton(bouton,affichage);
-    ajouterBoutonTableau('Valider', 'valider_echange', bouton.coord, 95, 45, affichage.boutonsAction);
+    ajouterBoutonTableau('Valider', 'valider_echange', bouton.coord, 95, 45, boutons);
 end;
 
 procedure echangeRessources(joueurs: TJoueurs; idJoueurActuel:Integer; var idJoueurEchange: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
 var boutons: Array of TBouton;
     valeurBouton: String;
-    i: Integer;
+    valeurBoutonSplit: TStringTab;
     ressource: TRessource;
-    stringTab: TStringTab;
 begin
-    nettoyageAffichage(affichage);
-    SDL_Delay(66);
-
-    affichageEchangeRessources(joueurs,idJoueurActuel,idJoueurEchange,affichage,boutons);
-    miseAJourRenderer(affichage);
-    
     for ressource := Physique to Mathematiques do
     begin
         ressources1[ressource] := 0;
         ressources2[ressource] := 0;
     end;
 
+    nettoyageAffichage(affichage);
+    SDL_Delay(66);
+
+    affichageEchangeRessources(joueurs,idJoueurActuel,idJoueurEchange,ressources1,ressources2,affichage,boutons);
+    miseAJourRenderer(affichage);
+
     clicBouton(affichage,boutons,valeurBouton);
     while valeurBouton <> 'valider_echange' do
     begin
-        writeln(splitValeur(valeurBouton)[0]);
+        if valeurBouton = 'joueur_precedent' then
+            idJoueurEchange := (idJoueurEchange - 1 + length(joueurs)) mod length(joueurs)
+        else if valeurBouton = 'joueur_suivant' then
+            idJoueurEchange := (idJoueurEchange + 1) mod length(joueurs)
+        else
+        begin
+            //TODO opti la vérif de ressources pour limiter aux ressources possédées en max
+            valeurBoutonSplit := splitValeur(valeurBouton);
+
+            ressource := TRessource(GetEnumValue(TypeInfo(TRessource), valeurBoutonSplit[0]));
+
+            if valeurBoutonSplit[1] = 'plus' then
+            begin
+                if valeurBoutonSplit[2] = '1' then
+                    ressources1[ressource] := ressources1[ressource] + 1
+                else
+                    ressources2[ressource] := ressources2[ressource] + 1;
+            end
+            else
+            begin
+                if valeurBoutonSplit[2] = '1' then
+                    ressources1[ressource] := max(0,ressources1[ressource] - 1)
+                else
+                    ressources2[ressource] := max(0,ressources2[ressource] - 1);
+            end;
+        end;
+        nettoyageAffichage(affichage);
+        affichageEchangeRessources(joueurs,idJoueurActuel,idJoueurEchange,ressources1,ressources2,affichage,boutons);
+        miseAJourRenderer(affichage);
+
         clicBouton(affichage,boutons,valeurBouton);
     end;
 end;

@@ -67,18 +67,24 @@ begin
 end;
 
 function splitValeur(texte: String): TStringTab;
-var i : Integer;
+var i,lastOcc : Integer;
     tab: TStringTab;
 begin
-    i := 0;
-    setLength(tab, 2);
+    i := 1;
+    lastOcc := 0;
+    setLength(tab, 1);
+    tab[length(tab)] := '';
     while i <= Length(texte) do
     begin
         if texte[i] = '_' then
         begin
-            tab[0] := Copy(texte, 1, i-1);
-            tab[1] := Copy(texte, i+1, Length(texte)-i);
-            break;
+            setLength(tab, length(tab)+1);
+            tab[length(tab)] := '';
+            lastOcc := i+1;
+        end
+        else
+        begin
+            tab[length(tab)-1] := tab[length(tab)-1] + texte[i];
         end;
         i := i + 1;
     end;
