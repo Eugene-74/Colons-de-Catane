@@ -103,6 +103,7 @@ begin
 
       estEleve := True;
       IdJoueur := joueurActuel.Id;
+      joueurActuel.Points:=+1;
     end;
 
     affichagePersonne(plateau.Personnes[High(plateau.Personnes)], affichage);
@@ -166,23 +167,44 @@ end;
 
 function VerifierAdjacencePersonnes(HexagonesCoords: TCoords; plateau: TPlateau): Boolean;
 var
-  i, j, k, nombreAdjacents: Integer;
+  i, j, k, l, nombreCommuns: Integer;
 begin
-   VerifierAdjacencePersonnes:= False;
-  for i := 0 to High(plateau.Personnes)-1 do
+  VerifierAdjacencePersonnes := False;
+
+  // Vérification des doublons dans HexagonesCoords
+  for i := 0 to High(HexagonesCoords) - 1 do
   begin
-    nombreAdjacents := 0;
-    for j := 0 to High(HexagonesCoords)-1 do
+    for j := i + 1 to High(HexagonesCoords) do
     begin
+      if (HexagonesCoords[i].x = HexagonesCoords[j].x) and 
+         (HexagonesCoords[i].y = HexagonesCoords[j].y) then
+      begin
+        Exit(True); // Il y a des coordonnées identiques
+      end;
+    end;
+  end;
+
+  // Vérification de l'adjacence avec les personnes sur le plateau
+  for i := 0 to High(plateau.Personnes) do
+  begin
+    nombreCommuns := 0;
+
+    // Vérifier chaque coordonnée dans HexagonesCoords
+    for j := 0 to High(HexagonesCoords) do
+    begin
+      // Comparer avec les trois positions de la personne
       for k := 0 to 2 do
       begin
-        if sontAdjacentes(HexagonesCoords[j], plateau.Personnes[i].Position[k]) then
+        if (HexagonesCoords[j].x = plateau.Personnes[i].Position[k].x) and
+           (HexagonesCoords[j].y = plateau.Personnes[i].Position[k].y) then
         begin
-          Inc(nombreAdjacents);  
-          Break;
+          Inc(nombreCommuns);
+          Break; // Passer à la coordonnée suivante après un match
         end;
       end;
-      if nombreAdjacents >= 2 then
+
+      // Si on trouve au moins deux coordonnées identiques, on arrête
+      if nombreCommuns >= 2 then
       begin
         VerifierAdjacencePersonnes := True;
         Exit;
@@ -190,6 +212,8 @@ begin
     end;
   end;
 end;
+
+
 
 
 
@@ -423,9 +447,7 @@ end;
 
 function ClicConnexion(var plateau : TPlateau; var affichage : TAffichage): TCoords;
 var
-  i: Integer;
   coords: TCoords;
-  selections: TCoords;
 begin
   SetLength(coords, 2);
   clicHexagone(plateau, affichage,coords[0]);
@@ -437,7 +459,6 @@ end;
 procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 var
   coords: TCoords;
-  i: Integer;
 begin
 
   // Demande à l'utilisateur de sélectionner deux hexagones pour la connexion
@@ -569,6 +590,7 @@ begin
     end;
   end;
 end;
+
 
 
 
