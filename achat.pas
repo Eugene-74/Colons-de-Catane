@@ -19,6 +19,7 @@ function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: B
 function VerifierAdjacencePersonnes(HexagonesCoords: TCoords; plateau: TPlateau): Boolean;
 function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;
 function aucuneConnexionAdjacente(coords: TCoords;  plateau: TPlateau; joueur: TJoueur): Boolean;
+function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var joueur:TJoueur):Boolean;
 
 
 implementation
@@ -425,6 +426,8 @@ begin
   end;
   enContactAvecAutreConnexion := not aucuneConnexionAdjacente(coords, plateau, joueur);
   enContactAvecPersonne := enContactEleveConnexion(plateau, coords, joueur);
+  if enContactAutreEleveConnexion(plateau,coords,joueur) then 
+     connexionValide:= False;
 if not enContactAvecPersonne then
 begin
   if not enContactAvecAutreConnexion then
@@ -523,77 +526,130 @@ begin
     end;
   end;
 end;
-
 function aucuneConnexionAdjacente(coords: TCoords; plateau: TPlateau; joueur: TJoueur): Boolean;
 var
-  i, k, contactCount: Integer;
-  coordCorrespondante, autreCoord: TCoord;
-  enContactPersonne: Boolean;
+  i, j,k: Integer;
+  autreCoord, autreCoord2, coord1, coord2, coordRestante: TCoord;
+  verif: Boolean;
 begin
-  aucuneConnexionAdjacente := True; // Initialisation à True
+  // Initialisation
+  aucuneConnexionAdjacente := True;
+  verif := true;
+
+  // Parcourir toutes les connexions du plateau pour vérifier les connexions du même joueur
   for i := 0 to High(plateau.Connexions) do
   begin
     if plateau.Connexions[i].IdJoueur = joueur.Id then
     begin
-      enContactPersonne := False;
-      if (coords[0].x = plateau.Connexions[i].Position[0].x) and
-         (coords[0].y = plateau.Connexions[i].Position[0].y) then
+      coord1 := plateau.Connexions[i].Position[0];
+      coord2 := plateau.Connexions[i].Position[1];
+
+      // Identifier `autreCoord` et `coordRestante` en fonction des coordonnées
+      if (coords[0].x = coord1.x) and (coords[0].y = coord1.y) then
       begin
-        coordCorrespondante := coords[0];
         autreCoord := coords[1];
+        autreCoord2 := coords[0];
+        coordRestante := coord2;
       end
-      else if (coords[1].x = plateau.Connexions[i].Position[0].x) and
-              (coords[1].y = plateau.Connexions[i].Position[0].y) then
+      else if (coords[1].x = coord1.x) and (coords[1].y = coord1.y) then
       begin
-        coordCorrespondante := coords[1];
         autreCoord := coords[0];
+        autreCoord2 := coords[1];
+        coordRestante := coord2;
       end
-      else if (coords[0].x = plateau.Connexions[i].Position[1].x) and
-              (coords[0].y = plateau.Connexions[i].Position[1].y) then
+      else if (coords[0].x = coord2.x) and (coords[0].y = coord2.y) then
       begin
-        coordCorrespondante := coords[0];
         autreCoord := coords[1];
+        autreCoord2 := coords[0];
+        coordRestante := coord1;
       end
-      else if (coords[1].x = plateau.Connexions[i].Position[1].x) and
-              (coords[1].y = plateau.Connexions[i].Position[1].y) then
+      else if (coords[1].x = coord2.x) and (coords[1].y = coord2.y) then
       begin
-        coordCorrespondante := coords[1];
         autreCoord := coords[0];
+        autreCoord2 := coords[1];
+        coordRestante := coord1;
       end
       else
-        Continue; 
-      contactCount := 0;
-      for k := 0 to High(plateau.Personnes) do
-      begin
-        if plateau.Personnes[k].IdJoueur = joueur.Id then
-        begin
-          if (sontAdjacentes(autreCoord, plateau.Personnes[k].Position[0])) or
-             (sontAdjacentes(autreCoord, plateau.Personnes[k].Position[1])) or
-             (sontAdjacentes(autreCoord, plateau.Personnes[k].Position[2])) then
-          begin
-            Inc(contactCount);
-          end;
-          if contactCount >= 2 then
-          begin
-            enContactPersonne := True;
-            Break;
-          end;
-        end;
-      end;
+        Continue; // Passer à la connexion suivante si aucune correspondance trouvée
 
-      if not enContactPersonne then
+      // Vérifier si `autreCoord` est adjacente à `coordRestante` (connexion du même joueur)
+      if sontAdjacentes(autreCoord, coordRestante) then
       begin
-        aucuneConnexionAdjacente := False;
-        WriteLn('L''autre hexagone doit être en contact avec au moins deux coordonnées d''une personne du joueur.');
-        Exit;
+       verif := False;
+       
+      end;
+    end;
+  end;
+
+  // Vérifier si `autreCoord2` est utilisé par une connexion d'un joueur différent
+  for j := 0 to High(plateau.Connexions) do
+  begin
+    if plateau.Connexions[j].IdJoueur <> joueur.Id then
+    begin
+      // Vérifier si `autreCoord2` correspond à une extrémité de la connexion d'un autr<;:e joueur
+      if ((autreCoord2.x = plateau.Connexions[j].Position[0].x) and 
+          (autreCoord2.y = plateau.Connexions[j].Position[0].y) and
+          sontAdjacentes(autreCoord, plateau.Connexions[j].Position[1])) or
+         ((autreCoord2.x = plateau.Connexions[j].Position[1].x) and 
+          (autreCoord2.y = plateau.Connexions[j].Position[1].y) and
+          sontAdjacentes(autreCoord, plateau.Connexions[j].Position[0])) then
+      begin
+        verif := True;
+        WriteLn('Erreur : autreCoord est utilisé par une connexion d''un autre joueur, et coordRestante est adjacente à cette connexion.');
+        Break;
+      end;
+    end;
+  end;
+  for k:=0 to High(plateau.Personnes)-1 do
+  Begin
+    if plateau.Personnes[k].IdJoueur <> joueur.Id then 
+    begin
+      if (coords[0].x = plateau.Personnes[i].Position[k].x) and
+           (coords[0].y = plateau.Personnes[i].Position[k].y) then
+           verif:=True;
+    end;
+
+  end;
+
+
+
+    aucuneConnexionAdjacente := verif;
+ 
+end;
+
+function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var joueur:TJoueur):Boolean;
+  var
+  i, k, l: Integer;
+begin
+  enContactAutreEleveConnexion := False;
+  for i := 0 to High(plateau.Personnes) do
+  begin
+    if plateau.Personnes[i].IdJoueur <> joueur.Id then
+    begin
+      l := 0; 
+      for k := 0 to 2 do
+      begin
+        if (coords[0].x = plateau.Personnes[i].Position[k].x) and
+           (coords[0].y = plateau.Personnes[i].Position[k].y) then
+        begin
+          Inc(l);
+        end;
+
+        if (coords[1].x = plateau.Personnes[i].Position[k].x) and
+           (coords[1].y = plateau.Personnes[i].Position[k].y) then
+        begin
+          Inc(l);
+        end;
+        if l >= 2 then
+        begin
+          enContactAutreEleveConnexion := True;
+          WriteLn('Connexion en contact avec une personne dune autre joueur.');
+          Exit;
+        end;
       end;
     end;
   end;
 end;
-
-
-
-
 
 
 
