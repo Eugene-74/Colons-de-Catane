@@ -242,19 +242,50 @@ begin
   
   for i:=1 to length(joueurs) do
     begin
-    // joueurs[i-1].Points := joueurs[i-1].Points + 1;
-    placementEleve(plateau,affichage,joueurs[i-1]);
+    // TODO re mettre apres
+    
+    // placementEleve(plateau,affichage,joueurs[i-1]);
 
-    placementConnexion(plateau,affichage,joueurs[i-1]);
+    // placementConnexion(plateau,affichage,joueurs[i-1]);
     end;
 
   for i:=length(joueurs) downto 1 do
     begin
-    // joueurs[i-1].Points := joueurs[i-1].Points + 1;
-    placementEleve(plateau,affichage,joueurs[i-1]);
 
-    placementConnexion(plateau,affichage,joueurs[i-1]);
+
+    // placementEleve(plateau,affichage,joueurs[i-1]);
+
+    // placementConnexion(plateau,affichage,joueurs[i-1]);
     end;
+
+  setLength(joueurs, 3);
+    joueurs[0].Nom := 'Patrick';
+    joueurs[0].Id := 0;
+    joueurs[1].Nom := 'Michel';
+    joueurs[1].Id := 1;
+    joueurs[2].Nom := 'Bob';
+    joueurs[2].Id := 2;
+
+  SetLength(plateau.Connexions, 1);
+  SetLength(plateau.Connexions[0].Position, 2);
+  plateau.Connexions[0].Position[0].x := 2;
+  plateau.Connexions[0].Position[0].y := 3;
+  plateau.Connexions[0].Position[1].x := 3;
+  plateau.Connexions[0].Position[1].y := 3;
+  plateau.Connexions[0].IdJoueur := 0;
+
+  SetLength(plateau.Personnes, 1);
+  SetLength(plateau.Personnes[0].Position, 3);
+  plateau.Personnes[0].Position[0].x := 2;
+  plateau.Personnes[0].Position[0].y := 3;
+  plateau.Personnes[0].Position[1].x := 3;
+  plateau.Personnes[0].Position[1].y := 3;
+  plateau.Personnes[0].Position[2].x := 2;
+  plateau.Personnes[0].Position[2].y := 4;
+  plateau.Personnes[0].IdJoueur := 0;
+
+  affichageTour(plateau,joueurs, affichage);
+  
 
 end;
 
@@ -321,14 +352,43 @@ end;
 
 procedure tour(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 var j : Tjoueur;
+  valeurBouton : String;
+  finTour : boolean;
+  ressources1,ressources2 : TRessources;
+  i : Integer;
 begin
-  for j in joueurs do 
+  for i := 0 to length(joueurs)-1 do 
     begin
+    j := joueurs[i];
+    finTour := False;
+    repeat
+      
+      clicAction(affichage, valeurBouton);
 
-    placementConnexion(plateau,affichage,joueurs[0]);
-    // TODO choisir l'ordre grace à des clicks
-    // achatElements(j,plateau,affichage);
-    // gestionDes(joueurs,plateau,affichage);
+      writeln(valeurBouton);
+      if(valeurBouton = 'achat_connexion')  then
+        placementConnexion(plateau,affichage,joueurs[0])
+      else if(valeurBouton = 'achat_eleve')  then
+        placementEleve(plateau,affichage,joueurs[0])
+      else if(valeurBouton = 'achat_carte_tutorat')  then
+        writeln('achat carte tutorat')
+      else if(valeurBouton = 'changement_en_prof')  then
+        changementProfesseur(plateau,affichage,j)
+      else if(valeurBouton = 'echange')  then
+        begin
+        writeln('echange');
+        echangeRessources(joueurs, j.Id, j.id,ressources1,ressources2,affichage);
+        writeln('echange bis');
+        affichageTour(plateau, joueurs, affichage);
+
+        // TODO verifier que l'échange est possible
+        end
+      else if(valeurBouton = 'fin_tour')  then
+        finTour := True;
+
+    until (finTour);   
+     
+
     end;
 
 

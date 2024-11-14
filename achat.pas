@@ -425,6 +425,7 @@ begin
     Exit;
   end;
   enContactAvecAutreConnexion := not aucuneConnexionAdjacente(coords, plateau, joueur);
+
   enContactAvecPersonne := enContactEleveConnexion(plateau, coords, joueur);
   if enContactAutreEleveConnexion(plateau,coords,joueur) then 
      connexionValide:= False;
@@ -480,6 +481,8 @@ begin
     plateau.Connexions[length(plateau.Connexions)-1].Position[1] := coords[1];
 
     
+    affichageConnexion(plateau.Connexions[length(plateau.Connexions)-1], affichage);
+    miseAJourRenderer(affichage);
 
 
     WriteLn('Connexion placée avec succès !');
@@ -490,8 +493,6 @@ begin
     // Si la connexionn n'est pas valide, on rappelle la fonction
     placementConnexion(plateau,affichage,joueur);
     end;
-  affichageConnexion(plateau.Connexions[length(plateau.Connexions)-1], affichage);
-  miseAJourRenderer(affichage);
 end;
 function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;
 var
