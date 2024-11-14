@@ -104,11 +104,17 @@ begin
 
       estEleve := True;
       IdJoueur := joueurActuel.Id;
-      joueurActuel.Points:=+1;
+      joueurActuel.Points:=1+joueurActuel.Points;
+
+          
+
+
     end;
 
     affichagePersonne(plateau.Personnes[High(plateau.Personnes)], affichage);
     miseAJourRenderer(affichage);
+
+    
     WriteLn('Élève placé avec succès !');
   end
   else

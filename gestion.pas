@@ -206,28 +206,28 @@ begin
     res[r] := 0;
   stop := false;
   SetLength(joueurs,0);
-  i:=1;
+  i:=0;
   repeat
-    write('rentrer le nom du joueur '+IntToStr(i)+' : (0 pour arêter)');
+    write('rentrer le nom du joueur '+IntToStr(i+1)+' : (0 pour arêter)');
     readln(text);
     if(text <> '0') then
       begin
-      SetLength(joueurs,i);
-      joueurs[i-1].Nom:= text;
-      joueurs[i-1].Points :=0;
-      joueurs[i-1].Ressources := res;
-      joueurs[i-1].Id := i;
+      SetLength(joueurs,i+1);
+      joueurs[i].Nom:= text;
+      joueurs[i].Points :=0;
+      joueurs[i].Ressources := res;
+      joueurs[i].Id := i;
       
       i := i + 1;
       end
     else 
       begin
-        if(i < 3)then
+        if(i < 2)then
           writeln('Le nombre de joueur doit être de au moins 2')
         else 
           stop := true;
       end;
-  until ((i>4) or (stop));
+  until ((i>3) or (stop));
 
 
   SetLength(plateau.Connexions, 1);
@@ -245,7 +245,6 @@ begin
     // TODO re mettre apres
     
     // placementEleve(plateau,affichage,joueurs[i-1]);
-
     // placementConnexion(plateau,affichage,joueurs[i-1]);
     end;
 
@@ -254,17 +253,8 @@ begin
 
 
     // placementEleve(plateau,affichage,joueurs[i-1]);
-
     // placementConnexion(plateau,affichage,joueurs[i-1]);
     end;
-
-  setLength(joueurs, 3);
-    joueurs[0].Nom := 'Patrick';
-    joueurs[0].Id := 0;
-    joueurs[1].Nom := 'Michel';
-    joueurs[1].Id := 1;
-    joueurs[2].Nom := 'Bob';
-    joueurs[2].Id := 2;
 
   SetLength(plateau.Connexions, 1);
   SetLength(plateau.Connexions[0].Position, 2);
@@ -274,15 +264,13 @@ begin
   plateau.Connexions[0].Position[1].y := 3;
   plateau.Connexions[0].IdJoueur := 0;
 
-  SetLength(plateau.Personnes, 1);
-  SetLength(plateau.Personnes[0].Position, 3);
-  plateau.Personnes[0].Position[0].x := 2;
-  plateau.Personnes[0].Position[0].y := 3;
-  plateau.Personnes[0].Position[1].x := 3;
-  plateau.Personnes[0].Position[1].y := 3;
-  plateau.Personnes[0].Position[2].x := 2;
-  plateau.Personnes[0].Position[2].y := 4;
-  plateau.Personnes[0].IdJoueur := 0;
+  setLength(plateau.Connexions, 2);
+  SetLength(plateau.Connexions[1].Position, 2);
+  plateau.Connexions[1].Position[0].x := 3;
+  plateau.Connexions[1].Position[0].y := 2;
+  plateau.Connexions[1].Position[1].x := 3;
+  plateau.Connexions[1].Position[1].y := 3;
+  plateau.Connexions[1].IdJoueur := 1;
 
   affichageTour(plateau,joueurs, affichage);
   
@@ -367,16 +355,15 @@ begin
 
       writeln(valeurBouton);
       if(valeurBouton = 'achat_connexion')  then
-        placementConnexion(plateau,affichage,joueurs[0])
+        placementConnexion(plateau,affichage,j)
       else if(valeurBouton = 'achat_eleve')  then
-        placementEleve(plateau,affichage,joueurs[0])
+        placementEleve(plateau,affichage,j)
       else if(valeurBouton = 'achat_carte_tutorat')  then
         writeln('achat carte tutorat')
       else if(valeurBouton = 'changement_en_prof')  then
         changementProfesseur(plateau,affichage,j)
       else if(valeurBouton = 'echange')  then
         begin
-        writeln('echange');
         echangeRessources(joueurs, j.Id, j.id,ressources1,ressources2,affichage);
         writeln('echange bis');
         affichageTour(plateau, joueurs, affichage);
@@ -387,8 +374,14 @@ begin
         finTour := True;
 
     until (finTour);   
-     
+    writeln(j.Id);
+    writeln(i);
 
+    // affichageScore(joueurs, j.id ,affichage);
+    // miseAJourRenderer(affichage);
+
+     
+    writeln('fin fin de tour');
     end;
 
 

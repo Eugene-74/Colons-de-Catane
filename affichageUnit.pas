@@ -19,6 +19,7 @@ procedure affichageDes(de1,de2:Integer;var affichage: TAffichage);
 procedure echangeRessources(joueurs: TJoueurs; idJoueurActuel:Integer; var idJoueurEchange: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
 procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; var affichage: TAffichage);
 procedure clicAction(var affichage: TAffichage; var valeurBouton: String);
+procedure affichageScore(joueurs: TJoueurs; id: Integer; var affichage: TAffichage);
 
 implementation
 
