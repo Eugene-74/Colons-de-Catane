@@ -339,15 +339,14 @@ begin
 end;
 
 procedure tour(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
-var j : Tjoueur;
-  valeurBouton : String;
+var valeurBouton : String;
   finTour : boolean;
   ressources1,ressources2 : TRessources;
   i : Integer;
 begin
   for i := 0 to length(joueurs)-1 do 
     begin
-    j := joueurs[i];
+    // j := joueurs[i];
     finTour := False;
     repeat
       
@@ -355,16 +354,17 @@ begin
 
       writeln(valeurBouton);
       if(valeurBouton = 'achat_connexion')  then
-        placementConnexion(plateau,affichage,j)
+        placementConnexion(plateau,affichage,joueurs[i])
       else if(valeurBouton = 'achat_eleve')  then
-        placementEleve(plateau,affichage,j)
+        placementEleve(plateau,affichage,joueurs[i])
+        // les point ne s'affiche pas
       else if(valeurBouton = 'achat_carte_tutorat')  then
         writeln('achat carte tutorat')
       else if(valeurBouton = 'changement_en_prof')  then
-        changementProfesseur(plateau,affichage,j)
+        changementProfesseur(plateau,affichage,joueurs[i])
       else if(valeurBouton = 'echange')  then
         begin
-        echangeRessources(joueurs, j.Id, j.id,ressources1,ressources2,affichage);
+        echangeRessources(joueurs, joueurs[i].Id, joueurs[i].Id,ressources1,ressources2,affichage);
         writeln('echange bis');
         affichageTour(plateau, joueurs, affichage);
 
@@ -374,11 +374,9 @@ begin
         finTour := True;
 
     until (finTour);   
-    writeln(j.Id);
-    writeln(i);
-
-    // affichageScore(joueurs, j.id ,affichage);
-    // miseAJourRenderer(affichage);
+    writeln(joueurs[i].Nom);
+    writeln(joueurs[i].Id);
+    writeln(joueurs[i].Points);
 
      
     writeln('fin fin de tour');

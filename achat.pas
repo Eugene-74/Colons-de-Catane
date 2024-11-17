@@ -104,10 +104,9 @@ begin
 
       estEleve := True;
       IdJoueur := joueurActuel.Id;
+
+      // ajout d'un point
       joueurActuel.Points:=1+joueurActuel.Points;
-
-          
-
 
     end;
 
@@ -283,7 +282,10 @@ var
           //   joueurActuel.Ressources[Physique] := joueurActuel.Ressources[Physique] - 1;
           // end;
           plateau.Personnes[i].estEleve := False; // Convertir l'élève en professeur
-          estConverti := True;
+          estConverti := True;      
+          
+          // ajout d'un point
+          joueurActuel.Points:=1+joueurActuel.Points;
           WriteLn('Élève converti en professeur avec succès !');
           Break; 
         end;
@@ -338,7 +340,7 @@ for i := 0 to length(connexionsJ) -1 do
 end;
 
 
-procedure verificationPointsVictoire(plateau : TPlateau;joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer);
+procedure verificationPointsVictoire(plateau : TPlateau; joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer);
 var
   joueur : TJoueur;
   plusGrandeRoute,plusDeplacementSouillard : Boolean;
@@ -353,7 +355,8 @@ begin
   j:=0;
   for joueur in joueurs do
   begin
-    j := j+1;
+
+    points[j] := joueur.points;
 
     // TODO erreur acces violation
     // plusGrandeRoute := True;
@@ -365,6 +368,8 @@ begin
     // if plusGrandeRoute then
     //   points[j] := points[j] + 2;
     // end;
+
+
     
     if(joueur.CartesTutorat.carte2.nbr >= 3) then
       for i := 0 to High(joueurs) do
@@ -373,12 +378,21 @@ begin
     if(plusDeplacementSouillard) then
       points[j] := points[j] + 2;
     
-    if points[j] > 10 then
+    writeln('point des joeurus ');
+    writeln(points[j]);
+    writeln(joueurs[i].Points);
+
+
+    if points[j] > 11 then
     begin
+      writeln('gagner');
       gagner := True;       
       gagnant := j+1; 
       Break;
     end;
+
+    j := j+1;
+
   end;
 
 
