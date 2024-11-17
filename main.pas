@@ -1,16 +1,15 @@
 program main;
 
-uses affichageUnit,types,gestion;
+uses affichageUnit,types,gestion,traitement;
 
 var 
     affichage: TAffichage;
     plateau: TPlateau;
     joueurs: TJoueurs;
     testYann : Boolean;
-    coord : Tcoord;
     ressources1,ressources2 : TRessources;
-    id1,id2 : Integer;
     ressource : TRessource;
+    id : Integer;
     valeurBouton : String;
 
 begin
@@ -32,9 +31,7 @@ begin
     initialisationAffichage(affichage);
     writeln('initialisation fini');
 
-    coord.x := 500;
-    coord.y := 750;
-    affichageTexte('test', 35, coord, affichage);
+    affichageTexte('test', 35, FCoord(500,750), affichage);
 
     SetLength(plateau.Connexions, 1);
     SetLength(plateau.Connexions[0].Position, 2);
@@ -59,8 +56,6 @@ begin
 
     affichageTour(plateau,joueurs, affichage);
 
-    id1 := 0;
-    id2 := 1;
     setLength(joueurs, 3);
     joueurs[0].Nom := 'Patrick';
     joueurs[0].Id := 0;
@@ -74,17 +69,21 @@ begin
         joueurs[1].ressources[ressource] := 3;
     end;
 
+    affichageDes(1,3,FCoord(1500,475),affichage);
+    miseAJourRenderer(affichage);
+
     writeln('Clic action');
     clicAction(affichage,valeurBouton);
     writeln('Valeur bouton : ', valeurBouton);
 
     writeln('Echange de ressources');
-    echangeRessources(joueurs,id1,id2,ressources1,ressources2,affichage);
+    id := 1;
+    echangeRessources(joueurs,0,id,ressources1,ressources2,affichage);
 
     affichageTour(plateau,joueurs, affichage);
 
-    clicHexagone(plateau, affichage, coord);
-    writeln('Coord x : ', coord.x, ' Coord y : ', coord.y);
+    clicAction(affichage,valeurBouton);
+    writeln('Valeur bouton : ', valeurBouton);
   end;
 
   writeln('Fin du programme');

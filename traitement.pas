@@ -10,6 +10,7 @@ procedure round_hexa(q_f,r_f:Real; var q,r:Integer);
 function enContact(hexagones: TCoords): Boolean;
 function sontAdjacentes(coord1, coord2: TCoord): Boolean;
 function splitValeur(texte: String): TStringTab;
+function FCoord(x, y: Integer): TCoord;
 
 implementation
 
@@ -67,11 +68,10 @@ begin
 end;
 
 function splitValeur(texte: String): TStringTab;
-var i,lastOcc : Integer;
+var i : Integer;
     tab: TStringTab;
 begin
     i := 1;
-    lastOcc := 0;
     setLength(tab, 1);
     tab[length(tab)] := '';
     while i <= Length(texte) do
@@ -80,7 +80,6 @@ begin
         begin
             setLength(tab, length(tab)+1);
             tab[length(tab)] := '';
-            lastOcc := i+1;
         end
         else
         begin
@@ -89,6 +88,13 @@ begin
         i := i + 1;
     end;
     splitValeur := tab;
+end;
+
+function FCoord(x, y: Integer): TCoord;
+var coord: TCoord;
+begin
+    FCoord.x := x;
+    FCoord.y := y;
 end;
 
 end.
