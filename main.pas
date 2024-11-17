@@ -29,30 +29,21 @@ begin
   // 1 plateau normal 2 plateau sans bord
     plateau := chargementPlateau(1);
     initialisationAffichage(affichage);
-    writeln('initialisation fini');
-
-    affichageTexte('test', 35, FCoord(500,750), affichage);
 
     SetLength(plateau.Connexions, 1);
     SetLength(plateau.Connexions[0].Position, 2);
-    plateau.Connexions[0].Position[0].x := 3;
-    plateau.Connexions[0].Position[0].y := 1;
-    plateau.Connexions[0].Position[1].x := 2;
-    plateau.Connexions[0].Position[1].y := 2;
+    plateau.Connexions[0].Position[0] := FCoord(3,1);
+    plateau.Connexions[0].Position[1] := FCoord(2,2);
     plateau.Connexions[0].IdJoueur := 4;
 
     SetLength(plateau.Personnes, 1);
     SetLength(plateau.Personnes[0].Position, 3);
-    plateau.Personnes[0].Position[0].x := 2;
-    plateau.Personnes[0].Position[0].y := 3;
-    plateau.Personnes[0].Position[1].x := 3;
-    plateau.Personnes[0].Position[1].y := 3;
-    plateau.Personnes[0].Position[2].x := 2;
-    plateau.Personnes[0].Position[2].y := 4;
+    plateau.Personnes[0].Position[0] := FCoord(2,3);
+    plateau.Personnes[0].Position[1] := FCoord(3,3);
+    plateau.Personnes[0].Position[2] := FCoord(2,4);
     plateau.Personnes[0].IdJoueur := 3;
 
-    plateau.Souillard.Position.x := 4;
-    plateau.Souillard.Position.y := 3;
+    plateau.Souillard.Position := FCoord(4,3);
 
     affichageTour(plateau,joueurs, affichage);
 
@@ -72,18 +63,15 @@ begin
     affichageDes(1,3,FCoord(1500,475),affichage);
     miseAJourRenderer(affichage);
 
-    writeln('Clic action');
     clicAction(affichage,valeurBouton);
     writeln('Valeur bouton : ', valeurBouton);
 
-    writeln('Echange de ressources');
     id := 1;
     echangeRessources(joueurs,0,id,ressources1,ressources2,affichage);
 
     affichageTour(plateau,joueurs, affichage);
 
     clicAction(affichage,valeurBouton);
-    writeln('Valeur bouton : ', valeurBouton);
   end;
 
   writeln('Fin du programme');
