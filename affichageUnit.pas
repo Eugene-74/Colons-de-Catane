@@ -186,16 +186,16 @@ Postconditions :
 procedure recupererCouleurJoueur(joueurId: Integer; var couleur: TSDL_Color);
 begin
     case joueurId of
-        1: begin
+        0: begin
             couleur.r := 255; couleur.g := 0; couleur.b := 0;
         end;
-        2: begin
+        1: begin
             couleur.r := 0; couleur.g := 255; couleur.b := 0;
         end;
-        3: begin
+        2: begin
             couleur.r := 0; couleur.g := 0; couleur.b := 255;
         end;
-        4: begin
+        3: begin
         couleur.r := 255; couleur.g := 255; couleur.b := 0;
         end;
     end;
