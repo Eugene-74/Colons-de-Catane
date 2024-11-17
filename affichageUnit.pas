@@ -15,7 +15,7 @@ procedure affichageTexte(text:String; taille:Integer; coord:Tcoord; var affichag
 procedure affichagePersonne(personne: TPersonne; var affichage: TAffichage);
 procedure affichageSouillard(plat: TPlateau; var affichage: TAffichage);
 procedure affichageConnexion(connexion : TConnexion; var affichage : TAffichage);
-procedure affichageDes(de1,de2:Integer;var affichage: TAffichage);
+procedure affichageDes(de1,de2:Integer; coord: TCoord; var affichage: TAffichage);
 procedure echangeRessources(joueurs: TJoueurs; idJoueurActuel:Integer; var idJoueurEchange: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
 procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; var affichage: TAffichage);
 procedure clicAction(var affichage: TAffichage; var valeurBouton: String);
@@ -120,6 +120,7 @@ procedure affichageHexagone(plat: TPlateau; var affichage: TAffichage; q, r: Int
 var destination_rect: TSDL_RECT;
     texture,texturebis: PSDL_Texture;
     x,y: Integer;
+    coord: Tcoord;
 begin
     if (plat.Grille[q,r].ressource = Rien) then
         exit;
@@ -144,6 +145,13 @@ begin
 
 	if SDL_RenderCopy(affichage.renderer,texturebis,nil,@destination_rect)<>0 then
         WriteLn('Erreur SDL: ', SDL_GetError());
+
+    coord.x:=affichage.xGrid+x - 40 div 2;
+    coord.y:=affichage.yGrid+y - 50 div 2;
+    if plat.Grille[q,r].Numero div 10 >= 1 then
+        affichageTexte(IntToStr(plat.Grille[q,r].Numero), 40, coord, affichage)
+    else
+        affichageTexte(' ' + IntToStr(plat.Grille[q,r].Numero), 40, coord, affichage);
 end;
 
 {Affiche le fond de l'écran en blanc
@@ -186,16 +194,16 @@ Postconditions :
 procedure recupererCouleurJoueur(joueurId: Integer; var couleur: TSDL_Color);
 begin
     case joueurId of
-        1: begin
+        0: begin
             couleur.r := 255; couleur.g := 0; couleur.b := 0;
         end;
-        2: begin
+        1: begin
             couleur.r := 0; couleur.g := 255; couleur.b := 0;
         end;
-        3: begin
+        2: begin
             couleur.r := 0; couleur.g := 0; couleur.b := 255;
         end;
-        4: begin
+        3: begin
         couleur.r := 255; couleur.g := 255; couleur.b := 0;
         end;
     end;
@@ -289,8 +297,7 @@ var scoord: Tcoord;
     i: Integer;
     x,y: Integer;
 begin
-    scoord.x := 0;
-    scoord.y := 0;
+    scoord := FCoord(0,0);
     
     for i:=0 to length(personne.Position)-1 do
     begin
@@ -299,8 +306,8 @@ begin
         scoord.y := scoord.y + y;
     end;
 
-    scoord.x := scoord.x div length(personne.Position);
-    scoord.y := scoord.y div length(personne.Position);
+    scoord.x := scoord.x div 3;
+    scoord.y := scoord.y div 3;
 
     calculPosPersonne := scoord;
 end;
@@ -318,8 +325,6 @@ var coord: Tcoord;
     couleur: TSDL_Color;
 begin
     coord := calculPosPersonne(personne);
-    coord.x := affichage.xGrid + coord.x;
-    coord.y := affichage.yGrid + coord.y;
 
     if personne.estEleve then
         texture := affichage.texturePlateau.textureEleve
@@ -330,8 +335,8 @@ begin
     SDL_SetTextureColorMod(texture, couleur.r, couleur.g, couleur.b);
 	
 	// Définit le carre de destination pour l'affichage de la carte
-	destination_rect.x:=coord.x-(taillePersonne div 2);
-	destination_rect.y:=coord.y-(taillePersonne div 2);
+	destination_rect.x:=affichage.xGrid + coord.x -(taillePersonne div 2);
+	destination_rect.y:=affichage.yGrid + coord.y -(taillePersonne div 2);
 	destination_rect.w:=taillePersonne;
 	destination_rect.h:=taillePersonne;
 
@@ -346,20 +351,17 @@ Préconditions :
 Postconditions :
     - affichage : la structure contenant le renderer}
 procedure affichageSouillard(plat: TPlateau; var affichage: TAffichage);
-var coord: Tcoord;
-    destination_rect: TSDL_RECT;
+var destination_rect: TSDL_RECT;
     texture: PSDL_Texture;
     x,y: Integer;
 begin
     hexaToCard(plat.Souillard.Position.x,plat.Souillard.Position.y,tailleHexagone div 2,x,y);
-    coord.x := affichage.xGrid + x;
-    coord.y := affichage.yGrid + y;
 
     texture := affichage.texturePlateau.textureSouillard;
     
     // Définit le carre de destination pour l'affichage de la carte
-    destination_rect.x:=coord.x-(tailleSouillard div 2);
-    destination_rect.y:=coord.y-(Round(tailleSouillard*1.3) div 2);
+    destination_rect.x:=affichage.xGrid + x-(tailleSouillard div 2);
+    destination_rect.y:=affichage.yGrid + y -(Round(tailleSouillard*1.3) div 2);
     destination_rect.w:=tailleSouillard;
     destination_rect.h:=Round(tailleSouillard*1.3);
 
@@ -390,8 +392,7 @@ begin
                 end;
                 SDL_MOUSEBUTTONDOWN:
                 begin
-                    coord.x := event.button.x;
-                    coord.y := event.button.y;
+                    coord := FCoord(event.button.x,event.button.y);
                     running := False;
                     break;
                 end;
@@ -418,8 +419,7 @@ begin
         cardToHexa(coord.x-affichage.xGrid,coord.y-affichage.yGrid,tailleHexagone div 2,q,r);
 
         running := False;
-        coord.x := q;
-        coord.y := r;
+        coord := FCoord(q,r);
         
         SDL_Delay(66);
     end;
@@ -480,19 +480,31 @@ begin
 	SDL_DestroyTexture(texteTexture);
 end;
 
-procedure affichageDes(de1,de2:Integer;var affichage: TAffichage);
-var coord: Tcoord;
+procedure affichageDe(de,rotation:Integer; coord:Tcoord; var affichage: TAffichage);
+var destination_rect: TSDL_RECT;
+    texture: PSDL_Texture;
 begin
-    coord.x := 1600;
-    coord.y := 500;
-    affichageTexte('Des : ' + IntToStr(de1) + ';' + IntToStr(de2), 25, coord, affichage);
+    texture := chargerTexture(affichage, 'DiceFaces/' + IntToStr(de));
+    destination_rect.x := coord.x;
+    destination_rect.y := coord.y;
+    destination_rect.w := 75;
+    destination_rect.h := 75;
+
+    if SDL_RenderCopyEx(affichage.renderer, texture, nil, @destination_rect, rotation, nil, SDL_FLIP_NONE) <> 0 then
+        WriteLn('Erreur SDL: ', SDL_GetError());
+end;
+
+procedure affichageDes(de1,de2:Integer; coord: TCoord; var affichage: TAffichage);
+begin
+    affichageDe(de1,-15,coord,affichage);
+    coord.x := coord.x + 75;
+    affichageDe(de2,20,coord,affichage);
 end;
 
 procedure affichageScore(joueurs: TJoueurs; id: Integer; var affichage: TAffichage);
 var coord: Tcoord;
 begin
-    coord.x := 25;
-    coord.y := 25 + id*75;
+    coord := FCoord(25,25+id*75);
     affichageTexte(joueurs[id].Nom + ': ' + IntToStr(joueurs[id].Points) + ' points', 25, coord, affichage);
     coord.y := coord.y + 25;
     affichageTexte('M: '+IntToStr(joueurs[id].Ressources[Mathematiques])+'  P: '+IntToStr(joueurs[id].Ressources[Physique])+'  C: '+IntToStr(joueurs[id].Ressources[Chimie])+'  I: '+IntToStr(joueurs[id].Ressources[Informatique])+'  H: '+IntToStr(joueurs[id].Ressources[Humanites]), 25, coord, affichage);
@@ -621,17 +633,14 @@ begin
     miseAJourRenderer(affichage);
 
     SDL_Delay(66);
-    
-    coord.x := 450;
-    coord.y := 70;
+
+    coord := FCoord(450,70);
     affichageZone(coord.x,coord.y,1050,930,3,affichage);
 
-    coord.x := 890;
-    coord.y := 90;
+    coord := FCoord(890,90);
     affichageTexte('Echange', 35, coord, affichage);
 
-    coord.x := 650;
-    coord.y := 160;
+    coord := FCoord(650,160);
     affichageTexte(joueurs[idJoueurActuel].Nom, 25, coord, affichage);
     
     coord.x := 450;
@@ -641,8 +650,7 @@ begin
         affichageIntegerInput(coord,GetEnumName(TypeInfo(TRessource), Ord(ressource)),'1',ressources1,affichage,boutons);
     end;
 
-    coord.x := 950;
-    coord.y := 160;
+    coord := FCoord(950,160);
     affichageJoueurInput(joueurs,idJoueurEchange,coord,affichage,boutons);
 
     for ressource := Physique to Mathematiques do
@@ -651,8 +659,7 @@ begin
         affichageIntegerInput(coord,GetEnumName(TypeInfo(TRessource), Ord(ressource)),'2',ressources2,affichage,boutons);
     end;
 
-    bouton.coord.x := 900;
-    bouton.coord.y := 450;
+    bouton.coord := FCoord(900,450);
     bouton.w := 95;
     bouton.h := 45;
     bouton.texte := 'Valider';
