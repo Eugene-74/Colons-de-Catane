@@ -120,6 +120,8 @@ procedure affichageHexagone(plat: TPlateau; var affichage: TAffichage; q, r: Int
 var destination_rect: TSDL_RECT;
     texture,texturebis: PSDL_Texture;
     x,y: Integer;
+    coord: Tcoord;
+    texte: String;
 begin
     if (plat.Grille[q,r].ressource = Rien) then
         exit;
@@ -144,6 +146,13 @@ begin
 
 	if SDL_RenderCopy(affichage.renderer,texturebis,nil,@destination_rect)<>0 then
         WriteLn('Erreur SDL: ', SDL_GetError());
+
+    coord.x:=affichage.xGrid+x - 40 div 2;
+    coord.y:=affichage.yGrid+y - 50 div 2;
+    if plat.Grille[q,r].Numero div 10 >= 1 then
+        affichageTexte(IntToStr(plat.Grille[q,r].Numero), 40, coord, affichage)
+    else
+        affichageTexte(' ' + IntToStr(plat.Grille[q,r].Numero), 40, coord, affichage);
 end;
 
 {Affiche le fond de l'écran en blanc
