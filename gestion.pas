@@ -198,10 +198,7 @@ var i,num : integer;
   r : Tressource;
   cartesTutorat : TCartesTutorat;
 begin
-
-  cartesTutorat := intialisationTutorat();
-  plateau.cartesTutorat := cartesTutorat;
-
+  
   for r := Aucune to Mathematiques do
     res[r] := 0;
   stop := false;
@@ -230,16 +227,21 @@ begin
   until ((i>3) or (stop));
 
 
-  SetLength(plateau.Connexions, 1);
-  SetLength(plateau.Connexions[0].Position, 2);
-
   initialisationAffichage(affichage);
 
   num :=1;
 
   plateau := chargementPlateau(num);
+
+  plateau.des1 := 1;
+  plateau.des2 := 1;
+
+  cartesTutorat := intialisationTutorat();
+  plateau.cartesTutorat := cartesTutorat;
+
   affichageTour(plateau, joueurs, affichage);
   
+
   for i:=1 to length(joueurs) do
     begin
     // TODO re mettre apres
@@ -280,15 +282,12 @@ end;
 
 function nombreAleatoire(n : Integer): Integer;
 begin
-  Randomize;
   nombreAleatoire := Random(n) + 1;
+  Randomize();
 end;
 
     
-procedure deplacementSouillard(var plateau : TPlateau; var affichage : TAffichage);
-begin
-  writeln('deplacementSouillard activer');
-end;
+
 
 
 procedure distributionConnaissance(var joueurs : TJoueurs;var plateau : TPlateau;des : integer);
@@ -311,7 +310,8 @@ begin
               for coo in perso.Position do 
                 begin
                 if((coo.x = coord.x )and (coo.y = coord.y))then
-                  joueurs[perso.IdJoueur].Ressources[res] := joueurs[perso.IdJoueur].Ressources[res] +1 ;
+                  if((plateau.Souillard.Position.x <> coord.x) and (plateau.Souillard.Position.y <> coord.y)) then
+                    joueurs[perso.IdJoueur].Ressources[res] := joueurs[perso.IdJoueur].Ressources[res] +1 ;
                 end;
             end;
           end;
@@ -322,13 +322,22 @@ end;
 procedure gestionDes(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 var
   des,des1, des2: Integer;
+  coord : Tcoord;
 begin
-
   des1 := nombreAleatoire(6);
   des2 := nombreAleatoire(6);
   des := des1 + des2;
+
+  plateau.des1 := des1;
+  plateau.des2 := des2;
+
+
   if(des = 7)then
-    deplacementSouillard(plateau,affichage)
+    begin
+    affichageTour(plateau,joueurs,affichage);
+
+    deplacementSouillard(plateau,joueurs,affichage)
+    end;
   else 
     begin
       distributionConnaissance(joueurs,plateau,des);
@@ -346,17 +355,20 @@ var valeurBouton : String;
 begin
   for i := 0 to length(joueurs)-1 do 
     begin
-    // j := joueurs[i];
+    gestionDes(joueurs,plateau,affichage);
+      
+    affichageTour(plateau,joueurs,affichage);
+
+
     finTour := False;
     repeat
-      
       clicAction(affichage, valeurBouton);
 
       writeln(valeurBouton);
       if(valeurBouton = 'achat_connexion')  then
         placementConnexion(plateau,affichage,joueurs[i])
       else if(valeurBouton = 'achat_eleve')  then
-        placementEleve(plateau,affichage,joueurs[i])
+        PlacementEleve(plateau,affichage,joueurs[i])
         // les point ne s'affiche pas
       else if(valeurBouton = 'achat_carte_tutorat')  then
         writeln('achat carte tutorat')
@@ -406,10 +418,11 @@ placementConnexion(plateau,affichage,joueur);
 
 end;
 
-procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueur : Tjoueur);
+procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueurs : Tjoueurs; joueur : Tjoueur);
 begin
 affichageTexte('Deplacement du souillard par le joueur '+joueur.nom,0,plateau.Souillard.Position,affichage);
-deplacementSouillard(plateau, affichage);
+deplacementSouillard(plateau,joueurs,affichage);
+
 
 end;
 
@@ -453,7 +466,7 @@ begin
   else if nom = plateau.cartesTutorat.carte2.nom then
   begin
     writeln('Utilisation de la carte ', plateau.cartesTutorat.carte2.nom);
-    utiliserCarte2(plateau, affichage, joueur);
+    utiliserCarte2(plateau, affichage,joueurs, joueur);
 
   end
   else if nom = plateau.cartesTutorat.carte3.nom then

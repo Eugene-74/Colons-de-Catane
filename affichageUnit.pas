@@ -174,6 +174,7 @@ procedure affichageGrille(plat: TPlateau; var affichage: TAffichage);
 var q,r,taille: Integer;
     //gridSize: Integer;
 begin
+// TODO afficher sans bordure !!! 
     affichageFond(affichage);
 
     taille := length(plat.Grille);
@@ -507,6 +508,8 @@ begin
     coord := FCoord(25,25+id*75);
     affichageTexte(joueurs[id].Nom + ': ' + IntToStr(joueurs[id].Points) + ' points', 25, coord, affichage);
     coord.y := coord.y + 25;
+    
+
     affichageTexte('M: '+IntToStr(joueurs[id].Ressources[Mathematiques])+'  P: '+IntToStr(joueurs[id].Ressources[Physique])+'  C: '+IntToStr(joueurs[id].Ressources[Chimie])+'  I: '+IntToStr(joueurs[id].Ressources[Informatique])+'  H: '+IntToStr(joueurs[id].Ressources[Humanites]), 25, coord, affichage);
 end;
 
@@ -744,13 +747,21 @@ Postconditions :
     - affichage : la structure contenant le renderer}
 procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; var affichage: TAffichage);
 var i: Integer;
+  coord : Tcoord;
 begin
     nettoyageAffichage(affichage);
 
     affichageFond(affichage);
 
+    
     affichageGrille(plat,affichage);
+    // TODO probleme afficher souillard entre les couches de affichage grille ...
+    
     affichageSouillard(plat,affichage);
+
+
+    
+    affichageDes(plat.des1,plat.des2,FCoord(50,500),affichage);
 
     for i:=0 to length(plat.Connexions)-1 do
         affichageConnexion(plat.Connexions[i],affichage);

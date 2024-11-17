@@ -98,6 +98,9 @@ type
     Personnes: TPersonnes;
     Connexions: TConnexions;
     CartesTutorat: TCartesTutorat;
+    des1 : Integer;
+    des2 : Integer;
+
   end;
   
   PWindow = PSDL_Window;
