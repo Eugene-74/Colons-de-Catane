@@ -1,6 +1,6 @@
 program main;
 
-uses affichageUnit,types,gestion,traitement;
+uses affichageUnit,types,gestion,traitement,achat;
 
 var 
     affichage: TAffichage;
@@ -11,6 +11,7 @@ var
     ressource : TRessource;
     id : Integer;
     valeurBouton : String;
+    tempCoord : Tcoord;
 
 begin
   testYann := False;
@@ -18,8 +19,15 @@ begin
   begin
     initialisationPartie(joueurs,plateau,affichage);
 
-    partie(joueurs,plateau,affichage);
-    // clicHexagone(plateau, affichage, coord);
+    while True do 
+    begin
+      clicHexagone(plateau,affichage,tempCoord);
+      dansLePlateau(plateau,tempCoord);
+    end;
+    
+    // partie(joueurs,plateau,affichage);
+
+
 
   end
   else

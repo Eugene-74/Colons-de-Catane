@@ -26,13 +26,13 @@ begin
     SetLength(ressources, 7, 7);
     SetLength(numeros, 7, 7);
 
-    ressources[0] := [Aucune, Aucune, Aucune, Aucune, Aucune, Aucune, Aucune];
-    ressources[1] := [Aucune, Aucune, Aucune, Humanites, Mathematiques, Chimie, Aucune];
-    ressources[2] := [Aucune, Aucune, Mathematiques, Chimie, Informatique, Physique, Aucune];
-    ressources[3] := [Aucune, Humanites, Informatique, Rien, Humanites, Chimie, Aucune];
-    ressources[4] := [Aucune, Physique, Mathematiques, Informatique, Physique, Aucune, Aucune];
-    ressources[5] := [Aucune, Physique, Humanites, Mathematiques, Aucune, Aucune, Aucune];
-    ressources[6] := [Aucune, Aucune, Aucune, Aucune, Aucune, Aucune, Aucune];
+    ressources[0] := [Aucune, Aucune, Aucune, Rien, Rien, Rien, Rien];
+    ressources[1] := [Aucune, Aucune, Rien, Humanites, Mathematiques, Chimie, Rien];
+    ressources[2] := [Aucune, Rien, Mathematiques, Chimie, Informatique, Physique, Rien];
+    ressources[3] := [Rien, Humanites, Informatique, Rien, Humanites, Chimie, Rien];
+    ressources[4] := [Rien, Physique, Mathematiques, Informatique, Physique, Rien, Aucune];
+    ressources[5] := [Rien, Physique, Humanites, Mathematiques, Rien, Aucune, Aucune];
+    ressources[6] := [Rien, Rien, Rien, Rien, Aucune, Aucune, Aucune];
     numeros[0] := [-1, -1, -1, -1, -1, -1, -1];
     numeros[1] := [-1, -1, -1, 6, 3, 8, -1];
     numeros[2] := [-1, -1, 2, 9, 11, 4, -1];
@@ -40,27 +40,6 @@ begin
     numeros[4] := [-1, 10, 5, 6, 12, -1, -1];
     numeros[5] := [-1, 8, 10, 9, -1, -1, -1];
     numeros[6] := [-1, -1, -1, -1, -1, -1, -1];
-    end
-  else if(num = 2) then 
-    begin
-    SetLength(grille, 5, 5);
-    SetLength(ressources, 5, 5);
-    SetLength(numeros, 5, 5);
-
-    // ressources[0] := [Aucune, Aucune, Aucune, Aucune, Aucune, Aucune, Aucune];
-    ressources[0] := [Aucune, Aucune, Humanites, Mathematiques, Chimie];
-    ressources[1] := [Aucune, Mathematiques, Chimie, Informatique, Physique];
-    ressources[2] := [Humanites, Informatique, Rien, Humanites, Chimie];
-    ressources[3] := [Physique, Mathematiques, Informatique, Physique, Aucune];
-    ressources[4] := [Physique, Humanites, Mathematiques, Aucune, Aucune];
-    // ressources[6] := [Aucune, Aucune, Aucune, Aucune, Aucune, Aucune, Aucune];
-    // numeros[0] := [-1, -1, -1, -1, -1, -1, -1];
-    numeros[0] := [-1, -1, 6, 3, 8];
-    numeros[1] := [-1, 2, 9, 11, 4];
-    numeros[2] := [5, 4, -1, 3, 11];
-    numeros[3] := [10, 5, 6, 12, -1];
-    numeros[4] := [8, 10, 9, -1, -1];
-    // numeros[6] := [-1, -1, -1, -1, -1, -1, -1];
     end
   else 
     begin
@@ -191,7 +170,6 @@ end;
 
 procedure initialisationPartie(var joueurs : TJoueurs;var plateau : TPlateau;var affichage : TAffichage);
 var i,num : integer;
-  coord : Tcoord;
   text : string;
   stop : Boolean;
   res : TRessources;
@@ -322,7 +300,6 @@ end;
 procedure gestionDes(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 var
   des,des1, des2: Integer;
-  coord : Tcoord;
 begin
   des1 := nombreAleatoire(6);
   des2 := nombreAleatoire(6);
@@ -337,7 +314,7 @@ begin
     affichageTour(plateau,joueurs,affichage);
 
     deplacementSouillard(plateau,joueurs,affichage)
-    end;
+    end
   else 
     begin
       distributionConnaissance(joueurs,plateau,des);

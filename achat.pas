@@ -21,6 +21,7 @@ function VerifierAdjacencePersonnes(HexagonesCoords: TCoords; plateau: TPlateau)
 function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;
 function aucuneConnexionAdjacente(coords: TCoords;  plateau: TPlateau; joueur: TJoueur): Boolean;
 function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var joueur:TJoueur):Boolean;
+function dansLePlateau(plateau : TPlateau; coord : Tcoord): boolean;
 
 implementation
 
@@ -86,12 +87,56 @@ end;
 
 
 function dansLePlateau(plateau : TPlateau; coord : Tcoord): boolean;
+var taille : Integer;
 begin
   
-  dansLePlateau := False;
-// TODO faire attetion ne marche que si plateau sans bord
-  if((coord.x > 0) and (coord.x < length(plateau.Grille))  and ((coord.y > 0) and (coord.y < length(plateau.Grille)))) then
-    dansLePlateau := True;
+  dansLePlateau := True;
+  taille := length(plateau.Grille)- 2;
+
+
+  if(coord.x <= 0) then
+    dansLePlateau := False;
+  if(coord.x > taille) then
+    dansLePlateau := False;
+  if(coord.y <= 0) then
+    dansLePlateau := False;
+  if(coord.y > taille) then
+    dansLePlateau := False;
+
+  // writeln(taille div 2);
+  if(coord.x <= taille div 2) then
+    begin
+    if ((coord.y > taille) or (coord.y <=taille div 2 +1- coord.x)) then 
+      dansLePlateau := False;
+    // writeln(taille div 2 - coord.x);
+    // writeln(taille);
+    end;
+  
+  if(coord.x > taille div 2 +1) then
+    begin
+    if ((coord.y >  taille - coord.x  + taille div 2 +1) or (coord.y <=0)) then 
+      dansLePlateau := False;
+    writeln( taille - coord.x  + taille div 2 +1);
+    writeln(0);
+
+    end;
+
+  write('dans le plateau');
+  writeln(dansLePlateau);
+
+  // case coord.x of
+  //   1: if ((coord.y > 5) or (coord.y <=2)) then 
+  //     dansLePlateau := False;
+  //   2: if ((coord.y > 5) or (coord.y <=1)) then 
+  //     dansLePlateau := False;
+  //   3: if ((coord.y > 5) or (coord.y <=0)) then
+  //     dansLePlateau := False;
+  //   4: if ((coord.y > 4) or (coord.y <=0)) then
+  //     dansLePlateau := False;
+  //   5: if ((coord.y > 3) or (coord.y <=0)) then
+  //     dansLePlateau := False;
+  // end;
+
 
 end;
 
@@ -107,7 +152,7 @@ begin
   if PersonneValide(plateau, HexagonesCoords, True, joueurActuel) then
   begin
    
-    
+    // TODO MACHE PAS LES HEXAGONES SONT PAS SPECIALEMENT COLLER
     SetLength(plateau.Personnes, Length(plateau.Personnes) + 1);
     with plateau.Personnes[High(plateau.Personnes)] do
     begin
@@ -723,11 +768,11 @@ procedure deplacementSouillard(var plateau : TPlateau;var joueurs : TJoueurs ;va
 var coord : Tcoord;
 begin
 
-  writeln('deplacement du souillard');
 
   repeat
   clicHexagone(plateau, affichage, coord); 
   until (dansLePlateau(plateau,coord));
+
 
   plateau.Souillard.Position := coord;
 

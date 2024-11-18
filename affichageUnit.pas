@@ -8,7 +8,6 @@ uses sdl2, sdl2_image, sdl2_ttf, types, sysutils, TypInfo, traitement, Math;
 procedure initialisationSDL(var affichage: TAffichage);
 procedure initialisationAffichage(var affichage: TAffichage);
 procedure affichageGrille(plat: TPlateau; var affichage: TAffichage);
-//procedure testAffichagePlateau(plat: TPlateau);
 procedure clicHexagone(var plat: TPlateau; var affichage: TAffichage; var coord: Tcoord);
 procedure miseAJourRenderer(var affichage :TAffichage);
 procedure affichageTexte(text:String; taille:Integer; coord:Tcoord; var affichage:TAffichage);
@@ -26,11 +25,10 @@ implementation
 const
     WINDOW_W = 1920;
     WINDOW_H = 1080;
-    tailleHexagone = 220;
+    tailleHexagone = 180;
     taillePersonne = tailleHexagone div 5;
     tailleSouillard = tailleHexagone div 2;
 
-// Permet de charger la texture de l'image
 {Permet de charger la texture de l'image
 Préconditions :
     - affichage : la structure contenant le renderer
@@ -104,6 +102,7 @@ begin
     end;
 
     affichage.texturePlateau.textureContourHexagone := chargerTexture(affichage, 'hexagoneCercle');
+    affichage.texturePlateau.textureContourVide := chargerTexture(affichage, 'hexagone');
     affichage.texturePlateau.textureEleve := chargerTexture(affichage, 'person');
     affichage.texturePlateau.textureSouillard := chargerTexture(affichage, 'souillard');
     affichage.texturePlateau.textureProfesseur := chargerTexture(affichage, 'person');
@@ -122,35 +121,37 @@ var destination_rect: TSDL_RECT;
     x,y: Integer;
     coord: Tcoord;
 begin
-    if (plat.Grille[q,r].ressource = Rien) then
-        exit;
-    texture := affichage.texturePlateau.textureRessource[plat.Grille[q,r].ressource];
-    texturebis := affichage.texturePlateau.textureContourHexagone;
-
     hexaToCard(q,r,tailleHexagone div 2,x,y);
 	
-	// Définit le carre de destination pour l'affichage de la carte
-	destination_rect.x:=affichage.xGrid+x-(tailleHexagone div 2);
-	destination_rect.y:=affichage.yGrid+y-(tailleHexagone div 2);
-	destination_rect.w:=tailleHexagone;
-	destination_rect.h:=tailleHexagone;
+    // Définit le carre de destination pour l'affichage de la carte
+    destination_rect.x:=affichage.xGrid+x-(tailleHexagone div 2);
+    destination_rect.y:=affichage.yGrid+y-(tailleHexagone div 2);
+    destination_rect.w:=tailleHexagone;
+    destination_rect.h:=tailleHexagone;
 
-	if SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect)<>0 then
-        WriteLn('Erreur SDL: ', SDL_GetError());
+    if (plat.Grille[q,r].ressource = Rien) then
+        texturebis := affichage.texturePlateau.textureContourVide
+    else
+    begin
+        texturebis := affichage.texturePlateau.textureContourHexagone;
+        texture := affichage.texturePlateau.textureRessource[plat.Grille[q,r].ressource];
+        if SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect)<>0 then
+            WriteLn('Erreur SDL: ', SDL_GetError());
+    end;
 
     destination_rect.x:=affichage.xGrid+x-(Round(tailleHexagone * 1.05) div 2);
     destination_rect.y:=affichage.yGrid+y-(Round(tailleHexagone * 1.05) div 2);
     destination_rect.w:=Round(tailleHexagone * 1.05);
     destination_rect.h:=Round(tailleHexagone * 1.05);
 
-	if SDL_RenderCopy(affichage.renderer,texturebis,nil,@destination_rect)<>0 then
+	  if SDL_RenderCopy(affichage.renderer,texturebis,nil,@destination_rect)<>0 then
         WriteLn('Erreur SDL: ', SDL_GetError());
 
     coord.x:=affichage.xGrid+x - 40 div 2;
     coord.y:=affichage.yGrid+y - 50 div 2;
     if plat.Grille[q,r].Numero div 10 >= 1 then
         affichageTexte(IntToStr(plat.Grille[q,r].Numero), 40, coord, affichage)
-    else
+    else if (plat.Grille[q,r].Numero <> -1 )then
         affichageTexte(' ' + IntToStr(plat.Grille[q,r].Numero), 40, coord, affichage);
 end;
 
@@ -174,7 +175,6 @@ procedure affichageGrille(plat: TPlateau; var affichage: TAffichage);
 var q,r,taille: Integer;
     //gridSize: Integer;
 begin
-// TODO afficher sans bordure !!! 
     affichageFond(affichage);
 
     taille := length(plat.Grille);
@@ -183,6 +183,7 @@ begin
     //and not ((q+r<=gridSize) or (q+r>=gridSize*gridSize))
     for q:=0 to taille-1 do
         for r:=0 to taille-1 do
+        // TODO changer pour avoir l'affichage des hexagone "Aucune" en couleur unis pour montrer les bord
             if (plat.Grille[q,r].ressource <> Aucune) then
                 affichageHexagone(plat,affichage,q,r);
 end;
@@ -422,6 +423,8 @@ begin
         running := False;
         coord := FCoord(q,r);
         
+        writeln('Clic : ',coord.x,' ',coord.y);
+
         SDL_Delay(66);
     end;
 end;
@@ -825,7 +828,7 @@ begin
     initialisationSDL(affichage);
 
     affichage.xGrid := 100;
-    affichage.yGrid := 25;
+    affichage.yGrid := 100;
 
     initialisationTextures(affichage);
     initialisationBoutonsAction(affichage);
