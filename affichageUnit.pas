@@ -177,8 +177,8 @@ procedure calculPosConnexion(connexion: TConnexion; var coord: Tcoord; var longu
 var dx,dy: Integer;
     coord2: Tcoord;
 begin
-    hexaToCard(connexion.Position[0].x,connexion.Position[0].y,tailleHexagone div 2,coord.x,coord.y);
-    hexaToCard(connexion.Position[1].x,connexion.Position[1].y,tailleHexagone div 2,coord2.x,coord2.y);
+    hexaToCart(connexion.Position[0],coord,tailleHexagone div 2);
+    hexaToCart(connexion.Position[1],coord2,tailleHexagone div 2);
 
     dx := coord2.x - coord.x;
     dy := coord2.y - coord.y;
@@ -228,16 +228,15 @@ Préconditions :
 Postconditions :
     - TCoord : les coordonnées de la personne}
 function calculPosPersonne(personne : TPersonne): Tcoord;
-var scoord: Tcoord;
+var scoord,coord: Tcoord;
     i: Integer;
-    x,y: Integer;
 begin
     scoord := FCoord(0,0);
     
     for i:=0 to length(personne.Position)-1 do
     begin
-        hexaToCard(personne.Position[i].x,personne.Position[i].y,tailleHexagone div 2,x,y);
-        scoord := FCoord(scoord.x + x,scoord.y + y);
+        hexaToCart(personne.Position[i],coord,tailleHexagone div 2);
+        scoord := FCoord(scoord.x + coord.x,scoord.y + coord.y);
     end;
 
     calculPosPersonne := FCoord(scoord.x div 3,scoord.y div 3);
@@ -306,21 +305,12 @@ Préconditions :
 Postconditions :
     - coord (TCoord): les coordonnées du clic (système hexagonal)}
 procedure clicHexagone(var plat: TPlateau; var affichage: TAffichage; var coord: Tcoord);
-var running: Boolean;
-    q,r: Integer;
+var tempCoord: Tcoord;
 begin
-    running := True;
-
-    while running do
-    begin
-        clicCart(affichage,coord);
-        cardToHexa(coord.x-affichage.xGrid,coord.y-affichage.yGrid,tailleHexagone div 2,q,r);
-
-        running := False;
-        coord := FCoord(q,r);
-
-        attendre(66);
-    end;
+    clicCart(affichage,coord);
+    cartToHexa(FCoord(coord.x-affichage.xGrid,coord.y-affichage.yGrid),tempCoord,tailleHexagone div 2);
+    coord := tempCoord;
+    attendre(66);
 end;
 
 // Transforme du texte en une texture
@@ -377,22 +367,22 @@ begin
     affichageImage(coord.x,coord.y,75,75,chargerTexture(affichage, 'DiceFaces/' + IntToStr(de)),affichage);
 end;
 
-procedure affichageDetailsHexagone(q,r,x,y: Integer; plat: TPlateau; var affichage: TAffichage);
+procedure affichageDetailsHexagone(coordHexa,coordCart: TCoord; plat: TPlateau; var affichage: TAffichage);
 var coord: Tcoord;
     texture: PSDL_Texture;
 begin
-    if (plat.Grille[q,r].ressource = Rien) then
+    if (plat.Grille[coordHexa.x,coordHexa.y].ressource = Rien) then
         texture := affichage.texturePlateau.textureContourVide
     else
         texture := affichage.texturePlateau.textureContourHexagone;
 
-    affichageImage(affichage.xGrid+x-(Round(tailleHexagone * 1.05) div 2),affichage.yGrid+y-(Round(tailleHexagone * 1.05) div 2),Round(tailleHexagone * 1.05),Round(tailleHexagone * 1.05),texture,affichage);
+    affichageImage(affichage.xGrid+coordCart.x-(Round(tailleHexagone * 1.05) div 2),affichage.yGrid+coordCart.y-(Round(tailleHexagone * 1.05) div 2),Round(tailleHexagone * 1.05),Round(tailleHexagone * 1.05),texture,affichage);
 
-    coord := FCoord(affichage.xGrid+x - 40 div 2,affichage.yGrid+y - 50 div 2);
-    if plat.Grille[q,r].Numero div 10 >= 1 then
-        affichageTexte(IntToStr(plat.Grille[q,r].Numero), 40, coord, FCouleur(0,0,0,255), affichage)
-    else if (plat.Grille[q,r].Numero <> -1 )then
-        affichageTexte(' ' + IntToStr(plat.Grille[q,r].Numero), 40, coord, FCouleur(0,0,0,255), affichage);
+    coord := FCoord(affichage.xGrid+coordCart.x - 40 div 2,affichage.yGrid+coordCart.y - 50 div 2);
+    if plat.Grille[coordHexa.x,coordHexa.y].Numero div 10 >= 1 then
+        affichageTexte(IntToStr(plat.Grille[coordHexa.x,coordHexa.y].Numero), 40, coord, FCouleur(0,0,0,255), affichage)
+    else if (plat.Grille[coordHexa.x,coordHexa.y].Numero <> -1 )then
+        affichageTexte(' ' + IntToStr(plat.Grille[coordHexa.x,coordHexa.y].Numero), 40, coord, FCouleur(0,0,0,255), affichage);
 end;
 
 {Affiche un hexagone à l'écran
@@ -402,15 +392,15 @@ Préconditions :
     - q,r : les coordonnées de l'hexagone
 Postconditions :
     - affichage : la structure contenant le renderer}
-procedure affichageHexagone(plat: TPlateau; var affichage: TAffichage; q, r: Integer);
-var x,y: Integer;
+procedure affichageHexagone(plat: TPlateau; var affichage: TAffichage; coordHexa: TCoord);
+var coordCart: TCoord;
 begin
-    hexaToCard(q,r,tailleHexagone div 2,x,y);
+    hexaToCart(coordHexa,coordCart,tailleHexagone div 2);
 
-    if (plat.Grille[q,r].ressource <> Rien) then
-        affichageImage(affichage.xGrid+x-(tailleHexagone div 2),affichage.yGrid+y-(tailleHexagone div 2),tailleHexagone,tailleHexagone,affichage.texturePlateau.textureRessource[plat.Grille[q,r].ressource],affichage);
-
-    affichageDetailsHexagone(q,r,x,y,plat,affichage);
+    if (plat.Grille[coordHexa.x,coordHexa.y].ressource <> Rien) and (plat.Grille[coordHexa.x,coordHexa.y].ressource <> Aucune) then
+        affichageImage(affichage.xGrid+coordCart.x-(tailleHexagone div 2),affichage.yGrid+coordCart.y-(tailleHexagone div 2),tailleHexagone,tailleHexagone,affichage.texturePlateau.textureRessource[plat.Grille[coordHexa.x,coordHexa.y].ressource],affichage);
+    
+    affichageDetailsHexagone(coordHexa,coordCart,plat,affichage);
 end;
 
 {Affiche le souillard à l'écran
@@ -420,13 +410,13 @@ Préconditions :
 Postconditions :
     - affichage : la structure contenant le renderer}
 procedure affichageSouillard(plat: TPlateau; var affichage: TAffichage);
-var x,y: Integer;
+var coord: TCoord;
 begin
-    hexaToCard(plat.Souillard.Position.x,plat.Souillard.Position.y,tailleHexagone div 2,x,y);
+    hexaToCart(plat.Souillard.Position,coord,tailleHexagone div 2);
     
-    affichageImage(affichage.xGrid+x-(tailleSouillard div 2),affichage.yGrid+y-(Round(tailleSouillard*1.3) div 2),tailleSouillard,Round(tailleSouillard*1.3),affichage.texturePlateau.textureSouillard,affichage);
+    affichageImage(affichage.xGrid+coord.x-(tailleSouillard div 2),affichage.yGrid+coord.y-(Round(tailleSouillard*1.3) div 2),tailleSouillard,Round(tailleSouillard*1.3),affichage.texturePlateau.textureSouillard,affichage);
     
-    affichageDetailsHexagone(plat.Souillard.Position.x,plat.Souillard.Position.y,x,y,plat,affichage);
+    affichageDetailsHexagone(plat.Souillard.Position,coord,plat,affichage);
 end;
 
 {Affiche la grille à l'écran
@@ -449,7 +439,9 @@ begin
         for r:=0 to taille-1 do
         // TODO changer pour avoir l'affichage des hexagone "Aucune" en couleur unis pour montrer les bord
             if (plat.Grille[q,r].ressource <> Aucune) then
-                affichageHexagone(plat,affichage,q,r);
+            begin
+                affichageHexagone(plat,affichage,FCoord(q,r));
+            end;
 end;
 
 procedure affichageDes(de1,de2:Integer; coord: TCoord; var affichage: TAffichage);
