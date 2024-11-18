@@ -16,7 +16,7 @@ function ClicConnexion(var plateau : TPlateau; var affichage : TAffichage): TCoo
 function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;affichage : TAffichage): Boolean;
 function ClicPersonne(affichage: TAffichage; plateau: TPlateau; estEleve: Boolean): TCoords;
 function CountPersonnes(personnes: array of TPersonne; estEleve: Boolean; joueur: TJoueur): Integer;
-function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur): Boolean;
+function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur;affichage : TAffichage): Boolean;
 function VerifierAdjacencePersonnes(HexagonesCoords: TCoords; plateau: TPlateau): Boolean;
 function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;
 function aucuneConnexionAdjacente(coords: TCoords;  plateau: TPlateau; joueur: TJoueur): Boolean;
@@ -115,7 +115,7 @@ var
 begin
   HexagonesCoords := ClicPersonne(affichage,plateau,True); 
 
-  if PersonneValide(plateau, HexagonesCoords, True, joueurActuel) then
+  if PersonneValide(plateau, HexagonesCoords, True, joueurActuel,affichage) then
   begin
    
     // TODO MACHE PAS LES HEXAGONES SONT PAS SPECIALEMENT COLLER
@@ -152,7 +152,7 @@ end;
 
 
 
-function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur): Boolean;
+function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur;affichage : TAffichage): Boolean;
 var
   personneAdjacente: Boolean;
 begin
@@ -183,7 +183,10 @@ begin
       ) then 
     begin
     PersonneValide:= False;      
-    WriteLn('Au moins 1 des hexagones choisis doit etre dans le plateau');
+
+    affichageInformation('Au moins 1 des hexagones choisis doit etre dans le plateau', 25, FCouleur(0,0,0,255), affichage);
+
+    // WriteLn('Au moins 1 des hexagones choisis doit etre dans le plateau');
     
     Exit;
     end; 
@@ -507,8 +510,8 @@ end;
 procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 var
   coords: TCoords;
+  i : Integer;
 begin
-
   // Demande à l'utilisateur de sélectionner deux hexagones pour la connexion
   coords := ClicConnexion(plateau,affichage);
 
@@ -524,8 +527,12 @@ begin
     plateau.Connexions[length(plateau.Connexions)-1].Position[0] := coords[0];
     plateau.Connexions[length(plateau.Connexions)-1].Position[1] := coords[1];
 
+// TODO mieux afficher eleve sur connexion
     
     affichageConnexion(plateau.Connexions[length(plateau.Connexions)-1], affichage);
+
+    for i:=0 to length(plateau.Personnes)-1 do
+        affichagePersonne(plateau.Personnes[i],affichage);
     miseAJourRenderer(affichage);
 
 
