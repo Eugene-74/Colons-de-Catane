@@ -91,6 +91,7 @@ begin
     for i:=Physique to Mathematiques do
     begin
         affichage.texturePlateau.textureRessource[i] := chargerTexture(affichage, 'Ressources/'+GetEnumName(TypeInfo(TRessource), Ord(i)));
+        affichage.texturePlateau.textureIconesRessources[i] := chargerTexture(affichage, 'IconesRessources/'+GetEnumName(TypeInfo(TRessource), Ord(i)));
     end;
 
     affichage.texturePlateau.textureContourHexagone := chargerTexture(affichage, 'hexagoneCercle');
@@ -503,13 +504,32 @@ end;
 
 procedure affichageScore(joueurs: TJoueurs; id: Integer; var affichage: TAffichage);
 var coord: Tcoord;
+    texture: PSDL_Texture;
+    destination_rect: TSDL_RECT;
+    ressource: TRessource;
 begin
     coord := FCoord(25,25+id*75);
     affichageTexte(joueurs[id].Nom + ': ' + IntToStr(joueurs[id].Points) + ' points', 25, coord, FCouleur(0,0,0,255), affichage);
-    coord.y := coord.y + 25;
-    
+    coord.y := coord.y + 35;
 
-    affichageTexte('M: '+IntToStr(joueurs[id].Ressources[Mathematiques])+'  P: '+IntToStr(joueurs[id].Ressources[Physique])+'  C: '+IntToStr(joueurs[id].Ressources[Chimie])+'  I: '+IntToStr(joueurs[id].Ressources[Informatique])+'  H: '+IntToStr(joueurs[id].Ressources[Humanites]), 25, coord, FCouleur(0,0,0,255), affichage);
+    destination_rect.x := 25;
+    destination_rect.w := 25;
+    destination_rect.h := 25;
+    destination_rect.y := coord.y;
+
+    for ressource := Physique to Mathematiques do
+    begin
+        texture := affichage.texturePlateau.textureIconesRessources[ressource];
+
+        SDL_RenderCopy(affichage.renderer, texture, nil, @destination_rect);
+
+        coord.x := coord.x + 25;
+
+        affichageTexte(' ' + IntToStr(joueurs[id].Ressources[ressource]), 25, FCoord(coord.x,coord.y-5), FCouleur(0,0,0,255), affichage);
+
+        coord.x := coord.x + 40;
+        destination_rect.x := coord.x;
+    end;
 end;
 
 procedure ajouterBoutonTableau(texte: String; valeur: String; coord: Tcoord; w,h:Integer; var boutons: TBoutons);
