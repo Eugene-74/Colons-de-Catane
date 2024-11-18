@@ -70,21 +70,6 @@ begin
     SDL_RenderClear(affichage.renderer);
 end;
 
-{procedure testAffichagePlateau(plat: TPlateau);
-var q,r,taille: Integer;
-begin
-    taille := length(plat.Grille);
-    for r:=0 to taille-1 do
-    begin
-        for q:=0 to taille-1 do
-        begin
-            write(plat.Grille[q,r].ressource);
-            write(plat.Grille[q,r].Numero);
-            write(' ');
-        end;
-        writeln();
-    end;
-end;}
 
 {Initialise le plateau de jeu
 Préconditions :
