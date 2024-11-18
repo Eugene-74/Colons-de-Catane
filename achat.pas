@@ -107,7 +107,7 @@ begin
       joueurActuel.Points:=+1;
     end;
 
-    affichagePersonne(plateau.Personnes[High(plateau.Personnes)], affichage);
+    affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
     miseAJourRenderer(affichage);
     WriteLn('Élève placé avec succès !');
   end
