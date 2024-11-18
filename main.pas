@@ -19,13 +19,9 @@ begin
   begin
     initialisationPartie(joueurs,plateau,affichage);
 
-    while True do 
-    begin
-      clicHexagone(plateau,affichage,tempCoord);
-      dansLePlateau(plateau,tempCoord);
-    end;
+   
     
-    // partie(joueurs,plateau,affichage);
+    partie(joueurs,plateau,affichage);
 
 
 
