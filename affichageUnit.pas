@@ -504,6 +504,7 @@ begin
 end;
 
 procedure affichageScore(joueur:TJoueur; var affichage: TAffichage);
+// TODO marche pas tt seul affiche l'un sur l'autre
 var coord: Tcoord;
     texture: PSDL_Texture;
     destination_rect: TSDL_RECT;
