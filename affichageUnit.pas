@@ -363,8 +363,14 @@ begin
 end;
 
 procedure affichageDe(de,rotation:Integer; coord:TCoord; var affichage: TAffichage);
+var destination_rect: TSDL_RECT;
 begin
-    affichageImage(coord.x,coord.y,75,75,chargerTexture(affichage, 'DiceFaces/' + IntToStr(de)),affichage);
+    destination_rect.x:=coord.x;
+    destination_rect.y:=coord.y;
+    destination_rect.w:=75;
+    destination_rect.h:=75;
+
+    SDL_RenderCopyEx(affichage.renderer, chargerTexture(affichage, 'DiceFaces/' + IntToStr(de)), nil, @destination_rect, rotation, nil, SDL_FLIP_NONE);
 end;
 
 procedure affichageDetailsHexagone(coordHexa,coordCart: TCoord; plat: TPlateau; var affichage: TAffichage);
