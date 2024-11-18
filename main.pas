@@ -13,7 +13,7 @@ var
     valeurBouton : String;
 
 begin
-  testYann := True;
+  testYann := False;
   if not testYann then
   begin
     initialisationPartie(joueurs,plateau,affichage);

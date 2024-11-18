@@ -389,13 +389,6 @@ begin
 	SDL_DestroyTexture(texteTexture);
 end;
 
-procedure affichageInformation(texte: String; taille: Integer; couleur: TSDL_Color; var affichage: TAffichage);
-begin
-    affichageTexte(texte, taille, FCoord(400,1025), couleur, affichage);
-    miseAJourRenderer(affichage);
-    attendre(66);
-end;
-
 procedure affichageDe(de,rotation:Integer; coord:TCoord; var affichage: TAffichage);
 var destination_rect: TSDL_RECT;
     texture: PSDL_Texture;
@@ -577,6 +570,13 @@ end;
 procedure suppressionInformation(var affichage: TAffichage);
 begin
     affichageZone(400,1025,1120,50,0,affichage);
+    attendre(66);
+end;
+
+procedure affichageInformation(texte: String; taille: Integer; couleur: TSDL_Color; var affichage: TAffichage);
+begin
+    suppressionInformation(affichage);
+    affichageTexte(texte, taille, FCoord(400,1025), couleur, affichage);
     miseAJourRenderer(affichage);
     attendre(66);
 end;
