@@ -99,6 +99,7 @@ begin
     affichage.texturePlateau.textureEleve := chargerTexture(affichage, 'eleve');
     affichage.texturePlateau.textureSouillard := chargerTexture(affichage, 'souillard');
     affichage.texturePlateau.textureProfesseur := chargerTexture(affichage, 'professeur');
+    affichage.texturePlateau.texturePoint := chargerTexture(affichage, 'point');
 end;
 
 {Affiche le fond de l'écran en blanc
@@ -509,7 +510,17 @@ var coord: Tcoord;
     ressource: TRessource;
 begin
     coord := FCoord(25,25+joueur.id*75);
-    affichageTexte(joueur.Nom + ': ' + IntToStr(joueur.Points) + ' points', 25, coord, FCouleur(0,0,0,255), affichage);
+    affichageTexte(joueur.Nom + ': ', 25, coord, FCouleur(0,0,0,255), affichage);
+    coord.x := coord.x + 13*(length(joueur.Nom)+2);
+    destination_rect.x := coord.x;
+    destination_rect.y := coord.y+7;
+    destination_rect.w := 25;
+    destination_rect.h := 25;
+    SDL_RenderCopy(affichage.renderer, affichage.texturePlateau.texturePoint, nil, @destination_rect);
+    affichageTexte(IntToStr(joueur.Points), 25, FCoord(coord.x+30,coord.y), FCouleur(0,0,0,255), affichage);
+
+
+    coord.x := 25;
     coord.y := coord.y + 35;
 
     destination_rect.x := 25;
