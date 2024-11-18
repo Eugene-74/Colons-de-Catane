@@ -17,7 +17,7 @@ procedure affichageDes(de1,de2:Integer; coord: TCoord; var affichage: TAffichage
 procedure echangeRessources(joueurs: TJoueurs; idJoueurActuel:Integer; var idJoueurEchange: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
 procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; var affichage: TAffichage);
 procedure clicAction(var affichage: TAffichage; var valeurBouton: String);
-procedure affichageScore(joueurs: TJoueurs; id: Integer; var affichage: TAffichage);
+procedure affichageScore(joueur: TJoueur; var affichage: TAffichage);
 procedure affichageInformation(texte: String; taille: Integer; couleur: TSDL_Color; var affichage: TAffichage);
 procedure suppressionInformation(var affichage: TAffichage);
 procedure attendre(ms: Integer);
@@ -502,14 +502,14 @@ begin
     affichageDe(de2,20,coord,affichage);
 end;
 
-procedure affichageScore(joueurs: TJoueurs; id: Integer; var affichage: TAffichage);
+procedure affichageScore(joueur:TJoueur; var affichage: TAffichage);
 var coord: Tcoord;
     texture: PSDL_Texture;
     destination_rect: TSDL_RECT;
     ressource: TRessource;
 begin
-    coord := FCoord(25,25+id*75);
-    affichageTexte(joueurs[id].Nom + ': ' + IntToStr(joueurs[id].Points) + ' points', 25, coord, FCouleur(0,0,0,255), affichage);
+    coord := FCoord(25,25+joueur.id*75);
+    affichageTexte(joueur.Nom + ': ' + IntToStr(joueur.Points) + ' points', 25, coord, FCouleur(0,0,0,255), affichage);
     coord.y := coord.y + 35;
 
     destination_rect.x := 25;
@@ -525,7 +525,7 @@ begin
 
         coord.x := coord.x + 25;
 
-        affichageTexte(' ' + IntToStr(joueurs[id].Ressources[ressource]), 25, FCoord(coord.x,coord.y-5), FCouleur(0,0,0,255), affichage);
+        affichageTexte(' ' + IntToStr(joueur.Ressources[ressource]), 25, FCoord(coord.x,coord.y-5), FCouleur(0,0,0,255), affichage);
 
         coord.x := coord.x + 40;
         destination_rect.x := coord.x;
@@ -801,7 +801,7 @@ begin
         affichageBouton(affichage.boutonsAction[i],affichage);
     
     for i:=0 to length(joueurs)-1 do
-        affichageScore(joueurs,i,affichage);
+        affichageScore(joueurs[i],affichage);
 
     miseAJourRenderer(affichage);
 end;
