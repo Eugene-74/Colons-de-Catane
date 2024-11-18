@@ -104,7 +104,6 @@ begin
 end;
 
 function FCoord(x, y: Integer): TCoord;
-var coord: TCoord;
 begin
     FCoord.x := x;
     FCoord.y := y;

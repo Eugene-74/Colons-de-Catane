@@ -11,19 +11,14 @@ var
     ressource : TRessource;
     id : Integer;
     valeurBouton : String;
-    tempCoord : Tcoord;
 
 begin
   testYann := False;
   if not testYann then
   begin
     initialisationPartie(joueurs,plateau,affichage);
-
-   
     
     partie(joueurs,plateau,affichage);
-
-
 
   end
   else

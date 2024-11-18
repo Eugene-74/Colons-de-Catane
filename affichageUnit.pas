@@ -103,9 +103,9 @@ begin
 
     affichage.texturePlateau.textureContourHexagone := chargerTexture(affichage, 'hexagoneCercle');
     affichage.texturePlateau.textureContourVide := chargerTexture(affichage, 'hexagone');
-    affichage.texturePlateau.textureEleve := chargerTexture(affichage, 'person');
+    affichage.texturePlateau.textureEleve := chargerTexture(affichage, 'eleve');
     affichage.texturePlateau.textureSouillard := chargerTexture(affichage, 'souillard');
-    affichage.texturePlateau.textureProfesseur := chargerTexture(affichage, 'person');
+    affichage.texturePlateau.textureProfesseur := chargerTexture(affichage, 'professeur');
 end;
 
 procedure affichageDetailsHexagone(q,r,x,y: Integer; plat: TPlateau; var affichage: TAffichage);
@@ -340,7 +340,10 @@ begin
     if personne.estEleve then
         texture := affichage.texturePlateau.textureEleve
     else
+    begin
         texture := affichage.texturePlateau.textureProfesseur;
+        writeln('ayo');
+    end;
 
     recupererCouleurJoueur(personne.IdJoueur,couleur);
     SDL_SetTextureColorMod(texture, couleur.r, couleur.g, couleur.b);
@@ -761,20 +764,15 @@ Postconditions :
     - affichage : la structure contenant le renderer}
 procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; var affichage: TAffichage);
 var i: Integer;
-  coord : Tcoord;
 begin
     nettoyageAffichage(affichage);
 
     affichageFond(affichage);
 
-    
     affichageGrille(plat,affichage);
-    // TODO probleme afficher souillard entre les couches de affichage grille ...
     
     affichageSouillard(plat,affichage);
 
-
-    
     affichageDes(plat.des1,plat.des2,FCoord(50,500),affichage);
 
     for i:=0 to length(plat.Connexions)-1 do
