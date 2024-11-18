@@ -170,7 +170,7 @@ begin
 
     end;
 
-    affichagePersonne(plateau.Personnes[High(plateau.Personnes)], affichage);
+    affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
     miseAJourRenderer(affichage);
 
     
