@@ -11,6 +11,7 @@ procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var j
 procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 procedure verificationPointsVictoire(plateau : TPlateau; joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer);
 procedure affichageGagnant(joueur: TJoueur; affichage: TAffichage);
+procedure deplacementSouillard(var plateau : TPlateau; var joueurs : TJoueurs ;var affichage : TAffichage);
 function ClicConnexion(var plateau : TPlateau; var affichage : TAffichage): TCoords;
 function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur): Boolean;
 function ClicPersonne(affichage: TAffichage; plateau: TPlateau; estEleve: Boolean): TCoords;
@@ -21,7 +22,6 @@ function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur
 function aucuneConnexionAdjacente(coords: TCoords;  plateau: TPlateau; joueur: TJoueur): Boolean;
 function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var joueur:TJoueur):Boolean;
 
-
 implementation
 
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage);
@@ -29,6 +29,9 @@ var
   choix: Integer;
 begin
   
+// TODO changer les write en une valeur donner dans la fonction 
+// c'est gestion qui envoie la bonne action a effectuer
+
   WriteLn('Choisissez l''élément à acheter : ');
   WriteLn('1. Élève');
   WriteLn('2. Connexion');
@@ -43,7 +46,7 @@ begin
          (joueur.Ressources[Chimie] >= 1) and 
          (joueur.Ressources[Physique] >= 1) then
       begin
-        placementEleve(plateau, affichage, joueur);
+        PlacementEleve(plateau, affichage, joueur);
 
         joueur.Ressources[Mathematiques] := joueur.Ressources[Mathematiques] - 1;
         joueur.Ressources[Humanites] := joueur.Ressources[Humanites] - 1;
@@ -82,6 +85,18 @@ begin
 end;
 
 
+function dansLePlateau(plateau : TPlateau; coord : Tcoord): boolean;
+begin
+  
+  dansLePlateau := False;
+// TODO faire attetion ne marche que si plateau sans bord
+  if((coord.x > 0) and (coord.x < length(plateau.Grille))  and ((coord.y > 0) and (coord.y < length(plateau.Grille)))) then
+    dansLePlateau := True;
+
+end;
+
+
+
 
 procedure placementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 var
@@ -104,11 +119,16 @@ begin
 
       estEleve := True;
       IdJoueur := joueurActuel.Id;
-      joueurActuel.Points:=+1;
+
+      // ajout d'un point
+      joueurActuel.Points:=1+joueurActuel.Points;
+
     end;
 
     affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
     miseAJourRenderer(affichage);
+
+    
     WriteLn('Élève placé avec succès !');
   end
   else
@@ -117,6 +137,8 @@ begin
     placementEleve(plateau,  affichage, joueurActuel);
   end;
 end;
+
+
 
 
 function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur): Boolean;
@@ -131,6 +153,11 @@ begin
     Exit;
   end;
 
+  if(joueurActuel.Points > 2 ) then
+    // TODO verifier le contact avec une connexion du joueur
+    writeln('placement d''eleve apres le debut de partie');
+
+
   // Vérifie la présence d'une personne adjacente
 
     if  VerifierAdjacencePersonnes(HexagonesCoords,plateau) then
@@ -141,7 +168,16 @@ begin
         personneAdjacente := True; 
    
   
- 
+  // 4. Vérifie si au moins 1 des hexagones est dans le plateau
+  if (( not dansLePlateau(plateau,HexagonesCoords[0]) and not dansLePlateau(plateau,HexagonesCoords[1]) and not dansLePlateau(plateau,HexagonesCoords[2]) )
+      ) then 
+    begin
+    PersonneValide:= False;      
+    WriteLn('Au moins 1 des hexagones choisis doit etre dans le plateau');
+    
+    Exit;
+    end; 
+
   PersonneValide := personneAdjacente;
 
 end;
@@ -277,7 +313,10 @@ var
           //   joueurActuel.Ressources[Physique] := joueurActuel.Ressources[Physique] - 1;
           // end;
           plateau.Personnes[i].estEleve := False; // Convertir l'élève en professeur
-          estConverti := True;
+          estConverti := True;      
+          
+          // ajout d'un point
+          joueurActuel.Points:=1+joueurActuel.Points;
           WriteLn('Élève converti en professeur avec succès !');
           Break; 
         end;
@@ -332,7 +371,7 @@ for i := 0 to length(connexionsJ) -1 do
 end;
 
 
-procedure verificationPointsVictoire(plateau : TPlateau;joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer);
+procedure verificationPointsVictoire(plateau : TPlateau; joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer);
 var
   joueur : TJoueur;
   plusGrandeRoute,plusDeplacementSouillard : Boolean;
@@ -347,7 +386,8 @@ begin
   j:=0;
   for joueur in joueurs do
   begin
-    j := j+1;
+
+    points[j] := joueur.points;
 
     // TODO erreur acces violation
     // plusGrandeRoute := True;
@@ -359,6 +399,8 @@ begin
     // if plusGrandeRoute then
     //   points[j] := points[j] + 2;
     // end;
+
+
     
     if(joueur.CartesTutorat.carte2.nbr >= 3) then
       for i := 0 to High(joueurs) do
@@ -367,12 +409,21 @@ begin
     if(plusDeplacementSouillard) then
       points[j] := points[j] + 2;
     
-    if points[j] > 10 then
+    // writeln('point des joeurus ');
+    // writeln(points[j]);
+    // writeln(joueurs[i].Points);
+
+
+    if points[j] > 11 then
     begin
+      writeln('gagner');
       gagner := True;       
       gagnant := j+1; 
       Break;
     end;
+
+    j := j+1;
+
   end;
 
 
@@ -397,6 +448,7 @@ begin
   connexionValide := True;
   enContactAvecAutreConnexion := False;
   enContactAvecPersonne := False;
+
 
   // 1. Vérifie si une connexion existe déjà avec les mêmes coordonnées (indépendamment de l'ordre)
   for i := 0 to High(plateau.Connexions) do
@@ -426,8 +478,23 @@ begin
   end;
   enContactAvecAutreConnexion := not aucuneConnexionAdjacente(coords, plateau, joueur);
   enContactAvecPersonne := enContactEleveConnexion(plateau, coords, joueur);
+
+  // 3. Vérifie si en contact avec un eleve ou une connexion
   if enContactAutreEleveConnexion(plateau,coords,joueur) then 
      connexionValide:= False;
+
+  // 4. Vérifie si au moins 1 des hexagones est dans le plateau
+  if (not dansLePlateau(plateau,coords[0]) and not dansLePlateau(plateau,coords[1])) then 
+    begin
+    connexionValide:= False;      
+    WriteLn('Au moins 1 des hexagones choisis doit etre dans le plateau');
+
+    Exit;
+    end; 
+
+
+
+  
 if not enContactAvecPersonne then
 begin
   if not enContactAvecAutreConnexion then
@@ -480,6 +547,8 @@ begin
     plateau.Connexions[length(plateau.Connexions)-1].Position[1] := coords[1];
 
     
+    affichageConnexion(plateau.Connexions[length(plateau.Connexions)-1], affichage);
+    miseAJourRenderer(affichage);
 
 
     WriteLn('Connexion placée avec succès !');
@@ -490,8 +559,6 @@ begin
     // Si la connexionn n'est pas valide, on rappelle la fonction
     placementConnexion(plateau,affichage,joueur);
     end;
-  affichageConnexion(plateau.Connexions[length(plateau.Connexions)-1], affichage);
-  miseAJourRenderer(affichage);
 end;
 function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;
 var
@@ -651,6 +718,22 @@ begin
   end;
 end;
 
+
+procedure deplacementSouillard(var plateau : TPlateau;var joueurs : TJoueurs ;var affichage : TAffichage);
+var coord : Tcoord;
+begin
+
+  writeln('deplacement du souillard');
+
+  repeat
+  clicHexagone(plateau, affichage, coord); 
+  until (dansLePlateau(plateau,coord));
+
+  plateau.Souillard.Position := coord;
+
+  affichageTour(plateau,joueurs,affichage);
+
+end;
 
 
 
