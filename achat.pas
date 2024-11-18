@@ -670,7 +670,7 @@ begin
         Continue; // Passer à la connexion suivante si aucune correspondance trouvée
 
       // Vérifier si `autreCoord` est adjacente à `coordRestante` (connexion du même joueur)
-      if sontAdjacentes(autreCoord, coordRestante) then
+      if sontAdjacents(autreCoord, coordRestante) then
       begin
        verif := False;
        
@@ -686,10 +686,10 @@ begin
       // Vérifier si `autreCoord2` correspond à une extrémité de la connexion d'un autr<;:e joueur
       if ((autreCoord2.x = plateau.Connexions[j].Position[0].x) and 
           (autreCoord2.y = plateau.Connexions[j].Position[0].y) and
-          sontAdjacentes(autreCoord, plateau.Connexions[j].Position[1])) or
+          sontAdjacents(autreCoord, plateau.Connexions[j].Position[1])) or
          ((autreCoord2.x = plateau.Connexions[j].Position[1].x) and 
           (autreCoord2.y = plateau.Connexions[j].Position[1].y) and
-          sontAdjacentes(autreCoord, plateau.Connexions[j].Position[0])) then
+          sontAdjacents(autreCoord, plateau.Connexions[j].Position[0])) then
       begin
         verif := True;
         WriteLn('Erreur : autreCoord est utilisé par une connexion d''un autre joueur, et coordRestante est adjacente à cette connexion.');
