@@ -65,12 +65,12 @@ begin
     begin
         for j := i + 1 to length(hexagones) - 1 do
         begin
-            if not sontAdjacentes(hexagones[i], hexagones[j]) then
+            if not sontAdjacents(hexagones[i], hexagones[j]) then
             begin
                 enContact := False;
             end;
-  end;
-end;
+        end;
+    end;
 end;
 
 function splitValeur(texte: String): TStringTab;
