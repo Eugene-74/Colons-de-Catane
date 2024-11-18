@@ -19,6 +19,8 @@ procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; var affichage: TAffic
 procedure clicAction(var affichage: TAffichage; var valeurBouton: String);
 procedure affichageScore(joueurs: TJoueurs; id: Integer; var affichage: TAffichage);
 procedure affichageInformation(texte: String; taille: Integer; couleur: TSDL_Color; var affichage: TAffichage);
+procedure suppressionInformation(var affichage: TAffichage);
+procedure attendre(ms: Integer);
 
 implementation
 
@@ -28,6 +30,11 @@ const
     tailleHexagone = 180;
     tailleEleve = tailleHexagone div 3;
     tailleSouillard = tailleHexagone div 2;
+
+procedure attendre(ms: Integer);
+begin
+    SDL_Delay(ms);
+end;
 
 {Permet de charger la texture de l'image
 Préconditions :
@@ -83,7 +90,7 @@ var i: TRessource;
 begin
     for i:=Physique to Mathematiques do
     begin
-        affichage.texturePlateau.textureRessource[i] := chargerTexture(affichage, GetEnumName(TypeInfo(TRessource), Ord(i)));
+        affichage.texturePlateau.textureRessource[i] := chargerTexture(affichage, 'Ressources/'+GetEnumName(TypeInfo(TRessource), Ord(i)));
     end;
 
     affichage.texturePlateau.textureContourHexagone := chargerTexture(affichage, 'hexagoneCercle');
@@ -275,7 +282,7 @@ begin
 
     while running do
     begin
-        SDL_Delay(66);
+        attendre(66);
         while SDL_PollEvent(@event) <> 0 do
         begin
             case event.type_ of
@@ -314,7 +321,7 @@ begin
         running := False;
         coord := FCoord(q,r);
 
-        SDL_Delay(66);
+        attendre(66);
     end;
 end;
 
@@ -371,6 +378,7 @@ procedure affichageInformation(texte: String; taille: Integer; couleur: TSDL_Col
 begin
     affichageTexte(texte, taille, FCoord(400,1025), couleur, affichage);
     miseAJourRenderer(affichage);
+    attendre(66);
 end;
 
 procedure affichageDe(de,rotation:Integer; coord:TCoord; var affichage: TAffichage);
@@ -551,6 +559,13 @@ begin
     affichageTexte(' '+bouton.texte, 25, bouton.coord, FCouleur(0,0,0,255), affichage);
 end;
 
+procedure suppressionInformation(var affichage: TAffichage);
+begin
+    affichageZone(400,1025,1120,50,0,affichage);
+    miseAJourRenderer(affichage);
+    attendre(66);
+end;
+
 procedure clicBouton(var affichage: TAffichage; var boutons: TBoutons; var valeurBouton: String);
 var running: Boolean;
     i: Integer;
@@ -579,7 +594,7 @@ begin
             end;
         end;
         
-        SDL_Delay(66);
+        attendre(66);
     end;
 end;
 
@@ -633,7 +648,7 @@ begin
     affichageFond(affichage);
     miseAJourRenderer(affichage);
 
-    SDL_Delay(66);
+    attendre(66);
 
     coord := FCoord(450,70);
     affichageZone(coord.x,coord.y,1050,930,3,affichage);
@@ -689,7 +704,7 @@ begin
     end;
 
     nettoyageAffichage(affichage);
-    SDL_Delay(66);
+    attendre(66);
 
     affichageEchangeRessources(joueurs,idJoueurActuel,idJoueurEchange,ressources1,ressources2,affichage,boutons);
     miseAJourRenderer(affichage);
