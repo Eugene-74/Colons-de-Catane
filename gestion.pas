@@ -1,7 +1,7 @@
 unit gestion;
 
 interface
-uses Types,affichageUnit,SysUtils,achat;
+uses Types,affichageUnit,SysUtils,achat,traitement;
 function chargementPlateau(num : Integer): TPlateau;
 procedure initialisationPartie(var joueurs : TJoueurs;var  plateau : TPlateau;var affichage : TAffichage);
 procedure partie(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
@@ -26,13 +26,13 @@ begin
     SetLength(ressources, 7, 7);
     SetLength(numeros, 7, 7);
 
-    ressources[0] := [Aucune, Aucune, Aucune, Aucune, Aucune, Aucune, Aucune];
-    ressources[1] := [Aucune, Aucune, Aucune, Humanites, Mathematiques, Chimie, Aucune];
-    ressources[2] := [Aucune, Aucune, Mathematiques, Chimie, Informatique, Physique, Aucune];
-    ressources[3] := [Aucune, Humanites, Informatique, Rien, Humanites, Chimie, Aucune];
-    ressources[4] := [Aucune, Physique, Mathematiques, Informatique, Physique, Aucune, Aucune];
-    ressources[5] := [Aucune, Physique, Humanites, Mathematiques, Aucune, Aucune, Aucune];
-    ressources[6] := [Aucune, Aucune, Aucune, Aucune, Aucune, Aucune, Aucune];
+    ressources[0] := [Aucune, Aucune, Aucune, Rien, Rien, Rien, Rien];
+    ressources[1] := [Aucune, Aucune, Rien, Humanites, Mathematiques, Chimie, Rien];
+    ressources[2] := [Aucune, Rien, Mathematiques, Chimie, Informatique, Physique, Rien];
+    ressources[3] := [Rien, Humanites, Informatique, Rien, Humanites, Chimie, Rien];
+    ressources[4] := [Rien, Physique, Mathematiques, Informatique, Physique, Rien, Aucune];
+    ressources[5] := [Rien, Physique, Humanites, Mathematiques, Rien, Aucune, Aucune];
+    ressources[6] := [Rien, Rien, Rien, Rien, Aucune, Aucune, Aucune];
     numeros[0] := [-1, -1, -1, -1, -1, -1, -1];
     numeros[1] := [-1, -1, -1, 6, 3, 8, -1];
     numeros[2] := [-1, -1, 2, 9, 11, 4, -1];
@@ -40,27 +40,6 @@ begin
     numeros[4] := [-1, 10, 5, 6, 12, -1, -1];
     numeros[5] := [-1, 8, 10, 9, -1, -1, -1];
     numeros[6] := [-1, -1, -1, -1, -1, -1, -1];
-    end
-  else if(num = 2) then 
-    begin
-    SetLength(grille, 5, 5);
-    SetLength(ressources, 5, 5);
-    SetLength(numeros, 5, 5);
-
-    // ressources[0] := [Aucune, Aucune, Aucune, Aucune, Aucune, Aucune, Aucune];
-    ressources[0] := [Aucune, Aucune, Humanites, Mathematiques, Chimie];
-    ressources[1] := [Aucune, Mathematiques, Chimie, Informatique, Physique];
-    ressources[2] := [Humanites, Informatique, Rien, Humanites, Chimie];
-    ressources[3] := [Physique, Mathematiques, Informatique, Physique, Aucune];
-    ressources[4] := [Physique, Humanites, Mathematiques, Aucune, Aucune];
-    // ressources[6] := [Aucune, Aucune, Aucune, Aucune, Aucune, Aucune, Aucune];
-    // numeros[0] := [-1, -1, -1, -1, -1, -1, -1];
-    numeros[0] := [-1, -1, 6, 3, 8];
-    numeros[1] := [-1, 2, 9, 11, 4];
-    numeros[2] := [5, 4, -1, 3, 11];
-    numeros[3] := [10, 5, 6, 12, -1];
-    numeros[4] := [8, 10, 9, -1, -1];
-    // numeros[6] := [-1, -1, -1, -1, -1, -1, -1];
     end
   else 
     begin
@@ -190,10 +169,9 @@ intialisationTutorat := CARTES_TUTORAT;
 end;
 
 procedure initialisationPartie(var joueurs : TJoueurs;var plateau : TPlateau;var affichage : TAffichage);
-var i,num : integer;
-  coord : Tcoord;
+var i,j,num : integer;
   text : string;
-  stop : Boolean;
+  stop,unique : Boolean;
   res : TRessources;
   r : Tressource;
   cartesTutorat : TCartesTutorat;
@@ -205,9 +183,19 @@ begin
   SetLength(joueurs,0);
   i:=0;
   repeat
-    write('rentrer le nom du joueur '+IntToStr(i+1)+' : (0 pour arêter)');
+    write('rentrer le nom du joueur '+IntToStr(i+1)+' : (Entrer pour arêter)');
     readln(text);
-    if(text <> '0') then
+    unique := True;
+
+    // for j:=0 to  length(joueurs) -1 do 
+    //   if(joueurs[j].Nom = text) then
+    //     begin
+    //     writeln('Le nom du joueur doit être unique');
+    //     unique := False;
+    //     end;
+
+    // if(((text <> '\n') and (text <> '')) and unique) then
+    if((text <>  '0')) then
       begin
       SetLength(joueurs,i+1);
       joueurs[i].Nom:= text;
@@ -220,7 +208,7 @@ begin
     else 
       begin
         if(i < 2)then
-          writeln('Le nombre de joueur doit être de au moins 2')
+          writeln('Le nombre de joueur invalide ( + 2 joueurs minimum)')
         else 
           stop := true;
       end;
@@ -322,7 +310,6 @@ end;
 procedure gestionDes(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 var
   des,des1, des2: Integer;
-  coord : Tcoord;
 begin
   des1 := nombreAleatoire(6);
   des2 := nombreAleatoire(6);
@@ -373,7 +360,10 @@ begin
       else if(valeurBouton = 'achat_carte_tutorat')  then
         writeln('achat carte tutorat')
       else if(valeurBouton = 'changement_en_prof')  then
-        changementProfesseur(plateau,affichage,joueurs[i])
+        begin
+        changementProfesseur(plateau,affichage,joueurs[i]);
+        affichageTour(plateau,joueurs,affichage);
+        end
       else if(valeurBouton = 'echange')  then
         begin
         echangeRessources(joueurs, joueurs[i].Id, joueurs[i].Id,ressources1,ressources2,affichage);
@@ -386,12 +376,6 @@ begin
         finTour := True;
 
     until (finTour);   
-    writeln(joueurs[i].Nom);
-    writeln(joueurs[i].Id);
-    writeln(joueurs[i].Points);
-
-     
-    writeln('fin fin de tour');
     end;
 
 
@@ -404,7 +388,7 @@ begin
   repeat
     tour(joueurs,plateau,affichage);
 
-    verificationPointsVictoire(plateau,joueurs,gagner,gagnant);
+    verificationPointsVictoire(plateau,joueurs,gagner,gagnant,affichage);
   until (gagner);
   affichageGagnant(joueurs[gagnant],affichage);
 
@@ -420,7 +404,7 @@ end;
 
 procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueurs : Tjoueurs; joueur : Tjoueur);
 begin
-affichageTexte('Deplacement du souillard par le joueur '+joueur.nom,0,plateau.Souillard.Position,affichage);
+affichageInformation('Deplacement du souillard par le joueur '+joueur.nom,25,FCouleur(0,0,0,255),affichage);
 deplacementSouillard(plateau,joueurs,affichage);
 
 

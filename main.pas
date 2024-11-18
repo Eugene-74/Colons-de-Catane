@@ -1,6 +1,6 @@
 program main;
 
-uses affichageUnit,types,gestion,traitement;
+uses affichageUnit,types,gestion,traitement,achat;
 
 var 
     affichage: TAffichage;
@@ -13,13 +13,20 @@ var
     valeurBouton : String;
 
 begin
-  testYann := False;
+  testYann := True;
   if not testYann then
   begin
     initialisationPartie(joueurs,plateau,affichage);
 
+    SetLength(plateau.Personnes, 1);
+    SetLength(plateau.Personnes[0].Position, 3);
+    plateau.Personnes[0].Position[0] := FCoord(2,3);
+    plateau.Personnes[0].Position[1] := FCoord(3,3);
+    plateau.Personnes[0].Position[2] := FCoord(2,4);
+    plateau.Personnes[0].estEleve := True;
+    plateau.Personnes[0].IdJoueur := 0;
+
     partie(joueurs,plateau,affichage);
-    // clicHexagone(plateau, affichage, coord);
 
   end
   else
@@ -45,8 +52,15 @@ begin
 
     plateau.Souillard.Position := FCoord(4,3);
 
+    plateau.des1 := 1;
+    plateau.des2 := 3;
+
     affichageTour(plateau,joueurs, affichage);
 
+    affichageInformation('salut', 25, FCouleur(0,0,0,255), affichage);
+
+    suppressionInformation(affichage);
+    
     setLength(joueurs, 3);
     joueurs[0].Nom := 'Patrick';
     joueurs[0].Id := 0;
@@ -59,8 +73,6 @@ begin
         joueurs[0].ressources[ressource] := 5;
         joueurs[1].ressources[ressource] := 3;
     end;
-
-    affichageDes(1,3,FCoord(1500,475),affichage);
     miseAJourRenderer(affichage);
 
     clicAction(affichage,valeurBouton);

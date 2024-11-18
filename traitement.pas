@@ -2,15 +2,16 @@ unit traitement;
 
 interface
 
-uses Types;
+uses Types,SDL2;
 
 procedure hexaToCard(q,r,taille:Integer; var x,y:Integer);
 procedure cardToHexa(x,y,taille:Integer; var q,r:Integer);
 procedure round_hexa(q_f,r_f:Real; var q,r:Integer);
 function enContact(hexagones: TCoords): Boolean;
-function sontAdjacentes(coord1, coord2: TCoord): Boolean;
+function sontAdjacents(coord1, coord2: TCoord): Boolean;
 function splitValeur(texte: String): TStringTab;
 function FCoord(x, y: Integer): TCoord;
+function FCouleur(r, g, b, a: Integer): TSDL_Color;
 
 implementation
 
@@ -47,23 +48,28 @@ begin
     round_hexa(q_f,r_f,q,r);
 end;
 
-function sontAdjacentes(coord1, coord2: TCoord): Boolean;
+function sontAdjacents(coord1, coord2: TCoord): Boolean;
 var dq, dr: Integer;
 begin
     dq := coord1.x - coord2.x;
     dr := coord1.y - coord2.y;
 
-    sontAdjacentes := ((Abs(dq) = 1) and (dr = 0)) or ((Abs(dr) = 1) and (dq = 0)) or ((dq = -1) and (dr = 1)) or ((dq = 1) and (dr = -1));
+    sontAdjacents := ((Abs(dq) = 1) and (dr = 0)) or ((Abs(dr) = 1) and (dq = 0)) or ((dq = -1) and (dr = 1)) or ((dq = 1) and (dr = -1));
 end;
 
 function enContact(hexagones: TCoords): Boolean;
-var i: Integer;
+var i,j: Integer;
 begin
     enContact := True;
-    for i:=0 to Length(hexagones)-2 do
+    for i := 0 to length(hexagones) - 1 do
     begin
-        if not sontAdjacentes(hexagones[i], hexagones[i+1]) then
-            enContact := False;
+        for j := i + 1 to length(hexagones) - 1 do
+        begin
+            if not sontAdjacents(hexagones[i], hexagones[j]) then
+            begin
+                enContact := False;
+            end;
+        end;
     end;
 end;
 
@@ -91,10 +97,17 @@ begin
 end;
 
 function FCoord(x, y: Integer): TCoord;
-var coord: TCoord;
 begin
     FCoord.x := x;
     FCoord.y := y;
+end;
+
+function FCouleur(r, g, b, a: Integer): TSDL_Color;
+begin
+    FCouleur.r := r;
+    FCouleur.g := g;
+    FCouleur.b := b;
+    FCouleur.a := a;
 end;
 
 end.
