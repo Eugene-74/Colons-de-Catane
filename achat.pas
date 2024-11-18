@@ -6,7 +6,7 @@ uses
   Types, affichageUnit,traitement;
 
 procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
-procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage);
+procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
 procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 procedure verificationPointsVictoire(plateau : TPlateau; joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer);
@@ -25,19 +25,19 @@ function dansLePlateau(plateau : TPlateau; coord : Tcoord): boolean;
 
 implementation
 
-procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage);
-var
-  choix: Integer;
+procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
+// var
+  // choix: Integer;
 begin
   
 // TODO changer les write en une valeur donner dans la fonction 
 // c'est gestion qui envoie la bonne action a effectuer
 
-  WriteLn('Choisissez l''élément à acheter : ');
-  WriteLn('1. Élève');
-  WriteLn('2. Connexion');
-  WriteLn('3. Changer un Élève en Professeur');
-  ReadLn(choix);
+  // WriteLn('Choisissez l''élément à acheter : ');
+  // WriteLn('1. Élève');
+  // WriteLn('2. Connexion');
+  // WriteLn('3. Changer un Élève en Professeur');
+  // ReadLn(choix);
 
   case choix of
     1: 
@@ -304,31 +304,37 @@ var
   begin
   // Appeler ClicPersonne pour récupérer les hexagones sélectionnés
   HexagonesCoords := ClicPersonne(affichage, plateau, False); 
-  compteur := 0;
+  // compteur := 0;
 
   // Vérifie si les hexagones sont adjacents
 
   if enContact(HexagonesCoords) then
   begin
+        writeln('contact');
+
     estConverti := False;
     // Parcourt les personnes du plateau pour trouver un élève appartenant au joueur actuel
-    for i := 0 to High(plateau.Personnes)-1 do
+    for i := 0 to length(plateau.Personnes)-1 do
     begin
+        writeln('plateau');
+
       if (plateau.Personnes[i].IdJoueur = joueurActuel.Id) and
          (plateau.Personnes[i].estEleve) then
       begin
+        writeln('elev trouver');
         compteur := 0; // Réinitialise le compteur pour cette personne
         // Parcourt les positions de la personne pour vérifier la correspondance avec les hexagones sélectionnés
-        for j := 0 to  High(HexagonesCoords)-1 do
+        for j := 0 to  length(HexagonesCoords)-1 do
         begin
           // Compare chaque position de la personne avec les coordonnées sélectionnées
-          for k := 0 to High(HexagonesCoords)-1 do
+          for k := 0 to length(HexagonesCoords)-1 do
           begin
             if (plateau.Personnes[i].Position[j].x = HexagonesCoords[k].x) and
                (plateau.Personnes[i].Position[j].y = HexagonesCoords[k].y) then
             begin
               compteur := compteur + 1;
-              Break; // Passe à la prochaine position une fois une correspondance trouvée
+              writeln('compteur',compteur);
+              // Break; // Passe à la prochaine position une fois une correspondance trouvée
             end;
           end;
         end;
@@ -336,22 +342,22 @@ var
         // Si toutes les positions de la personne correspondent aux hexagones sélectionnés, effectuer la conversion
         if compteur = 3 then
         begin
-          // if(retraitRessources) then
-          // begin
-          //   joueurActuel.Ressources[Mathematiques] := joueurActuel.Ressources[Mathematiques] - 2;
-          //   joueurActuel.Ressources[Physique] := joueurActuel.Ressources[Physique] - 1;
-          // end;
           plateau.Personnes[i].estEleve := False; // Convertir l'élève en professeur
           estConverti := True;      
           
           // ajout d'un point
           joueurActuel.Points:=1+joueurActuel.Points;
+
+
+          // affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
+          // miseAJourRenderer(affichage); 
+
           WriteLn('Élève converti en professeur avec succès !');
-          Break; 
+          // Break; 
         end;
       end;
       if estConverti then
-        Break;
+        // Break;
     end;
 
   //   if not estConverti then
