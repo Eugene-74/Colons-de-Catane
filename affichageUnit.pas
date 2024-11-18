@@ -384,7 +384,7 @@ end;
 
 procedure affichageInformation(texte: String; taille: Integer; couleur: TSDL_Color; var affichage: TAffichage);
 begin
-    affichageTexte(texte, taille, FCoord(25,25), couleur, affichage);
+    affichageTexte(texte, taille, FCoord(400,1025), couleur, affichage);
 end;
 
 procedure affichageDe(de,rotation:Integer; coord:TCoord; var affichage: TAffichage);

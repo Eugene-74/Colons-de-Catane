@@ -25,7 +25,7 @@ begin
     plateau.Personnes[0].Position[2] := FCoord(2,4);
     plateau.Personnes[0].estEleve := True;
     plateau.Personnes[0].IdJoueur := 0;
-    
+
     partie(joueurs,plateau,affichage);
 
   end
@@ -53,6 +53,9 @@ begin
     plateau.Souillard.Position := FCoord(4,3);
 
     affichageTour(plateau,joueurs, affichage);
+    affichageInformation('salut', 25, FCouleur(0,0,0,255), affichage);
+
+    miseAJourRenderer(affichage);
 
     setLength(joueurs, 3);
     joueurs[0].Nom := 'Patrick';
