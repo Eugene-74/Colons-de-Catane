@@ -113,42 +113,36 @@ procedure placementEleve(var plateau: TPlateau; var affichage: TAffichage; var j
 var
  HexagonesCoords: TCoords;
 begin
-  HexagonesCoords := ClicPersonne(affichage,plateau,True); 
+  
+  affichageInformation('Cliquez sur 3 hexagones entre lesquels vous voulez placer l''eleve', 25, FCouleur(0,0,0,255), affichage);
 
-  if PersonneValide(plateau, HexagonesCoords, True, joueurActuel,affichage) then
+  repeat
+    HexagonesCoords := ClicPersonne(affichage,plateau,True); 
+  until PersonneValide(plateau, HexagonesCoords, True, joueurActuel,affichage);
+
+  SetLength(plateau.Personnes, Length(plateau.Personnes) + 1);
+  with plateau.Personnes[High(plateau.Personnes)] do
   begin
-   
-    // TODO MACHE PAS LES HEXAGONES SONT PAS SPECIALEMENT COLLER
-    SetLength(plateau.Personnes, Length(plateau.Personnes) + 1);
-    with plateau.Personnes[High(plateau.Personnes)] do
-    begin
-      // Assigner les coordonnées des hexagones sélectionnés à l'élève
-      SetLength(Position, 3); 
-      Position[0] := HexagonesCoords[0];
-      Position[1] := HexagonesCoords[1];
-      Position[2] := HexagonesCoords[2];
+    // Assigner les coordonnées des hexagones sélectionnés à l'élève
+    SetLength(Position, 3); 
+    Position[0] := HexagonesCoords[0];
+    Position[1] := HexagonesCoords[1];
+    Position[2] := HexagonesCoords[2];
 
-      estEleve := True;
-      IdJoueur := joueurActuel.Id;
+    estEleve := True;
+    IdJoueur := joueurActuel.Id;
 
-      // ajout d'un point
-      joueurActuel.Points:=1+joueurActuel.Points;
+    // ajout d'un point
+    joueurActuel.Points:=1+joueurActuel.Points;
 
-    end;
-
+    affichageScore(joueurActuel,affichage);
     affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
     miseAJourRenderer(affichage);
 
     
-    affichageInformation('Eleve place avec succes !', 25, FCouleur(0,0,0,255), affichage);
+    affichageInformation('Eleve place avec succes !', 25, FCouleur(0,255,0,255), affichage);
 
     
-  end
-  else
-  begin
-    affichageInformation('Placement invalide. Verifiez les conditions de placement.', 25, FCouleur(0,0,0,255), affichage);
-
-    placementEleve(plateau,  affichage, joueurActuel);
   end;
 end;
 
@@ -163,6 +157,8 @@ begin
   if not enContact(HexagonesCoords) then
   begin
     PersonneValide := False;
+    affichageInformation('Les 3 hexagonnes doivent etre adjacents.', 25, FCouleur(255,0,0,255), affichage);
+
     Exit;
   end;
 
@@ -171,6 +167,9 @@ begin
     if not enContactEleveConnexion(plateau,HexagonesCoords,joueurActuel) then
     begin
      writeln('Eleve non liée avec une connexion');
+     
+      affichageInformation('erreur.', 25, FCouleur(255,0,0,255), affichage);
+
       exit;
     end;
 
@@ -180,6 +179,8 @@ begin
     if  VerifierAdjacencePersonnes(HexagonesCoords,plateau) then
     begin
         PersonneValide := False; 
+      affichageInformation('Il y a deja un autre eleve/professeur trop proche.', 25, FCouleur(255,0,0,255), affichage);
+
     end
     else
         personneAdjacente := True; 
@@ -209,10 +210,7 @@ var
  
 begin
   SetLength(HexagonesCoords,3);
-  if estEleve then
-    affichageInformation('Cliquez sur trois hexagones entre lesquels vous voulez placer l''eleve', 25, FCouleur(0,0,0,255), affichage)
-  else
-    affichageInformation('Cliquez sur trois hexagones entre lesquels vous voulez placer le professeur', 25, FCouleur(0,0,0,255), affichage);
+  
   for i := 0 to 2 do
   begin
     clicHexagone(plateau, affichage, HexagonesCoords[i]); 
@@ -293,6 +291,8 @@ var
   estConverti: Boolean;
   begin
   // Appeler ClicPersonne pour récupérer les hexagones sélectionnés
+  affichageInformation('Cliquez sur 3 hexagones entre lesquels vous voulez placer le professeur', 25, FCouleur(0,0,0,255), affichage);
+
   HexagonesCoords := ClicPersonne(affichage, plateau, False); 
   // compteur := 0;
 
@@ -332,13 +332,14 @@ var
           joueurActuel.Points:=1+joueurActuel.Points;
           
 
-          affichageInformation('Eleve converti en professeur avec succes !', 25, FCouleur(0,0,0,255), affichage);
+          affichageInformation('Eleve converti en professeur avec succes !', 25, FCouleur(0,255,0,255), affichage);
 
         end;
       end;
       if estConverti then
     end;
-
+    
+    affichageScore(joueurActuel,affichage);
     affichagePersonne(plateau.Personnes[i], affichage);
     miseAJourRenderer(affichage);
   end
@@ -504,6 +505,7 @@ function ClicConnexion(var plateau : TPlateau; var affichage : TAffichage): TCoo
 var
   coords: TCoords;
 begin
+
   SetLength(coords, 2);
   clicHexagone(plateau, affichage,coords[0]);
   clicHexagone(plateau, affichage,coords[1]);
@@ -517,39 +519,34 @@ var
   i : Integer;
 begin
   // Demande à l'utilisateur de sélectionner deux hexagones pour la connexion
+  affichageInformation('Cliquez sur 2 hexagones entre lesquels vous voulez placer la connexion', 25, FCouleur(0,0,0,255), affichage);
+
+  repeat
   coords := ClicConnexion(plateau,affichage);
 
+  until connexionValide(coords, plateau, joueur,affichage);
+
+
   // Vérifie si la connexion est valide avec les hexagones sélectionnés
-  if connexionValide(coords, plateau, joueur,affichage) then
-    begin
+  SetLength(plateau.Connexions, Length(plateau.Connexions) + 1);
+  plateau.Connexions[length(plateau.Connexions)-1].IdJoueur := joueur.Id;
 
-    SetLength(plateau.Connexions, Length(plateau.Connexions) + 1);
-    plateau.Connexions[length(plateau.Connexions)-1].IdJoueur := joueur.Id;
+  setLength(plateau.Connexions[length(plateau.Connexions)-1].Position,2);
 
-    setLength(plateau.Connexions[length(plateau.Connexions)-1].Position,2);
-
-    plateau.Connexions[length(plateau.Connexions)-1].Position[0] := coords[0];
-    plateau.Connexions[length(plateau.Connexions)-1].Position[1] := coords[1];
+  plateau.Connexions[length(plateau.Connexions)-1].Position[0] := coords[0];
+  plateau.Connexions[length(plateau.Connexions)-1].Position[1] := coords[1];
 
 // TODO mieux afficher eleve sur connexion
-    
-    affichageConnexion(plateau.Connexions[length(plateau.Connexions)-1], affichage);
+  
+  affichageConnexion(plateau.Connexions[length(plateau.Connexions)-1], affichage);
 
-    for i:=0 to length(plateau.Personnes)-1 do
-        affichagePersonne(plateau.Personnes[i],affichage);
-    miseAJourRenderer(affichage);
+  for i:=0 to length(plateau.Personnes)-1 do
+      affichagePersonne(plateau.Personnes[i],affichage);
+  miseAJourRenderer(affichage);
 
 
-    affichageInformation('Connexion placee avec succes !', 25, FCouleur(0,0,0,255), affichage);
+  affichageInformation('Connexion placee avec succes !', 25, FCouleur(0,255,0,255), affichage);
 
-    end
-  else
-    begin
-    affichageInformation('Impossible de placer la connexion : verifiez la position choisie.', 25, FCouleur(0,0,0,255), affichage);
-    
-    // Si la connexionn n'est pas valide, on rappelle la fonction
-    placementConnexion(plateau,affichage,joueur);
-    end;
 end;
 function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;
 var
@@ -714,14 +711,16 @@ end;
 procedure deplacementSouillard(var plateau : TPlateau;var joueurs : TJoueurs ;var affichage : TAffichage);
 var coord : Tcoord;
 begin
-
+  affichageInformation('Cliquez sur 1 hexagones pour déplacer le souillard.', 25, FCouleur(0,0,0,255), affichage);
 
   repeat
   clicHexagone(plateau, affichage, coord); 
   until (dansLePlateau(plateau,coord));
 
-
   plateau.Souillard.Position := coord;
+
+  affichageInformation('Eleve deplace avec succes !', 25, FCouleur(0,255,0,255), affichage);
+
 
   affichageTour(plateau,joueurs,affichage);
 

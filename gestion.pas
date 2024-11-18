@@ -334,11 +334,31 @@ begin
 
 end;
 
+function aLesRessources(joueur : Tjoueur; ressources : TRessources):boolean;
+var res : TRessource;
+begin
+  aLesRessources := True;
+  for res in [Physique..Mathematiques] do 
+    if(joueur.ressources[res] >= ressources[res]) then
+      aLesRessources := False;
+end;
+
+procedure enleverRessources( var joueur : Tjoueur; ressources : TRessources);
+var res : TRessource;
+begin
+  for res in [Physique..Mathematiques] do 
+    joueur.ressources[res] := joueur.ressources[res] - ressources[res]
+  
+end;
+
+
 procedure tour(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
-var valeurBouton : String;
+var valeurBouton,text : String;
   finTour : boolean;
   ressources1,ressources2 : TRessources;
-  i : Integer;
+  res : TRessource;
+  i,id1,id2 : Integer;
+
 begin
   for i := 0 to length(joueurs)-1 do 
     begin
@@ -362,13 +382,32 @@ begin
       else if(valeurBouton = 'changement_en_prof')  then
         begin
         changementProfesseur(plateau,affichage,joueurs[i]);
-        affichageTour(plateau,joueurs,affichage);
+        
         end
       else if(valeurBouton = 'echange')  then
         begin
-        echangeRessources(joueurs, joueurs[i].Id, joueurs[i].Id,ressources1,ressources2,affichage);
-        writeln('echange bis');
-        affichageTour(plateau, joueurs, affichage);
+        id1 := joueurs[i].id;
+        id2 := joueurs[i+1].id;
+
+        echangeRessources(joueurs,id1, id2 ,ressources1,ressources2,affichage);
+        if(aLesRessources(joueurs[id1],ressources1) and aLesRessources(joueurs[id2],ressources2)) then
+            begin
+            enleverRessources(joueurs[id1],ressources1);
+            enleverRessources(joueurs[id2],ressources1);
+
+            affichageTour(plateau, joueurs, affichage);
+            affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' a ete valide',25,FCouleur(0,255,0,255),affichage);
+              
+
+            end
+        else
+            affichageTour(plateau, joueurs, affichage);
+            affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est impossible',25,FCouleur(255,0,0,255),affichage);
+
+
+
+
+
 
         // TODO verifier que l'échange est possible
         end
