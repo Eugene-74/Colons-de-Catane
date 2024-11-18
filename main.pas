@@ -53,9 +53,8 @@ begin
     plateau.Souillard.Position := FCoord(4,3);
 
     affichageTour(plateau,joueurs, affichage);
-    affichageInformation('salut', 25, FCouleur(0,0,0,255), affichage);
 
-    miseAJourRenderer(affichage);
+    affichageInformation('salut', 25, FCouleur(0,0,0,255), affichage);
 
     setLength(joueurs, 3);
     joueurs[0].Nom := 'Patrick';
