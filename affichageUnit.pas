@@ -108,6 +108,32 @@ begin
     affichage.texturePlateau.textureProfesseur := chargerTexture(affichage, 'person');
 end;
 
+procedure affichageDetailsHexagone(q,r,x,y: Integer; plat: TPlateau; var affichage: TAffichage);
+var destination_rect: TSDL_RECT;
+    coord: Tcoord;
+    texture: PSDL_Texture;
+begin
+    if (plat.Grille[q,r].ressource = Rien) then
+        texture := affichage.texturePlateau.textureContourVide
+    else
+        texture := affichage.texturePlateau.textureContourHexagone;
+
+    destination_rect.x:=affichage.xGrid+x-(Round(tailleHexagone * 1.05) div 2);
+    destination_rect.y:=affichage.yGrid+y-(Round(tailleHexagone * 1.05) div 2);
+    destination_rect.w:=Round(tailleHexagone * 1.05);
+    destination_rect.h:=Round(tailleHexagone * 1.05);
+
+    if SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect)<>0 then
+        WriteLn('Erreur SDL: ', SDL_GetError());
+
+    coord.x:=affichage.xGrid+x - 40 div 2;
+    coord.y:=affichage.yGrid+y - 50 div 2;
+    if plat.Grille[q,r].Numero div 10 >= 1 then
+        affichageTexte(IntToStr(plat.Grille[q,r].Numero), 40, coord, affichage)
+    else if (plat.Grille[q,r].Numero <> -1 )then
+        affichageTexte(' ' + IntToStr(plat.Grille[q,r].Numero), 40, coord, affichage);
+end;
+
 {Affiche un hexagone à l'écran
 Préconditions :
     - plat : le plateau de jeu
@@ -117,42 +143,25 @@ Postconditions :
     - affichage : la structure contenant le renderer}
 procedure affichageHexagone(plat: TPlateau; var affichage: TAffichage; q, r: Integer);
 var destination_rect: TSDL_RECT;
-    texture,texturebis: PSDL_Texture;
+    texture: PSDL_Texture;
     x,y: Integer;
-    coord: Tcoord;
 begin
     hexaToCard(q,r,tailleHexagone div 2,x,y);
-	
-    // Définit le carre de destination pour l'affichage de la carte
-    destination_rect.x:=affichage.xGrid+x-(tailleHexagone div 2);
-    destination_rect.y:=affichage.yGrid+y-(tailleHexagone div 2);
-    destination_rect.w:=tailleHexagone;
-    destination_rect.h:=tailleHexagone;
 
-    if (plat.Grille[q,r].ressource = Rien) then
-        texturebis := affichage.texturePlateau.textureContourVide
-    else
+    if (plat.Grille[q,r].ressource <> Rien) then
     begin
-        texturebis := affichage.texturePlateau.textureContourHexagone;
+        // Définit le carre de destination pour l'affichage de la carte
+        destination_rect.x:=affichage.xGrid+x-(tailleHexagone div 2);
+        destination_rect.y:=affichage.yGrid+y-(tailleHexagone div 2);
+        destination_rect.w:=tailleHexagone;
+        destination_rect.h:=tailleHexagone;
+
         texture := affichage.texturePlateau.textureRessource[plat.Grille[q,r].ressource];
         if SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect)<>0 then
             WriteLn('Erreur SDL: ', SDL_GetError());
     end;
 
-    destination_rect.x:=affichage.xGrid+x-(Round(tailleHexagone * 1.05) div 2);
-    destination_rect.y:=affichage.yGrid+y-(Round(tailleHexagone * 1.05) div 2);
-    destination_rect.w:=Round(tailleHexagone * 1.05);
-    destination_rect.h:=Round(tailleHexagone * 1.05);
-
-	  if SDL_RenderCopy(affichage.renderer,texturebis,nil,@destination_rect)<>0 then
-        WriteLn('Erreur SDL: ', SDL_GetError());
-
-    coord.x:=affichage.xGrid+x - 40 div 2;
-    coord.y:=affichage.yGrid+y - 50 div 2;
-    if plat.Grille[q,r].Numero div 10 >= 1 then
-        affichageTexte(IntToStr(plat.Grille[q,r].Numero), 40, coord, affichage)
-    else if (plat.Grille[q,r].Numero <> -1 )then
-        affichageTexte(' ' + IntToStr(plat.Grille[q,r].Numero), 40, coord, affichage);
+    affichageDetailsHexagone(q,r,x,y,plat,affichage);
 end;
 
 {Affiche le fond de l'écran en blanc
@@ -369,6 +378,8 @@ begin
 
     if SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect)<>0 then
         WriteLn('Erreur SDL: ', SDL_GetError());
+    
+    affichageDetailsHexagone(plat.Souillard.Position.x,plat.Souillard.Position.y,x,y,plat,affichage);
 end;
 
 {Retourne les coordonnées du clic de la souris (système cartésien)
