@@ -195,7 +195,7 @@ begin
     //     end;
 
     // if(((text <> '\n') and (text <> '')) and unique) then
-    if((text <>  '')) then
+    if((text <>  '0')) then
       begin
       SetLength(joueurs,i+1);
       joueurs[i].Nom:= text;

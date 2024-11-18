@@ -13,10 +13,10 @@ procedure verificationPointsVictoire(plateau : TPlateau; joueurs: TJoueurs; var 
 procedure affichageGagnant(joueur: TJoueur; affichage: TAffichage);
 procedure deplacementSouillard(var plateau : TPlateau; var joueurs : TJoueurs ;var affichage : TAffichage);
 function ClicConnexion(var plateau : TPlateau; var affichage : TAffichage): TCoords;
-function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur): Boolean;
+function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;affichage : TAffichage): Boolean;
 function ClicPersonne(affichage: TAffichage; plateau: TPlateau; estEleve: Boolean): TCoords;
 function CountPersonnes(personnes: array of TPersonne; estEleve: Boolean; joueur: TJoueur): Integer;
-function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur): Boolean;
+function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur;affichage : TAffichage): Boolean;
 function VerifierAdjacencePersonnes(HexagonesCoords: TCoords; plateau: TPlateau): Boolean;
 function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;
 function aucuneConnexionAdjacente(coords: TCoords;  plateau: TPlateau; joueur: TJoueur): Boolean;
@@ -115,7 +115,7 @@ var
 begin
   HexagonesCoords := ClicPersonne(affichage,plateau,True); 
 
-  if PersonneValide(plateau, HexagonesCoords, True, joueurActuel) then
+  if PersonneValide(plateau, HexagonesCoords, True, joueurActuel,affichage) then
   begin
    
     // TODO MACHE PAS LES HEXAGONES SONT PAS SPECIALEMENT COLLER
@@ -152,7 +152,7 @@ end;
 
 
 
-function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur): Boolean;
+function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur;affichage : TAffichage): Boolean;
 var
   personneAdjacente: Boolean;
 begin
@@ -183,7 +183,10 @@ begin
       ) then 
     begin
     PersonneValide:= False;      
-    WriteLn('Au moins 1 des hexagones choisis doit etre dans le plateau');
+
+    affichageInformation('Au moins 1 des hexagones choisis doit etre dans le plateau', 25, FCouleur(0,0,0,255), affichage);
+
+    // WriteLn('Au moins 1 des hexagones choisis doit etre dans le plateau');
     
     Exit;
     end; 
@@ -401,14 +404,17 @@ end;
 
 
 procedure affichageGagnant(joueur: TJoueur; affichage: TAffichage);
+var text : String;
 begin
-  WriteLn('Félicitations, ', joueur.Nom, ' ! Vous avez gagné la partie avec ', joueur.Points, ' points.');
+  // text := ('Félicitations, ', joueur.Nom, ' ! Vous avez gagné la partie avec ', joueur.Points, ' points.');
+  affichageInformation(text, 25, FCouleur(0,0,0,255), affichage);
+  // WriteLn('Félicitations, ', joueur.Nom, ' ! Vous avez gagné la partie avec ', joueur.Points, ' points.');
 end;
 
 
 
 
-function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur): Boolean;
+function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;affichage :TAffichage): Boolean;
 var
   i: Integer;
   enContactAvecAutreConnexion, enContactAvecPersonne: Boolean;
@@ -433,7 +439,9 @@ begin
          (plateau.Connexions[i].Position[1].y = coords[0].y))) then
     begin
       connexionValide := False;
-      WriteLn('Position de connexion déjà occupée.');
+      // WriteLn('Position de connexion déjà occupée.');
+      affichageInformation('Position de connexion déjà occupée.', 25, FCouleur(0,0,0,255), affichage);
+
       Exit;
     end;
   end;
@@ -442,7 +450,9 @@ begin
   if not enContact(coords) then
   begin
     connexionValide := False;
-    WriteLn('Les deux hexagones ne sont pas adjacents.');
+    // WriteLn('Les deux hexagones ne sont pas adjacents.');
+    affichageInformation('Les deux hexagones ne sont pas adjacents.', 25, FCouleur(0,0,0,255), affichage);
+
     Exit;
   end;
   enContactAvecAutreConnexion := not aucuneConnexionAdjacente(coords, plateau, joueur);
@@ -456,7 +466,8 @@ begin
   if (not dansLePlateau(plateau,coords[0]) and not dansLePlateau(plateau,coords[1])) then 
     begin
     connexionValide:= False;      
-    WriteLn('Au moins 1 des hexagones choisis doit etre dans le plateau');
+    affichageInformation('Au moins 1 des hexagones choisis doit etre dans le plateau', 25, FCouleur(0,0,0,255), affichage);
+    // WriteLn('Au moins 1 des hexagones choisis doit etre dans le plateau');
 
     Exit;
     end; 
@@ -469,7 +480,8 @@ begin
   if not enContactAvecAutreConnexion then
   begin
     connexionValide := False;
-    WriteLn('La connexion doit être adjacente à une autre connexion ou en contact avec un élève ou un professeur.');
+    affichageInformation('La connexion doit être adjacente à une autre connexion ou en contact avec un élève ou un professeur.', 25, FCouleur(0,0,0,255), affichage);
+    // WriteLn('La connexion doit être adjacente à une autre connexion ou en contact avec un élève ou un professeur.');
     Exit;
   end;
 end
@@ -498,13 +510,13 @@ end;
 procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 var
   coords: TCoords;
+  i : Integer;
 begin
-
   // Demande à l'utilisateur de sélectionner deux hexagones pour la connexion
   coords := ClicConnexion(plateau,affichage);
 
   // Vérifie si la connexion est valide avec les hexagones sélectionnés
-  if connexionValide(coords, plateau, joueur) then
+  if connexionValide(coords, plateau, joueur,affichage) then
     begin
 
     SetLength(plateau.Connexions, Length(plateau.Connexions) + 1);
@@ -515,8 +527,12 @@ begin
     plateau.Connexions[length(plateau.Connexions)-1].Position[0] := coords[0];
     plateau.Connexions[length(plateau.Connexions)-1].Position[1] := coords[1];
 
+// TODO mieux afficher eleve sur connexion
     
     affichageConnexion(plateau.Connexions[length(plateau.Connexions)-1], affichage);
+
+    for i:=0 to length(plateau.Personnes)-1 do
+        affichagePersonne(plateau.Personnes[i],affichage);
     miseAJourRenderer(affichage);
 
 
