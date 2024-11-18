@@ -169,9 +169,9 @@ intialisationTutorat := CARTES_TUTORAT;
 end;
 
 procedure initialisationPartie(var joueurs : TJoueurs;var plateau : TPlateau;var affichage : TAffichage);
-var i,num : integer;
+var i,j,num : integer;
   text : string;
-  stop : Boolean;
+  stop,unique : Boolean;
   res : TRessources;
   r : Tressource;
   cartesTutorat : TCartesTutorat;
@@ -183,9 +183,19 @@ begin
   SetLength(joueurs,0);
   i:=0;
   repeat
-    write('rentrer le nom du joueur '+IntToStr(i+1)+' : (0 pour arêter)');
+    write('rentrer le nom du joueur '+IntToStr(i+1)+' : (Entrer pour arêter)');
     readln(text);
-    if(text <> '0') then
+    unique := True;
+
+    // for j:=0 to  length(joueurs) -1 do 
+    //   if(joueurs[j].Nom = text) then
+    //     begin
+    //     writeln('Le nom du joueur doit être unique');
+    //     unique := False;
+    //     end;
+
+    // if(((text <> '\n') and (text <> '')) and unique) then
+    if((text <>  '')) then
       begin
       SetLength(joueurs,i+1);
       joueurs[i].Nom:= text;
@@ -198,7 +208,7 @@ begin
     else 
       begin
         if(i < 2)then
-          writeln('Le nombre de joueur doit être de au moins 2')
+          writeln('Le nombre de joueur invalide ( + 2 joueurs minimum)')
         else 
           stop := true;
       end;
