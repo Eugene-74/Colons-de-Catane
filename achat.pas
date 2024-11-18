@@ -162,10 +162,6 @@ begin
     end;
 
    writeln('placement d''eleve apres le debut de partie');
-      exit;
-    end;
-
-   writeln('placement d''eleve apres le debut de partie');
   // Vérifie la présence d'une personne adjacente
 
     if  VerifierAdjacencePersonnes(HexagonesCoords,plateau) then
