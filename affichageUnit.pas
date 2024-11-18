@@ -338,20 +338,15 @@ var coord: Tcoord;
 begin
     coord := calculPosPersonne(personne);
 
+    destination_rect.x:=affichage.xGrid + coord.x -(tailleEleve div 2);
+    destination_rect.y:=affichage.yGrid + coord.y -(tailleEleve div 2);
+    destination_rect.w:=tailleEleve;
+    destination_rect.h:=tailleEleve;
+
     if personne.estEleve then
-        begin
-        texture := affichage.texturePlateau.textureEleve;
-        
-        destination_rect.x:=affichage.xGrid + coord.x -(tailleEleve div 2);
-        destination_rect.y:=affichage.yGrid + coord.y -(tailleEleve div 2);
-        destination_rect.w:=tailleEleve;
-        destination_rect.h:=tailleEleve;
-        end
+        texture := affichage.texturePlateau.textureEleve
     else
-    begin
         texture := affichage.texturePlateau.textureProfesseur;
-        writeln('ayo');
-    end;
 
     recupererCouleurJoueur(personne.IdJoueur,couleur);
     SDL_SetTextureColorMod(texture, couleur.r, couleur.g, couleur.b);
