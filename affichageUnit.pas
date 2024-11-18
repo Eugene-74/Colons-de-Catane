@@ -106,8 +106,8 @@ begin
         affichage.texturePlateau.textureIconesRessources[i] := chargerTexture(affichage, 'IconesRessources/'+GetEnumName(TypeInfo(TRessource), Ord(i)));
     end;
 
-    affichage.texturePlateau.textureContourHexagone := chargerTexture(affichage, 'hexagoneCercle');
-    affichage.texturePlateau.textureContourVide := chargerTexture(affichage, 'hexagone');
+    affichage.texturePlateau.textureContourHexagone := chargerTexture(affichage, 'bordureCercle');
+    affichage.texturePlateau.textureContourVide := chargerTexture(affichage, 'bordure');
     affichage.texturePlateau.textureEleve := chargerTexture(affichage, 'eleve');
     affichage.texturePlateau.textureSouillard := chargerTexture(affichage, 'souillard');
     affichage.texturePlateau.textureProfesseur := chargerTexture(affichage, 'professeur');
@@ -384,7 +384,7 @@ begin
 
     affichageImage(affichage.xGrid+coordCart.x-(Round(tailleHexagone * 1.05) div 2),affichage.yGrid+coordCart.y-(Round(tailleHexagone * 1.05) div 2),Round(tailleHexagone * 1.05),Round(tailleHexagone * 1.05),texture,affichage);
 
-    coord := FCoord(affichage.xGrid+coordCart.x - 40 div 2,affichage.yGrid+coordCart.y - 50 div 2);
+    coord := FCoord(affichage.xGrid+coordCart.x - 40 div 2,affichage.yGrid+coordCart.y - 50 div 2 - 5);
     if plat.Grille[coordHexa.x,coordHexa.y].Numero div 10 >= 1 then
         affichageTexte(IntToStr(plat.Grille[coordHexa.x,coordHexa.y].Numero), 40, coord, FCouleur(0,0,0,255), affichage)
     else if (plat.Grille[coordHexa.x,coordHexa.y].Numero <> -1 )then
