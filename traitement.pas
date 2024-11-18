@@ -57,14 +57,27 @@ begin
 end;
 
 function enContact(hexagones: TCoords): Boolean;
-var i: Integer;
+var i,j: Integer;
 begin
+    // writeln('enContact');
     enContact := True;
-    for i:=0 to Length(hexagones)-2 do
+// TODO Marche pas car verifie pas toute les possibilité !!! (deja corriger regarde le code)
+    // for i:=0 to Length(hexagones)-2 do
+    // begin
+    //     if not sontAdjacentes(hexagones[i], hexagones[i+1]) then
+    //         enContact := False;
+    // end;
+    for i := 0 to Length(hexagones) - 1 do
     begin
-        if not sontAdjacentes(hexagones[i], hexagones[i+1]) then
-            enContact := False;
-    end;
+      for j := i + 1 to Length(hexagones) - 1 do
+      begin
+        if not sontAdjacentes(hexagones[i], hexagones[j]) then
+        begin
+          enContact := False;
+          Exit;
+        end;
+  end;
+end;
 end;
 
 function splitValeur(texte: String): TStringTab;

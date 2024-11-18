@@ -121,23 +121,6 @@ begin
 
     end;
 
-  write('dans le plateau');
-  writeln(dansLePlateau);
-
-  // case coord.x of
-  //   1: if ((coord.y > 5) or (coord.y <=2)) then 
-  //     dansLePlateau := False;
-  //   2: if ((coord.y > 5) or (coord.y <=1)) then 
-  //     dansLePlateau := False;
-  //   3: if ((coord.y > 5) or (coord.y <=0)) then
-  //     dansLePlateau := False;
-  //   4: if ((coord.y > 4) or (coord.y <=0)) then
-  //     dansLePlateau := False;
-  //   5: if ((coord.y > 3) or (coord.y <=0)) then
-  //     dansLePlateau := False;
-  // end;
-
-
 end;
 
 
@@ -324,6 +307,7 @@ var
   compteur := 0;
 
   // Vérifie si les hexagones sont adjacents
+
   if enContact(HexagonesCoords) then
   begin
     estConverti := False;
@@ -454,16 +438,12 @@ begin
     if(plusDeplacementSouillard) then
       points[j] := points[j] + 2;
     
-    // writeln('point des joeurus ');
-    // writeln(points[j]);
-    // writeln(joueurs[i].Points);
-
-
-    if points[j] > 11 then
+    if points[j] >= 10 then
     begin
-      writeln('gagner');
-      gagner := True;       
+
+      gagner := True;
       gagnant := j+1; 
+      // writeln(joueur.Nom,'viens de gagner la partie en dépassant les 10 points');
       Break;
     end;
 
@@ -478,7 +458,6 @@ end;
 procedure affichageGagnant(joueur: TJoueur; affichage: TAffichage);
 begin
   WriteLn('Félicitations, ', joueur.Nom, ' ! Vous avez gagné la partie avec ', joueur.Points, ' points.');
-   
 end;
 
 
