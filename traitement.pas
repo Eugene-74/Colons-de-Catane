@@ -47,7 +47,7 @@ begin
     round_hexa(q_f,r_f,q,r);
 end;
 
-function sontAdjacentes(coord1, coord2: TCoord): Boolean;
+function sontAdjacents(coord1, coord2: TCoord): Boolean;
 var dq, dr: Integer;
 begin
     dq := coord1.x - coord2.x;
@@ -59,23 +59,16 @@ end;
 function enContact(hexagones: TCoords): Boolean;
 var i,j: Integer;
 begin
-    // writeln('enContact');
     enContact := True;
-// TODO Marche pas car verifie pas toute les possibilité !!! (deja corriger regarde le code)
-    // for i:=0 to Length(hexagones)-2 do
-    // begin
-    //     if not sontAdjacentes(hexagones[i], hexagones[i+1]) then
-    //         enContact := False;
-    // end;
-    for i := 0 to Length(hexagones) - 1 do
+    //TODO Vérifier que ça marche bien avec des cas extremes
+    for i := 0 to length(hexagones) - 1 do
     begin
-      for j := i + 1 to Length(hexagones) - 1 do
-      begin
-        if not sontAdjacentes(hexagones[i], hexagones[j]) then
+        for j := i + 1 to length(hexagones) - 1 do
         begin
-          enContact := False;
-          Exit;
-        end;
+            if not sontAdjacentes(hexagones[i], hexagones[j]) then
+            begin
+                enContact := False;
+            end;
   end;
 end;
 end;
