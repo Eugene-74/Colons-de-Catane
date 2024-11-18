@@ -2,7 +2,7 @@ unit traitement;
 
 interface
 
-uses Types;
+uses Types,SDL2;
 
 procedure hexaToCard(q,r,taille:Integer; var x,y:Integer);
 procedure cardToHexa(x,y,taille:Integer; var q,r:Integer);
@@ -11,6 +11,7 @@ function enContact(hexagones: TCoords): Boolean;
 function sontAdjacents(coord1, coord2: TCoord): Boolean;
 function splitValeur(texte: String): TStringTab;
 function FCoord(x, y: Integer): TCoord;
+function FCouleur(r, g, b, a: Integer): TSDL_Color;
 
 implementation
 
@@ -60,7 +61,6 @@ function enContact(hexagones: TCoords): Boolean;
 var i,j: Integer;
 begin
     enContact := True;
-    //TODO Vérifier que ça marche bien avec des cas extremes
     for i := 0 to length(hexagones) - 1 do
     begin
         for j := i + 1 to length(hexagones) - 1 do
@@ -100,6 +100,14 @@ function FCoord(x, y: Integer): TCoord;
 begin
     FCoord.x := x;
     FCoord.y := y;
+end;
+
+function FCouleur(r, g, b, a: Integer): TSDL_Color;
+begin
+    FCouleur.r := r;
+    FCouleur.g := g;
+    FCouleur.b := b;
+    FCouleur.a := a;
 end;
 
 end.
