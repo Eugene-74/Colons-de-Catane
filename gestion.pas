@@ -350,7 +350,10 @@ begin
       else if(valeurBouton = 'achat_carte_tutorat')  then
         writeln('achat carte tutorat')
       else if(valeurBouton = 'changement_en_prof')  then
-        changementProfesseur(plateau,affichage,joueurs[i])
+        begin
+        changementProfesseur(plateau,affichage,joueurs[i]);
+        affichageTour(plateau,joueurs,affichage);
+        end
       else if(valeurBouton = 'echange')  then
         begin
         echangeRessources(joueurs, joueurs[i].Id, joueurs[i].Id,ressources1,ressources2,affichage);

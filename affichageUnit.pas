@@ -26,7 +26,8 @@ const
     WINDOW_W = 1920;
     WINDOW_H = 1080;
     tailleHexagone = 180;
-    taillePersonne = tailleHexagone div 5;
+    tailleEleve = tailleHexagone div 4;
+    tailleProf = tailleHexagone div 3;
     tailleSouillard = tailleHexagone div 2;
 
 {Permet de charger la texture de l'image
@@ -105,7 +106,7 @@ begin
     affichage.texturePlateau.textureContourVide := chargerTexture(affichage, 'hexagone');
     affichage.texturePlateau.textureEleve := chargerTexture(affichage, 'person');
     affichage.texturePlateau.textureSouillard := chargerTexture(affichage, 'souillard');
-    affichage.texturePlateau.textureProfesseur := chargerTexture(affichage, 'person');
+    affichage.texturePlateau.textureProfesseur := chargerTexture(affichage, 'prof');
 end;
 
 {Affiche un hexagone à l'écran
@@ -329,18 +330,28 @@ begin
     coord := calculPosPersonne(personne);
 
     if personne.estEleve then
-        texture := affichage.texturePlateau.textureEleve
+        begin
+        texture := affichage.texturePlateau.textureEleve;
+        
+        destination_rect.x:=affichage.xGrid + coord.x -(tailleEleve div 2);
+        destination_rect.y:=affichage.yGrid + coord.y -(tailleEleve div 2);
+        destination_rect.w:=tailleEleve;
+        destination_rect.h:=tailleEleve;
+        end
     else
+        begin
         texture := affichage.texturePlateau.textureProfesseur;
+
+        destination_rect.x:=affichage.xGrid + coord.x -(tailleProf div 2);
+        destination_rect.y:=affichage.yGrid + coord.y -(tailleProf div 2);
+        destination_rect.w:=tailleProf;
+        destination_rect.h:=tailleProf;
+        end;
 
     recupererCouleurJoueur(personne.IdJoueur,couleur);
     SDL_SetTextureColorMod(texture, couleur.r, couleur.g, couleur.b);
 	
 	// Définit le carre de destination pour l'affichage de la carte
-	destination_rect.x:=affichage.xGrid + coord.x -(taillePersonne div 2);
-	destination_rect.y:=affichage.yGrid + coord.y -(taillePersonne div 2);
-	destination_rect.w:=taillePersonne;
-	destination_rect.h:=taillePersonne;
 
 	if SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect) <> 0 then
         WriteLn('Erreur SDL: ', SDL_GetError());
