@@ -554,7 +554,7 @@ end;
 
 procedure suppressionInformation(var affichage: TAffichage);
 begin
-    affichageZone(400,1025,1120,50,0,affichage);
+    affichageZone(400,1025,1500,50,0,affichage);
     attendre(66);
 end;
 
