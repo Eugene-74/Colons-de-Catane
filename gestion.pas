@@ -376,12 +376,6 @@ begin
         finTour := True;
 
     until (finTour);   
-    writeln(joueurs[i].Nom);
-    writeln(joueurs[i].Id);
-    writeln(joueurs[i].Points);
-
-     
-    writeln('fin fin de tour');
     end;
 
 
@@ -394,7 +388,7 @@ begin
   repeat
     tour(joueurs,plateau,affichage);
 
-    verificationPointsVictoire(plateau,joueurs,gagner,gagnant);
+    verificationPointsVictoire(plateau,joueurs,gagner,gagnant,affichage);
   until (gagner);
   affichageGagnant(joueurs[gagnant],affichage);
 
