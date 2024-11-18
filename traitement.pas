@@ -60,7 +60,6 @@ function enContact(hexagones: TCoords): Boolean;
 var i,j: Integer;
 begin
     enContact := True;
-    //TODO Vérifier que ça marche bien avec des cas extremes
     for i := 0 to length(hexagones) - 1 do
     begin
         for j := i + 1 to length(hexagones) - 1 do

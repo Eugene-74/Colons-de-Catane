@@ -26,8 +26,7 @@ const
     WINDOW_W = 1920;
     WINDOW_H = 1080;
     tailleHexagone = 180;
-    tailleEleve = tailleHexagone div 4;
-    tailleProf = tailleHexagone div 3;
+    tailleEleve = tailleHexagone div 3;
     tailleSouillard = tailleHexagone div 2;
 
 {Permet de charger la texture de l'image
