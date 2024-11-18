@@ -26,19 +26,8 @@ function dansLePlateau(plateau : TPlateau; coord : Tcoord): boolean;
 implementation
 
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
-// var
-  // choix: Integer;
 begin
   
-// TODO changer les write en une valeur donner dans la fonction 
-// c'est gestion qui envoie la bonne action a effectuer
-
-  // WriteLn('Choisissez l''élément à acheter : ');
-  // WriteLn('1. Élève');
-  // WriteLn('2. Connexion');
-  // WriteLn('3. Changer un Élève en Professeur');
-  // ReadLn(choix);
-
   case choix of
     1: 
      
@@ -103,22 +92,16 @@ begin
   if(coord.y > taille) then
     dansLePlateau := False;
 
-  // writeln(taille div 2);
   if(coord.x <= taille div 2) then
     begin
     if ((coord.y > taille) or (coord.y <=taille div 2 +1- coord.x)) then 
       dansLePlateau := False;
-    // writeln(taille div 2 - coord.x);
-    // writeln(taille);
     end;
   
   if(coord.x > taille div 2 +1) then
     begin
     if ((coord.y >  taille - coord.x  + taille div 2 +1) or (coord.y <=0)) then 
       dansLePlateau := False;
-    writeln( taille - coord.x  + taille div 2 +1);
-    writeln(0);
-
     end;
 
 end;
@@ -171,7 +154,6 @@ end;
 
 function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur): Boolean;
 var
-  i: Integer;
   personneAdjacente: Boolean;
 begin
   personneAdjacente := False;
@@ -232,7 +214,7 @@ end;
 
 function VerifierAdjacencePersonnes(HexagonesCoords: TCoords; plateau: TPlateau): Boolean;
 var
-  i, j, k, l, nombreCommuns: Integer;
+  i,j, k, nombreCommuns: Integer;
 begin
   VerifierAdjacencePersonnes := False;
 
@@ -310,18 +292,13 @@ var
 
   if enContact(HexagonesCoords) then
   begin
-        writeln('contact');
-
     estConverti := False;
     // Parcourt les personnes du plateau pour trouver un élève appartenant au joueur actuel
     for i := 0 to length(plateau.Personnes)-1 do
     begin
-        writeln('plateau');
-
       if (plateau.Personnes[i].IdJoueur = joueurActuel.Id) and
          (plateau.Personnes[i].estEleve) then
       begin
-        writeln('elev trouver');
         compteur := 0; // Réinitialise le compteur pour cette personne
         // Parcourt les positions de la personne pour vérifier la correspondance avec les hexagones sélectionnés
         for j := 0 to  length(HexagonesCoords)-1 do
@@ -333,8 +310,6 @@ var
                (plateau.Personnes[i].Position[j].y = HexagonesCoords[k].y) then
             begin
               compteur := compteur + 1;
-              writeln('compteur',compteur);
-              // Break; // Passe à la prochaine position une fois une correspondance trouvée
             end;
           end;
         end;
@@ -348,20 +323,11 @@ var
           // ajout d'un point
           joueurActuel.Points:=1+joueurActuel.Points;
 
-
-          // affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
-          // miseAJourRenderer(affichage); 
-
           WriteLn('Élève converti en professeur avec succès !');
-          // Break; 
         end;
       end;
       if estConverti then
-        // Break;
     end;
-
-  //   if not estConverti then
-  //     WriteLn('Aucun élève trouvé à convertir sur les hexagones sélectionnés.');
 
     affichagePersonne(plateau.Personnes[i], affichage);
     miseAJourRenderer(affichage);
@@ -374,35 +340,8 @@ end;
 
 
 function compterRouteSuite(plateau : TPlateau; joueur : Tjoueur):Integer;
-var connexions,connexionsJ : TConnexions;
-  connexion : TConnexion;
-  i,j,nbr,max : Integer;
-
 begin
-connexions := plateau.Connexions;
-for connexion in connexions do
-  begin
-  if (connexion.idJoueur = joueur.id) then
-    begin
-    SetLength(connexionsJ,length(connexionsJ)+1);
-    connexionsJ[length(connexionsJ)] := connexion;
-    end;
-  end;
-
-for i := 0 to length(connexionsJ) -1 do 
-  begin
-  for j := i to length(connexionsJ) -1 do 
-    begin 
-    if ( ((connexionsJ[i].Position[0].x = connexionsJ[j].Position[0].x) and (connexionsJ[i].Position[0].y = connexionsJ[j].Position[0].y)) 
-        or ((connexionsJ[i].Position[1].x = connexionsJ[j].Position[1].x) and (connexionsJ[i].Position[1].y = connexionsJ[j].Position[1].y)) ) then
-        nbr := nbr +1;
-    end;
-  if (nbr > max) then
-    max := nbr;
-  nbr := 0;
-  end;
-
-  compterRouteSuite := max;
+  compterRouteSuite := 0;
 end;
 
 
@@ -425,15 +364,15 @@ begin
     points[j] := joueur.points;
 
     // TODO erreur acces violation
-    // plusGrandeRoute := True;
-    // if (compterRouteSuite(plateau,joueur) >= 5) then
-    // begin
-    // for i := 0 to High(joueurs) do
-    //   if(compterRouteSuite(plateau,joueur) < compterRouteSuite(plateau,joueurs[i])) then
-    //     plusGrandeRoute := False;
-    // if plusGrandeRoute then
-    //   points[j] := points[j] + 2;
-    // end;
+    plusGrandeRoute := True;
+    if (compterRouteSuite(plateau,joueur) >= 5) then
+    begin
+    for i := 0 to High(joueurs) do
+      if(compterRouteSuite(plateau,joueur) < compterRouteSuite(plateau,joueurs[i])) then
+        plusGrandeRoute := False;
+    if plusGrandeRoute then
+      points[j] := points[j] + 2;
+    end;
 
 
     
@@ -449,7 +388,7 @@ begin
 
       gagner := True;
       gagnant := j+1; 
-      // writeln(joueur.Nom,'viens de gagner la partie en dépassant les 10 points');
+      writeln(joueur.Nom,'viens de gagner la partie en dépassant les 10 points');
       Break;
     end;
 
