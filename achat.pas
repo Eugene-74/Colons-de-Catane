@@ -343,7 +343,7 @@ var
         if compteur = 3 then
         begin
           plateau.Personnes[i].estEleve := False; // Convertir l'élève en professeur
-          estConverti := True;      
+          estConverti := True;
           
           // ajout d'un point
           joueurActuel.Points:=1+joueurActuel.Points;
