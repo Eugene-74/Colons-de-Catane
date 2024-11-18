@@ -1,7 +1,7 @@
 unit gestion;
 
 interface
-uses Types,affichageUnit,SysUtils,achat;
+uses Types,affichageUnit,SysUtils,achat,traitement;
 function chargementPlateau(num : Integer): TPlateau;
 procedure initialisationPartie(var joueurs : TJoueurs;var  plateau : TPlateau;var affichage : TAffichage);
 procedure partie(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
@@ -410,7 +410,7 @@ end;
 
 procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueurs : Tjoueurs; joueur : Tjoueur);
 begin
-affichageTexte('Deplacement du souillard par le joueur '+joueur.nom,0,plateau.Souillard.Position,affichage);
+affichageInformation('Deplacement du souillard par le joueur '+joueur.nom,25,FCouleur(0,0,0,255),affichage);
 deplacementSouillard(plateau,joueurs,affichage);
 
 
