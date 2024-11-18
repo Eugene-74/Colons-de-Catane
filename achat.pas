@@ -155,9 +155,17 @@ begin
 
   if(joueurActuel.Points > 2 ) then
     // TODO verifier le contact avec une connexion du joueur
-    writeln('placement d''eleve apres le debut de partie');
+    if not enContactEleveConnexion(plateau,HexagonesCoords,joueurActuel) then
+    begin
+     writeln('Eleve non liée avec une connexion');
+      exit;
+    end;
 
+   writeln('placement d''eleve apres le debut de partie');
+      exit;
+    end;
 
+   writeln('placement d''eleve apres le debut de partie');
   // Vérifie la présence d'une personne adjacente
 
     if  VerifierAdjacencePersonnes(HexagonesCoords,plateau) then

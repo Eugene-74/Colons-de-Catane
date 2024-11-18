@@ -337,7 +337,7 @@ begin
     affichageTour(plateau,joueurs,affichage);
 
     deplacementSouillard(plateau,joueurs,affichage)
-    end;
+    end
   else 
     begin
       distributionConnaissance(joueurs,plateau,des);
