@@ -11,7 +11,6 @@ var
     ressource : TRessource;
     id : Integer;
     valeurBouton : String;
-    tempCoord : Tcoord;
 
 begin
   testYann := False;
@@ -28,8 +27,6 @@ begin
     plateau.Personnes[0].IdJoueur := 0;
     
     partie(joueurs,plateau,affichage);
-
-
 
   end
   else
