@@ -37,7 +37,7 @@ begin
 end;
 
 {Permet de charger la texture de l'image
-Préconditions :
+Preconditions :
     - affichage : la structure contenant le renderer
     - filename : le nom du fichier image (sans l'extension, de type .png)
 Postconditions :
@@ -51,7 +51,7 @@ begin
 
 	image := IMG_LoadTexture(affichage.renderer, PChar(chemin));
 	
-	// Verifie si le chargement a réussi
+	// Verifie si le chargement a reussi
 	if image = nil then
 		writeln('Could not load image : ',IMG_GetError);
 	
@@ -66,7 +66,7 @@ begin
         Halt(1);
     end;
 
-    //TODO Check si tout est bien initialisé
+    //TODO Check si tout est bien initialise
     affichage.fenetre := SDL_CreateWindow('Catan', SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, SDL_WINDOW_SHOWN);
     affichage.renderer := SDL_CreateRenderer(affichage.fenetre, -1, SDL_RENDERER_ACCELERATED);
 end;
@@ -91,7 +91,7 @@ end;
 
 
 {Initialise le plateau de jeu
-Préconditions :
+Preconditions :
     - plat : le plateau de jeu
     - affichage : la structure contenant le renderer
 Postconditions :
@@ -114,8 +114,8 @@ begin
     affichage.texturePlateau.texturePoint := chargerTexture(affichage, 'point');
 end;
 
-{Affiche le fond de l'écran en blanc
-Préconditions :
+{Affiche le fond de l'ecran en blanc
+Preconditions :
     - affichage : la structure contenant le renderer}
 procedure affichageFond(var affichage: TAffichage);
 begin
@@ -124,11 +124,11 @@ begin
         WriteLn('Erreur SDL: ', SDL_GetError());
 end;
 
-{Renvoie la couleur associé au joueur
-Préconditions :
+{Renvoie la couleur associe au joueur
+Preconditions :
     - joueurId : l'identifiant du joueur
 Postconditions :
-    - couleur (TSDL_Color) : la couleur associée au joueur}
+    - couleur (TSDL_Color) : la couleur associee au joueur}
 procedure recupererCouleurJoueur(joueurId: Integer; var couleur: TSDL_Color);
 begin
     case joueurId of
@@ -147,8 +147,8 @@ begin
     end;
 end;
 
-{Crée une texture de couleur
-Préconditions :
+{Cree une texture de couleur
+Preconditions :
     - affichage : la structure contenant le renderer
     - r,g,b : les valeurs RGB de la couleur
 Postconditions :
@@ -166,11 +166,11 @@ begin
     creerTextureCouleur := texture;
 end;
 
-{Calcul les coordonnées d'une connexion
-Préconditions :
+{Calcul les coordonnees d'une connexion
+Preconditions :
     - connexion : la connexion à calculer
 Postconditions :
-    - coord (TCoord) : les coordonnées du milieu de la connexion
+    - coord (TCoord) : les coordonnees du milieu de la connexion
     - longueur (Real) : la longueur de la connexion
     - angle (Real) : l'angle de la connexion}
 procedure calculPosConnexion(connexion: TConnexion; var coord: Tcoord; var longueur: Real; var angle: Real);
@@ -189,8 +189,8 @@ begin
     angle := RadToDeg(arctan2(dy,dx)+PI/2);
 end;
 
-{Affiche la connexion à l'écran
-Préconditions :
+{Affiche la connexion à l'ecran
+Preconditions :
     - connexion : la connexion à afficher
     - affichage : la structure contenant le renderer
 Postconditions :
@@ -222,11 +222,11 @@ begin
     SDL_DestroyTexture(colorTexture);
 end;
 
-{Calcul les coordonnées d'une personne
-Préconditions :
+{Calcul les coordonnees d'une personne
+Preconditions :
     - personne : la personne à calculer
 Postconditions :
-    - TCoord : les coordonnées de la personne}
+    - TCoord : les coordonnees de la personne}
 function calculPosPersonne(personne : TPersonne): Tcoord;
 var scoord,coord: Tcoord;
     i: Integer;
@@ -242,8 +242,8 @@ begin
     calculPosPersonne := FCoord(scoord.x div 3,scoord.y div 3);
 end;
 
-{Affiche la personne à l'écran
-Préconditions :
+{Affiche la personne à l'ecran
+Preconditions :
     - personne : la personne à afficher
     - affichage : la structure contenant le renderer
 Postconditions :
@@ -266,11 +266,11 @@ begin
     affichageImage(affichage.xGrid + coord.x -(tailleEleve div 2),affichage.yGrid + coord.y -(tailleEleve div 2),tailleEleve,tailleEleve,texture,affichage);
 end;
 
-{Retourne les coordonnées du clic de la souris (système cartésien)
-Préconditions :
+{Retourne les coordonnees du clic de la souris (système cartesien)
+Preconditions :
     - affichage : la structure contenant le renderer
 Postconditions :
-    - coord (TCoord) : les coordonnées du clic (système cartésien)}
+    - coord (TCoord) : les coordonnees du clic (système cartesien)}
 procedure clicCart(var affichage: TAffichage; var coord: Tcoord);
 var running : Boolean;
     event: TSDL_Event;
@@ -298,12 +298,12 @@ begin
     end;
 end;
 
-{Renvoie les coordonnées du clic de la souris (système hexagonal)
-Préconditions :
+{Renvoie les coordonnees du clic de la souris (système hexagonal)
+Preconditions :
     - plat : le plateau de jeu
     - affichage : la structure contenant le renderer
 Postconditions :
-    - coord (TCoord): les coordonnées du clic (système hexagonal)}
+    - coord (TCoord): les coordonnees du clic (système hexagonal)}
 procedure clicHexagone(var plat: TPlateau; var affichage: TAffichage; var coord: Tcoord);
 var tempCoord: Tcoord;
 begin
@@ -328,11 +328,11 @@ begin
 	LoadTextureFromText := texture;
 end;
 
-{Affiche du texte à l'écran
-Préconditions :
+{Affiche du texte à l'ecran
+Preconditions :
     - text : le texte à afficher
     - taille : la taille de la police
-    - coord : les coordonnées du texte (système cartésien)
+    - coord : les coordonnees du texte (système cartesien)
     - affichage : la structure contenant le renderer
 Postconditions :
     - affichage : la structure contenant le renderer}
@@ -391,11 +391,11 @@ begin
         affichageTexte(' ' + IntToStr(plat.Grille[coordHexa.x,coordHexa.y].Numero), 40, coord, FCouleur(0,0,0,255), affichage);
 end;
 
-{Affiche un hexagone à l'écran
-Préconditions :
+{Affiche un hexagone à l'ecran
+Preconditions :
     - plat : le plateau de jeu
     - affichage : la structure contenant le renderer
-    - q,r : les coordonnées de l'hexagone
+    - q,r : les coordonnees de l'hexagone
 Postconditions :
     - affichage : la structure contenant le renderer}
 procedure affichageHexagone(plat: TPlateau; var affichage: TAffichage; coordHexa: TCoord);
@@ -409,8 +409,8 @@ begin
     affichageDetailsHexagone(coordHexa,coordCart,plat,affichage);
 end;
 
-{Affiche le souillard à l'écran
-Préconditions :
+{Affiche le souillard à l'ecran
+Preconditions :
     - plat : le plateau de jeu
     - affichage : la structure contenant le renderer
 Postconditions :
@@ -425,8 +425,8 @@ begin
     affichageDetailsHexagone(plat.Souillard.Position,coord,plat,affichage);
 end;
 
-{Affiche la grille à l'écran
-Préconditions :
+{Affiche la grille à l'ecran
+Preconditions :
     - plat : le plateau de jeu
     - affichage : la structure contenant le renderer
 Postconditions :
@@ -657,13 +657,13 @@ begin
     ajouterBoutonTableau('Valider', 'valider_echange', bouton.coord, 95, 45, boutons);
 end;
 
-{Affiche l'écran d'échange de ressources
-Préconditions :
+{Affiche l'ecran d'echange de ressources
+Preconditions :
     - joueurs : les joueurs de la partie
     - idJoueurActuel : l'identifiant du joueur actuel
-    - idJoueurEchange : l'identifiant du joueur avec qui échanger
-    - ressources1 : les ressources à échanger du joueur actuel
-    - ressources2 : les ressources à échanger du joueur avec qui échanger
+    - idJoueurEchange : l'identifiant du joueur avec qui echanger
+    - ressources1 : les ressources à echanger du joueur actuel
+    - ressources2 : les ressources à echanger du joueur avec qui echanger
     - affichage : la structure contenant le renderer}
 procedure echangeRessources(joueurs: TJoueurs; idJoueurActuel:Integer; var idJoueurEchange: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
 var boutons: Array of TBouton;
@@ -692,7 +692,7 @@ begin
             idJoueurEchange := (idJoueurEchange + 1) mod length(joueurs)
         else
         begin
-            //TODO opti la vérif de ressources pour limiter aux ressources possédées en max
+            //TODO opti la verif de ressources pour limiter aux ressources possedees en max
             valeurBoutonSplit := splitValeur(valeurBouton);
 
             ressource := TRessource(GetEnumValue(TypeInfo(TRessource), valeurBoutonSplit[0]));
@@ -726,8 +726,8 @@ begin
     clicBouton(affichage,affichage.boutonsAction,valeurBouton);
 end;
 
-{Affiche le tour à l'écran
-Préconditions :
+{Affiche le tour à l'ecran
+Preconditions :
     - plat : le plateau de jeu
     - affichage : la structure contenant le renderer
 Postconditions :
@@ -761,7 +761,7 @@ begin
 end;
 
 {Met à jour l'affichage
-Préconditions :
+Preconditions :
     - affichage : la structure contenant le renderer
 Postconditions :
     - affichage : la structure contenant le renderer}
@@ -796,7 +796,7 @@ begin
 end;
 
 {Initialise l'affichage
-Préconditions :
+Preconditions :
     - plat : le plateau de jeu
     - affichage : la structure contenant le renderer
 Postconditions :

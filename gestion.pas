@@ -101,64 +101,7 @@ begin
     
 end;
 
-function tirerCarteTutorat(var cartesTutorat : TCartesTutorat):TCarteTutorat;
-var carteTutorat : TCarteTutorat;
-  i,nbrTotal: Integer;
-begin
-  carteTutorat.nom := '';
-  carteTutorat.description := '';
-  carteTutorat.nbr := 0;
-  Randomize();
 
-  // TODO penser à verif que il en reste avant d'accepter l'achat 
-  nbrTotal := cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr + cartesTutorat.carte3.nbr + cartesTutorat.carte4.nbr + cartesTutorat.carte5.nbr;
-
-  i := Random(nbrTotal) + 1;
-  if (i >= 1) and (i <= cartesTutorat.carte1.nbr) then
-    begin
-    carteTutorat.nom := cartesTutorat.carte1.nom;
-    carteTutorat.description := cartesTutorat.carte1.description;
-    carteTutorat.nbr := 1;
-
-    cartesTutorat.carte1.nbr := cartesTutorat.carte1.nbr - 1; 
-    end
-  else if (i > cartesTutorat.carte1.nbr) and (i <= cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr) then
-    begin
-    carteTutorat.nom := cartesTutorat.carte2.nom;
-    carteTutorat.description := cartesTutorat.carte2.description;
-    carteTutorat.nbr := 1;
-
-    cartesTutorat.carte2.nbr := cartesTutorat.carte2.nbr - 1; 
-    end
-  else if (i > cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr) and (i <= cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr + cartesTutorat.carte3.nbr) then
-    begin
-    carteTutorat.nom := cartesTutorat.carte3.nom;
-    carteTutorat.description := cartesTutorat.carte3.description;
-    carteTutorat.nbr := 1;
-
-    cartesTutorat.carte3.nbr := cartesTutorat.carte3.nbr - 1;
-    end
-  else if (i > cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr + cartesTutorat.carte3.nbr) and (i <= cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr + cartesTutorat.carte3.nbr + cartesTutorat.carte4.nbr) then
-    begin
-    carteTutorat.nom := cartesTutorat.carte4.nom;
-    carteTutorat.description := cartesTutorat.carte4.description;
-    carteTutorat.nbr := 1;
-
-    cartesTutorat.carte4.nbr := cartesTutorat.carte4.nbr - 1;
-    end
-  else
-    begin
-    carteTutorat.nom := cartesTutorat.carte5.nom;
-    carteTutorat.description := cartesTutorat.carte5.description;
-    carteTutorat.nbr := 1;
-
-    cartesTutorat.carte5.nbr := cartesTutorat.carte5.nbr - 1;
-    end;
-
-
-
-  tirerCarteTutorat := carteTutorat;
-end;
 
 
 
@@ -371,24 +314,24 @@ begin
     repeat
       clicAction(affichage, valeurBouton);
 
-      writeln(valeurBouton);
-      if(valeurBouton = 'achat_connexion')  then
-        placementConnexion(plateau,affichage,joueurs[i])
-      else if(valeurBouton = 'achat_eleve')  then
+      if(valeurBouton = 'achat_eleve')  then
         PlacementEleve(plateau,affichage,joueurs[i])
-        // les point ne s'affiche pas
-      else if(valeurBouton = 'achat_carte_tutorat')  then
-        writeln('achat carte tutorat')
+        // achatElements(joueurs[i], plateau, affichage,1);
+      else if(valeurBouton = 'achat_connexion')  then
+        placementConnexion(plateau,affichage,joueurs[i])
+        // achatElements(joueurs[i], plateau, affichage,2);
       else if(valeurBouton = 'changement_en_prof')  then
         begin
         changementProfesseur(plateau,affichage,joueurs[i]);
+        // achatElements(joueurs[i], plateau, affichage,3);
         
         end
+      else if(valeurBouton = 'achat_carte_tutorat')  then
+          achatElements(joueurs[i], plateau, affichage,4)
       else if(valeurBouton = 'echange')  then
         begin
         id1 := joueurs[i].id;
         id2 := joueurs[i+1].id;
-
         echangeRessources(joueurs,id1, id2 ,ressources1,ressources2,affichage);
         if(aLesRessources(joueurs[id1],ressources1) and aLesRessources(joueurs[id2],ressources2)) then
             begin
@@ -397,19 +340,10 @@ begin
 
             affichageTour(plateau, joueurs, affichage);
             affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' a ete valide',25,FCouleur(0,255,0,255),affichage);
-              
-
             end
         else
             affichageTour(plateau, joueurs, affichage);
             affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est impossible',25,FCouleur(255,0,0,255),affichage);
-
-
-
-
-
-
-        // TODO verifier que l'échange est possible
         end
       else if(valeurBouton = 'fin_tour')  then
         finTour := True;
@@ -482,32 +416,45 @@ procedure utiliserCarteTutorat(var plateau : TPlateau;var affichage : TAffichage
 begin
   if nom = plateau.cartesTutorat.carte1.nom then
   begin
-    writeln('Utilisation de la carte ', plateau.cartesTutorat.carte1.nom);
-    utiliserCarte1(plateau,affichage,joueur);
-
+    if(joueur.CartesTutorat.carte1.utilisee < joueur.CartesTutorat.carte1.nbr) then
+    begin
+      utiliserCarte1(plateau,affichage,joueur);
+      joueur.CartesTutorat.carte1.utilisee := joueur.CartesTutorat.carte1.utilisee + 1 
+    end;
   end
   else if nom = plateau.cartesTutorat.carte2.nom then
   begin
-    writeln('Utilisation de la carte ', plateau.cartesTutorat.carte2.nom);
-    utiliserCarte2(plateau, affichage,joueurs, joueur);
-
+    if(joueur.CartesTutorat.carte2.utilisee < joueur.CartesTutorat.carte2.nbr) then
+    begin
+      utiliserCarte2(plateau, affichage,joueurs, joueur);
+      joueur.CartesTutorat.carte2.utilisee := joueur.CartesTutorat.carte2.utilisee + 1 
+    end;
   end
   else if nom = plateau.cartesTutorat.carte3.nom then
   begin
-    writeln('Utilisation de la carte ', plateau.cartesTutorat.carte3.nom);
-    utiliserCarte3(plateau,joueur);
+    if(joueur.CartesTutorat.carte3.utilisee < joueur.CartesTutorat.carte3.nbr) then
+    begin
+      utiliserCarte3(plateau,joueur);
+      joueur.CartesTutorat.carte3.utilisee := joueur.CartesTutorat.carte3.utilisee + 1 
+    end;
 
   end
   else if nom = plateau.cartesTutorat.carte4.nom then
   begin
-    writeln('Utilisation de la carte ', plateau.cartesTutorat.carte4.nom);
-    utiliserCarte4(plateau,joueur);
+    if(joueur.CartesTutorat.carte4.utilisee < joueur.CartesTutorat.carte4.nbr) then
+    begin
+      utiliserCarte4(plateau,joueur);
+      joueur.CartesTutorat.carte4.utilisee := joueur.CartesTutorat.carte4.utilisee + 1 
+    end;
 
   end
   else if nom = plateau.cartesTutorat.carte5.nom then
   begin
-    writeln('Utilisation de la carte ', plateau.cartesTutorat.carte5.nom);
-    utiliserCarte5(joueurs,joueur);
+    if(joueur.CartesTutorat.carte5.utilisee < joueur.CartesTutorat.carte5.nbr) then
+    begin
+      utiliserCarte5(joueurs,joueur);
+      joueur.CartesTutorat.carte5.utilisee := joueur.CartesTutorat.carte5.utilisee + 1 
+    end;
 
   end
   else

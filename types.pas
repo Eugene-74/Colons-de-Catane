@@ -5,7 +5,7 @@ interface
 uses SDL2, SDL2_image;
 
 type
-  // Définition du type TRessource
+  // Definition du type TRessource
   TRessource = (Aucune, Physique, Informatique, Chimie, Humanites, Mathematiques, Rien);
 
   TStringTab = array of String;
@@ -14,6 +14,7 @@ type
     nom : String;
     description : String;
     nbr : Integer;
+    utilisee : Integer;
   end;
 
   TCartesTutorat = record
@@ -25,23 +26,23 @@ type
 
   end;
 
-  // Définition de TCoord
+  // Definition de TCoord
   TCoord = record
     x, y: Integer;
   end;
 
   TCoords = array of TCoord;
 
-  // Définition de TRessourceValeur
+  // Definition de TRessourceValeur
 //   TRessourceValeur = record
 //     Ressource: TRessource;
 //     Quantite: Integer;
 //   end;
 
-  // Définition de TRessources (tableau dynamique de TRessourceValeur)
+  // Definition de TRessources (tableau dynamique de TRessourceValeur)
   TRessources = array [Aucune..Rien] of Integer;
 
-  // Définition de TJoueur
+  // Definition de TJoueur
   TJoueur = record
     Ressources: TRessources;
     Points: Integer;
@@ -51,47 +52,47 @@ type
 
   end;
 
-  // Définition de TJoueurs (tableau dynamique de TJoueur)
+  // Definition de TJoueurs (tableau dynamique de TJoueur)
   TJoueurs = array of TJoueur;
 
   // IdJoueurActuel
   IdJoueurActuel = Integer;
 
-  // Définition de THexagone
+  // Definition de THexagone
   THexagone = record
     ressource: TRessource;
     Numero: Integer;
   end;
 
 
-  // Définition de TGrille (tableau dynamique de THexagones à 2 dimensions)
+  // Definition de TGrille (tableau dynamique de THexagones à 2 dimensions)
   TGrille = array of array of THexagone;
 
-  // Définition de TConnexion
+  // Definition de TConnexion
   TConnexion = record
     Position: array of TCoord;  // Tableau dynamique de 2 TCoord
     IdJoueur: Integer;
   end;
 
-  // Définition de TConnexions (tableau dynamique de TConnexion)
+  // Definition de TConnexions (tableau dynamique de TConnexion)
   TConnexions = array of TConnexion;
 
-  // Définition de TPersonne
+  // Definition de TPersonne
   TPersonne = record
     Position: array of TCoord;  // Tableau dynamique de 3 TCoord
     estEleve: Boolean;
     IdJoueur: Integer;
   end;
 
-  // Définition de TPersonnes (tableau dynamique de TPersonne)
+  // Definition de TPersonnes (tableau dynamique de TPersonne)
   TPersonnes = array of TPersonne;
 
-  // Définition de TSouillard
+  // Definition de TSouillard
   TSouillard = record
     Position: TCoord;
   end;
 
-  // Définition de TPlateau
+  // Definition de TPlateau
   TPlateau = record
     Grille: TGrille;
     Souillard: TSouillard;
@@ -127,7 +128,7 @@ type
 
   TBoutons = array of TBouton;
 
-  // Définition de TAffichage (pour les transferts et mises à jour via SDL)
+  // Definition de TAffichage (pour les transferts et mises à jour via SDL)
   TAffichage = record
     fenetre: PWindow;
     renderer: PRenderer;
@@ -139,11 +140,11 @@ type
 
 const
   CARTES_TUTORAT: TCartesTutorat = (
-    carte1: (nom: 'discution'; description: 'discution'; nbr: 10);
-    carte2: (nom: 'WordReference'; description: 'discution'; nbr: 12);
-    carte3: (nom: 'Voler'; description: 'discution'; nbr: 8);
-    carte4: (nom: 'Choisir 2 connaissances'; description: 'discution'; nbr: 16);
-    carte5: (nom: 'le dernier'; description: 'discution'; nbr: 4)
+    carte1: (nom: 'discution'; description: 'discution'; nbr: 10;utilisee : 0);
+    carte2: (nom: 'WordReference'; description: 'discution'; nbr: 12;utilisee : 0);
+    carte3: (nom: 'Voler'; description: 'discution'; nbr: 8;utilisee : 0);
+    carte4: (nom: 'Choisir 2 connaissances'; description: 'discution'; nbr: 16;utilisee : 0);
+    carte5: (nom: 'le dernier'; description: 'discution'; nbr: 4;utilisee : 0)
   );
 
 implementation
