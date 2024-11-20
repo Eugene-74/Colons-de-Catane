@@ -362,6 +362,10 @@ var
   i, j, k, compteur: Integer;
   estConverti: Boolean;
   begin
+  // TODO verifier la proximiter avec une connexion du joueur
+  // TODO verifier que le joueur a encore un eleve a changer
+  // TODO re demander au joueur de placer un prof si il met des hexagones invalide
+
   // Appeler ClicPersonne pour recuperer les hexagones selectionnes
   affichageInformation('Cliquez sur 3 hexagones entre lesquels vous voulez placer le professeur', 25, FCouleur(0,0,0,255), affichage);
 
@@ -408,7 +412,7 @@ var
 
         end;
       end;
-      if estConverti then
+      // if estConverti then
     end;
     
     affichageScore(joueurActuel,affichage);
