@@ -29,10 +29,72 @@ function enContactEleveConnexions(plateau: TPlateau; eleve: TPersonne; var joueu
 
 implementation
 
+procedure tirerCarteTutorat(var cartesTutorat : TCartesTutorat;var  joueur : Tjoueur);
+var  i,nbrTotal: Integer;
+begin
+  Randomize();
+
+  // TODO penser à verif que il en reste avant d'accepter l'achat 
+  nbrTotal := cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr + cartesTutorat.carte3.nbr + cartesTutorat.carte4.nbr + cartesTutorat.carte5.nbr;
+
+  i := Random(nbrTotal) + 1;
+  if (i >= 1) and (i <= cartesTutorat.carte1.nbr) then
+    begin
+    joueur.cartesTutorat.carte1.nbr := joueur.cartesTutorat.carte1.nbr +1;
+    // carteTutorat.nom := cartesTutorat.carte1.nom;
+    // carteTutorat.description := cartesTutorat.carte1.description;
+    // carteTutorat.nbr := 1;
+
+    cartesTutorat.carte1.nbr := cartesTutorat.carte1.nbr - 1; 
+    end
+  else if (i > cartesTutorat.carte1.nbr) and (i <= cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr) then
+    begin
+    joueur.cartesTutorat.carte2.nbr := joueur.cartesTutorat.carte2.nbr +1;
+
+    // carteTutorat.nom := cartesTutorat.carte2.nom;
+    // carteTutorat.description := cartesTutorat.carte2.description;
+    // carteTutorat.nbr := 1;
+
+    cartesTutorat.carte2.nbr := cartesTutorat.carte2.nbr - 1; 
+    end
+  else if (i > cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr) and (i <= cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr + cartesTutorat.carte3.nbr) then
+    begin
+    joueur.cartesTutorat.carte3.nbr := joueur.cartesTutorat.carte3.nbr +1;
+
+    // carteTutorat.nom := cartesTutorat.carte3.nom;
+    // carteTutorat.description := cartesTutorat.carte3.description;
+    // carteTutorat.nbr := 1;
+
+    cartesTutorat.carte3.nbr := cartesTutorat.carte3.nbr - 1;
+    end
+  else if (i > cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr + cartesTutorat.carte3.nbr) and (i <= cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr + cartesTutorat.carte3.nbr + cartesTutorat.carte4.nbr) then
+    begin
+    joueur.cartesTutorat.carte4.nbr := joueur.cartesTutorat.carte4.nbr +1;
+
+    // carteTutorat.nom := cartesTutorat.carte4.nom;
+    // carteTutorat.description := cartesTutorat.carte4.description;
+    // carteTutorat.nbr := 1;
+
+    cartesTutorat.carte4.nbr := cartesTutorat.carte4.nbr - 1;
+    end
+  else
+    begin
+    joueur.cartesTutorat.carte5.nbr := joueur.cartesTutorat.carte5.nbr +1;
+
+    // carteTutorat.nom := cartesTutorat.carte5.nom;
+    // carteTutorat.description := cartesTutorat.carte5.description;
+    // carteTutorat.nbr := 1;
+
+    cartesTutorat.carte5.nbr := cartesTutorat.carte5.nbr - 1;
+    end;
+
+end;
+
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
 begin
   
   case choix of
+   // ELEVE
     1: 
      
       if (joueur.Ressources[Mathematiques] >= 1) and 
@@ -50,6 +112,7 @@ begin
       else
         affichageInformation('Vous n''avez pas les ressources necessaires pour acheter un eleve.', 25, FCouleur(0,0,0,255), affichage);
 
+    // CONNEXION
     2: 
      
       if (joueur.Ressources[Humanites] >= 1) and 
@@ -63,7 +126,12 @@ begin
       else
         affichageInformation('Vous n''avez pas les ressources necessaires pour acheter une connexion.', 25, FCouleur(0,0,0,255), affichage);
     
+<<<<<<< HEAD
     3:  
+=======
+    // PROFESSEUR
+    3: 
+>>>>>>> f339995f1570c9817187bef26c0510ef3dad0c40
     
       if (joueur.Ressources[Mathematiques] >= 2) and 
          (joueur.Ressources[Physique] >= 1) then
@@ -72,7 +140,15 @@ begin
       end
       else
         affichageInformation('Vous n''avez pas les ressources necessaires pour changer un eleve en professeur.', 25, FCouleur(0,0,0,255), affichage);
-  
+    // PROFESSEUR
+    4:
+    //  verif ressource
+    if(plateau.cartesTutorat.carte1.nbr + plateau.cartesTutorat.carte2.nbr + plateau.cartesTutorat.carte3.nbr + plateau.cartesTutorat.carte4.nbr + plateau.cartesTutorat.carte5.nbr >=0 )  then //and a les ressources
+    begin
+        tirerCarteTutorat(plateau.CartesTutorat, joueur);
+    end
+    else 
+        affichageInformation('Impossbile d''acheter une carte de tutorat.', 25, FCouleur(255,0,0,255), affichage);
   else
     WriteLn('Choix invalide.');  // Affiche si le choix n'est pas valide
   end;
@@ -132,19 +208,18 @@ begin
       Position[1] := HexagonesCoords[1];
       Position[2] := HexagonesCoords[2];
 
-      estEleve := True;
-      IdJoueur := joueurActuel.Id;
+    estEleve := True;
+    IdJoueur := joueurActuel.Id;
 
-      // ajout d'un point
-      joueurActuel.Points:=1+joueurActuel.Points;
+    // ajout d'un point
+    joueurActuel.Points:=1+joueurActuel.Points;
 
-    end;
-
+    affichageScore(joueurActuel,affichage);
     affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
     miseAJourRenderer(affichage);
 
     
-    affichageInformation('Eleve place avec succes !', 25, FCouleur(0,0,0,255), affichage);
+    affichageInformation('Eleve place avec succes !', 25, FCouleur(0,255,0,255), affichage);
 
     
   end
@@ -295,26 +370,42 @@ var
   HexagonesCoords: TCoords;
   i, j, k, compteur: Integer;
   estConverti: Boolean;
+<<<<<<< HEAD
 begin
   // Appeler ClicPersonne pour récupérer les hexagones sélectionnés
   HexagonesCoords := ClicPersonne(affichage, plateau, False); 
   // compteur := 0;
 
   // Vérifie si les hexagones sont adjacents
+=======
+  begin
+  // TODO verifier la proximiter avec une connexion du joueur
+  // TODO verifier que le joueur a encore un eleve a changer
+  // TODO re demander au joueur de placer un prof si il met des hexagones invalide
+
+  // Appeler ClicPersonne pour recuperer les hexagones selectionnes
+  affichageInformation('Cliquez sur 3 hexagones entre lesquels vous voulez placer le professeur', 25, FCouleur(0,0,0,255), affichage);
+
+  HexagonesCoords := ClicPersonne(affichage, plateau, False); 
+  // compteur := 0;
+
+  // Verifie si les hexagones sont adjacents
+
+>>>>>>> f339995f1570c9817187bef26c0510ef3dad0c40
   if enContact(HexagonesCoords) then
   begin
     estConverti := False;
-    // Parcourt les personnes du plateau pour trouver un élève appartenant au joueur actuel
+    // Parcourt les personnes du plateau pour trouver un elève appartenant au joueur actuel
     for i := 0 to length(plateau.Personnes)-1 do
     begin
       if (plateau.Personnes[i].IdJoueur = joueurActuel.Id) and
          (plateau.Personnes[i].estEleve) then
       begin
-        compteur := 0; // Réinitialise le compteur pour cette personne
-        // Parcourt les positions de la personne pour vérifier la correspondance avec les hexagones sélectionnés
+        compteur := 0; // Reinitialise le compteur pour cette personne
+        // Parcourt les positions de la personne pour verifier la correspondance avec les hexagones selectionnes
         for j := 0 to  length(HexagonesCoords)-1 do
         begin
-          // Compare chaque position de la personne avec les coordonnées sélectionnées
+          // Compare chaque position de la personne avec les coordonnees selectionnees
           for k := 0 to length(HexagonesCoords)-1 do
           begin
             if (plateau.Personnes[i].Position[j].x = HexagonesCoords[k].x) and
@@ -325,23 +416,24 @@ begin
           end;
         end;
 
-        // Si toutes les positions de la personne correspondent aux hexagones sélectionnés, effectuer la conversion
+        // Si toutes les positions de la personne correspondent aux hexagones selectionnes, effectuer la conversion
         if compteur = 3 then
         begin
-          plateau.Personnes[i].estEleve := False; // Convertir l'élève en professeur
+          plateau.Personnes[i].estEleve := False; // Convertir l'elève en professeur
           estConverti := True;
           
           // ajout d'un point
           joueurActuel.Points:=1+joueurActuel.Points;
           
 
-          affichageInformation('Eleve converti en professeur avec succes !', 25, FCouleur(0,0,0,255), affichage);
+          affichageInformation('Eleve converti en professeur avec succes !', 25, FCouleur(0,255,0,255), affichage);
 
         end;
       end;
-      if estConverti then
+      // if estConverti then
     end;
-
+    
+    affichageScore(joueurActuel,affichage);
     affichagePersonne(plateau.Personnes[i], affichage);
     miseAJourRenderer(affichage);
   end
@@ -442,7 +534,6 @@ begin
 
     points[j] := joueur.points;
 
-    // TODO erreur acces violation
     plusGrandeRoute := True;
     if (compterRouteSuite(plateau,joueur) >= 5) then
     begin
@@ -452,12 +543,10 @@ begin
     if plusGrandeRoute then
       points[j] := points[j] + 2;
     end;
-
-
     
-    if(joueur.CartesTutorat.carte2.nbr >= 3) then
+    if(joueur.CartesTutorat.carte2.utilisee >= 3) then
       for i := 0 to High(joueurs) do
-        if(joueur.CartesTutorat.carte1.nbr < joueurs[i].CartesTutorat.carte1.nbr) then
+        if(joueur.CartesTutorat.carte1.utilisee < joueurs[i].CartesTutorat.carte1.utilisee) then
           plusDeplacementSouillard := False;
     if(plusDeplacementSouillard) then
       points[j] := points[j] + 2;
@@ -467,7 +556,7 @@ begin
 
       gagner := True;
       gagnant := j+1; 
-      affichageInformation(joueur.Nom + 'viens de gagner la partie en dépassant les 10 points', 25, FCouleur(0,0,0,255), affichage);
+      affichageInformation(joueur.Nom + 'viens de gagner la partie en depassant les 10 points', 25, FCouleur(0,0,0,255), affichage);
 
       Break;
     end;
@@ -483,7 +572,7 @@ end;
 procedure affichageGagnant(joueur: TJoueur; affichage: TAffichage);
 var text : String;
 begin
-  text := ('Félicitations, ' + joueur.Nom + ' ! Vous avez gagné la partie avec ' + intToStr(joueur.Points) + ' points.');
+  text := ('Felicitations, ' + joueur.Nom + ' ! Vous avez gagne la partie avec ' + intToStr(joueur.Points) + ' points.');
   affichageInformation(text, 25, FCouleur(0,0,0,255), affichage);
 end;
 
@@ -501,7 +590,7 @@ begin
   enContactAvecPersonne := False;
 
 
-  // 1. Vérifie si une connexion existe déjà avec les mêmes coordonnées (indépendamment de l'ordre)
+  // 1. Verifie si une connexion existe dejà avec les mêmes coordonnees (independamment de l'ordre)
   for i := 0 to High(plateau.Connexions) do
   begin
     if (((plateau.Connexions[i].Position[0].x = coords[0].x) and 
@@ -521,7 +610,7 @@ begin
     end;
   end;
 
-  // 2. Vérifie si les deux hexagones sont adjacents
+  // 2. Verifie si les deux hexagones sont adjacents
   if not enContact(coords) then
   begin
     connexionValide := False;
@@ -532,11 +621,11 @@ begin
   enContactAvecAutreConnexion := not aucuneConnexionAdjacente(coords, plateau, joueur,affichage);
   enContactAvecPersonne := enContactEleveConnexion(plateau, coords, joueur);
 
-  // 3. Vérifie si en contact avec un eleve ou une connexion
+  // 3. Verifie si en contact avec un eleve ou une connexion
   if enContactAutreEleveConnexion(plateau,coords,joueur,affichage) then 
      connexionValide:= False;
 
-  // 4. Vérifie si au moins 1 des hexagones est dans le plateau
+  // 4. Verifie si au moins 1 des hexagones est dans le plateau
   if (not dansLePlateau(plateau,coords[0]) and not dansLePlateau(plateau,coords[1])) then 
     begin
     connexionValide:= False;      
@@ -572,6 +661,7 @@ function ClicConnexion(var plateau : TPlateau; var affichage : TAffichage): TCoo
 var
   coords: TCoords;
 begin
+
   SetLength(coords, 2);
   clicHexagone(plateau, affichage,coords[0]);
   clicHexagone(plateau, affichage,coords[1]);
@@ -584,40 +674,35 @@ var
   coords: TCoords;
   i : Integer;
 begin
-  // Demande à l'utilisateur de sélectionner deux hexagones pour la connexion
+  // Demande à l'utilisateur de selectionner deux hexagones pour la connexion
+  affichageInformation('Cliquez sur 2 hexagones entre lesquels vous voulez placer la connexion', 25, FCouleur(0,0,0,255), affichage);
+
+  repeat
   coords := ClicConnexion(plateau,affichage);
 
-  // Vérifie si la connexion est valide avec les hexagones sélectionnés
-  if connexionValide(coords, plateau, joueur,affichage) then
-    begin
+  until connexionValide(coords, plateau, joueur,affichage);
 
-    SetLength(plateau.Connexions, Length(plateau.Connexions) + 1);
-    plateau.Connexions[length(plateau.Connexions)-1].IdJoueur := joueur.Id;
 
-    setLength(plateau.Connexions[length(plateau.Connexions)-1].Position,2);
+  // Verifie si la connexion est valide avec les hexagones selectionnes
+  SetLength(plateau.Connexions, Length(plateau.Connexions) + 1);
+  plateau.Connexions[length(plateau.Connexions)-1].IdJoueur := joueur.Id;
 
-    plateau.Connexions[length(plateau.Connexions)-1].Position[0] := coords[0];
-    plateau.Connexions[length(plateau.Connexions)-1].Position[1] := coords[1];
+  setLength(plateau.Connexions[length(plateau.Connexions)-1].Position,2);
+
+  plateau.Connexions[length(plateau.Connexions)-1].Position[0] := coords[0];
+  plateau.Connexions[length(plateau.Connexions)-1].Position[1] := coords[1];
 
 // TODO mieux afficher eleve sur connexion
-    
-    affichageConnexion(plateau.Connexions[length(plateau.Connexions)-1], affichage);
+  
+  affichageConnexion(plateau.Connexions[length(plateau.Connexions)-1], affichage);
 
-    for i:=0 to length(plateau.Personnes)-1 do
-        affichagePersonne(plateau.Personnes[i],affichage);
-    miseAJourRenderer(affichage);
+  for i:=0 to length(plateau.Personnes)-1 do
+      affichagePersonne(plateau.Personnes[i],affichage);
+  miseAJourRenderer(affichage);
 
 
-    affichageInformation('Connexion placee avec succes !', 25, FCouleur(0,0,0,255), affichage);
+  affichageInformation('Connexion placee avec succes !', 25, FCouleur(0,255,0,255), affichage);
 
-    end
-  else
-    begin
-    affichageInformation('Impossible de placer la connexion : verifiez la position choisie.', 25, FCouleur(0,0,0,255), affichage);
-    
-    // Si la connexionn n'est pas valide, on rappelle la fonction
-    placementConnexion(plateau,affichage,joueur);
-    end;
 end;
 function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;
 var
@@ -661,7 +746,7 @@ begin
   aucuneConnexionAdjacente := True;
   verif := true;
 
-  // Parcourir toutes les connexions du plateau pour vérifier les connexions du même joueur
+  // Parcourir toutes les connexions du plateau pour verifier les connexions du même joueur
   for i := 0 to High(plateau.Connexions) do
   begin
     if plateau.Connexions[i].IdJoueur = joueur.Id then
@@ -669,7 +754,7 @@ begin
       coord1 := plateau.Connexions[i].Position[0];
       coord2 := plateau.Connexions[i].Position[1];
 
-      // Identifier `autreCoord` et `coordRestante` en fonction des coordonnées
+      // Identifier `autreCoord` et `coordRestante` en fonction des coordonnees
       if (coords[0].x = coord1.x) and (coords[0].y = coord1.y) then
       begin
         autreCoord := coords[1];
@@ -695,9 +780,9 @@ begin
         coordRestante := coord1;
       end
       else
-        Continue; // Passer à la connexion suivante si aucune correspondance trouvée
+        Continue; // Passer à la connexion suivante si aucune correspondance trouvee
 
-      // Vérifier si `autreCoord` est adjacente à `coordRestante` (connexion du même joueur)
+      // Verifier si `autreCoord` est adjacente à `coordRestante` (connexion du même joueur)
       if sontAdjacents(autreCoord, coordRestante) then
       begin
        verif := False;
@@ -706,12 +791,12 @@ begin
     end;
   end;
 
-  // Vérifier si `autreCoord2` est utilisé par une connexion d'un joueur différent
+  // Verifier si `autreCoord2` est utilise par une connexion d'un joueur different
   for j := 0 to High(plateau.Connexions) do
   begin
     if plateau.Connexions[j].IdJoueur <> joueur.Id then
     begin
-      // Vérifier si `autreCoord2` correspond à une extrémité de la connexion d'un autr<;:e joueur
+      // Verifier si `autreCoord2` correspond à une extremite de la connexion d'un autr<;:e joueur
       if ((autreCoord2.x = plateau.Connexions[j].Position[0].x) and 
           (autreCoord2.y = plateau.Connexions[j].Position[0].y) and
           sontAdjacents(autreCoord, plateau.Connexions[j].Position[1])) or
@@ -720,7 +805,7 @@ begin
           sontAdjacents(autreCoord, plateau.Connexions[j].Position[0])) then
       begin
         verif := True;
-        affichageInformation('Erreur : autreCoord est utilisé par une connexion d''un autre joueur, et coordRestante est adjacente à cette connexion.', 25, FCouleur(0,0,0,255), affichage);
+        affichageInformation('Erreur : autreCoord est utilise par une connexion d''un autre joueur, et coordRestante est adjacente à cette connexion.', 25, FCouleur(0,0,0,255), affichage);
         
         Break;
       end;
@@ -782,14 +867,16 @@ end;
 procedure deplacementSouillard(var plateau : TPlateau;var joueurs : TJoueurs ;var affichage : TAffichage);
 var coord : Tcoord;
 begin
-
+  affichageInformation('Cliquez sur 1 hexagones pour deplacer le souillard.', 25, FCouleur(0,0,0,255), affichage);
 
   repeat
   clicHexagone(plateau, affichage, coord); 
   until (dansLePlateau(plateau,coord));
 
-
   plateau.Souillard.Position := coord;
+
+  affichageInformation('Eleve deplace avec succes !', 25, FCouleur(0,255,0,255), affichage);
+
 
   affichageTour(plateau,joueurs,affichage);
 

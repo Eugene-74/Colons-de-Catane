@@ -17,7 +17,7 @@ procedure affichageDes(de1,de2:Integer; coord: TCoord; var affichage: TAffichage
 procedure echangeRessources(joueurs: TJoueurs; idJoueurActuel:Integer; var idJoueurEchange: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
 procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; var affichage: TAffichage);
 procedure clicAction(var affichage: TAffichage; var valeurBouton: String);
-procedure affichageScore(joueurs: TJoueurs; id: Integer; var affichage: TAffichage);
+procedure affichageScore(joueur: TJoueur; var affichage: TAffichage);
 procedure affichageInformation(texte: String; taille: Integer; couleur: TSDL_Color; var affichage: TAffichage);
 procedure suppressionInformation(var affichage: TAffichage);
 procedure attendre(ms: Integer);
@@ -37,7 +37,7 @@ begin
 end;
 
 {Permet de charger la texture de l'image
-Préconditions :
+Preconditions :
     - affichage : la structure contenant le renderer
     - filename : le nom du fichier image (sans l'extension, de type .png)
 Postconditions :
@@ -51,7 +51,7 @@ begin
 
 	image := IMG_LoadTexture(affichage.renderer, PChar(chemin));
 	
-	// Verifie si le chargement a réussi
+	// Verifie si le chargement a reussi
 	if image = nil then
 		writeln('Could not load image : ',IMG_GetError);
 	
@@ -66,7 +66,7 @@ begin
         Halt(1);
     end;
 
-    //TODO Check si tout est bien initialisé
+    //TODO Check si tout est bien initialise
     affichage.fenetre := SDL_CreateWindow('Catan', SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, SDL_WINDOW_SHOWN);
     affichage.renderer := SDL_CreateRenderer(affichage.fenetre, -1, SDL_RENDERER_ACCELERATED);
 end;
@@ -77,9 +77,21 @@ begin
     SDL_RenderClear(affichage.renderer);
 end;
 
+procedure affichageImage(x,y,w,h: Integer; texture: PSDL_Texture; var affichage: TAffichage);
+var destination_rect: TSDL_RECT;
+begin
+    destination_rect.x:=x;
+    destination_rect.y:=y;
+    destination_rect.w:=w;
+    destination_rect.h:=h;
+
+    if SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect)<>0 then
+        WriteLn('Erreur SDL: ', SDL_GetError());
+end;
+
 
 {Initialise le plateau de jeu
-Préconditions :
+Preconditions :
     - plat : le plateau de jeu
     - affichage : la structure contenant le renderer
 Postconditions :
@@ -91,17 +103,19 @@ begin
     for i:=Physique to Mathematiques do
     begin
         affichage.texturePlateau.textureRessource[i] := chargerTexture(affichage, 'Ressources/'+GetEnumName(TypeInfo(TRessource), Ord(i)));
+        affichage.texturePlateau.textureIconesRessources[i] := chargerTexture(affichage, 'IconesRessources/'+GetEnumName(TypeInfo(TRessource), Ord(i)));
     end;
 
-    affichage.texturePlateau.textureContourHexagone := chargerTexture(affichage, 'hexagoneCercle');
-    affichage.texturePlateau.textureContourVide := chargerTexture(affichage, 'hexagone');
+    affichage.texturePlateau.textureContourHexagone := chargerTexture(affichage, 'bordureCercle');
+    affichage.texturePlateau.textureContourVide := chargerTexture(affichage, 'bordure');
     affichage.texturePlateau.textureEleve := chargerTexture(affichage, 'eleve');
     affichage.texturePlateau.textureSouillard := chargerTexture(affichage, 'souillard');
     affichage.texturePlateau.textureProfesseur := chargerTexture(affichage, 'professeur');
+    affichage.texturePlateau.texturePoint := chargerTexture(affichage, 'point');
 end;
 
-{Affiche le fond de l'écran en blanc
-Préconditions :
+{Affiche le fond de l'ecran en blanc
+Preconditions :
     - affichage : la structure contenant le renderer}
 procedure affichageFond(var affichage: TAffichage);
 begin
@@ -110,11 +124,11 @@ begin
         WriteLn('Erreur SDL: ', SDL_GetError());
 end;
 
-{Renvoie la couleur associé au joueur
-Préconditions :
+{Renvoie la couleur associe au joueur
+Preconditions :
     - joueurId : l'identifiant du joueur
 Postconditions :
-    - couleur (TSDL_Color) : la couleur associée au joueur}
+    - couleur (TSDL_Color) : la couleur associee au joueur}
 procedure recupererCouleurJoueur(joueurId: Integer; var couleur: TSDL_Color);
 begin
     case joueurId of
@@ -133,8 +147,8 @@ begin
     end;
 end;
 
-{Crée une texture de couleur
-Préconditions :
+{Cree une texture de couleur
+Preconditions :
     - affichage : la structure contenant le renderer
     - r,g,b : les valeurs RGB de la couleur
 Postconditions :
@@ -152,32 +166,31 @@ begin
     creerTextureCouleur := texture;
 end;
 
-{Calcul les coordonnées d'une connexion
-Préconditions :
+{Calcul les coordonnees d'une connexion
+Preconditions :
     - connexion : la connexion à calculer
 Postconditions :
-    - coord (TCoord) : les coordonnées du milieu de la connexion
+    - coord (TCoord) : les coordonnees du milieu de la connexion
     - longueur (Real) : la longueur de la connexion
     - angle (Real) : l'angle de la connexion}
 procedure calculPosConnexion(connexion: TConnexion; var coord: Tcoord; var longueur: Real; var angle: Real);
 var dx,dy: Integer;
     coord2: Tcoord;
 begin
-    hexaToCard(connexion.Position[0].x,connexion.Position[0].y,tailleHexagone div 2,coord.x,coord.y);
-    hexaToCard(connexion.Position[1].x,connexion.Position[1].y,tailleHexagone div 2,coord2.x,coord2.y);
+    hexaToCart(connexion.Position[0],coord,tailleHexagone div 2);
+    hexaToCart(connexion.Position[1],coord2,tailleHexagone div 2);
 
     dx := coord2.x - coord.x;
     dy := coord2.y - coord.y;
 
-    coord.x := (coord.x + coord2.x) div 2;
-    coord.y := (coord.y + coord2.y) div 2;
+    coord := FCoord((coord.x + coord2.x) div 2,(coord.y + coord2.y) div 2);
 
     longueur := tailleHexagone div 2;
     angle := RadToDeg(arctan2(dy,dx)+PI/2);
 end;
 
-{Affiche la connexion à l'écran
-Préconditions :
+{Affiche la connexion à l'ecran
+Preconditions :
     - connexion : la connexion à afficher
     - affichage : la structure contenant le renderer
 Postconditions :
@@ -191,9 +204,7 @@ var couleur: TSDL_Color;
     colorTexture: PSDL_Texture;
 begin
     epaisseur := 6;
-
     recupererCouleurJoueur(connexion.IdJoueur,couleur);
-
     calculPosConnexion(connexion,coord,longueur,angle);
 
     destination_rect.x:=affichage.xGrid + coord.x - Round(epaisseur*abs(Sin(angle)) / 2) - tailleHexagone div 4 + epaisseur div 2;
@@ -211,49 +222,38 @@ begin
     SDL_DestroyTexture(colorTexture);
 end;
 
-{Calcul les coordonnées d'une personne
-Préconditions :
+{Calcul les coordonnees d'une personne
+Preconditions :
     - personne : la personne à calculer
 Postconditions :
-    - TCoord : les coordonnées de la personne}
+    - TCoord : les coordonnees de la personne}
 function calculPosPersonne(personne : TPersonne): Tcoord;
-var scoord: Tcoord;
+var scoord,coord: Tcoord;
     i: Integer;
-    x,y: Integer;
 begin
     scoord := FCoord(0,0);
     
     for i:=0 to length(personne.Position)-1 do
     begin
-        hexaToCard(personne.Position[i].x,personne.Position[i].y,tailleHexagone div 2,x,y);
-        scoord.x := scoord.x + x;
-        scoord.y := scoord.y + y;
+        hexaToCart(personne.Position[i],coord,tailleHexagone div 2);
+        scoord := FCoord(scoord.x + coord.x,scoord.y + coord.y);
     end;
 
-    scoord.x := scoord.x div 3;
-    scoord.y := scoord.y div 3;
-
-    calculPosPersonne := scoord;
+    calculPosPersonne := FCoord(scoord.x div 3,scoord.y div 3);
 end;
 
-{Affiche la personne à l'écran
-Préconditions :
+{Affiche la personne à l'ecran
+Preconditions :
     - personne : la personne à afficher
     - affichage : la structure contenant le renderer
 Postconditions :
     - affichage : la structure contenant le renderer}
 procedure affichagePersonne(personne: TPersonne; var affichage: TAffichage);
 var coord: Tcoord;
-    destination_rect: TSDL_RECT;
     texture: PSDL_Texture;
     couleur: TSDL_Color;
 begin
     coord := calculPosPersonne(personne);
-
-    destination_rect.x:=affichage.xGrid + coord.x -(tailleEleve div 2);
-    destination_rect.y:=affichage.yGrid + coord.y -(tailleEleve div 2);
-    destination_rect.w:=tailleEleve;
-    destination_rect.h:=tailleEleve;
 
     if personne.estEleve then
         texture := affichage.texturePlateau.textureEleve
@@ -262,18 +262,15 @@ begin
 
     recupererCouleurJoueur(personne.IdJoueur,couleur);
     SDL_SetTextureColorMod(texture, couleur.r, couleur.g, couleur.b);
-	
-	// Définit le carre de destination pour l'affichage de la carte
 
-	if SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect) <> 0 then
-        WriteLn('Erreur SDL: ', SDL_GetError());
+    affichageImage(affichage.xGrid + coord.x -(tailleEleve div 2),affichage.yGrid + coord.y -(tailleEleve div 2),tailleEleve,tailleEleve,texture,affichage);
 end;
 
-{Retourne les coordonnées du clic de la souris (système cartésien)
-Préconditions :
+{Retourne les coordonnees du clic de la souris (système cartesien)
+Preconditions :
     - affichage : la structure contenant le renderer
 Postconditions :
-    - coord (TCoord) : les coordonnées du clic (système cartésien)}
+    - coord (TCoord) : les coordonnees du clic (système cartesien)}
 procedure clicCart(var affichage: TAffichage; var coord: Tcoord);
 var running : Boolean;
     event: TSDL_Event;
@@ -301,28 +298,19 @@ begin
     end;
 end;
 
-{Renvoie les coordonnées du clic de la souris (système hexagonal)
-Préconditions :
+{Renvoie les coordonnees du clic de la souris (système hexagonal)
+Preconditions :
     - plat : le plateau de jeu
     - affichage : la structure contenant le renderer
 Postconditions :
-    - coord (TCoord): les coordonnées du clic (système hexagonal)}
+    - coord (TCoord): les coordonnees du clic (système hexagonal)}
 procedure clicHexagone(var plat: TPlateau; var affichage: TAffichage; var coord: Tcoord);
-var running: Boolean;
-    q,r: Integer;
+var tempCoord: Tcoord;
 begin
-    running := True;
-
-    while running do
-    begin
-        clicCart(affichage,coord);
-        cardToHexa(coord.x-affichage.xGrid,coord.y-affichage.yGrid,tailleHexagone div 2,q,r);
-
-        running := False;
-        coord := FCoord(q,r);
-
-        attendre(66);
-    end;
+    clicCart(affichage,coord);
+    cartToHexa(FCoord(coord.x-affichage.xGrid,coord.y-affichage.yGrid),tempCoord,tailleHexagone div 2);
+    coord := tempCoord;
+    attendre(66);
 end;
 
 // Transforme du texte en une texture
@@ -340,17 +328,17 @@ begin
 	LoadTextureFromText := texture;
 end;
 
-{Affiche du texte à l'écran
-Préconditions :
+{Affiche du texte à l'ecran
+Preconditions :
     - text : le texte à afficher
     - taille : la taille de la police
-    - coord : les coordonnées du texte (système cartésien)
+    - coord : les coordonnees du texte (système cartesien)
     - affichage : la structure contenant le renderer
 Postconditions :
     - affichage : la structure contenant le renderer}
 procedure affichageTexte(text:String; taille:Integer; coord:TCoord; couleur: TSDL_Color; var affichage:TAffichage);
 var police:PTTF_Font;
-	texteTexture:PSDL_Texture;
+	texteTexture: PSDL_Texture;
 	textRect : TSDL_Rect;
 begin
 	// Definit le rectangle de destination pour le texte
@@ -374,112 +362,71 @@ begin
 	SDL_DestroyTexture(texteTexture);
 end;
 
-procedure affichageInformation(texte: String; taille: Integer; couleur: TSDL_Color; var affichage: TAffichage);
-begin
-    affichageTexte(texte, taille, FCoord(400,1025), couleur, affichage);
-    miseAJourRenderer(affichage);
-    attendre(66);
-end;
-
 procedure affichageDe(de,rotation:Integer; coord:TCoord; var affichage: TAffichage);
 var destination_rect: TSDL_RECT;
-    texture: PSDL_Texture;
 begin
-    texture := chargerTexture(affichage, 'DiceFaces/' + IntToStr(de));
-    destination_rect.x := coord.x;
-    destination_rect.y := coord.y;
-    destination_rect.w := 75;
-    destination_rect.h := 75;
+    destination_rect.x:=coord.x;
+    destination_rect.y:=coord.y;
+    destination_rect.w:=75;
+    destination_rect.h:=75;
 
-    if SDL_RenderCopyEx(affichage.renderer, texture, nil, @destination_rect, rotation, nil, SDL_FLIP_NONE) <> 0 then
-        WriteLn('Erreur SDL: ', SDL_GetError());
+    SDL_RenderCopyEx(affichage.renderer, chargerTexture(affichage, 'DiceFaces/' + IntToStr(de)), nil, @destination_rect, rotation, nil, SDL_FLIP_NONE);
 end;
 
-procedure affichageDetailsHexagone(q,r,x,y: Integer; plat: TPlateau; var affichage: TAffichage);
-var destination_rect: TSDL_RECT;
-    coord: Tcoord;
+procedure affichageDetailsHexagone(coordHexa,coordCart: TCoord; plat: TPlateau; var affichage: TAffichage);
+var coord: Tcoord;
     texture: PSDL_Texture;
 begin
-    if (plat.Grille[q,r].ressource = Rien) then
+    if (plat.Grille[coordHexa.x,coordHexa.y].ressource = Rien) then
         texture := affichage.texturePlateau.textureContourVide
     else
         texture := affichage.texturePlateau.textureContourHexagone;
 
-    destination_rect.x:=affichage.xGrid+x-(Round(tailleHexagone * 1.05) div 2);
-    destination_rect.y:=affichage.yGrid+y-(Round(tailleHexagone * 1.05) div 2);
-    destination_rect.w:=Round(tailleHexagone * 1.05);
-    destination_rect.h:=Round(tailleHexagone * 1.05);
+    affichageImage(affichage.xGrid+coordCart.x-(Round(tailleHexagone * 1.05) div 2),affichage.yGrid+coordCart.y-(Round(tailleHexagone * 1.05) div 2),Round(tailleHexagone * 1.05),Round(tailleHexagone * 1.05),texture,affichage);
 
-    if SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect)<>0 then
-        WriteLn('Erreur SDL: ', SDL_GetError());
-
-    coord.x:=affichage.xGrid+x - 40 div 2;
-    coord.y:=affichage.yGrid+y - 50 div 2;
-    if plat.Grille[q,r].Numero div 10 >= 1 then
-        affichageTexte(IntToStr(plat.Grille[q,r].Numero), 40, coord, FCouleur(0,0,0,255), affichage)
-    else if (plat.Grille[q,r].Numero <> -1 )then
-        affichageTexte(' ' + IntToStr(plat.Grille[q,r].Numero), 40, coord, FCouleur(0,0,0,255), affichage);
+    coord := FCoord(affichage.xGrid+coordCart.x - 40 div 2,affichage.yGrid+coordCart.y - 50 div 2 - 5);
+    if plat.Grille[coordHexa.x,coordHexa.y].Numero div 10 >= 1 then
+        affichageTexte(IntToStr(plat.Grille[coordHexa.x,coordHexa.y].Numero), 40, coord, FCouleur(0,0,0,255), affichage)
+    else if (plat.Grille[coordHexa.x,coordHexa.y].Numero <> -1 )then
+        affichageTexte(' ' + IntToStr(plat.Grille[coordHexa.x,coordHexa.y].Numero), 40, coord, FCouleur(0,0,0,255), affichage);
 end;
 
-{Affiche un hexagone à l'écran
-Préconditions :
+{Affiche un hexagone à l'ecran
+Preconditions :
     - plat : le plateau de jeu
     - affichage : la structure contenant le renderer
-    - q,r : les coordonnées de l'hexagone
+    - q,r : les coordonnees de l'hexagone
 Postconditions :
     - affichage : la structure contenant le renderer}
-procedure affichageHexagone(plat: TPlateau; var affichage: TAffichage; q, r: Integer);
-var destination_rect: TSDL_RECT;
-    texture: PSDL_Texture;
-    x,y: Integer;
+procedure affichageHexagone(plat: TPlateau; var affichage: TAffichage; coordHexa: TCoord);
+var coordCart: TCoord;
 begin
-    hexaToCard(q,r,tailleHexagone div 2,x,y);
+    hexaToCart(coordHexa,coordCart,tailleHexagone div 2);
 
-    if (plat.Grille[q,r].ressource <> Rien) then
-    begin
-        // Définit le carre de destination pour l'affichage de la carte
-        destination_rect.x:=affichage.xGrid+x-(tailleHexagone div 2);
-        destination_rect.y:=affichage.yGrid+y-(tailleHexagone div 2);
-        destination_rect.w:=tailleHexagone;
-        destination_rect.h:=tailleHexagone;
-
-        texture := affichage.texturePlateau.textureRessource[plat.Grille[q,r].ressource];
-        if SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect)<>0 then
-            WriteLn('Erreur SDL: ', SDL_GetError());
-    end;
-
-    affichageDetailsHexagone(q,r,x,y,plat,affichage);
+    if (plat.Grille[coordHexa.x,coordHexa.y].ressource <> Rien) and (plat.Grille[coordHexa.x,coordHexa.y].ressource <> Aucune) then
+        affichageImage(affichage.xGrid+coordCart.x-(tailleHexagone div 2),affichage.yGrid+coordCart.y-(tailleHexagone div 2),tailleHexagone,tailleHexagone,affichage.texturePlateau.textureRessource[plat.Grille[coordHexa.x,coordHexa.y].ressource],affichage);
+    
+    affichageDetailsHexagone(coordHexa,coordCart,plat,affichage);
 end;
 
-{Affiche le souillard à l'écran
-Préconditions :
+{Affiche le souillard à l'ecran
+Preconditions :
     - plat : le plateau de jeu
     - affichage : la structure contenant le renderer
 Postconditions :
     - affichage : la structure contenant le renderer}
 procedure affichageSouillard(plat: TPlateau; var affichage: TAffichage);
-var destination_rect: TSDL_RECT;
-    texture: PSDL_Texture;
-    x,y: Integer;
+var coord: TCoord;
 begin
-    hexaToCard(plat.Souillard.Position.x,plat.Souillard.Position.y,tailleHexagone div 2,x,y);
-
-    texture := affichage.texturePlateau.textureSouillard;
+    hexaToCart(plat.Souillard.Position,coord,tailleHexagone div 2);
     
-    // Définit le carre de destination pour l'affichage de la carte
-    destination_rect.x:=affichage.xGrid + x-(tailleSouillard div 2);
-    destination_rect.y:=affichage.yGrid + y -(Round(tailleSouillard*1.3) div 2);
-    destination_rect.w:=tailleSouillard;
-    destination_rect.h:=Round(tailleSouillard*1.3);
-
-    if SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect)<>0 then
-        WriteLn('Erreur SDL: ', SDL_GetError());
+    affichageImage(affichage.xGrid+coord.x-(tailleSouillard div 2),affichage.yGrid+coord.y-(Round(tailleSouillard*1.3) div 2),tailleSouillard,Round(tailleSouillard*1.3),affichage.texturePlateau.textureSouillard,affichage);
     
-    affichageDetailsHexagone(plat.Souillard.Position.x,plat.Souillard.Position.y,x,y,plat,affichage);
+    affichageDetailsHexagone(plat.Souillard.Position,coord,plat,affichage);
 end;
 
-{Affiche la grille à l'écran
-Préconditions :
+{Affiche la grille à l'ecran
+Preconditions :
     - plat : le plateau de jeu
     - affichage : la structure contenant le renderer
 Postconditions :
@@ -498,25 +445,45 @@ begin
         for r:=0 to taille-1 do
         // TODO changer pour avoir l'affichage des hexagone "Aucune" en couleur unis pour montrer les bord
             if (plat.Grille[q,r].ressource <> Aucune) then
-                affichageHexagone(plat,affichage,q,r);
+            begin
+                affichageHexagone(plat,affichage,FCoord(q,r));
+            end;
 end;
 
 procedure affichageDes(de1,de2:Integer; coord: TCoord; var affichage: TAffichage);
 begin
     affichageDe(de1,-15,coord,affichage);
-    coord.x := coord.x + 75;
-    affichageDe(de2,20,coord,affichage);
+    affichageDe(de2,20,FCoord(coord.x+75,coord.y),affichage);
 end;
 
-procedure affichageScore(joueurs: TJoueurs; id: Integer; var affichage: TAffichage);
+procedure affichageScore(joueur:TJoueur; var affichage: TAffichage);
+// TODO marche pas tt seul affiche l'un sur l'autre
 var coord: Tcoord;
+    ressource: TRessource;
 begin
-    coord := FCoord(25,25+id*75);
-    affichageTexte(joueurs[id].Nom + ': ' + IntToStr(joueurs[id].Points) + ' points', 25, coord, FCouleur(0,0,0,255), affichage);
-    coord.y := coord.y + 25;
-    
+    coord := FCoord(25,25+joueur.id*75);
 
-    affichageTexte('M: '+IntToStr(joueurs[id].Ressources[Mathematiques])+'  P: '+IntToStr(joueurs[id].Ressources[Physique])+'  C: '+IntToStr(joueurs[id].Ressources[Chimie])+'  I: '+IntToStr(joueurs[id].Ressources[Informatique])+'  H: '+IntToStr(joueurs[id].Ressources[Humanites]), 25, coord, FCouleur(0,0,0,255), affichage);
+    affichageTexte(joueur.Nom + ': ', 25, coord, FCouleur(0,0,0,255), affichage);
+
+    coord.x := coord.x + 13*(length(joueur.Nom)+2);
+
+    affichageImage(coord.x,coord.y+7,25,25,affichage.texturePlateau.texturePoint,affichage);
+    affichageTexte(IntToStr(joueur.Points), 25, FCoord(coord.x+30,coord.y), FCouleur(0,0,0,255), affichage);
+
+
+    coord.x := 25;
+    coord.y := coord.y + 35;
+
+    for ressource := Physique to Mathematiques do
+    begin
+        affichageImage(coord.x,coord.y,25,25,affichage.texturePlateau.textureIconesRessources[ressource],affichage);
+
+        coord.x := coord.x + 25;
+
+        affichageTexte(' ' + IntToStr(joueur.Ressources[ressource]), 25, FCoord(coord.x,coord.y-5), FCouleur(0,0,0,255), affichage);
+
+        coord.x := coord.x + 40;
+    end;
 end;
 
 procedure ajouterBoutonTableau(texte: String; valeur: String; coord: Tcoord; w,h:Integer; var boutons: TBoutons);
@@ -561,7 +528,14 @@ end;
 
 procedure suppressionInformation(var affichage: TAffichage);
 begin
-    affichageZone(400,1025,1120,50,0,affichage);
+    affichageZone(400,1025,1500,50,0,affichage);
+    attendre(66);
+end;
+
+procedure affichageInformation(texte: String; taille: Integer; couleur: TSDL_Color; var affichage: TAffichage);
+begin
+    suppressionInformation(affichage);
+    affichageTexte(texte, taille, FCoord(400,1025), couleur, affichage);
     miseAJourRenderer(affichage);
     attendre(66);
 end;
@@ -683,13 +657,13 @@ begin
     ajouterBoutonTableau('Valider', 'valider_echange', bouton.coord, 95, 45, boutons);
 end;
 
-{Affiche l'écran d'échange de ressources
-Préconditions :
+{Affiche l'ecran d'echange de ressources
+Preconditions :
     - joueurs : les joueurs de la partie
     - idJoueurActuel : l'identifiant du joueur actuel
-    - idJoueurEchange : l'identifiant du joueur avec qui échanger
-    - ressources1 : les ressources à échanger du joueur actuel
-    - ressources2 : les ressources à échanger du joueur avec qui échanger
+    - idJoueurEchange : l'identifiant du joueur avec qui echanger
+    - ressources1 : les ressources à echanger du joueur actuel
+    - ressources2 : les ressources à echanger du joueur avec qui echanger
     - affichage : la structure contenant le renderer}
 procedure echangeRessources(joueurs: TJoueurs; idJoueurActuel:Integer; var idJoueurEchange: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
 var boutons: Array of TBouton;
@@ -718,7 +692,7 @@ begin
             idJoueurEchange := (idJoueurEchange + 1) mod length(joueurs)
         else
         begin
-            //TODO opti la vérif de ressources pour limiter aux ressources possédées en max
+            //TODO opti la verif de ressources pour limiter aux ressources possedees en max
             valeurBoutonSplit := splitValeur(valeurBouton);
 
             ressource := TRessource(GetEnumValue(TypeInfo(TRessource), valeurBoutonSplit[0]));
@@ -752,8 +726,8 @@ begin
     clicBouton(affichage,affichage.boutonsAction,valeurBouton);
 end;
 
-{Affiche le tour à l'écran
-Préconditions :
+{Affiche le tour à l'ecran
+Preconditions :
     - plat : le plateau de jeu
     - affichage : la structure contenant le renderer
 Postconditions :
@@ -781,13 +755,13 @@ begin
         affichageBouton(affichage.boutonsAction[i],affichage);
     
     for i:=0 to length(joueurs)-1 do
-        affichageScore(joueurs,i,affichage);
+        affichageScore(joueurs[i],affichage);
 
     miseAJourRenderer(affichage);
 end;
 
 {Met à jour l'affichage
-Préconditions :
+Preconditions :
     - affichage : la structure contenant le renderer
 Postconditions :
     - affichage : la structure contenant le renderer}
@@ -822,7 +796,7 @@ begin
 end;
 
 {Initialise l'affichage
-Préconditions :
+Preconditions :
     - plat : le plateau de jeu
     - affichage : la structure contenant le renderer
 Postconditions :
