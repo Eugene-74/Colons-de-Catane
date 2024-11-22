@@ -22,6 +22,10 @@ function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur
 function aucuneConnexionAdjacente(coords: TCoords;  plateau: TPlateau; joueur: TJoueur; var affichage : TAffichage): Boolean;
 function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var joueur:TJoueur; var affichage : TAffichage):Boolean;
 function dansLePlateau(plateau : TPlateau; coord : Tcoord): boolean;
+function enContactConnexionConnexion(plateau: TPlateau; coords1: TCoords; coords2: TCoords): Boolean;
+function CoordsEgales(coords1: TCoords; coords2: TCoords): Boolean;
+function enContactEleveConnexions(plateau: TPlateau; eleve: TPersonne; var joueur: TJoueur): TCoords;
+
 
 implementation
 
