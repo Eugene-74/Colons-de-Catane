@@ -126,12 +126,9 @@ begin
       else
         affichageInformation('Vous n''avez pas les ressources necessaires pour acheter une connexion.', 25, FCouleur(0,0,0,255), affichage);
     
-<<<<<<< HEAD
-    3:  
-=======
+
     // PROFESSEUR
     3: 
->>>>>>> f339995f1570c9817187bef26c0510ef3dad0c40
     
       if (joueur.Ressources[Mathematiques] >= 2) and 
          (joueur.Ressources[Physique] >= 1) then
@@ -201,7 +198,7 @@ begin
     // TODO MACHE PAS LES HEXAGONES SONT PAS SPECIALEMENT COLLER
     SetLength(plateau.Personnes, Length(plateau.Personnes) + 1);
     with plateau.Personnes[High(plateau.Personnes)] do
-    begin
+   
       // Assigner les coordonnées des hexagones sélectionnés à l'élève
       SetLength(Position, 3); 
       Position[0] := HexagonesCoords[0];
@@ -370,14 +367,14 @@ var
   HexagonesCoords: TCoords;
   i, j, k, compteur: Integer;
   estConverti: Boolean;
-<<<<<<< HEAD
+
 begin
   // Appeler ClicPersonne pour récupérer les hexagones sélectionnés
   HexagonesCoords := ClicPersonne(affichage, plateau, False); 
   // compteur := 0;
 
   // Vérifie si les hexagones sont adjacents
-=======
+
   begin
   // TODO verifier la proximiter avec une connexion du joueur
   // TODO verifier que le joueur a encore un eleve a changer
@@ -391,7 +388,6 @@ begin
 
   // Verifie si les hexagones sont adjacents
 
->>>>>>> f339995f1570c9817187bef26c0510ef3dad0c40
   if enContact(HexagonesCoords) then
   begin
     estConverti := False;
@@ -442,6 +438,7 @@ begin
     // Les hexagones sélectionnés ne sont pas adjacents
     affichageInformation('Conversion invalide. Les hexagones sélectionnés ne sont pas adjacents.', 25, FCouleur(0, 0, 0, 255), affichage);
   end;
+end;
 end;
 
 
