@@ -198,7 +198,7 @@ begin
     // TODO MACHE PAS LES HEXAGONES SONT PAS SPECIALEMENT COLLER
     SetLength(plateau.Personnes, Length(plateau.Personnes) + 1);
     with plateau.Personnes[High(plateau.Personnes)] do
-   
+   begin
       // Assigner les coordonnées des hexagones sélectionnés à l'élève
       SetLength(Position, 3); 
       Position[0] := HexagonesCoords[0];
@@ -207,7 +207,7 @@ begin
 
     estEleve := True;
     IdJoueur := joueurActuel.Id;
-
+  end;
     // ajout d'un point
     joueurActuel.Points:=1+joueurActuel.Points;
 
