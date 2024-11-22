@@ -63,7 +63,7 @@ begin
       else
         affichageInformation('Vous n''avez pas les ressources necessaires pour acheter une connexion.', 25, FCouleur(0,0,0,255), affichage);
     
-    3: 
+    3:  
     
       if (joueur.Ressources[Mathematiques] >= 2) and 
          (joueur.Ressources[Physique] >= 1) then
@@ -295,13 +295,12 @@ var
   HexagonesCoords: TCoords;
   i, j, k, compteur: Integer;
   estConverti: Boolean;
-  begin
+begin
   // Appeler ClicPersonne pour récupérer les hexagones sélectionnés
   HexagonesCoords := ClicPersonne(affichage, plateau, False); 
   // compteur := 0;
 
   // Vérifie si les hexagones sont adjacents
-
   if enContact(HexagonesCoords) then
   begin
     estConverti := False;
@@ -348,16 +347,81 @@ var
   end
   else
   begin
-    affichageInformation('Conversion invalide. Les hexagones selectionnes ne sont pas adjacents.', 25, FCouleur(0,0,0,255), affichage);
-
+    // Les hexagones sélectionnés ne sont pas adjacents
+    affichageInformation('Conversion invalide. Les hexagones sélectionnés ne sont pas adjacents.', 25, FCouleur(0, 0, 0, 255), affichage);
   end;
 end;
 
 
-function compterRouteSuite(plateau : TPlateau; joueur : Tjoueur):Integer;
+function compterRouteSuite(plateau: TPlateau; joueur: TJoueur): Integer;
+var
+  i, j, k, l: Integer;
+  connexionsEleve: TCoords; // Tableau contenant les connexions liées à un élève
+  maxRoute, routeActuelle: Integer;
+  connexionCourante: TCoords;
+  dejaVisite: array of Boolean;
+
 begin
-  compterRouteSuite := 0;
+  maxRoute := 0;
+  setLength (connexionCourante,2);
+  // Initialiser un tableau pour marquer les connexions visitées
+  SetLength(dejaVisite, Length(plateau.Connexions));
+  for i := 0 to High(dejaVisite) do
+    dejaVisite[i] := False;
+
+  // Parcourir les élèves du joueur
+  for i := 0 to High(plateau.Personnes) do
+  begin
+    if plateau.Personnes[i].IdJoueur = joueur.Id then
+    begin
+      // Récupérer les connexions liées à l'élève
+      connexionsEleve := enContactEleveConnexions(plateau, plateau.Personnes[i],joueur);
+
+      // Parcourir chaque connexion liée à l'élève
+      for j := 0 to High(connexionsEleve) do
+      begin
+        routeActuelle := 1; // Initialiser le compteur de la route
+        connexionCourante[0]:= connexionsEleve[j];
+        connexionCourante[1]:= connexionsEleve[j+1];
+
+
+        // Parcourir les connexions du joueur pour suivre la chaîne
+        while True do
+        begin
+          // Rechercher une connexion liée à la connexion courante
+          l := -1;
+          for k := 0 to High(plateau.Connexions) do
+          begin
+            if (plateau.Connexions[k].IdJoueur = joueur.Id) and
+               not dejaVisite[k] and
+               enContactConnexionConnexion(plateau, connexionCourante, plateau.Connexions[k].Position) and
+               not CoordsEgales(connexionCourante, plateau.Connexions[k].Position) then
+            begin
+              l := k; // Trouver une connexion liée
+              Break;
+            end;
+          end;
+
+          // Si aucune connexion suivante n'est trouvée, arrêter la chaîne
+          if l = -1 then
+            Break;
+
+          // Marquer la connexion comme visitée et continuer la chaîne
+          dejaVisite[l] := True;
+          connexionCourante := plateau.Connexions[l].Position;
+          Inc(routeActuelle);
+        end;
+
+        // Mettre à jour le maximum si une route plus longue est trouvée
+        if routeActuelle > maxRoute then
+          maxRoute := routeActuelle;
+      end;
+    end;
+  end;
+
+  compterRouteSuite := maxRoute;
 end;
+
 
 
 procedure verificationPointsVictoire(plateau : TPlateau; joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer;var affichage : TAffichage);
@@ -730,7 +794,142 @@ begin
   affichageTour(plateau,joueurs,affichage);
 
 end;
+function enContactConnexionConnexion(plateau: TPlateau; coords1: TCoords; coords2: TCoords): Boolean;
+var
+  Coord, autreCoord1, autreCoord2: TCoord;
+begin
+  enContactConnexionConnexion := False;
 
+  // Vérifie si coords1[0] correspond à coords2[0]
+  if (coords1[0].x = coords2[0].x) and (coords1[0].y = coords2[0].y) then
+  begin
+    Coord := coords1[0];
+    autreCoord1 := coords1[1];
+    autreCoord2 := coords2[1];
+  end
+  // Vérifie si coords1[0] correspond à coords2[1]
+  else if (coords1[0].x = coords2[1].x) and (coords1[0].y = coords2[1].y) then
+  begin
+    Coord := coords1[0];
+    autreCoord1 := coords1[1];
+    autreCoord2 := coords2[0];
+  end
+  // Vérifie si coords1[1] correspond à coords2[0]
+  else if (coords1[1].x = coords2[0].x) and (coords1[1].y = coords2[0].y) then
+  begin
+    Coord := coords1[1];
+    autreCoord1 := coords1[0];
+    autreCoord2 := coords2[1];
+  end
+  // Vérifie si coords1[1] correspond à coords2[1]
+  else if (coords1[1].x = coords2[1].x) and (coords1[1].y = coords2[1].y) then
+  begin
+    Coord := coords1[1];
+    autreCoord1 := coords1[0];
+    autreCoord2 := coords2[0];
+  end
+  else
+    Exit; // Aucune correspondance trouvée
+
+  // Vérifie si les deux autres coordonnées (autreCoord1 et autreCoord2) sont adjacentes
+  if sontAdjacents(autreCoord1, autreCoord2) then
+    enContactConnexionConnexion := True;
+end;
+
+
+function CoordsEgales(coords1: TCoords; coords2: TCoords): Boolean;
+begin
+  CoordsEgales := False;
+
+  // Vérification si les deux ensembles de coordonnées sont identiques (dans n'importe quel ordre)
+  if ((coords1[0].x = coords2[0].x) and (coords1[0].y = coords2[0].y) and
+      (coords1[1].x = coords2[1].x) and (coords1[1].y = coords2[1].y)) or
+     ((coords1[0].x = coords2[1].x) and (coords1[0].y = coords2[1].y) and
+      (coords1[1].x = coords2[0].x) and (coords1[1].y = coords2[0].y)) then
+  begin
+    CoordsEgales := True;
+  end;
+end;
+
+function enContactConnexions(plateau: TPlateau; coords: TCoords; joueur: TJoueur): Boolean;
+var
+  i: Integer;
+  coord1, coord2, autreCoord, autreCoord2: TCoord;
+  connexionTrouvee: Boolean;
+begin
+  enContactConnexions := False; // Initialisation à False par défaut
+
+  // Parcourir toutes les connexions du plateau
+  for i := 0 to High(plateau.Connexions) do
+  begin
+    // Vérifier si la connexion appartient au joueur
+    if plateau.Connexions[i].IdJoueur = joueur.Id then
+    begin
+      coord1 := plateau.Connexions[i].Position[0];
+      coord2 := plateau.Connexions[i].Position[1];
+
+      // Vérifier si l'une des coordonnées correspond à celles du joueur
+      if (coords[0].x = coord1.x) and (coords[0].y = coord1.y) then
+      begin
+        autreCoord := coords[1];
+        autreCoord2 := coord2;
+      end
+      else if (coords[1].x = coord1.x) and (coords[1].y = coord1.y) then
+      begin
+        autreCoord := coords[0];
+        autreCoord2 := coord2;
+      end
+      else if (coords[0].x = coord2.x) and (coords[0].y = coord2.y) then
+      begin
+        autreCoord := coords[1];
+        autreCoord2 := coord1;
+      end
+      else if (coords[1].x = coord2.x) and (coords[1].y = coord2.y) then
+      begin
+        autreCoord := coords[0];
+        autreCoord2 := coord1;
+      end
+      else
+        Continue; // Passer à la connexion suivante si aucune correspondance trouvée
+
+      // Vérifier si `autreCoord` est adjacente à `autreCoord2`
+      if sontAdjacents(autreCoord, autreCoord2) then
+      begin
+        enContactConnexions := True;
+        Exit; // Quitter dès qu'une connexion valide est trouvée
+      end;
+    end;
+  end;
+end;
+function enContactEleveConnexions(plateau: TPlateau; eleve: TPersonne; var joueur: TJoueur): TCoords;
+var
+  i, k: Integer;
+  connexionsTrouvees: Integer;
+begin
+  connexionsTrouvees := 0;
+  SetLength(enContactEleveConnexions, 6); // Initialiser le tableau pour stocker 3 connexions maximum
+
+  // Parcours toutes les connexions du plateau
+  for i := 0 to High(plateau.Connexions) do
+  begin
+    // Vérifie si la connexion est en contact avec l'élève
+    if enContactEleveConnexion(plateau, plateau.Connexions[i].Position, joueur) then
+    begin
+      // Ajoute les coordonnées de la connexion en contact à la liste
+      enContactEleveConnexions[connexionsTrouvees] := plateau.Connexions[i].Position[0];
+      enContactEleveConnexions[connexionsTrouvees+1] := plateau.Connexions[i].Position[1];
+
+      connexionsTrouvees:=+2;
+
+      // Si 3 connexions sont trouvées, arrête la recherche
+      if connexionsTrouvees = 6 then
+        Exit;
+    end;
+  end;
+
+  // Si moins de 3 connexions sont trouvées, ajuste la taille du tableau pour ne pas inclure des indices inutiles
+  SetLength(enContactEleveConnexions, connexionsTrouvees);
+end;
 
 
 end.
