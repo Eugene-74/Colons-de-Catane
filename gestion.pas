@@ -313,7 +313,6 @@ begin
     finTour := False;
     repeat
       clicAction(affichage, valeurBouton);
-      jouerSonClicAction();
 
       if(valeurBouton = 'achat_eleve')  then
         PlacementEleve(plateau,affichage,joueurs[i])
