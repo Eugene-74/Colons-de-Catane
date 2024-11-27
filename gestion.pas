@@ -39,7 +39,6 @@ begin
   SetLength(grille, 7, 7);
   SetLength(ressources, 7, 7);
   SetLength(numeros, 7, 7);
-writeln(num);
     case num of
     1 : begin
     ressources[0] := [Aucune, Aucune, Aucune, Rien, Rien, Rien, Rien];
@@ -295,7 +294,7 @@ var valeurBouton,text : String;
 begin
   for i := 0 to length(joueurs)-1 do
     begin
-    // gestionDes(joueurs,plateau,affichage);
+    gestionDes(joueurs,plateau,affichage);
       
     affichageTour(plateau,joueurs,affichage);
 
@@ -339,14 +338,6 @@ begin
     // TODO enlever apres
     verificationMusique(affichage);
 
-    for j := 0 to length(plateau.Connexions)-1 do 
-      begin
-        writeln(j);
-        writeln(plateau.Connexions[j].Position[0].x,' , ',plateau.Connexions[j].Position[0].y);
-        writeln(plateau.Connexions[j].Position[1].x,' , ',plateau.Connexions[j].Position[1].y);
-        writeln();
-
-      end;
 
     end;
 

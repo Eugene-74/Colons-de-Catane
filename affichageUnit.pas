@@ -563,7 +563,7 @@ begin
     if length(boutons) = 0 then
     begin
         running := False;
-        writeln('Pas de boutons');
+        // writeln('Pas de boutons');
     end;
 
     while running do

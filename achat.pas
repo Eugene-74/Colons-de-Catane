@@ -284,11 +284,11 @@ begin
     // TODO verifier le contact avec une connexion du joueur
     if not enContactEleveConnexion(plateau,HexagonesCoords,joueurActuel) then
     begin
-     writeln('Eleve non liée avec une connexion');
+    //  writeln('Eleve non liée avec une connexion');
       exit;
     end;
 
-   writeln('placement d''eleve apres le debut de partie');
+  //  writeln('placement d''eleve apres le debut de partie');
   // Vérifie la présence d'une personne adjacente
 
     if  VerifierAdjacencePersonnes(HexagonesCoords,plateau) then
@@ -545,7 +545,7 @@ begin
 
           // Marquer la connexion comme visitée et continuer la chaîne
           dejaVisite[l] := True;
-          // TODO NE SURTOUT PAS METTRE ça CA CASSE TOUT
+          // TODO NE SURTOUT PAS METTRE ça CA CASSE TOUT CAR CA PASSE UN POINTEUR
           // connexionCourante := plateau.Connexions[l].Position;
           connexionCourante[0] := plateau.Connexions[l].Position[0];
           connexionCourante[1] := plateau.Connexions[l].Position[1];
@@ -583,7 +583,8 @@ begin
   begin
 
     points[j] := joueur.points;
-
+    
+    
     plusGrandeRoute := True;
     if (compterRouteSuite(plateau,joueur) >= 5) then
     begin
@@ -594,6 +595,7 @@ begin
       points[j] := points[j] + 2;
     end;
     
+
     if(joueur.CartesTutorat.carte2.utilisee >= 3) then
       for i := 0 to High(joueurs) do
         if(joueur.CartesTutorat.carte1.utilisee < joueurs[i].CartesTutorat.carte1.utilisee) then
