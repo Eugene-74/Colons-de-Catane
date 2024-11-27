@@ -5,30 +5,33 @@ interface
 uses
   Types, affichageUnit,traitement,sysutils, musique;
 
-procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
-procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
-procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 procedure verificationPointsVictoire(plateau : TPlateau; joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer;var affichage : TAffichage);
 procedure affichageGagnant(joueur: TJoueur; affichage: TAffichage);
 procedure deplacementSouillard(var plateau : TPlateau; var joueurs : TJoueurs ;var affichage : TAffichage);
-function ClicConnexion(var plateau : TPlateau; var affichage : TAffichage): TCoords;
-function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage : TAffichage): Boolean;
-function ClicPersonne(affichage: TAffichage; plateau: TPlateau; estEleve: Boolean): TCoords;
-function CountPersonnes(personnes: array of TPersonne; estEleve: Boolean; joueur: TJoueur): Integer;
-function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur;var affichage : TAffichage): Boolean;
-function VerifierAdjacencePersonnes(HexagonesCoords: TCoords; plateau: TPlateau): Boolean;
-function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;
-function aucuneConnexionAdjacente(coords: TCoords;  plateau: TPlateau; joueur: TJoueur; var affichage : TAffichage): Boolean;
-function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var joueur:TJoueur; var affichage : TAffichage):Boolean;
 function dansLePlateau(plateau : TPlateau; coord : Tcoord): boolean;
-function enContactConnexionConnexion(plateau: TPlateau; coords1: TCoords; coords2: TCoords): Boolean;
 function CoordsEgales(coords1: TCoords; coords2: TCoords): Boolean;
-function enContactEleveConnexions(plateau: TPlateau; eleve: TPersonne; var joueur: TJoueur): TCoords;
-function resteEleve(plateau:TPlateau; joueur:Tjoueur): Boolean;
+procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 
 
 implementation
+
+
+procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);forward;
+procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);forward;
+function ClicConnexion(var plateau : TPlateau; var affichage : TAffichage): TCoords;forward;
+function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage : TAffichage): Boolean;forward;
+function ClicPersonne(affichage: TAffichage; plateau: TPlateau; estEleve: Boolean): TCoords;forward;
+function CountPersonnes(personnes: array of TPersonne; estEleve: Boolean; joueur: TJoueur): Integer;forward;
+function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur;var affichage : TAffichage): Boolean;forward;
+function VerifierAdjacencePersonnes(HexagonesCoords: TCoords; plateau: TPlateau): Boolean;forward;
+function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;forward;
+function aucuneConnexionAdjacente(coords: TCoords;  plateau: TPlateau; joueur: TJoueur; var affichage : TAffichage): Boolean;forward;
+function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var joueur:TJoueur; var affichage : TAffichage):Boolean;forward;
+function enContactConnexionConnexion(plateau: TPlateau; coords1: TCoords; coords2: TCoords): Boolean;forward;
+function resteEleve(plateau:TPlateau; joueur:Tjoueur): Boolean;forward;
+function enContactEleveConnexions(plateau: TPlateau; eleve: TPersonne; var joueur: TJoueur): TCoords;forward;
+
 
 procedure clicHexagoneValide(var plateau: TPlateau; var affichage: TAffichage; var coord: Tcoord);
 var valide : boolean;
@@ -114,6 +117,8 @@ begin
          (joueur.Ressources[Chimie] >= 1) and 
          (joueur.Ressources[Physique] >= 1) then
       begin
+      jouerSonClicAction();
+
         PlacementEleve(plateau, affichage, joueur);
 
         joueur.Ressources[Mathematiques] := joueur.Ressources[Mathematiques] - 1;
@@ -122,7 +127,10 @@ begin
         joueur.Ressources[Physique] := joueur.Ressources[Physique] - 1;
       end
       else
-        affichageInformation('Vous n''avez pas les ressources necessaires pour acheter un eleve.', 25, FCouleur(0,0,0,255), affichage);
+        begin
+          affichageInformation('Vous n''avez pas les ressources necessaires pour acheter un eleve.', 25, FCouleur(0,0,0,255), affichage);
+          jouerSonValide(false);
+        end;
 
     // CONNEXION
     2: 
@@ -130,13 +138,19 @@ begin
       if (joueur.Ressources[Humanites] >= 1) and 
          (joueur.Ressources[Physique] >= 1) then
       begin
+      jouerSonClicAction();
+
         placementConnexion(plateau, affichage, joueur);
 
         joueur.Ressources[Physique] := joueur.Ressources[Physique] - 1;
         joueur.Ressources[Chimie] := joueur.Ressources[Chimie] - 1;
       end
       else
-        affichageInformation('Vous n''avez pas les ressources necessaires pour acheter une connexion.', 25, FCouleur(0,0,0,255), affichage);
+        begin
+          affichageInformation('Vous n''avez pas les ressources necessaires pour acheter une connexion.', 25, FCouleur(0,0,0,255), affichage);
+          jouerSonValide(false);
+          
+        end;
     
 
     // PROFESSEUR
@@ -145,19 +159,31 @@ begin
       if (joueur.Ressources[Mathematiques] >= 2) and 
          (joueur.Ressources[Physique] >= 1) then
       begin
+      jouerSonClicAction();
+
         changementProfesseur(plateau, affichage, joueur);
       end
       else
-        affichageInformation('Vous n''avez pas les ressources necessaires pour changer un eleve en professeur.', 25, FCouleur(0,0,0,255), affichage);
+        begin
+          affichageInformation('Vous n''avez pas les ressources necessaires pour changer un eleve en professeur.', 25, FCouleur(0,0,0,255), affichage);
+          jouerSonValide(false);
+        end;
     // PROFESSEUR
     4:
     //  verif ressource
     if(plateau.cartesTutorat.carte1.nbr + plateau.cartesTutorat.carte2.nbr + plateau.cartesTutorat.carte3.nbr + plateau.cartesTutorat.carte4.nbr + plateau.cartesTutorat.carte5.nbr >=0 )  then //and a les ressources
     begin
+      jouerSonClicAction();
+
         tirerCarteTutorat(plateau.CartesTutorat, joueur);
     end
-    else 
-        affichageInformation('Impossbile d''acheter une carte de tutorat.', 25, FCouleur(255,0,0,255), affichage);
+    else
+    begin
+    
+      affichageInformation('Impossbile d''acheter une carte de tutorat.', 25, FCouleur(255,0,0,255), affichage);
+      jouerSonValide(false);
+      
+    end;
   else
     WriteLn('Choix invalide.');  // Affiche si le choix n'est pas valide
   end;
@@ -1020,6 +1046,7 @@ begin
   // Si moins de 3 connexions sont trouvées, ajuste la taille du tableau pour ne pas inclure des indices inutiles
   SetLength(enContactEleveConnexions, connexionsTrouvees);
 end;
+
 function resteEleve(plateau: TPlateau; joueur: TJoueur): Boolean;
 var
   i: Integer;
