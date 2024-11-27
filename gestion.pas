@@ -350,7 +350,7 @@ begin
 
     until (finTour);
 
-// TODO enlever apres
+    // TODO enlever apres
     verificationMusique(affichage);
 
     end;

@@ -18,7 +18,7 @@ begin
     begin
         demarrerMusique(affichage);
         // enlever
-        arreterMusique(affichage);
+        // arreterMusique(affichage);
 
         initialisationPartie(joueurs,plateau,affichage);
 

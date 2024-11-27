@@ -6,7 +6,9 @@ uses SDL2, SDL2_mixer,types,SysUtils,DateUtils;
 procedure demarrerMusique(var affichage :TAffichage);
 procedure verificationMusique(var affichage :TAffichage);
 procedure arreterMusique(var affichage :TAffichage);
-procedure jouerSon(valide : Boolean);
+procedure jouerSonValide(valide : Boolean);
+// procedure son(cheminSon : Pchar);
+
 
 
 implementation
@@ -88,6 +90,7 @@ begin
     // writeln('Musique: ', musiques[randomIndex]);
     musique := Mix_LoadMUS(musiques[randomIndex]);
 
+    affichage.musiqueActuel.active := true;
     affichage.musiqueActuel.debut := DateTimeToUnix(Now);
     affichage.musiqueActuel.temps := musiquesTemps[randomIndex];
     
@@ -97,7 +100,7 @@ begin
         Exit;
     end;
 
-    if Mix_PlayMusic(musique, -1) = -1 then
+    if Mix_PlayMusic(musique, 0) = -1 then
     begin
         WriteLn('Erreur de lecture de la musique: ', Mix_GetError);
         Exit;
@@ -106,51 +109,62 @@ end;
 
 procedure verificationMusique(var affichage :TAffichage);
 begin
-    if(DateTimeToUnix(Now) - affichage.musiqueActuel.debut  >= affichage.musiqueActuel.temps) then
-    begin
-        demarrerMusique(affichage);
-    end;
+    if(affichage.musiqueActuel.active) then
+        if(DateTimeToUnix(Now) - affichage.musiqueActuel.debut  >= affichage.musiqueActuel.temps) then
+        begin
+            demarrerMusique(affichage);
+        end;
 end;
 
 procedure arreterMusique(var affichage : TAffichage);
 begin
     Mix_HaltMusic();
+    affichage.musiqueActuel.active := False;
     affichage.musiqueActuel.debut := 0;
     affichage.musiqueActuel.temps := 0;
 
 end;
 
 
-procedure jouerSon(valide : Boolean);
+
+procedure demarrerSon(cheminSon : Pchar);
 var
-    musique: PMix_Music;
-    if(valide)then
-        musiques: 'Assets/Musique/N1 - Jeux.mp3'
-    else
-        musiques: 'Assets/Musique/N1 - Jeux.mp3'
-
-    
-
+  son: PMix_Chunk;
 begin
-    if Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0 then
-    begin
-        WriteLn('Erreur d''initialisation de SDL_mixer: ', Mix_GetError);
-        Exit;
-    end;
 
-    musique := Mix_LoadMUS(musiques);
+  if Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0 then
+  begin
+    WriteLn('Erreur d''initialisation de SDL_mixer: ', Mix_GetError);
+    Exit;
+  end;
 
-    if musique = nil then
-    begin
-        WriteLn('Erreur de chargement de la musique: ', Mix_GetError);
-        Exit;
-    end;
+  son := Mix_LoadWAV(cheminSon);
 
-    if Mix_PlayMusic(musique, -1) = -1 then
-    begin
-        WriteLn('Erreur de lecture de la musique: ', Mix_GetError);
-        Exit;
-    end;
+  if son = nil then
+  begin
+    WriteLn('Erreur de chargement du son: ', Mix_GetError);
+    Exit;
+  end;
+
+  // Jouer le son sur le premier canal disponible (-1) une seule fois (0)
+  if Mix_PlayChannel(-1, son, 0) = -1 then
+  begin
+    WriteLn('Erreur de lecture du son: ', Mix_GetError);
+  end;
+end;
+
+
+procedure jouerSonValide(valide: Boolean);
+var
+    cheminSon: PChar;
+begin
+
+    if valide then
+        cheminSon := 'Assets/Sons/valide.mp3'
+    else
+        cheminSon := 'Assets/Sons/refus.mp3';
+    demarrerSon(cheminSon);
+
 end;
 
 end.

@@ -131,6 +131,8 @@ type
   TMusique = record
     debut : Int64;
     temps : Int64;
+    active : Boolean;
+
   end;
 
   // Definition de TAffichage (pour les transferts et mises à jour via SDL)
