@@ -3,7 +3,7 @@ unit affichageUnit;
 
 interface
 
-uses sdl2, sdl2_image, sdl2_ttf, types, sysutils, TypInfo, traitement, Math;
+uses sdl2, sdl2_image, sdl2_ttf, types, sysutils, TypInfo, traitement, Math,musique;
 
 procedure initialisationSDL(var affichage: TAffichage);
 procedure initialisationAffichage(var affichage: TAffichage);
@@ -310,6 +310,7 @@ begin
     clicCart(affichage,coord);
     cartToHexa(FCoord(coord.x-affichage.xGrid,coord.y-affichage.yGrid),tempCoord,tailleHexagone div 2);
     coord := tempCoord;
+    jouerSonClic();
     attendre(66);
 end;
 

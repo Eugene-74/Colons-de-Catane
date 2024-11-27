@@ -164,7 +164,14 @@ begin
     else
         cheminSon := 'Assets/Sons/refus.mp3';
     demarrerSon(cheminSon);
-
 end;
 
+
+procedure jouerSonClic();
+// var
+    // cheminSon: PChar;
+begin
+
+    demarrerSon('Assets/Sons/clic.mp3');
+end;
 end.
