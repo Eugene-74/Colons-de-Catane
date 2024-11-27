@@ -126,7 +126,7 @@ begin
   SetLength(joueurs,0);
   i:=0;
   repeat
-    write('rentrer le nom du joueur '+IntToStr(i+1)+' : (Entrer pour arêter)');
+    write('rentrer le nom du joueur '+IntToStr(i+1)+' : (Entrer pour areter)');
     readln(text);
     unique := True;
 
