@@ -89,7 +89,7 @@ begin
     plat.Souillard.Position.x := 3;
     plat.Souillard.Position.y := 3;
     end
-   else if(num = 2) then
+  else if(num = 2) then
     begin
       plat.Grille := grille;
       plat.Souillard.Position.x := 2;

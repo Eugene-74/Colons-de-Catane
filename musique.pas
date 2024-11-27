@@ -5,6 +5,9 @@ uses SDL2, SDL2_mixer,types,SysUtils,DateUtils;
 
 procedure demarrerMusique(var affichage :TAffichage);
 procedure verificationMusique(var affichage :TAffichage);
+procedure arreterMusique(var affichage :TAffichage);
+procedure jouerSon(valide : Boolean);
+
 
 implementation
 
@@ -109,5 +112,45 @@ begin
     end;
 end;
 
+procedure arreterMusique(var affichage : TAffichage);
+begin
+    Mix_HaltMusic();
+    affichage.musiqueActuel.debut := 0;
+    affichage.musiqueActuel.temps := 0;
+
+end;
+
+
+procedure jouerSon(valide : Boolean);
+var
+    musique: PMix_Music;
+    if(valide)then
+        musiques: 'Assets/Musique/N1 - Jeux.mp3'
+    else
+        musiques: 'Assets/Musique/N1 - Jeux.mp3'
+
+    
+
+begin
+    if Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0 then
+    begin
+        WriteLn('Erreur d''initialisation de SDL_mixer: ', Mix_GetError);
+        Exit;
+    end;
+
+    musique := Mix_LoadMUS(musiques);
+
+    if musique = nil then
+    begin
+        WriteLn('Erreur de chargement de la musique: ', Mix_GetError);
+        Exit;
+    end;
+
+    if Mix_PlayMusic(musique, -1) = -1 then
+    begin
+        WriteLn('Erreur de lecture de la musique: ', Mix_GetError);
+        Exit;
+    end;
+end;
 
 end.

@@ -2,7 +2,7 @@ program main;
 
 uses affichageUnit,types,gestion,traitement,achat,musique;
 
-var 
+var
     affichage: TAffichage;
     plateau: TPlateau;
     joueurs: TJoueurs;
@@ -13,28 +13,31 @@ var
     valeurBouton : String;
 
 begin
-  testYann := False;
-  if not testYann then
-  begin
-    demarrerMusique(affichage);
-    initialisationPartie(joueurs,plateau,affichage);
+    testYann := False;
+    if not testYann then
+    begin
+        demarrerMusique(affichage);
+        // enlever
+        arreterMusique(affichage);
 
-    SetLength(plateau.Personnes, 1);
-    SetLength(plateau.Personnes[0].Position, 3);
-    plateau.Personnes[0].Position[0] := FCoord(2,3);
-    plateau.Personnes[0].Position[1] := FCoord(3,3);
-    plateau.Personnes[0].Position[2] := FCoord(2,4);
-    plateau.Personnes[0].estEleve := True;
-    plateau.Personnes[0].IdJoueur := 0;
+        initialisationPartie(joueurs,plateau,affichage);
 
-    partie(joueurs,plateau,affichage);
+        SetLength(plateau.Personnes, 1);
+        SetLength(plateau.Personnes[0].Position, 3);
+        plateau.Personnes[0].Position[0] := FCoord(2,3);
+        plateau.Personnes[0].Position[1] := FCoord(3,3);
+        plateau.Personnes[0].Position[2] := FCoord(2,4);
+        plateau.Personnes[0].estEleve := True;
+        plateau.Personnes[0].IdJoueur := 0;
 
-  end
-  else
-  begin
-    writeln('Test Yann');
+        partie(joueurs,plateau,affichage);
 
-  // 1 plateau normal 2 plateau sans bord
+    end
+    else
+    begin
+        writeln('Test Yann');
+
+    // 1 plateau normal 2 plateau sans bord
     plateau := chargementPlateau(1);
     initialisationAffichage(affichage);
 
@@ -85,7 +88,7 @@ begin
     affichageTour(plateau,joueurs, affichage);
 
     clicAction(affichage,valeurBouton);
-  end;
+end;
 
-  writeln('Fin du programme');
+writeln('Fin du programme');
 end.
