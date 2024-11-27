@@ -310,7 +310,7 @@ begin
     begin
     gestionDes(joueurs,plateau,affichage);
       
-    affichageTour(plateau,joueurs,affichage);
+    // affichageTour(plateau,joueurs,affichage);
 
 
     finTour := False;
