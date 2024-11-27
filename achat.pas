@@ -3,23 +3,34 @@ unit achat;
 interface
 
 uses
-  Types, affichageUnit,traitement,sysutils, musique;
+  Types, affichageUnit,traitement,sysutils;
 
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
 procedure verificationPointsVictoire(plateau : TPlateau; joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer;var affichage : TAffichage);
 procedure affichageGagnant(joueur: TJoueur; affichage: TAffichage);
 procedure deplacementSouillard(var plateau : TPlateau; var joueurs : TJoueurs ;var affichage : TAffichage);
+function ClicConnexion(var plateau : TPlateau; var affichage : TAffichage): TCoords;
+function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage : TAffichage): Boolean;
+function ClicPersonne(affichage: TAffichage; plateau: TPlateau; estEleve: Boolean): TCoords;
+function CountPersonnes(personnes: array of TPersonne; estEleve: Boolean; joueur: TJoueur): Integer;
+function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur;var affichage : TAffichage): Boolean;
+function VerifierAdjacencePersonnes(HexagonesCoords: TCoords; plateau: TPlateau): Boolean;
+function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;
+function aucuneConnexionAdjacente(coords: TCoords;  plateau: TPlateau; joueur: TJoueur; var affichage : TAffichage): Boolean;
+function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var joueur:TJoueur; var affichage : TAffichage):Boolean;
 function dansLePlateau(plateau : TPlateau; coord : Tcoord): boolean;
+function enContactConnexionConnexion(plateau: TPlateau; coords1: TCoords; coords2: TCoords): Boolean;
 function CoordsEgales(coords1: TCoords; coords2: TCoords): Boolean;
-procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
+function enContactEleveConnexions(plateau: TPlateau; eleve: TPersonne; var joueur: TJoueur): TCoords;
+function resteEleve(plateau:TPlateau; joueur:Tjoueur): Boolean;
 
 
 implementation
 
 
-function ClicConnexion(plateau : TPlateau; affichage : TAffichage): TCoords;forward;
 procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);forward;
 procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);forward;
+function ClicConnexion(var plateau : TPlateau; var affichage : TAffichage): TCoords;forward;
 function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage : TAffichage): Boolean;forward;
 function ClicPersonne(affichage: TAffichage; plateau: TPlateau; estEleve: Boolean): TCoords;forward;
 function CountPersonnes(personnes: array of TPersonne; estEleve: Boolean; joueur: TJoueur): Integer;forward;
@@ -223,46 +234,51 @@ end;
 
 
 procedure placementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
-var HexagonesCoords: TCoords;
-  valide : Boolean;
+var
+ HexagonesCoords: TCoords;
 begin
+  HexagonesCoords := ClicPersonne(affichage,plateau,True); 
 
-  repeat
-    HexagonesCoords := ClicPersonne(affichage,plateau,True);
-    valide := PersonneValide(plateau, HexagonesCoords, True, joueurActuel,affichage);
-    jouerSonValide(valide);
-  until valide;
+  if PersonneValide(plateau, HexagonesCoords, True, joueurActuel,affichage) then
+  begin
+   
+    // TODO MACHE PAS LES HEXAGONES SONT PAS SPECIALEMENT COLLER
+    SetLength(plateau.Personnes, Length(plateau.Personnes) + 1);
+    with plateau.Personnes[High(plateau.Personnes)] do
+   begin
+      // Assigner les coordonnées des hexagones sélectionnés à l'élève
+      SetLength(Position, 3); 
+      Position[0] := HexagonesCoords[0];
+      Position[1] := HexagonesCoords[1];
+      Position[2] := HexagonesCoords[2];
 
-  // TODO MACHE PAS LES HEXAGONES SONT PAS SPECIALEMENT COLLER
-  SetLength(plateau.Personnes, Length(plateau.Personnes) + 1);
-  with plateau.Personnes[High(plateau.Personnes)] do
-    begin
-        // Assigner les coordonnées des hexagones sélectionnés à l'élève
-        SetLength(Position, 3); 
-        Position[0] := HexagonesCoords[0];
-        Position[1] := HexagonesCoords[1];
-        Position[2] := HexagonesCoords[2];
+    estEleve := True;
+    IdJoueur := joueurActuel.Id;
+  end;
+    // ajout d'un point
+    joueurActuel.Points:=1+joueurActuel.Points;
 
-      estEleve := True;
-      IdJoueur := joueurActuel.Id;
-      end;
-  // ajout d'un point
-  joueurActuel.Points:=1+joueurActuel.Points;
+    affichageScore(joueurActuel,affichage);
+    affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
+    miseAJourRenderer(affichage);
 
-  affichageScore(joueurActuel,affichage);
-  affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
-  miseAJourRenderer(affichage);
+    
+    affichageInformation('Eleve place avec succes !', 25, FCouleur(0,255,0,255), affichage);
 
-  
-  affichageInformation('Eleve place avec succes !', 25, FCouleur(0,255,0,255), affichage);
+    
+  end
+  else
+  begin
+    affichageInformation('Placement invalide. Verifiez les conditions de placement.', 25, FCouleur(0,0,0,255), affichage);
 
-  
+    placementEleve(plateau,  affichage, joueurActuel);
+  end;
 end;
 
 
 
 
-function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur;var affichage : TAffichage): Boolean;
+function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur;affichage : TAffichage): Boolean;
 var
   personneAdjacente: Boolean;
 begin
@@ -286,16 +302,17 @@ begin
 
     if  VerifierAdjacencePersonnes(HexagonesCoords,plateau) then
     begin
-        PersonneValide := False;
+        PersonneValide := False; 
     end
     else
-        personneAdjacente := True;
+        personneAdjacente := True; 
+   
   
   // 4. Vérifie si au moins 1 des hexagones est dans le plateau
   if (( not dansLePlateau(plateau,HexagonesCoords[0]) and not dansLePlateau(plateau,HexagonesCoords[1]) and not dansLePlateau(plateau,HexagonesCoords[2]) )
-      ) then
+      ) then 
     begin
-    PersonneValide:= False;
+    PersonneValide:= False;      
 
     affichageInformation('Au moins 1 des hexagones choisis doit etre dans le plateau', 25, FCouleur(0,0,0,255), affichage);
 
@@ -312,7 +329,7 @@ function ClicPersonne(affichage: TAffichage; plateau: TPlateau; estEleve: Boolea
 var
   i: Integer;
   HexagonesCoords: TCoords;
-
+ 
 begin
   SetLength(HexagonesCoords,3);
   if estEleve then
@@ -321,8 +338,7 @@ begin
     affichageInformation('Cliquez sur trois hexagones entre lesquels vous voulez placer le professeur', 25, FCouleur(0,0,0,255), affichage);
   for i := 0 to 2 do
   begin
-    clicHexagone(plateau, affichage, HexagonesCoords[i]);
-
+    clicHexagone(plateau, affichage, HexagonesCoords[i]); 
   end;
   ClicPersonne := HexagonesCoords;
 end;
@@ -339,7 +355,7 @@ begin
     for j := i + 1 to High(HexagonesCoords) do
     begin
       if (HexagonesCoords[i].x = HexagonesCoords[j].x) and 
-          (HexagonesCoords[i].y = HexagonesCoords[j].y) then
+         (HexagonesCoords[i].y = HexagonesCoords[j].y) then
       begin
         Exit(True); // Il y a des coordonnées identiques
       end;
@@ -358,7 +374,7 @@ begin
       for k := 0 to 2 do
       begin
         if (HexagonesCoords[j].x = plateau.Personnes[i].Position[k].x) and
-          (HexagonesCoords[j].y = plateau.Personnes[i].Position[k].y) then
+           (HexagonesCoords[j].y = plateau.Personnes[i].Position[k].y) then
         begin
           Inc(nombreCommuns);
           Break; // Passer à la coordonnée suivante après un match
@@ -376,6 +392,9 @@ begin
 end;
 
 
+
+
+
 function CountPersonnes(personnes: array of TPersonne; estEleve: Boolean; joueur: TJoueur): Integer;
 var
   i,Result: Integer;
@@ -390,20 +409,40 @@ begin
   CountPersonnes:= Result;
 end;
 
-function professeurValide(affichage : TAffichage;plateau : TPlateau;joueurActuel : TJoueur;HexagonesCoords : Tcoords):Boolean;
-var i,j,compteur,k : Integer;
+procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
+var
+  HexagonesCoords: TCoords;
+  i, j, k, compteur: Integer;
+  estConverti: Boolean;
 
 begin
-  professeurValide := false;
+  // Appeler ClicPersonne pour récupérer les hexagones sélectionnés
+  HexagonesCoords := ClicPersonne(affichage, plateau, False); 
+  // compteur := 0;
 
-// TODO deplacer dans achat element, si il peut pas poser faut pas lui enlever les ressources.
+  // Vérifie si les hexagones sont adjacents
+
+  begin
+  // TODO verifier la proximiter avec une connexion du joueur
+  // TODO verifier que le joueur a encore un eleve a changer
+  // TODO re demander au joueur de placer un prof si il met des hexagones invalide
+
+  // Appeler ClicPersonne pour recuperer les hexagones selectionnes
+  estConverti := False;
   if not resteEleve(plateau,joueurActuel) then
   begin
     affichageInformation('plus d''éléve à changer', 25, FCouleur(0, 0, 0, 255), affichage);
-  end;
+  end
+  else
+  begin
+    repeat
+    affichageInformation('Cliquez sur 3 hexagones entre lesquels vous voulez placer le professeur', 25, FCouleur(0,0,0,255), affichage);
+    HexagonesCoords := ClicPersonne(affichage, plateau, False); 
+    // compteur := 0;
 
-
-  if enContact(HexagonesCoords) then
+    // Verifie si les hexagones sont adjacents
+    
+    if enContact(HexagonesCoords) then
     begin
     
       // Parcourt les personnes du plateau pour trouver un elève appartenant au joueur actuel
@@ -430,12 +469,23 @@ begin
           // Si toutes les positions de la personne correspondent aux hexagones selectionnes, effectuer la conversion
           if compteur = 3 then
           begin
-            professeurValide := True;
+            plateau.Personnes[i].estEleve := False; // Convertir l'elève en professeur
+            estConverti := True;
+            
+            // ajout d'un point
+            joueurActuel.Points:=1+joueurActuel.Points;
+            
+
+            affichageInformation('Eleve converti en professeur avec succes !', 25, FCouleur(0,255,0,255), affichage);
 
           end;
         end;
         // if estConverti then
       end;
+      
+      affichageScore(joueurActuel,affichage);
+      affichagePersonne(plateau.Personnes[i], affichage);
+      miseAJourRenderer(affichage);
       
     end
     else
@@ -443,37 +493,13 @@ begin
       // Les hexagones sélectionnés ne sont pas adjacents
       affichageInformation('Conversion invalide. Les hexagones sélectionnés ne sont pas adjacents.', 25, FCouleur(0, 0, 0, 255), affichage);
     end;
+    until estConverti;
+  end;
+end;
 end;
 
 
-procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
-var
-  HexagonesCoords: TCoords;
-  i, j, k, compteur: Integer;
-  estConverti: Boolean;
-  valide : Boolean;
-begin
-  repeat
-    affichageInformation('Cliquez sur 3 hexagones entre lesquels vous voulez placer le professeur', 25, FCouleur(0,0,0,255), affichage);
-    HexagonesCoords := ClicPersonne(affichage, plateau, False);
-    valide := professeurValide(affichage,plateau,joueurActuel,HexagonesCoords);
-  until valide;
-
-  joueurActuel.Points:=1+joueurActuel.Points;
-  
-  // changer en prof ici
-  // plateau.Personnes[i].estEleve := False; // Convertir l'elève en professeur
-
-  affichageScore(joueurActuel,affichage);
-  affichagePersonne(plateau.Personnes[i], affichage);
-  miseAJourRenderer(affichage);
-
-  affichageInformation('Eleve converti en professeur avec succes !', 25, FCouleur(0,255,0,255), affichage);
-end;
-
-
-
-function compterConnexionsSuite(plateau: TPlateau; joueur: TJoueur): Integer;
+function compterRouteSuite(plateau: TPlateau; joueur: TJoueur): Integer;
 var
   i, j, k, l: Integer;
   connexionsEleve: TCoords; // Tableau contenant les connexions liées à un élève
@@ -539,7 +565,7 @@ begin
     end;
   end;
 
-  compterConnexionsSuite := maxRoute;
+  compterRouteSuite := maxRoute;
 end;
 
 
@@ -563,10 +589,10 @@ begin
     points[j] := joueur.points;
 
     plusGrandeRoute := True;
-    if (compterConnexionsSuite(plateau,joueur) >= 5) then
+    if (compterRouteSuite(plateau,joueur) >= 5) then
     begin
     for i := 0 to High(joueurs) do
-      if(compterConnexionsSuite(plateau,joueur) < compterConnexionsSuite(plateau,joueurs[i])) then
+      if(compterRouteSuite(plateau,joueur) < compterRouteSuite(plateau,joueurs[i])) then
         plusGrandeRoute := False;
     if plusGrandeRoute then
       points[j] := points[j] + 2;
@@ -701,16 +727,15 @@ procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; v
 var
   coords: TCoords;
   i : Integer;
-  valide : Boolean;
 begin
   // Demande à l'utilisateur de selectionner deux hexagones pour la connexion
   affichageInformation('Cliquez sur 2 hexagones entre lesquels vous voulez placer la connexion', 25, FCouleur(0,0,0,255), affichage);
 
   repeat
   coords := ClicConnexion(plateau,affichage);
-  valide := connexionValide(coords, plateau, joueur,affichage);
-  jouerSonValide(valide);
-  until valide;
+
+  until connexionValide(coords, plateau, joueur,affichage);
+
 
   // Verifie si la connexion est valide avec les hexagones selectionnes
   SetLength(plateau.Connexions, Length(plateau.Connexions) + 1);
@@ -899,7 +924,9 @@ var coord : Tcoord;
 begin
   affichageInformation('Cliquez sur 1 hexagones pour deplacer le souillard.', 25, FCouleur(0,0,0,255), affichage);
 
-  clicHexagoneValide(plateau, affichage, coord);
+  repeat
+  clicHexagone(plateau, affichage, coord); 
+  until (dansLePlateau(plateau,coord));
 
   plateau.Souillard.Position := coord;
 

@@ -9,6 +9,7 @@ procedure partie(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffic
 function chargementPlateau(num : Integer): TPlateau;
 
 
+
 implementation
 
 function chargerGrille(num : Integer): TGrille; forward;
