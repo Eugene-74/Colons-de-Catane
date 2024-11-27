@@ -17,9 +17,9 @@ procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; v
 implementation
 
 
+function ClicConnexion(plateau : TPlateau; affichage : TAffichage): TCoords;forward;
 procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);forward;
 procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);forward;
-function ClicConnexion(var plateau : TPlateau; var affichage : TAffichage): TCoords;forward;
 function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage : TAffichage): Boolean;forward;
 function ClicPersonne(affichage: TAffichage; plateau: TPlateau; estEleve: Boolean): TCoords;forward;
 function CountPersonnes(personnes: array of TPersonne; estEleve: Boolean; joueur: TJoueur): Integer;forward;
@@ -133,7 +133,7 @@ begin
         end;
 
     // CONNEXION
-    2: 
+    2:
      
       if (joueur.Ressources[Humanites] >= 1) and 
          (joueur.Ressources[Physique] >= 1) then
@@ -184,8 +184,6 @@ begin
       jouerSonValide(false);
       
     end;
-  else
-    WriteLn('Choix invalide.');  // Affiche si le choix n'est pas valide
   end;
 end;
 
@@ -687,7 +685,7 @@ end;
 
 
 
-function ClicConnexion(var plateau : TPlateau; var affichage : TAffichage): TCoords;
+function ClicConnexion(plateau : TPlateau; affichage : TAffichage): TCoords;
 var
   coords: TCoords;
 begin
@@ -723,18 +721,19 @@ begin
   plateau.Connexions[length(plateau.Connexions)-1].Position[0] := coords[0];
   plateau.Connexions[length(plateau.Connexions)-1].Position[1] := coords[1];
 
-// TODO mieux afficher eleve sur connexion
   
   affichageConnexion(plateau.Connexions[length(plateau.Connexions)-1], affichage);
 
   for i:=0 to length(plateau.Personnes)-1 do
       affichagePersonne(plateau.Personnes[i],affichage);
-  miseAJourRenderer(affichage);
 
+  miseAJourRenderer(affichage);
 
   affichageInformation('Connexion placee avec succes !', 25, FCouleur(0,255,0,255), affichage);
 
 end;
+
+
 function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;
 var
   i, k, l: Integer;

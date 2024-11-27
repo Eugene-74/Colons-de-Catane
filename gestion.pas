@@ -191,21 +191,7 @@ begin
     // placementConnexion(plateau,affichage,joueurs[i-1]);
     end;
 
-  SetLength(plateau.Connexions, 1);
-  SetLength(plateau.Connexions[0].Position, 2);
-  plateau.Connexions[0].Position[0].x := 2;
-  plateau.Connexions[0].Position[0].y := 3;
-  plateau.Connexions[0].Position[1].x := 3;
-  plateau.Connexions[0].Position[1].y := 3;
-  plateau.Connexions[0].IdJoueur := 0;
 
-  setLength(plateau.Connexions, 2);
-  SetLength(plateau.Connexions[1].Position, 2);
-  plateau.Connexions[1].Position[0].x := 3;
-  plateau.Connexions[1].Position[0].y := 2;
-  plateau.Connexions[1].Position[1].x := 3;
-  plateau.Connexions[1].Position[1].y := 3;
-  plateau.Connexions[1].IdJoueur := 1;
 
   affichageTour(plateau,joueurs, affichage);
   
@@ -304,13 +290,13 @@ var valeurBouton,text : String;
   ressources1,ressources2 : TRessources;
   res : TRessource;
   i,id1,id2 : Integer;
-
+  j,k : Integer;
 begin
-  for i := 0 to length(joueurs)-1 do 
+  for i := 0 to length(joueurs)-1 do
     begin
-    gestionDes(joueurs,plateau,affichage);
+    // gestionDes(joueurs,plateau,affichage);
       
-    // affichageTour(plateau,joueurs,affichage);
+    affichageTour(plateau,joueurs,affichage);
 
 
     finTour := False;
@@ -318,19 +304,15 @@ begin
       clicAction(affichage, valeurBouton);
 
       if(valeurBouton = 'achat_eleve')  then
-        // PlacementEleve(plateau,affichage,joueurs[i])
         achatElements(joueurs[i], plateau, affichage,1)
       else if(valeurBouton = 'achat_connexion')  then
-        // placementConnexion(plateau,affichage,joueurs[i])
         achatElements(joueurs[i], plateau, affichage,2)
       else if(valeurBouton = 'changement_en_prof')  then
         begin
-        // changementProfesseur(plateau,affichage,joueurs[i]);
-        achatElements(joueurs[i], plateau, affichage,3);
-        
+        // achatElements(joueurs[i], plateau, affichage,3);
         end
       else if(valeurBouton = 'achat_carte_tutorat')  then
-          achatElements(joueurs[i], plateau, affichage,4)
+          // achatElements(joueurs[i], plateau, affichage,4)
       else if(valeurBouton = 'echange')  then
         begin
         id1 := joueurs[i].id;
@@ -355,6 +337,15 @@ begin
 
     // TODO enlever apres
     verificationMusique(affichage);
+
+    for j := 0 to length(plateau.Connexions)-1 do 
+      begin
+        writeln(j);
+        writeln(plateau.Connexions[j].Position[0].x,' , ',plateau.Connexions[j].Position[0].y);
+        writeln(plateau.Connexions[j].Position[1].x,' , ',plateau.Connexions[j].Position[1].y);
+        writeln();
+
+      end;
 
     end;
 
