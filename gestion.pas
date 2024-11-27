@@ -35,13 +35,12 @@ var
   i, j: Integer;
 begin
 // Tableau static pose des problème
-
-  if(num = 1) then 
-    begin
-    SetLength(grille, 7, 7);
-    SetLength(ressources, 7, 7);
-    SetLength(numeros, 7, 7);
-
+  SetLength(grille, 7, 7);
+  SetLength(ressources, 7, 7);
+  SetLength(numeros, 7, 7);
+writeln(num);
+    case num of
+    1 : begin
     ressources[0] := [Aucune, Aucune, Aucune, Rien, Rien, Rien, Rien];
     ressources[1] := [Aucune, Aucune, Rien, Humanites, Mathematiques, Chimie, Rien];
     ressources[2] := [Aucune, Rien, Mathematiques, Chimie, Informatique, Physique, Rien];
@@ -56,17 +55,8 @@ begin
     numeros[4] := [-1, 3, 5, 6, 12, -1, -1];
     numeros[5] := [-1, 8, 10, 9, -1, -1, -1];
     numeros[6] := [-1, -1, -1, -1, -1, -1, -1];
-    end
-  else if (num=2) then
-    begin
-    SetLength(grille, 7, 7);
-    SetLength(ressources, 7, 7);
-    SetLength(numeros, 7, 7);
-// bois = Humanites
-// physique = mouton
-// info = pierre
-// foin = mathématique
-// glaise = chimie
+    end;
+    2 : begin
     ressources[0] := [Aucune, Aucune, Aucune, Rien, Rien, Rien, Rien];
     ressources[1] := [Aucune, Aucune, Rien, Chimie, Physique, Chimie, Rien];
     ressources[2] := [Aucune, Rien, Mathematiques, Informatique, Humanites, Physique, Rien];
@@ -81,29 +71,9 @@ begin
     numeros[4] := [-1, 2, 4, 5, 10, -1, -1];
     numeros[5] := [-1, 6, 3, 8, -1, -1, -1];
     numeros[6] := [-1, -1, -1, -1, -1, -1, -1];
-    end
-  else
-    begin
-    SetLength(grille, 7, 7);
-    SetLength(ressources, 7, 7);
-    SetLength(numeros, 7, 7);
-
-    ressources[0] := [Physique, Physique, Physique, Physique, Physique, Physique, Physique];
-    ressources[1] := [Physique, Physique, Physique, Physique, Physique, Physique, Physique];
-    ressources[2] := [Physique, Physique, Physique, Physique, Physique, Physique, Physique];
-    ressources[3] := [Physique, Physique, Physique, Physique, Physique, Physique, Physique];
-    ressources[4] := [Physique, Physique, Physique, Physique, Physique, Physique, Physique];
-    ressources[5] := [Physique, Physique, Physique, Physique, Physique, Physique, Physique];
-    ressources[6] := [Physique, Physique, Physique, Physique, Physique, Physique, Physique];
-    numeros[0] := [-1, -1, -1, -1, -1, -1, -1];
-    numeros[1] := [-1, -1, -1, -1, -1, -1, -1];
-    numeros[2] := [-1, -1, -1, -1, -1, -1, -1];
-    numeros[3] := [-1, -1, -1, -1, -1, -1, -1];
-    numeros[4] := [-1, -1, -1, -1, -1, -1, -1];
-    numeros[5] := [-1, -1, -1, -1, -1, -1, -1];
-    numeros[6] := [-1, -1, -1, -1, -1, -1, -1];
     end;
 
+  end;
 
   for i := 0 to 6 do
     for j := 0 to 6 do
