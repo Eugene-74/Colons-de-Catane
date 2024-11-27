@@ -13,15 +13,61 @@ implementation
 procedure demarrerMusique(var affichage :TAffichage);
 var
     musique: PMix_Music;
-    musiques: array[0..2] of PChar = (
-        'Assets/Musique/1.mp3',
-        'Assets/Musique/2.mp3',
-        'Assets/Musique/3.mp3'
+    musiques: array[0..23] of PChar = (
+        'Assets/Musique/N1 - Jeux.mp3',
+        'Assets/Musique/N1 - Jeux (1).mp3',
+        'Assets/Musique/N2 - Jeux.mp3',
+        'Assets/Musique/N2 - Jeux (1).mp3',
+        'Assets/Musique/N3 - Jeux.mp3',
+        'Assets/Musique/N3 - Jeux (1).mp3',
+        'Assets/Musique/N4 - Jeux.mp3',
+        'Assets/Musique/N4 - Jeux (1).mp3',
+        'Assets/Musique/N5 - Jeux.mp3',
+        'Assets/Musique/N5 - Jeux (1).mp3',
+        'Assets/Musique/N6 - Jeux.mp3',
+        'Assets/Musique/N6 - Jeux (1).mp3',
+        'Assets/Musique/N7 - Jeux.mp3',
+        'Assets/Musique/N7 - Jeux (1).mp3',
+        'Assets/Musique/N8 - Jeux.mp3',
+        'Assets/Musique/N8 - Jeux (1).mp3',
+        'Assets/Musique/N9 - Jeux.mp3',
+        'Assets/Musique/N9 - Jeux (1).mp3',
+        'Assets/Musique/N10 - Jeux.mp3',
+        'Assets/Musique/N10 - Jeux (1).mp3',
+        'Assets/Musique/N11 - Jeux (1).mp3',
+        'Assets/Musique/N11 - Jeux (2).mp3',
+        'Assets/Musique/N12 - Jeux (1).mp3',
+        'Assets/Musique/N12 - Jeux (2).mp3'
+
+
     );
-    musiquesTemps: array[0..2] of Integer = (
-        4*60,
-        4*60,
-        1*60+57
+    musiquesTemps: array[0..23] of Integer = (
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30
+
+
         
     );
     
