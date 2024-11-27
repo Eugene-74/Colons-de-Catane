@@ -106,8 +106,11 @@ begin
         affichage.texturePlateau.textureIconesRessources[i] := chargerTexture(affichage, 'IconesRessources/'+GetEnumName(TypeInfo(TRessource), Ord(i)));
     end;
 
-    affichage.texturePlateau.textureContourHexagone := chargerTexture(affichage, 'bordureCercle');
-    affichage.texturePlateau.textureContourVide := chargerTexture(affichage, 'bordure');
+    // affichage.texturePlateau.textureContourHexagone := chargerTexture(affichage, 'bordureCercle');
+    // affichage.texturePlateau.textureContourVide := chargerTexture(affichage, 'bordure');
+    affichage.texturePlateau.textureContourHexagone := chargerTexture(affichage, 'hexagoneCercle');
+    affichage.texturePlateau.textureContourVide := chargerTexture(affichage, 'hexagone');
+
     affichage.texturePlateau.textureEleve := chargerTexture(affichage, 'eleve');
     affichage.texturePlateau.textureSouillard := chargerTexture(affichage, 'souillard');
     affichage.texturePlateau.textureProfesseur := chargerTexture(affichage, 'professeur');
