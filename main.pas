@@ -1,6 +1,6 @@
 program main;
 
-uses affichageUnit,types,gestion,traitement,achat;
+uses affichageUnit,types,gestion,traitement,achat,musique;
 
 var 
     affichage: TAffichage;
@@ -16,6 +16,7 @@ begin
   testYann := False;
   if not testYann then
   begin
+    demarrerMusique(affichage);
     initialisationPartie(joueurs,plateau,affichage);
 
     SetLength(plateau.Personnes, 1);

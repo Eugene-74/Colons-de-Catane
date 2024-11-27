@@ -1,7 +1,7 @@
 unit gestion;
 
 interface
-uses Types,affichageUnit,SysUtils,achat,traitement;
+uses Types,affichageUnit,SysUtils,achat,traitement,musique;
 function chargementPlateau(num : Integer): TPlateau;
 procedure initialisationPartie(var joueurs : TJoueurs;var  plateau : TPlateau;var affichage : TAffichage);
 procedure partie(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
@@ -348,7 +348,11 @@ begin
       else if(valeurBouton = 'fin_tour')  then
         finTour := True;
 
-    until (finTour);   
+    until (finTour);
+
+// TODO enlever apres
+    verificationMusique(affichage);
+
     end;
 
 

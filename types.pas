@@ -128,6 +128,11 @@ type
 
   TBoutons = array of TBouton;
 
+  TMusique = record
+    debut : Int64;
+    temps : Int64;
+  end;
+
   // Definition de TAffichage (pour les transferts et mises à jour via SDL)
   TAffichage = record
     fenetre: PWindow;
@@ -136,6 +141,7 @@ type
     yGrid: Integer;
     texturePlateau : TTexturePlateau;
     boutonsAction: TBoutons;
+    musiqueActuel : TMusique;
   end;
 
 const
