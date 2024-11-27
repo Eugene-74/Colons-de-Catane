@@ -8,6 +8,7 @@ procedure verificationMusique(var affichage :TAffichage);
 procedure arreterMusique(var affichage :TAffichage);
 procedure jouerSonValide(valide : Boolean);
 // procedure son(cheminSon : Pchar);
+procedure jouerSonClic();
 
 
 
@@ -47,32 +48,30 @@ var
 
     );
     musiquesTemps: array[0..23] of Integer = (
-        30,
-        30,
-        30,
-        30,
-        30,
-        30,
-        30,
-        30,
-        30,
-        30,
-        30,
-        30,
-        30,
-        30,
-        30,
-        30,
-        30,
-        30,
-        30,
-        30,
-        30,
-        30,
-        30,
-        30
-
-
+        4*60,
+        4*60,
+        1*60+23,
+        1*60+57,
+        4*60,
+        4*60,
+        1*60+50,
+        2*60+3,
+        1*60+49,
+        2*60+37,
+        4*60,
+        4*60,
+        2*60+7,
+        4*60,
+        2*60+47,
+        4*60,
+        3*60+47,
+        2*60+10,
+        4*60,
+        4*60,
+        3*60+56,
+        9,
+        4*60,
+        2*60+57
         
     );
     
@@ -168,10 +167,9 @@ end;
 
 
 procedure jouerSonClic();
-// var
-    // cheminSon: PChar;
 begin
-
     demarrerSon('Assets/Sons/clic.mp3');
 end;
+
+
 end.
