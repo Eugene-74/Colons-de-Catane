@@ -1,7 +1,7 @@
 unit musique;
 
 interface
-uses SDL2, SDL2_mixer,types,SysUtils,DateUtils;
+uses SDL2, SDL2_mixer,types,SysUtils;
 
 procedure demarrerMusique(var affichage :TAffichage);
 procedure verificationMusique(var affichage :TAffichage);
@@ -91,7 +91,7 @@ begin
     musique := Mix_LoadMUS(musiques[randomIndex]);
 
     affichage.musiqueActuel.active := true;
-    affichage.musiqueActuel.debut := DateTimeToUnix(Now);
+    affichage.musiqueActuel.debut := Now/1000;
     affichage.musiqueActuel.temps := musiquesTemps[randomIndex];
     
     if musique = nil then
@@ -110,7 +110,7 @@ end;
 procedure verificationMusique(var affichage :TAffichage);
 begin
     if(affichage.musiqueActuel.active) then
-        if(DateTimeToUnix(Now) - affichage.musiqueActuel.debut  >= affichage.musiqueActuel.temps) then
+        if(Now/1000 - affichage.musiqueActuel.debut  >= affichage.musiqueActuel.temps) then
         begin
             demarrerMusique(affichage);
         end;
