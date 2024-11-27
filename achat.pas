@@ -19,7 +19,7 @@ implementation
 
 procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);forward;
 procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);forward;
-function ClicConnexion(plateau : TPlateau;  affichage : TAffichage): TCoords;forward;
+procedure ClicConnexion(plateau : TPlateau;affichage : TAffichage;var coords : TCoords);forward;
 function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage : TAffichage): Boolean;forward;
 function ClicPersonne(affichage: TAffichage; plateau: TPlateau; estEleve: Boolean): TCoords;forward;
 function CountPersonnes(personnes: array of TPersonne; estEleve: Boolean; joueur: TJoueur): Integer;forward;
@@ -31,6 +31,8 @@ function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var jou
 function enContactConnexionConnexion(plateau: TPlateau; coords1: TCoords; coords2: TCoords): Boolean;forward;
 function resteEleve(plateau:TPlateau; joueur:Tjoueur): Boolean;forward;
 function enContactEleveConnexions(plateau: TPlateau; eleve: TPersonne; var joueur: TJoueur): TCoords;forward;
+function compterRouteSuite(plateau: TPlateau; joueur: TJoueur): Integer;forward;
+
 
 
 procedure clicHexagoneValide(var plateau: TPlateau; var affichage: TAffichage; var coord: Tcoord);
@@ -543,7 +545,12 @@ begin
 
           // Marquer la connexion comme visitée et continuer la chaîne
           dejaVisite[l] := True;
-          connexionCourante := plateau.Connexions[l].Position;
+          // TODO NE SURTOUT PAS METTRE ça CA CASSE TOUT
+          // connexionCourante := plateau.Connexions[l].Position;
+          connexionCourante[0] := plateau.Connexions[l].Position[0];
+          connexionCourante[1] := plateau.Connexions[l].Position[1];
+
+
           Inc(routeActuelle);
         end;
 
@@ -700,30 +707,28 @@ end;
 
 
 
-function ClicConnexion(plateau : TPlateau; affichage : TAffichage): TCoords;
-var
-  coords: TCoords;
+procedure ClicConnexion(plateau : TPlateau; affichage : TAffichage;var coords : TCoords);
 begin
 
   SetLength(coords, 2);
   clicHexagone(plateau, affichage,coords[0]);
   clicHexagone(plateau, affichage,coords[1]);
 
-  ClicConnexion := coords;
 end;
 
 procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 var
   coords: TCoords;
   i : Integer;
+  coord1,coord2 : Tcoord;
 begin
   // Demande à l'utilisateur de selectionner deux hexagones pour la connexion
   affichageInformation('Cliquez sur 2 hexagones entre lesquels vous voulez placer la connexion', 25, FCouleur(0,0,0,255), affichage);
 
-  repeat
-  coords := ClicConnexion(plateau,affichage);
+  // repeat
+  ClicConnexion(plateau,affichage,coords);
 
-  until connexionValide(coords, plateau, joueur,affichage);
+  // until connexionValide(coords, plateau, joueur,affichage);
 
 
   // Verifie si la connexion est valide avec les hexagones selectionnes
@@ -731,6 +736,11 @@ begin
   plateau.Connexions[length(plateau.Connexions)-1].IdJoueur := joueur.Id;
 
   setLength(plateau.Connexions[length(plateau.Connexions)-1].Position,2);
+
+  setLength(coords,2);
+
+
+
 
   plateau.Connexions[length(plateau.Connexions)-1].Position[0] := coords[0];
   plateau.Connexions[length(plateau.Connexions)-1].Position[1] := coords[1];

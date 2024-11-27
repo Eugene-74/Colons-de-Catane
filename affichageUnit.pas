@@ -206,6 +206,7 @@ var couleur: TSDL_Color;
     longueur,angle: Real;
     colorTexture: PSDL_Texture;
 begin
+    
     epaisseur := 6;
     recupererCouleurJoueur(connexion.IdJoueur,couleur);
     calculPosConnexion(connexion,coord,longueur,angle);
@@ -308,13 +309,20 @@ Preconditions :
 Postconditions :
     - coord (TCoord): les coordonnees du clic (système hexagonal)}
 procedure clicHexagone(var plat: TPlateau; var affichage: TAffichage; var coord: Tcoord);
-var tempCoord: Tcoord;
+// var tempCoord: Tcoord;
 begin
     clicCart(affichage,coord);
-    cartToHexa(FCoord(coord.x-affichage.xGrid,coord.y-affichage.yGrid),tempCoord,tailleHexagone div 2);
-    coord := tempCoord;
+
+
+    cartToHexa(FCoord(coord.x-affichage.xGrid,coord.y-affichage.yGrid),coord,tailleHexagone div 2);
+
+    // Randomize();
+    // coord.x := Random(5) +1 ;
+    // coord.y := Random(5) +1 ;
+
+    // coord := tempCoord;
     jouerSonClic();
-    attendre(66);
+    attendre(100);
 end;
 
 // Transforme du texte en une texture
