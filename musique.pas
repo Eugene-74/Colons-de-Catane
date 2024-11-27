@@ -7,8 +7,9 @@ procedure demarrerMusique(var affichage :TAffichage);
 procedure verificationMusique(var affichage :TAffichage);
 procedure arreterMusique(var affichage :TAffichage);
 procedure jouerSonValide(valide : Boolean);
-// procedure son(cheminSon : Pchar);
 procedure jouerSonClic();
+procedure jouerSonClicAction();
+
 
 
 
@@ -170,6 +171,12 @@ procedure jouerSonClic();
 begin
     demarrerSon('Assets/Sons/clic.mp3');
 end;
+
+procedure jouerSonClicAction();
+begin
+    demarrerSon('Assets/Sons/clicAction.mp3');
+end;
+
 
 
 end.
