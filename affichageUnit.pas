@@ -664,6 +664,7 @@ procedure affichageEchangeRessources(joueurs: TJoueurs; idJoueurActuel,idJoueurE
 var coord: Tcoord;
     bouton: TBouton;
     ressource: TRessource;
+    i: Integer;
 begin
     affichageFond(affichage);
 
@@ -671,6 +672,9 @@ begin
 
     coord := FCoord(450,70);
     affichageZone(coord.x,coord.y,1050,930,3,affichage);
+
+    for i:=0 to length(joueurs)-1 do
+        affichageScore(joueurs[i],affichage);
 
     coord := FCoord(890,90);
     affichageTexte('Echange', 35, coord, FCouleur(0,0,0,255), affichage);
