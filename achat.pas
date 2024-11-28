@@ -829,7 +829,7 @@ begin
         autreCoord := coords[0];
         autreCoord2 := coords[1];
         coordRestante := coord1;
-      end
+      end;
 
       // Verifier si `autreCoord` est adjacente à `coordRestante` (connexion du même joueur)
       if sontAdjacents(autreCoord, coordRestante) then
