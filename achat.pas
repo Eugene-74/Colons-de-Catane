@@ -921,16 +921,12 @@ begin
   affichageInformation('Cliquez sur 1 hexagones pour deplacer le souillard.', 25, FCouleur(0,0,0,255), affichage);
 
   repeat
-  clicHexagone(plateau, affichage, coord); 
+    clicHexagone(plateau, affichage, coord); 
   until (dansLePlateau(plateau,coord));
 
   plateau.Souillard.Position := coord;
 
-  affichageInformation('Eleve deplace avec succes !', 25, FCouleur(0,255,0,255), affichage);
-
-
-  affichageTour(plateau,joueurs,affichage);
-
+  affichageInformation('Souillard deplace avec succes !', 25, FCouleur(0,255,0,255), affichage);
 end;
 function enContactConnexionConnexion(plateau: TPlateau; coords1: TCoords; coords2: TCoords): Boolean;
 var

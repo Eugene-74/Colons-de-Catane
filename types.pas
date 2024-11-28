@@ -23,7 +23,6 @@ type
     carte3 : TCarteTutorat;
     carte4 : TCarteTutorat;
     carte5 : TCarteTutorat;
-
   end;
 
   // Definition de TCoord
@@ -32,12 +31,6 @@ type
   end;
 
   TCoords = array of TCoord;
-
-  // Definition de TRessourceValeur
-//   TRessourceValeur = record
-//     Ressource: TRessource;
-//     Quantite: Integer;
-//   end;
 
   // Definition de TRessources (tableau dynamique de TRessourceValeur)
   TRessources = array [Aucune..Rien] of Integer;
@@ -49,7 +42,6 @@ type
     Nom: String;
     Id: Integer;
     CartesTutorat: TCartesTutorat;
-
   end;
 
   // Definition de TJoueurs (tableau dynamique de TJoueur)
@@ -101,7 +93,6 @@ type
     CartesTutorat: TCartesTutorat;
     des1 : Integer;
     des2 : Integer;
-
   end;
   
   PWindow = PSDL_Window;
@@ -149,11 +140,11 @@ type
 
 const
   CARTES_TUTORAT: TCartesTutorat = (
-    carte1: (nom: 'discution'; description: 'discution'; nbr: 10;utilisee : 0);
-    carte2: (nom: 'WordReference'; description: 'discution'; nbr: 12;utilisee : 0);
-    carte3: (nom: 'Voler'; description: 'discution'; nbr: 8;utilisee : 0);
-    carte4: (nom: 'Choisir 2 connaissances'; description: 'discution'; nbr: 16;utilisee : 0);
-    carte5: (nom: 'le dernier'; description: 'discution'; nbr: 4;utilisee : 0)
+    carte1: (nom: 'discution'; description: 'discution'; nbr: 10; utilisee : 0);
+    carte2: (nom: 'WordReference'; description: 'discution'; nbr: 12; utilisee : 0);
+    carte3: (nom: 'Voler'; description: 'discution'; nbr: 8; utilisee : 0);
+    carte4: (nom: 'Choisir 2 connaissances'; description: 'discution'; nbr: 16; utilisee : 0);
+    carte5: (nom: 'le dernier'; description: 'discution'; nbr: 4; utilisee : 0)
   );
 
 implementation

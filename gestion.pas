@@ -172,7 +172,7 @@ begin
   cartesTutorat := intialisationTutorat();
   plateau.cartesTutorat := cartesTutorat;
 
-  affichageTour(plateau, joueurs, affichage);
+  affichageTour(plateau, joueurs, 0, affichage);
   
 
   for i:=1 to length(joueurs) do
@@ -193,7 +193,7 @@ begin
 
 
 
-  affichageTour(plateau,joueurs, affichage);
+  affichageTour(plateau, joueurs, 0, affichage);
   
 
 end;
@@ -252,17 +252,14 @@ begin
 
   if(des = 7)then
     begin
-    affichageTour(plateau,joueurs,affichage);
+      affichageDes(plateau.des1,plateau.des2,FCoord(50,500),affichage);
 
-    deplacementSouillard(plateau,joueurs,affichage)
+      deplacementSouillard(plateau,joueurs,affichage)
     end
   else 
     begin
       distributionConnaissance(joueurs,plateau,des);
     end;
-  
-
-
 end;
 
 function aLesRessources(joueur : Tjoueur; ressources : TRessources):boolean;
@@ -296,7 +293,7 @@ begin
     begin
     gestionDes(joueurs,plateau,affichage);
       
-    affichageTour(plateau,joueurs,affichage);
+    affichageTour(plateau,joueurs,i,affichage);
 
 
     finTour := False;
@@ -323,11 +320,11 @@ begin
             enleverRessources(joueurs[id1],ressources1);
             enleverRessources(joueurs[id2],ressources1);
 
-            affichageTour(plateau, joueurs, affichage);
+            affichageTour(plateau, joueurs, i, affichage);
             affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' a ete valide',25,FCouleur(0,255,0,255),affichage);
             end
         else
-            affichageTour(plateau, joueurs, affichage);
+            affichageTour(plateau, joueurs, i, affichage);
             affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est impossible',25,FCouleur(255,0,0,255),affichage);
         end
       else if(valeurBouton = 'demarrer_musique')  then
@@ -364,17 +361,14 @@ end;
 
 procedure utiliserCarte1(var plateau : TPlateau; var affichage : TAffichage;joueur : Tjoueur);
 begin
-placementConnexion(plateau,affichage,joueur);
-placementConnexion(plateau,affichage,joueur);
-
+  placementConnexion(plateau,affichage,joueur);
+  placementConnexion(plateau,affichage,joueur);
 end;
 
 procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueurs : Tjoueurs; joueur : Tjoueur);
 begin
-affichageInformation('Deplacement du souillard par le joueur '+joueur.nom,25,FCouleur(0,0,0,255),affichage);
-deplacementSouillard(plateau,joueurs,affichage);
-
-
+  affichageInformation('Deplacement du souillard par le joueur '+joueur.nom,25,FCouleur(0,0,0,255),affichage);
+  deplacementSouillard(plateau,joueurs,affichage);
 end;
 
 procedure utiliserCarte3(var plateau : TPlateau; joueur : Tjoueur);
@@ -386,6 +380,7 @@ begin
 
 // choix du type de ressources a voler
 // ON EST PAS SENCER CONNAITER LES CARTES DES AUTRES
+// On s'en fou (Yann)
 end;
 
 procedure utiliserCarte4(var plateau : TPlateau; joueur : Tjoueur);

@@ -15,7 +15,7 @@ procedure affichageSouillard(plat: TPlateau; var affichage: TAffichage);
 procedure affichageConnexion(connexion : TConnexion; var affichage : TAffichage);
 procedure affichageDes(de1,de2:Integer; coord: TCoord; var affichage: TAffichage);
 procedure echangeRessources(joueurs: TJoueurs; idJoueurActuel:Integer; var idJoueurEchange: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
-procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; var affichage: TAffichage);
+procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
 procedure clicAction(var affichage: TAffichage; var valeurBouton: String);
 procedure affichageScore(joueur: TJoueur; var affichage: TAffichage);
 procedure affichageInformation(texte: String; taille: Integer; couleur: TSDL_Color; var affichage: TAffichage);
@@ -538,6 +538,12 @@ begin
     if SDL_RenderFillRect(affichage.renderer, @interieur) <> 0 then
         WriteLn('Erreur SDL: ', SDL_GetError());
 end;
+
+procedure affichageCarteTutorat();
+begin
+    writeln('Affichage carte tutorat');
+end;
+
 procedure suppressionScores(playerId: Integer; var affichage: TAffichage);
 begin
     affichageZone(25,25+playerId*75,325,65,0,affichage);
@@ -782,7 +788,7 @@ Preconditions :
     - affichage : la structure contenant le renderer
 Postconditions :
     - affichage : la structure contenant le renderer}
-procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; var affichage: TAffichage);
+procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
 var i: Integer;
 begin
     nettoyageAffichage(affichage);
