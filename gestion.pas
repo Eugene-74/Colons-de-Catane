@@ -2,12 +2,12 @@ unit gestion;
 
 interface
 uses Types,affichageUnit,SysUtils,achat,traitement,musique;
+
 procedure initialisationPartie(var joueurs : TJoueurs;var  plateau : TPlateau;var affichage : TAffichage);
 procedure partie(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 
 // TODO enlever de l'interface
 function chargementPlateau(num : Integer): TPlateau;
-
 
 
 implementation
@@ -29,7 +29,7 @@ procedure utiliserCarteTutorat(var plateau : TPlateau;var affichage : TAffichage
 
 
 function chargerGrille(num : Integer): TGrille;
-var 
+var
   grille: TGrille;
   numeros: array of array of Integer;
   ressources: array of array of TRessource;
@@ -128,7 +128,7 @@ begin
   SetLength(joueurs,0);
   i:=0;
   repeat
-    write('rentrer le nom du joueur '+IntToStr(i+1)+' : (Entrer pour areter)');
+    write('rentrer le nom du joueur '+IntToStr(i+1)+' : (Entrer pour arreter)');
     readln(text);
     unique := True;
 
@@ -309,10 +309,10 @@ begin
         achatElements(joueurs[i], plateau, affichage,2)
       else if(valeurBouton = 'changement_en_prof')  then
         begin
-        // achatElements(joueurs[i], plateau, affichage,3);
+        achatElements(joueurs[i], plateau, affichage,3);
         end
       else if(valeurBouton = 'achat_carte_tutorat')  then
-          // achatElements(joueurs[i], plateau, affichage,4)
+          achatElements(joueurs[i], plateau, affichage,4)
       else if(valeurBouton = 'echange')  then
         begin
         id1 := joueurs[i].id;
@@ -330,6 +330,10 @@ begin
             affichageTour(plateau, joueurs, affichage);
             affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est impossible',25,FCouleur(255,0,0,255),affichage);
         end
+      else if(valeurBouton = 'demarrer_musique')  then
+          demarrerMusique(affichage)
+      else if(valeurBouton = 'arreter_musique')  then
+          arreterMusique(affichage)
       else if(valeurBouton = 'fin_tour')  then
         finTour := True;
 
@@ -449,7 +453,7 @@ begin
   end
   else
   begin
-    writeln('Carte inconnue');
+    writeln('Erreur : Carte inconnue');
   end;
 end;
 

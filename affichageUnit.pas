@@ -309,20 +309,15 @@ Preconditions :
 Postconditions :
     - coord (TCoord): les coordonnees du clic (système hexagonal)}
 procedure clicHexagone(var plat: TPlateau; var affichage: TAffichage; var coord: Tcoord);
-// var tempCoord: Tcoord;
+var tempCoord: Tcoord;
 begin
     clicCart(affichage,coord);
 
-
-    cartToHexa(FCoord(coord.x-affichage.xGrid,coord.y-affichage.yGrid),coord,tailleHexagone div 2);
-
-    // Randomize();
-    // coord.x := Random(5) +1 ;
-    // coord.y := Random(5) +1 ;
-
-    // coord := tempCoord;
+    cartToHexa(FCoord(coord.x-affichage.xGrid,coord.y-affichage.yGrid),tempCoord,tailleHexagone div 2);
+    
+    coord := tempCoord;
     jouerSonClic();
-    attendre(100);
+    attendre(66);
 end;
 
 // Transforme du texte en une texture
@@ -563,7 +558,7 @@ begin
     if length(boutons) = 0 then
     begin
         running := False;
-        // writeln('Pas de boutons');
+        writeln('Erreur : Pas de boutons');
     end;
 
     while running do

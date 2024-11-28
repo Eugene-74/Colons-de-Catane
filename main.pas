@@ -17,11 +17,10 @@ begin
     if not testYann then
     begin
         demarrerMusique(affichage);
-        // enlever
-        // arreterMusique(affichage);
+        // TODO enlever
+        arreterMusique(affichage);
 
         initialisationPartie(joueurs,plateau,affichage);
-
 
         SetLength(plateau.Connexions, 1);
         SetLength(plateau.Connexions[0].Position, 2);
@@ -53,6 +52,12 @@ begin
         joueurs[0].Ressources[Humanites] := 99;
         joueurs[0].Ressources[Physique] := 99;
 
+
+        joueurs[1].Ressources[Mathematiques] := 99;
+        joueurs[1].Ressources[Chimie] := 99;
+        joueurs[1].Ressources[Informatique] := 99;
+        joueurs[1].Ressources[Humanites] := 99;
+        joueurs[1].Ressources[Physique] := 99;
 
         partie(joueurs,plateau,affichage);
 
