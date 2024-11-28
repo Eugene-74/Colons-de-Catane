@@ -15,6 +15,7 @@ procedure affichageSouillard(plat: TPlateau; var affichage: TAffichage);
 procedure affichageConnexion(connexion : TConnexion; var affichage : TAffichage);
 procedure affichageDes(de1,de2:Integer; coord: TCoord; var affichage: TAffichage);
 procedure echangeRessources(joueurs: TJoueurs; idJoueurActuel:Integer; var idJoueurEchange: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
+procedure selectionRessource(var affichage: TAffichage; var ressource: TRessource);
 procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
 procedure clicAction(var affichage: TAffichage; var valeurBouton: String);
 procedure affichageScore(joueur: TJoueur; var affichage: TAffichage);
@@ -334,6 +335,7 @@ Preconditions :
     - affichage : la structure contenant le renderer
 Postconditions :
     - coord (TCoord): les coordonnees du clic (système hexagonal)}
+// TODO pk il y a un plateau ? (Yann)
 procedure clicHexagone(var plat: TPlateau; var affichage: TAffichage; var coord: Tcoord);
 var tempCoord: Tcoord;
 begin
@@ -549,6 +551,7 @@ begin
 
     affichageZone(coord.x+150,coord.y-10,60,60,2,affichage);
     affichageTexte(IntToStr(carteTutorat.nbr), 25, FCoord(coord.x+160,coord.y-10), FCouleur(0,200,0,255), affichage);
+    //TODO patch (faire un système de détection de retour à la ligne)
     affichageTexte(IntToStr(carteTutorat.utilisee), 25, FCoord(coord.x+160,coord.y+15), FCouleur(200,0,0,255), affichage);
 
     affichageTexte(carteTutorat.nom, 25, FCoord(coord.x+10,coord.y+130), FCouleur(0,0,0,255), affichage);
@@ -824,6 +827,78 @@ begin
         miseAJourRenderer(affichage);
 
         clicBouton(affichage,boutons,valeurBouton);
+    end;
+end;
+
+procedure affichageSelectionRessource(var boutonValider: TBouton; var affichage: TAffichage; var grille: TGrille);
+var ressource: TRessource;
+    coord,coordCart: Tcoord;
+    i,j: Integer;
+begin
+    affichageFond(affichage);
+
+    attendre(66);
+
+    coord := FCoord(450,70);
+    affichageZone(coord.x,coord.y,1050,930,3,affichage);
+
+    coord := FCoord(750,90);
+    affichageTexte('Selection de ressource', 35, coord, FCouleur(0,0,0,255), affichage);
+
+    coord := FCoord(680,130);
+    affichageTexte('Selectionnez la ressource que vous souhaitez', 25, coord, FCouleur(0,0,0,255), affichage);
+
+    coord := FCoord(800,300);
+    SetLength(Grille,3,2);
+    i := 0;
+    j := 0;
+    for ressource := Physique to Rien do
+    begin
+        hexaToCart(FCoord(i,j),coordCart,tailleHexagone div 2);
+        if ressource <> Rien then
+            affichageImage(coord.x+coordCart.x-(tailleHexagone div 2),coord.y+coordCart.y-(tailleHexagone div 2),tailleHexagone,tailleHexagone,affichage.texturePlateau.textureRessource[ressource],affichage);
+        grille[i,j].ressource := ressource;
+
+        Inc(i);
+        if i > 2 then
+        begin
+            i := 0;
+            Inc(j);
+        end;
+    end;
+
+    boutonValider.coord := FCoord(900,930);
+    boutonValider.w := 95;
+    boutonValider.h := 50;
+    boutonValider.texte := 'Valider';
+    boutonValider.valeur := 'valider';
+    affichageBouton(boutonValider,affichage);
+end;
+
+procedure selectionRessource(var affichage: TAffichage; var ressource: TRessource);
+var coord,coordHexa: Tcoord;
+    grille: TGrille;
+    valider: Boolean;
+    boutonValider: TBouton;
+begin
+    nettoyageAffichage(affichage);
+    attendre(66);
+
+    affichageSelectionRessource(boutonValider,affichage,grille);
+    miseAJourRenderer(affichage);
+
+    valider := False;
+    ressource := Rien;
+    while not valider do
+    begin
+        clicCart(affichage,coord);
+        cartToHexa(FCoord(coord.x-800,coord.y-300),coordHexa,tailleHexagone div 2);
+
+        if (coordHexa.x >= 0) and (coordHexa.x <= 2) and (coordHexa.y >= 0) and (coordHexa.y <= 1) then
+            ressource := grille[coordHexa.x,coordHexa.y].ressource;
+        
+        if (boutonValider.coord.x <= coord.x) and (coord.x <= boutonValider.coord.x + boutonValider.w) and (boutonValider.coord.y <= coord.y) and (coord.y <= boutonValider.coord.y + boutonValider.h) and (ressource <> Rien) then
+            valider := True;
     end;
 end;
 

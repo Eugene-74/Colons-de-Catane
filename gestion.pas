@@ -313,22 +313,24 @@ begin
       else if(valeurBouton = 'achat_carte_tutorat')  then
           achatElements(joueurs[i], plateau, affichage,4)
       else if(valeurBouton = 'echange')  then
-        begin
+      begin
         id1 := joueurs[i].id;
         id2 := joueurs[i+1].id;
         echangeRessources(joueurs,id1, id2 ,ressources1,ressources2,affichage);
         if(aLesRessources(joueurs[id1],ressources1) and aLesRessources(joueurs[id2],ressources2)) then
-            begin
+        begin
             enleverRessources(joueurs[id1],ressources1);
             enleverRessources(joueurs[id2],ressources1);
 
             affichageTour(plateau, joueurs, i, affichage);
             affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' a ete valide',25,FCouleur(0,255,0,255),affichage);
-            end
+        end
         else
+        begin
             affichageTour(plateau, joueurs, i, affichage);
             affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est impossible',25,FCouleur(255,0,0,255),affichage);
-        end
+        end;
+      end
       else if(valeurBouton = 'demarrer_musique')  then
           demarrerMusique(affichage)
       else if(valeurBouton = 'arreter_musique')  then
