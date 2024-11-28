@@ -101,6 +101,7 @@ Postconditions :
     - affichage : la structure contenant le renderer}
 procedure initialisationTextures(var affichage: TAffichage);
 var i: TRessource;
+    j: Integer;
 begin
     for i:=Physique to Rien do
     begin
@@ -108,6 +109,9 @@ begin
         if i <> Rien then
             affichage.texturePlateau.textureIconesRessources[i] := chargerTexture(affichage, 'IconesRessources/'+GetEnumName(TypeInfo(TRessource), Ord(i)));
     end;
+
+    for j:=1 to 5 do
+        affichage.texturePlateau.textureIconesCartesTutorat[j] := chargerTexture(affichage, 'IconesCartesTutorat/'+IntToStr(j));
 
     //TODO Clean up
     // affichage.texturePlateau.textureContourHexagone := chargerTexture(affichage, 'bordureCercle');
@@ -538,9 +542,50 @@ begin
         WriteLn('Erreur SDL: ', SDL_GetError());
 end;
 
-procedure affichageCarteTutorat();
+procedure affichageCarteTutorat(carteTutorat: TCarteTutorat; coord: TCoord; var affichage: TAffichage);
 begin
-    writeln('Affichage carte tutorat');
+    affichageZone(coord.x,coord.y,200,300,2,affichage);
+    affichageImage(coord.x+75,coord.y+35,50,50,affichage.texturePlateau.textureIconesCartesTutorat[1],affichage);
+
+    affichageZone(coord.x+150,coord.y-10,60,60,2,affichage);
+    affichageTexte(IntToStr(carteTutorat.nbr), 25, FCoord(coord.x+160,coord.y-10), FCouleur(0,200,0,255), affichage);
+    affichageTexte(IntToStr(carteTutorat.utilisee), 25, FCoord(coord.x+160,coord.y+15), FCouleur(200,0,0,255), affichage);
+
+    affichageTexte(carteTutorat.nom, 25, FCoord(coord.x+10,coord.y+130), FCouleur(0,0,0,255), affichage);
+    affichageTexte(carteTutorat.description, 17, FCoord(coord.x+10,coord.y+170), FCouleur(0,0,0,255), affichage);
+end;
+
+procedure affichageCartesTutorat(joueur: TJoueur; var affichage: TAffichage);
+var bouton: TBouton;
+begin
+    bouton.w := 200;
+    bouton.h := 300;
+    bouton.texte := '';
+
+    bouton.coord := FCoord(1400,25);
+    bouton.valeur := CARTES_TUTORAT.carte1.valeur;
+    ajouterBoutonTableau(bouton,affichage.boutonsAction);
+    affichageCarteTutorat(joueur.CartesTutorat.carte1,FCoord(1400,25),affichage);
+    
+    bouton.coord := FCoord(1615,25);
+    bouton.valeur := CARTES_TUTORAT.carte2.valeur;
+    ajouterBoutonTableau(bouton,affichage.boutonsAction);
+    affichageCarteTutorat(joueur.CartesTutorat.carte2,FCoord(1615,25),affichage);
+
+    bouton.coord := FCoord(1400,340);
+    bouton.valeur := CARTES_TUTORAT.carte3.valeur;
+    ajouterBoutonTableau(bouton,affichage.boutonsAction);
+    affichageCarteTutorat(joueur.CartesTutorat.carte3,FCoord(1400,340),affichage);
+
+    bouton.coord := FCoord(1615,340);
+    bouton.valeur := CARTES_TUTORAT.carte4.valeur;
+    ajouterBoutonTableau(bouton,affichage.boutonsAction);
+    affichageCarteTutorat(joueur.CartesTutorat.carte4,FCoord(1615,340),affichage);
+
+    bouton.coord := FCoord(1400,655);
+    bouton.valeur := CARTES_TUTORAT.carte5.valeur;
+    ajouterBoutonTableau(bouton,affichage.boutonsAction);
+    affichageCarteTutorat(joueur.CartesTutorat.carte5,FCoord(1400,655),affichage);
 end;
 
 procedure suppressionScores(playerId: Integer; var affichage: TAffichage);
@@ -814,6 +859,8 @@ begin
     
     for i:=0 to length(joueurs)-1 do
         affichageScore(joueurs[i],affichage);
+    
+    affichageCartesTutorat(joueurs[idJoueurActuel],affichage);
 
     affichageJoueurActuel(joueurs,idJoueurActuel,affichage);
 
