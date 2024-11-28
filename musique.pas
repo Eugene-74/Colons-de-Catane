@@ -90,9 +90,9 @@ begin
     // writeln('Musique: ', musiques[randomIndex]);
     musique := Mix_LoadMUS(musiques[randomIndex]);
 
-    affichage.musiqueActuel.active := true;
-    affichage.musiqueActuel.debut := DateTimeToUnix(Now);
-    affichage.musiqueActuel.temps := musiquesTemps[randomIndex];
+    affichage.musiqueActuelle.active := true;
+    affichage.musiqueActuelle.debut := DateTimeToUnix(Now);
+    affichage.musiqueActuelle.temps := musiquesTemps[randomIndex];
     
     if musique = nil then
     begin
@@ -109,8 +109,8 @@ end;
 
 procedure verificationMusique(var affichage :TAffichage);
 begin
-    if(affichage.musiqueActuel.active) then
-        if(DateTimeToUnix(Now) - affichage.musiqueActuel.debut  >= affichage.musiqueActuel.temps) then
+    if(affichage.musiqueActuelle.active) then
+        if(DateTimeToUnix(Now) - affichage.musiqueActuelle.debut  >= affichage.musiqueActuelle.temps) then
         begin
             demarrerMusique(affichage);
         end;

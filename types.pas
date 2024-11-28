@@ -12,18 +12,19 @@ type
 
   TCarteTutorat = record
     nom : String;
+    valeur : String;
     description : String;
     nbr : Integer;
     utilisee : Integer;
   end;
 
+  // TODO Opti ce type en tableau dynamique de 5 TCarteTutorat (Yann)
   TCartesTutorat = record
     carte1 : TCarteTutorat;
     carte2 : TCarteTutorat;
     carte3 : TCarteTutorat;
     carte4 : TCarteTutorat;
     carte5 : TCarteTutorat;
-
   end;
 
   // Definition de TCoord
@@ -32,12 +33,6 @@ type
   end;
 
   TCoords = array of TCoord;
-
-  // Definition de TRessourceValeur
-//   TRessourceValeur = record
-//     Ressource: TRessource;
-//     Quantite: Integer;
-//   end;
 
   // Definition de TRessources (tableau dynamique de TRessourceValeur)
   TRessources = array [Aucune..Rien] of Integer;
@@ -49,14 +44,10 @@ type
     Nom: String;
     Id: Integer;
     CartesTutorat: TCartesTutorat;
-
   end;
 
   // Definition de TJoueurs (tableau dynamique de TJoueur)
   TJoueurs = array of TJoueur;
-
-  // IdJoueurActuel
-  IdJoueurActuel = Integer;
 
   // Definition de THexagone
   THexagone = record
@@ -101,7 +92,6 @@ type
     CartesTutorat: TCartesTutorat;
     des1 : Integer;
     des2 : Integer;
-
   end;
   
   PWindow = PSDL_Window;
@@ -109,8 +99,9 @@ type
   PRenderer = PSDL_Renderer;
 
   TTexturePlateau = record
-    textureRessource: array[Physique..Mathematiques] of PSDL_Texture;
+    textureRessource: array[Physique..Rien] of PSDL_Texture;
     textureIconesRessources: array[Physique..Mathematiques] of PSDL_Texture;
+    textureIconesCartesTutorat: array[1..5] of PSDL_Texture;
     textureContourHexagone: PSDL_Texture;
     textureContourVide : PSDL_Texture;
     textureEleve: PSDL_Texture;
@@ -143,16 +134,17 @@ type
     yGrid: Integer;
     texturePlateau : TTexturePlateau;
     boutonsAction: TBoutons;
-    musiqueActuel : TMusique;
+    boutonsSysteme: TBoutons;
+    musiqueActuelle : TMusique;
   end;
 
 const
   CARTES_TUTORAT: TCartesTutorat = (
-    carte1: (nom: 'discution'; description: 'discution'; nbr: 10;utilisee : 0);
-    carte2: (nom: 'WordReference'; description: 'discution'; nbr: 12;utilisee : 0);
-    carte3: (nom: 'Voler'; description: 'discution'; nbr: 8;utilisee : 0);
-    carte4: (nom: 'Choisir 2 connaissances'; description: 'discution'; nbr: 16;utilisee : 0);
-    carte5: (nom: 'le dernier'; description: 'discution'; nbr: 4;utilisee : 0)
+    carte1: (nom: 'Discussion'; valeur: 'discussion'; description: 'discussion'; nbr: 10; utilisee : 0);
+    carte2: (nom: 'WordReference'; valeur: 'wordreference'; description: 'discussion'; nbr: 12; utilisee : 0);
+    carte3: (nom: 'Voler'; valeur: 'voler'; description: 'discussion'; nbr: 8; utilisee : 0);
+    carte4: (nom: 'Choisir 2 connaissances'; valeur: 'choix_connaissances'; description: 'discussion'; nbr: 16; utilisee : 0);
+    carte5: (nom: 'le dernier'; valeur: 'dernier'; description: 'discussion'; nbr: 4; utilisee : 0)
   );
 
 implementation

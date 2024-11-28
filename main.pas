@@ -88,7 +88,7 @@ begin
     plateau.des1 := 1;
     plateau.des2 := 3;
 
-    affichageTour(plateau,joueurs, affichage);
+    affichageTour(plateau,joueurs,0,affichage);
 
     affichageInformation('salut', 25, FCouleur(0,0,0,255), affichage);
 
@@ -113,7 +113,7 @@ begin
     id := 1;
     echangeRessources(joueurs,0,id,ressources1,ressources2,affichage);
 
-    affichageTour(plateau,joueurs, affichage);
+    affichageTour(plateau,joueurs,0,affichage);
 
     clicAction(affichage,valeurBouton);
 end;

@@ -251,6 +251,10 @@ begin
       end;
   // ajout d'un point
   joueurActuel.Points:=1+joueurActuel.Points;
+    suppressionScores(joueurActuel.id,affichage);
+    affichageScore(joueurActuel,affichage);
+    affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
+    miseAJourRenderer(affichage);
 
   affichageScore(joueurActuel,affichage);
   affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
@@ -676,6 +680,7 @@ begin
   
   affichageConnexion(plateau.Connexions[length(plateau.Connexions)-1], affichage);
 
+  //TODO opti ça (pour YANN)
   for i:=0 to length(plateau.Personnes)-1 do
       affichagePersonne(plateau.Personnes[i],affichage);
 
@@ -853,16 +858,12 @@ begin
   affichageInformation('Cliquez sur 1 hexagones pour deplacer le souillard.', 25, FCouleur(0,0,0,255), affichage);
 
   repeat
-  clicHexagone(plateau, affichage, coord); 
+    clicHexagone(plateau, affichage, coord); 
   until (dansLePlateau(plateau,coord));
 
   plateau.Souillard.Position := coord;
 
-  affichageInformation('Eleve deplace avec succes !', 25, FCouleur(0,255,0,255), affichage);
-
-
-  affichageTour(plateau,joueurs,affichage);
-
+  affichageInformation('Souillard deplace avec succes !', 25, FCouleur(0,255,0,255), affichage);
 end;
 function enContactConnexionConnexion(plateau: TPlateau; coords1: TCoords; coords2: TCoords): Boolean;
 var
