@@ -162,6 +162,7 @@ begin
 
   initialisationAffichage(affichage);
   
+  Randomize;
   num :=nombreAleatoire(2);
 
   plateau := chargementPlateau(num);
