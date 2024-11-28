@@ -118,13 +118,13 @@ end;
 
 procedure arreterMusique(var affichage : TAffichage);
 begin
-    if(affichage.musiqueActuel.active) then
+    if(affichage.musiqueActuelle.active) then
     begin
         
     Mix_HaltMusic();
-    affichage.musiqueActuel.active := False;
-    affichage.musiqueActuel.debut := 0;
-    affichage.musiqueActuel.temps := 0;
+    affichage.musiqueActuelle.active := False;
+    affichage.musiqueActuelle.debut := 0;
+    affichage.musiqueActuelle.temps := 0;
     end;
 
 end;

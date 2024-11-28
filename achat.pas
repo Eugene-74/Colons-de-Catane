@@ -402,6 +402,61 @@ begin
   CountPersonnes:= Result;
 end;
 
+function professeurValide(affichage : TAffichage;plateau : TPlateau;joueurActuel : TJoueur;HexagonesCoords : Tcoords):Boolean;
+var i,j,compteur,k : Integer;
+
+begin
+  professeurValide := false;
+
+// TODO deplacer dans achat element, si il peut pas poser faut pas lui enlever les ressources.
+  if not resteEleve(plateau,joueurActuel) then
+  begin
+    affichageInformation('plus d''éléve à changer', 25, FCouleur(0, 0, 0, 255), affichage);
+  end;
+
+
+  if enContact(HexagonesCoords) then
+    begin
+    
+      // Parcourt les personnes du plateau pour trouver un elève appartenant au joueur actuel
+      for i := 0 to length(plateau.Personnes)-1 do
+      begin
+        if (plateau.Personnes[i].IdJoueur = joueurActuel.Id) and
+          (plateau.Personnes[i].estEleve) then
+        begin
+          compteur := 0; // Reinitialise le compteur pour cette personne
+          // Parcourt les positions de la personne pour verifier la correspondance avec les hexagones selectionnes
+          for j := 0 to  length(HexagonesCoords)-1 do
+          begin
+            // Compare chaque position de la personne avec les coordonnees selectionnees
+            for k := 0 to length(HexagonesCoords)-1 do
+            begin
+              if (plateau.Personnes[i].Position[j].x = HexagonesCoords[k].x) and
+                (plateau.Personnes[i].Position[j].y = HexagonesCoords[k].y) then
+              begin
+                compteur := compteur + 1;
+              end;
+            end;
+          end;
+
+          // Si toutes les positions de la personne correspondent aux hexagones selectionnes, effectuer la conversion
+          if compteur = 3 then
+          begin
+            professeurValide := True;
+
+          end;
+        end;
+        // if estConverti then
+      end;
+      
+    end
+    else
+    begin
+      // Les hexagones sélectionnés ne sont pas adjacents
+      affichageInformation('Conversion invalide. Les hexagones sélectionnés ne sont pas adjacents.', 25, FCouleur(0, 0, 0, 255), affichage);
+    end;
+end;
+
 procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 var
   HexagonesCoords: TCoords;
