@@ -250,6 +250,7 @@ begin
     // ajout d'un point
     joueurActuel.Points:=1+joueurActuel.Points;
 
+    suppressionScores(joueurActuel.id,affichage);
     affichageScore(joueurActuel,affichage);
     affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
     miseAJourRenderer(affichage);
@@ -428,63 +429,64 @@ begin
   else
   begin
     repeat
-    affichageInformation('Cliquez sur 3 hexagones entre lesquels vous voulez placer le professeur', 25, FCouleur(0,0,0,255), affichage);
-    HexagonesCoords := ClicPersonne(affichage, plateau, False); 
-    // compteur := 0;
+      affichageInformation('Cliquez sur 3 hexagones entre lesquels vous voulez placer le professeur', 25, FCouleur(0,0,0,255), affichage);
+      HexagonesCoords := ClicPersonne(affichage, plateau, False); 
+      // compteur := 0;
 
-    // Verifie si les hexagones sont adjacents
-    
-    if enContact(HexagonesCoords) then
-    begin
-    
-      // Parcourt les personnes du plateau pour trouver un elève appartenant au joueur actuel
-      for i := 0 to length(plateau.Personnes)-1 do
+      // Verifie si les hexagones sont adjacents
+      
+      if enContact(HexagonesCoords) then
       begin
-        if (plateau.Personnes[i].IdJoueur = joueurActuel.Id) and
-          (plateau.Personnes[i].estEleve) then
+      
+        // Parcourt les personnes du plateau pour trouver un elève appartenant au joueur actuel
+        for i := 0 to length(plateau.Personnes)-1 do
         begin
-          compteur := 0; // Reinitialise le compteur pour cette personne
-          // Parcourt les positions de la personne pour verifier la correspondance avec les hexagones selectionnes
-          for j := 0 to  length(HexagonesCoords)-1 do
+          if (plateau.Personnes[i].IdJoueur = joueurActuel.Id) and
+            (plateau.Personnes[i].estEleve) then
           begin
-            // Compare chaque position de la personne avec les coordonnees selectionnees
-            for k := 0 to length(HexagonesCoords)-1 do
+            compteur := 0; // Reinitialise le compteur pour cette personne
+            // Parcourt les positions de la personne pour verifier la correspondance avec les hexagones selectionnes
+            for j := 0 to  length(HexagonesCoords)-1 do
             begin
-              if (plateau.Personnes[i].Position[j].x = HexagonesCoords[k].x) and
-                (plateau.Personnes[i].Position[j].y = HexagonesCoords[k].y) then
+              // Compare chaque position de la personne avec les coordonnees selectionnees
+              for k := 0 to length(HexagonesCoords)-1 do
               begin
-                compteur := compteur + 1;
+                if (plateau.Personnes[i].Position[j].x = HexagonesCoords[k].x) and
+                  (plateau.Personnes[i].Position[j].y = HexagonesCoords[k].y) then
+                begin
+                  compteur := compteur + 1;
+                end;
               end;
             end;
+
+            // Si toutes les positions de la personne correspondent aux hexagones selectionnes, effectuer la conversion
+            if compteur = 3 then
+            begin
+              plateau.Personnes[i].estEleve := False; // Convertir l'elève en professeur
+              estConverti := True;
+              
+              // ajout d'un point
+              joueurActuel.Points:=1+joueurActuel.Points;
+              
+
+              affichageInformation('Eleve converti en professeur avec succes !', 25, FCouleur(0,255,0,255), affichage);
+
+            end;
           end;
-
-          // Si toutes les positions de la personne correspondent aux hexagones selectionnes, effectuer la conversion
-          if compteur = 3 then
-          begin
-            plateau.Personnes[i].estEleve := False; // Convertir l'elève en professeur
-            estConverti := True;
-            
-            // ajout d'un point
-            joueurActuel.Points:=1+joueurActuel.Points;
-            
-
-            affichageInformation('Eleve converti en professeur avec succes !', 25, FCouleur(0,255,0,255), affichage);
-
-          end;
+          // if estConverti then
         end;
-        // if estConverti then
+        
+        suppressionScores(joueurActuel.id,affichage);
+        affichageScore(joueurActuel,affichage);
+        affichagePersonne(plateau.Personnes[i], affichage);
+        miseAJourRenderer(affichage);
+        
+      end
+      else
+      begin
+        // Les hexagones sélectionnés ne sont pas adjacents
+        affichageInformation('Conversion invalide. Les hexagones sélectionnés ne sont pas adjacents.', 25, FCouleur(0, 0, 0, 255), affichage);
       end;
-      
-      affichageScore(joueurActuel,affichage);
-      affichagePersonne(plateau.Personnes[i], affichage);
-      miseAJourRenderer(affichage);
-      
-    end
-    else
-    begin
-      // Les hexagones sélectionnés ne sont pas adjacents
-      affichageInformation('Conversion invalide. Les hexagones sélectionnés ne sont pas adjacents.', 25, FCouleur(0, 0, 0, 255), affichage);
-    end;
     until estConverti;
   end;
 end;
@@ -741,6 +743,7 @@ begin
   
   affichageConnexion(plateau.Connexions[length(plateau.Connexions)-1], affichage);
 
+  //TODO opti ça (pour YANN)
   for i:=0 to length(plateau.Personnes)-1 do
       affichagePersonne(plateau.Personnes[i],affichage);
 

@@ -20,6 +20,7 @@ procedure clicAction(var affichage: TAffichage; var valeurBouton: String);
 procedure affichageScore(joueur: TJoueur; var affichage: TAffichage);
 procedure affichageInformation(texte: String; taille: Integer; couleur: TSDL_Color; var affichage: TAffichage);
 procedure suppressionInformation(var affichage: TAffichage);
+procedure suppressionScores(playerId: Integer; var affichage: TAffichage);
 procedure attendre(ms: Integer);
 
 implementation
@@ -206,7 +207,6 @@ var couleur: TSDL_Color;
     longueur,angle: Real;
     colorTexture: PSDL_Texture;
 begin
-    
     epaisseur := 6;
     recupererCouleurJoueur(connexion.IdJoueur,couleur);
     calculPosConnexion(connexion,coord,longueur,angle);
@@ -440,17 +440,13 @@ Postconditions :
     - affichage : la structure contenant le renderer}
 procedure affichageGrille(plat: TPlateau; var affichage: TAffichage);
 var q,r,taille: Integer;
-    //gridSize: Integer;
 begin
     affichageFond(affichage);
 
     taille := length(plat.Grille);
-    //gridSize := taille div 2;
 
-    //and not ((q+r<=gridSize) or (q+r>=gridSize*gridSize))
     for q:=0 to taille-1 do
         for r:=0 to taille-1 do
-        // TODO changer pour avoir l'affichage des hexagone "Aucune" en couleur unis pour montrer les bord
             if (plat.Grille[q,r].ressource <> Aucune) then
             begin
                 affichageHexagone(plat,affichage,FCoord(q,r));
@@ -464,7 +460,6 @@ begin
 end;
 
 procedure affichageScore(joueur:TJoueur; var affichage: TAffichage);
-// TODO marche pas tt seul affiche l'un sur l'autre
 var coord: Tcoord;
     ressource: TRessource;
 begin
@@ -521,6 +516,11 @@ begin
     interieur.h := h-epaisseurBord*2;
     if SDL_RenderFillRect(affichage.renderer, @interieur) <> 0 then
         WriteLn('Erreur SDL: ', SDL_GetError());
+end;
+procedure suppressionScores(playerId: Integer; var affichage: TAffichage);
+begin
+    affichageZone(25,25+playerId*75,325,65,0,affichage);
+    writeln('test');
 end;
 
 procedure affichageBouton(bouton: TBouton; var affichage: TAffichage);
@@ -627,7 +627,6 @@ var coord: Tcoord;
     ressource: TRessource;
 begin
     affichageFond(affichage);
-    miseAJourRenderer(affichage);
 
     attendre(66);
 
