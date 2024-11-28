@@ -2,12 +2,12 @@ unit gestion;
 
 interface
 uses Types,affichageUnit,SysUtils,achat,traitement,musique;
+
 procedure initialisationPartie(var joueurs : TJoueurs;var  plateau : TPlateau;var affichage : TAffichage);
 procedure partie(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 
 // TODO enlever de l'interface
 function chargementPlateau(num : Integer): TPlateau;
-
 
 
 implementation
@@ -29,7 +29,7 @@ procedure utiliserCarteTutorat(var plateau : TPlateau;var affichage : TAffichage
 
 
 function chargerGrille(num : Integer): TGrille;
-var 
+var
   grille: TGrille;
   numeros: array of array of Integer;
   ressources: array of array of TRessource;
@@ -39,7 +39,6 @@ begin
   SetLength(grille, 7, 7);
   SetLength(ressources, 7, 7);
   SetLength(numeros, 7, 7);
-writeln(num);
     case num of
     1 : begin
     ressources[0] := [Aucune, Aucune, Aucune, Rien, Rien, Rien, Rien];
@@ -129,7 +128,7 @@ begin
   SetLength(joueurs,0);
   i:=0;
   repeat
-    write('rentrer le nom du joueur '+IntToStr(i+1)+' : (Entrer pour areter)');
+    write('rentrer le nom du joueur '+IntToStr(i+1)+' : (Entrer pour arreter)');
     readln(text);
     unique := True;
 
@@ -192,21 +191,7 @@ begin
     // placementConnexion(plateau,affichage,joueurs[i-1]);
     end;
 
-  SetLength(plateau.Connexions, 1);
-  SetLength(plateau.Connexions[0].Position, 2);
-  plateau.Connexions[0].Position[0].x := 2;
-  plateau.Connexions[0].Position[0].y := 3;
-  plateau.Connexions[0].Position[1].x := 3;
-  plateau.Connexions[0].Position[1].y := 3;
-  plateau.Connexions[0].IdJoueur := 0;
 
-  setLength(plateau.Connexions, 2);
-  SetLength(plateau.Connexions[1].Position, 2);
-  plateau.Connexions[1].Position[0].x := 3;
-  plateau.Connexions[1].Position[0].y := 2;
-  plateau.Connexions[1].Position[1].x := 3;
-  plateau.Connexions[1].Position[1].y := 3;
-  plateau.Connexions[1].IdJoueur := 1;
 
   affichageTour(plateau,joueurs, affichage);
   
@@ -305,13 +290,13 @@ var valeurBouton,text : String;
   ressources1,ressources2 : TRessources;
   res : TRessource;
   i,id1,id2 : Integer;
-
+  j,k : Integer;
 begin
-  for i := 0 to length(joueurs)-1 do 
+  for i := 0 to length(joueurs)-1 do
     begin
     gestionDes(joueurs,plateau,affichage);
       
-    // affichageTour(plateau,joueurs,affichage);
+    affichageTour(plateau,joueurs,affichage);
 
 
     finTour := False;
@@ -319,16 +304,12 @@ begin
       clicAction(affichage, valeurBouton);
 
       if(valeurBouton = 'achat_eleve')  then
-        // PlacementEleve(plateau,affichage,joueurs[i])
         achatElements(joueurs[i], plateau, affichage,1)
       else if(valeurBouton = 'achat_connexion')  then
-        // placementConnexion(plateau,affichage,joueurs[i])
         achatElements(joueurs[i], plateau, affichage,2)
       else if(valeurBouton = 'changement_en_prof')  then
         begin
-        // changementProfesseur(plateau,affichage,joueurs[i]);
         achatElements(joueurs[i], plateau, affichage,3);
-        
         end
       else if(valeurBouton = 'achat_carte_tutorat')  then
           achatElements(joueurs[i], plateau, affichage,4)
@@ -349,6 +330,10 @@ begin
             affichageTour(plateau, joueurs, affichage);
             affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est impossible',25,FCouleur(255,0,0,255),affichage);
         end
+      else if(valeurBouton = 'demarrer_musique')  then
+          demarrerMusique(affichage)
+      else if(valeurBouton = 'arreter_musique')  then
+          arreterMusique(affichage)
       else if(valeurBouton = 'fin_tour')  then
         finTour := True;
 
@@ -356,6 +341,7 @@ begin
 
     // TODO enlever apres
     verificationMusique(affichage);
+
 
     end;
 
@@ -368,7 +354,7 @@ var gagnant : integer;
 begin
   repeat
     tour(joueurs,plateau,affichage);
-
+  gagner := false;
     verificationPointsVictoire(plateau,joueurs,gagner,gagnant,affichage);
   until (gagner);
   affichageGagnant(joueurs[gagnant],affichage);
@@ -467,7 +453,7 @@ begin
   end
   else
   begin
-    writeln('Carte inconnue');
+    writeln('Erreur : Carte inconnue');
   end;
 end;
 
