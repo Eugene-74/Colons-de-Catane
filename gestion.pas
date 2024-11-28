@@ -302,7 +302,8 @@ begin
     finTour := False;
     repeat
       clicAction(affichage, valeurBouton);
-
+    
+    
       if(valeurBouton = 'achat_eleve')  then
         achatElements(joueurs[i], plateau, affichage,1)
       else if(valeurBouton = 'achat_connexion')  then
