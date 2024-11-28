@@ -19,6 +19,7 @@ procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; idJoueurActuel: Integ
 procedure clicAction(var affichage: TAffichage; var valeurBouton: String);
 procedure affichageScore(joueur: TJoueur; var affichage: TAffichage);
 procedure affichageInformation(texte: String; taille: Integer; couleur: TSDL_Color; var affichage: TAffichage);
+procedure affichageJoueurActuel(joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
 procedure suppressionInformation(var affichage: TAffichage);
 procedure suppressionScores(playerId: Integer; var affichage: TAffichage);
 procedure attendre(ms: Integer);
@@ -469,9 +470,7 @@ begin
     for q:=0 to taille-1 do
         for r:=0 to taille-1 do
             if (plat.Grille[q,r].ressource <> Aucune) then
-            begin
                 affichageHexagone(plat,affichage,FCoord(q,r));
-            end;
 end;
 
 procedure affichageDes(de1,de2:Integer; coord: TCoord; var affichage: TAffichage);
@@ -586,6 +585,12 @@ begin
     affichageTexte(texte, taille, FCoord(400,1025), couleur, affichage);
     miseAJourRenderer(affichage);
     attendre(66);
+end;
+
+procedure affichageJoueurActuel(joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
+begin
+    affichageZone(25,350,300,30,0,affichage);
+    affichageTexte('Tour : ' + joueurs[idJoueurActuel].Nom, 25, FCoord(25,350), FCouleur(0,0,0,255), affichage);
 end;
 
 procedure clicBouton(var affichage: TAffichage; var boutons: TBoutons; var valeurBouton: String);
@@ -794,11 +799,8 @@ begin
     nettoyageAffichage(affichage);
 
     affichageFond(affichage);
-
     affichageGrille(plat,affichage);
-    
     affichageSouillard(plat,affichage);
-
     affichageDes(plat.des1,plat.des2,FCoord(50,500),affichage);
 
     for i:=0 to length(plat.Connexions)-1 do
@@ -812,6 +814,8 @@ begin
     
     for i:=0 to length(joueurs)-1 do
         affichageScore(joueurs[i],affichage);
+
+    affichageJoueurActuel(joueurs,idJoueurActuel,affichage);
 
     miseAJourRenderer(affichage);
 end;

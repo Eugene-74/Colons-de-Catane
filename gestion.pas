@@ -291,6 +291,8 @@ var valeurBouton,text : String;
 begin
   for i := 0 to length(joueurs)-1 do
     begin
+    affichageJoueurActuel(joueurs,i,affichage);
+
     gestionDes(joueurs,plateau,affichage);
       
     affichageTour(plateau,joueurs,i,affichage);
