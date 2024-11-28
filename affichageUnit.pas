@@ -520,7 +520,6 @@ end;
 procedure suppressionScores(playerId: Integer; var affichage: TAffichage);
 begin
     affichageZone(25,25+playerId*75,325,65,0,affichage);
-    writeln('test');
 end;
 
 procedure affichageBouton(bouton: TBouton; var affichage: TAffichage);
