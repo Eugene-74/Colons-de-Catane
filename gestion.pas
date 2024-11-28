@@ -301,7 +301,6 @@ begin
     finTour := False;
     repeat
       clicAction(affichage, valeurBouton);
-      writeln(valeurBouton);
 
       if(valeurBouton = 'achat_eleve')  then
         achatElements(joueurs[i], plateau, affichage,1)
