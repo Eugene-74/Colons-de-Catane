@@ -109,7 +109,7 @@ type
   PRenderer = PSDL_Renderer;
 
   TTexturePlateau = record
-    textureRessource: array[Physique..Mathematiques] of PSDL_Texture;
+    textureRessource: array[Physique..Rien] of PSDL_Texture;
     textureIconesRessources: array[Physique..Mathematiques] of PSDL_Texture;
     textureContourHexagone: PSDL_Texture;
     textureContourVide : PSDL_Texture;
@@ -143,7 +143,7 @@ type
     yGrid: Integer;
     texturePlateau : TTexturePlateau;
     boutonsAction: TBoutons;
-    musiqueActuel : TMusique;
+    musiqueActuelle : TMusique;
   end;
 
 const

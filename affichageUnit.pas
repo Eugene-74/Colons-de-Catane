@@ -101,12 +101,14 @@ Postconditions :
 procedure initialisationTextures(var affichage: TAffichage);
 var i: TRessource;
 begin
-    for i:=Physique to Mathematiques do
+    for i:=Physique to Rien do
     begin
         affichage.texturePlateau.textureRessource[i] := chargerTexture(affichage, 'Ressources/'+GetEnumName(TypeInfo(TRessource), Ord(i)));
-        affichage.texturePlateau.textureIconesRessources[i] := chargerTexture(affichage, 'IconesRessources/'+GetEnumName(TypeInfo(TRessource), Ord(i)));
+        if i <> Rien then
+            affichage.texturePlateau.textureIconesRessources[i] := chargerTexture(affichage, 'IconesRessources/'+GetEnumName(TypeInfo(TRessource), Ord(i)));
     end;
 
+    //TODO Clean up
     // affichage.texturePlateau.textureContourHexagone := chargerTexture(affichage, 'bordureCercle');
     // affichage.texturePlateau.textureContourVide := chargerTexture(affichage, 'bordure');
     affichage.texturePlateau.textureContourHexagone := chargerTexture(affichage, 'hexagoneCercle');
@@ -410,7 +412,7 @@ var coordCart: TCoord;
 begin
     hexaToCart(coordHexa,coordCart,tailleHexagone div 2);
 
-    if (plat.Grille[coordHexa.x,coordHexa.y].ressource <> Rien) and (plat.Grille[coordHexa.x,coordHexa.y].ressource <> Aucune) then
+    if (plat.Grille[coordHexa.x,coordHexa.y].ressource <> Aucune) then
         affichageImage(affichage.xGrid+coordCart.x-(tailleHexagone div 2),affichage.yGrid+coordCart.y-(tailleHexagone div 2),tailleHexagone,tailleHexagone,affichage.texturePlateau.textureRessource[plat.Grille[coordHexa.x,coordHexa.y].ressource],affichage);
     
     affichageDetailsHexagone(coordHexa,coordCart,plat,affichage);
