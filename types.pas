@@ -143,6 +143,7 @@ type
     yGrid: Integer;
     texturePlateau : TTexturePlateau;
     boutonsAction: TBoutons;
+    boutonsSysteme: TBoutons;
     musiqueActuelle : TMusique;
   end;
 

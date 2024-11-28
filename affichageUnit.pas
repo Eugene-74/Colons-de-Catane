@@ -280,6 +280,8 @@ Postconditions :
 procedure clicCart(var affichage: TAffichage; var coord: Tcoord);
 var running : Boolean;
     event: TSDL_Event;
+    bouton: TBouton;
+    buttonClicked: Boolean;
 begin
     running := True;
 
@@ -296,8 +298,25 @@ begin
                 SDL_MOUSEBUTTONDOWN:
                 begin
                     coord := FCoord(event.button.x,event.button.y);
-                    running := False;
-                    break;
+
+                    buttonClicked := False;
+                    for bouton in affichage.boutonsSysteme do
+                    begin
+                        if (coord.x >= bouton.coord.x) and (coord.x <= bouton.coord.x + bouton.w) and (coord.y >= bouton.coord.y) and (coord.y <= bouton.coord.y + bouton.h) then
+                        begin
+                            buttonClicked := True;
+                            if bouton.valeur = 'musique_play' then
+                                demarrerMusique(affichage)
+                            else if bouton.valeur = 'musique_stop' then
+                                arreterMusique(affichage);
+                        end;
+                    end;
+                    
+                    if not buttonClicked then
+                    begin
+                        running := False;
+                        break;
+                    end;
                 end;
             end;
         end;
@@ -531,10 +550,22 @@ begin
     affichageTexte(' '+bouton.texte, 25, bouton.coord, FCouleur(0,0,0,255), affichage);
 end;
 
-procedure affichageBoutonsMusique(var affichage: TAffichage);
-var boutonPlay,boutonStop: TBouton;
+procedure initialisationBoutonsSysteme(var affichage: TAffichage);
+var bouton: TBouton;
 begin
-    boutonPlay.coord := FCoord(25,25);
+    bouton.coord := FCoord(WINDOW_W-130,WINDOW_H-75);
+    bouton.w := 50;
+    bouton.h := 50;
+    bouton.texte := 'P';
+    bouton.valeur := 'musique_play';
+    ajouterBoutonTableau(bouton,affichage.boutonsSysteme);
+
+    bouton.coord := FCoord(WINDOW_W-75,WINDOW_H-75);
+    bouton.w := 50;
+    bouton.h := 50;
+    bouton.texte := 'S';
+    bouton.valeur := 'musique_stop';
+    ajouterBoutonTableau(bouton,affichage.boutonsSysteme);
 end;
 
 procedure suppressionInformation(var affichage: TAffichage);
@@ -781,7 +812,11 @@ Preconditions :
 Postconditions :
     - affichage : la structure contenant le renderer}
 procedure miseAJourRenderer(var affichage :TAffichage);
+var i: Integer;
 begin
+    for i:=0 to length(affichage.boutonsSysteme)-1 do
+        affichageBouton(affichage.boutonsSysteme[i],affichage);
+    
     SDL_RenderPresent(affichage.renderer);
 end;
 
@@ -840,6 +875,7 @@ begin
 
     initialisationTextures(affichage);
     initialisationBoutonsAction(affichage);
+    initialisationBoutonsSysteme(affichage);
 end;
 
 end.
