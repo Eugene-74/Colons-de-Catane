@@ -16,10 +16,6 @@ begin
     testYann := False;
     if not testYann then
     begin
-        demarrerMusique(affichage);
-        // TODO enlever
-        arreterMusique(affichage);
-
         initialisationPartie(joueurs,plateau,affichage);
 
         SetLength(plateau.Connexions, 1);
