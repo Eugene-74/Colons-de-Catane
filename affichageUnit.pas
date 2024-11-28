@@ -490,14 +490,14 @@ begin
     end;
 end;
 
-procedure ajouterBoutonTableau(texte: String; valeur: String; coord: Tcoord; w,h:Integer; var boutons: TBoutons);
+procedure ajouterBoutonTableau(bouton: TBouton; var boutons: TBoutons);
 begin
     setLength(boutons, length(boutons)+1);
-    boutons[length(boutons)-1].coord := coord;
-    boutons[length(boutons)-1].w := w;
-    boutons[length(boutons)-1].h := h;
-    boutons[length(boutons)-1].texte := texte;
-    boutons[length(boutons)-1].valeur := valeur;
+    boutons[length(boutons)-1].coord := bouton.coord;
+    boutons[length(boutons)-1].w := bouton.w;
+    boutons[length(boutons)-1].h := bouton.h;
+    boutons[length(boutons)-1].texte := bouton.texte;
+    boutons[length(boutons)-1].valeur := bouton.valeur;
 end;
 
 procedure affichageZone(x,y,w,h,epaisseurBord: Integer; var affichage: TAffichage);
@@ -525,13 +525,16 @@ begin
 end;
 
 procedure affichageBouton(bouton: TBouton; var affichage: TAffichage);
-var epaisseurBord: Integer;
 begin
-    epaisseurBord := 2;
-
-    affichageZone(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,epaisseurBord,affichage);
+    affichageZone(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,2,affichage);
 
     affichageTexte(' '+bouton.texte, 25, bouton.coord, FCouleur(0,0,0,255), affichage);
+end;
+
+procedure affichageBoutonsMusique(var affichage: TAffichage);
+var boutonPlay,boutonStop: TBouton;
+begin
+    boutonPlay.coord := FCoord(25,25);
 end;
 
 procedure suppressionInformation(var affichage: TAffichage);
@@ -589,13 +592,15 @@ begin
 
     bouton.coord.x := coord.x + 120;
     bouton.texte := '+';
+    bouton.valeur := ressource + '_plus_' + id;
     affichageBouton(bouton,affichage);
-    ajouterBoutonTableau('+', ressource + '_plus_' + id, bouton.coord, 30, 33, boutons);
+    ajouterBoutonTableau(bouton, boutons);
 
     bouton.coord.x := coord.x + 155;
     bouton.texte := ' -';
+    bouton.valeur := ressource + '_moins_' + id;
     affichageBouton(bouton,affichage);
-    ajouterBoutonTableau('-', ressource + '_moins_' + id, bouton.coord, 30, 33, boutons);
+    ajouterBoutonTableau(bouton, boutons);
 
     coord.x := coord.x + 200;
     affichageTexte(ressource + ' : ' + IntToStr(ressources[TRessource(GetEnumValue(TypeInfo(TRessource), ressource))]), 25, coord, FCouleur(0,0,0,255), affichage);
@@ -610,13 +615,15 @@ begin
 
     bouton.coord.x := coord.x + 120;
     bouton.texte := '<';
+    bouton.valeur := 'joueur_precedent';
     affichageBouton(bouton,affichage);
-    ajouterBoutonTableau('<', 'joueur_precedent', bouton.coord, 30, 33, boutons);
+    ajouterBoutonTableau(bouton, boutons);
 
     bouton.coord.x := coord.x + 155;
     bouton.texte := '>';
+    bouton.valeur := 'joueur_suivant';
     affichageBouton(bouton,affichage);
-    ajouterBoutonTableau('>', 'joueur_suivant', bouton.coord, 30, 33, boutons);
+    ajouterBoutonTableau(bouton, boutons);
 
     coord.x := coord.x + 200;
     affichageTexte(joueurs[id].Nom, 25, coord, FCouleur(0,0,0,255), affichage);
@@ -660,8 +667,9 @@ begin
     bouton.w := 95;
     bouton.h := 45;
     bouton.texte := 'Valider';
+    bouton.valeur := 'valider_echange';
     affichageBouton(bouton,affichage);
-    ajouterBoutonTableau('Valider', 'valider_echange', bouton.coord, 95, 45, boutons);
+    ajouterBoutonTableau(bouton, boutons);
 end;
 
 {Affiche l'ecran d'echange de ressources
@@ -778,28 +786,42 @@ begin
 end;
 
 procedure initialisationBoutonsAction(var affichage: TAffichage);
-var coord: Tcoord;
+var bouton: TBouton;
 begin
     setLength(affichage.boutonsAction, 0);
+    bouton.w := 270;
+    bouton.h := 50;
 
-    coord.x := 25;
-    coord.y := WINDOW_H - 370;
-    ajouterBoutonTableau('Achat connexion', 'achat_connexion', coord, 270, 50, affichage.boutonsAction);
+    bouton.coord.x := 25;
+    bouton.coord.y := WINDOW_H - 370;
+    bouton.texte := 'Achat connexion';
+    bouton.valeur := 'achat_connexion';
+    ajouterBoutonTableau(bouton, affichage.boutonsAction);
 
-    coord.y := WINDOW_H - 310;
-    ajouterBoutonTableau('Achat eleve', 'achat_eleve', coord, 270, 50, affichage.boutonsAction);
+    bouton.coord.y := WINDOW_H - 310;
+    bouton.texte := 'Achat eleve';
+    bouton.valeur := 'achat_eleve';
+    ajouterBoutonTableau(bouton, affichage.boutonsAction);
 
-    coord.y := WINDOW_H - 250;
-    ajouterBoutonTableau('Achat carte tutorat', 'achat_carte_tutorat', coord, 270, 50, affichage.boutonsAction);
+    bouton.coord.y := WINDOW_H - 250;
+    bouton.texte := 'Achat carte tutorat';
+    bouton.valeur := 'achat_carte_tutorat';
+    ajouterBoutonTableau(bouton, affichage.boutonsAction);
 
-    coord.y := WINDOW_H - 190;
-    ajouterBoutonTableau('Changement en prof', 'changement_en_prof', coord, 270, 50, affichage.boutonsAction);
+    bouton.coord.y := WINDOW_H - 190;
+    bouton.texte := 'Changement en prof';
+    bouton.valeur := 'changement_en_prof';
+    ajouterBoutonTableau(bouton, affichage.boutonsAction);
 
-    coord.y := WINDOW_H - 130;
-    ajouterBoutonTableau('Echange', 'echange', coord, 270, 50, affichage.boutonsAction);
+    bouton.coord.y := WINDOW_H - 130;
+    bouton.texte := 'Echange ressources';
+    bouton.valeur := 'echange';
+    ajouterBoutonTableau(bouton, affichage.boutonsAction);
 
-    coord.y := WINDOW_H - 70;
-    ajouterBoutonTableau('Fin de tour', 'fin_tour', coord, 270, 50, affichage.boutonsAction);
+    bouton.coord.y := WINDOW_H - 70;
+    bouton.texte := 'Fin du tour';
+    bouton.valeur := 'fin_tour';
+    ajouterBoutonTableau(bouton, affichage.boutonsAction);
 end;
 
 {Initialise l'affichage
