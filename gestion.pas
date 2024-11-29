@@ -1,7 +1,7 @@
 unit gestion;
 
 interface
-uses Types,affichageUnit,SysUtils,achat,traitement,musique;
+uses Types,affichageUnit,SysUtils,achat,traitement,musique,TypInfo;
 
 procedure initialisationPartie(var joueurs : TJoueurs;var  plateau : TPlateau;var affichage : TAffichage);
 procedure partie(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
@@ -23,7 +23,7 @@ procedure tour(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAfficha
 procedure utiliserCarte1(var plateau : TPlateau; var affichage : TAffichage;joueur : Tjoueur);forward;
 procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueurs : Tjoueurs; joueur : Tjoueur);forward;
 procedure utiliserCarte3(var plateau : TPlateau; joueur : Tjoueur);forward;
-procedure utiliserCarte4(var plateau : TPlateau; joueur : Tjoueur);forward;
+procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau;joueurs : Tjoueurs; joueur : Tjoueur);forward;
 procedure utiliserCarte5(var joueurs : TJoueurs;joueur : Tjoueur);forward;
 procedure utiliserCarteTutorat(var plateau : TPlateau;var affichage : TAffichage;var joueurs : TJoueurs; joueur : Tjoueur;nom : String);forward;
 
@@ -147,6 +147,9 @@ begin
       joueurs[i].Points :=0;
       joueurs[i].Ressources := res;
       joueurs[i].Id := i;
+      joueurs[i].cartesTutorat := CARTES_TUTORAT;
+      
+
       
       i := i + 1;
       end
@@ -303,7 +306,6 @@ begin
     repeat
       clicAction(affichage, valeurBouton);
     
-    
       if(valeurBouton = 'achat_eleve')  then
         achatElements(joueurs[i], plateau, affichage,1)
       else if(valeurBouton = 'achat_connexion')  then
@@ -338,7 +340,15 @@ begin
       else if(valeurBouton = 'arreter_musique')  then
           arreterMusique(affichage)
       else if(valeurBouton = 'fin_tour')  then
-        finTour := True;
+        finTour := True
+      else 
+        begin
+        writeln(valeurBouton);
+        utiliserCarteTutorat(plateau,affichage, joueurs,joueurs[i] ,valeurBouton);
+
+        end;
+
+
 
     until (finTour);
 
@@ -389,12 +399,16 @@ begin
 // On s'en fou (Yann)
 end;
 
-procedure utiliserCarte4(var plateau : TPlateau; joueur : Tjoueur);
+procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau; joueurs : Tjoueurs;joueur : Tjoueur);
+var ressource : TRessource;
 begin
 // CHOISIR 2 CONNAISSANCE
 
+selectionRessource(affichage,ressource);
+joueur.ressources[ressource] := joueur.ressources[ressource] + 2;
+affichageInformation(joueur.Nom +  'viens de gagner 2 : ' +GetEnumName(TypeInfo(TRessource), Ord(ressource)),25,FCouleur(0,255,0,255),affichage);
 
-
+affichageTour(plateau, joueurs, joueur.Id, affichage);
 end;
 
 procedure utiliserCarte5(var joueurs : TJoueurs;joueur : Tjoueur);
@@ -408,54 +422,28 @@ for j in joueurs do
 end;
 
 procedure utiliserCarteTutorat(var plateau : TPlateau;var affichage : TAffichage;var joueurs : TJoueurs; joueur : Tjoueur;nom : String);
+var i : Integer;
 begin
-  if nom = plateau.cartesTutorat.carte1.nom then
-  begin
-    if(joueur.CartesTutorat.carte1.utilisee < joueur.CartesTutorat.carte1.nbr) then
+  for i:=0 to 4 do
     begin
-      utiliserCarte1(plateau,affichage,joueur);
-      joueur.CartesTutorat.carte1.utilisee := joueur.CartesTutorat.carte1.utilisee + 1 
+    if(joueur.CartesTutorat[i].nom = nom) then
+      begin
+      if(joueur.CartesTutorat[i].utilisee < joueur.CartesTutorat[i].nbr) then
+        begin
+        if(nom = plateau.cartesTutorat[0].nom) then
+          utiliserCarte1(plateau,affichage,joueur)
+        else if(nom = plateau.cartesTutorat[1].nom) then
+          utiliserCarte2(plateau,affichage,joueurs,joueur)
+        else if(nom = plateau.cartesTutorat[2].nom) then
+          utiliserCarte3(plateau,joueur)
+        else if(nom = plateau.cartesTutorat[3].nom) then
+          utiliserCarte4(affichage,plateau,joueurs,joueur)
+        else if(nom = plateau.cartesTutorat[4].nom) then
+          utiliserCarte5(joueurs,joueur);
+        joueur.CartesTutorat[i].utilisee := joueur.CartesTutorat[i].utilisee + 1;
+        end;
+      end;
     end;
-  end
-  else if nom = plateau.cartesTutorat.carte2.nom then
-  begin
-    if(joueur.CartesTutorat.carte2.utilisee < joueur.CartesTutorat.carte2.nbr) then
-    begin
-      utiliserCarte2(plateau, affichage,joueurs, joueur);
-      joueur.CartesTutorat.carte2.utilisee := joueur.CartesTutorat.carte2.utilisee + 1 
-    end;
-  end
-  else if nom = plateau.cartesTutorat.carte3.nom then
-  begin
-    if(joueur.CartesTutorat.carte3.utilisee < joueur.CartesTutorat.carte3.nbr) then
-    begin
-      utiliserCarte3(plateau,joueur);
-      joueur.CartesTutorat.carte3.utilisee := joueur.CartesTutorat.carte3.utilisee + 1 
-    end;
-
-  end
-  else if nom = plateau.cartesTutorat.carte4.nom then
-  begin
-    if(joueur.CartesTutorat.carte4.utilisee < joueur.CartesTutorat.carte4.nbr) then
-    begin
-      utiliserCarte4(plateau,joueur);
-      joueur.CartesTutorat.carte4.utilisee := joueur.CartesTutorat.carte4.utilisee + 1 
-    end;
-
-  end
-  else if nom = plateau.cartesTutorat.carte5.nom then
-  begin
-    if(joueur.CartesTutorat.carte5.utilisee < joueur.CartesTutorat.carte5.nbr) then
-    begin
-      utiliserCarte5(joueurs,joueur);
-      joueur.CartesTutorat.carte5.utilisee := joueur.CartesTutorat.carte5.utilisee + 1 
-    end;
-
-  end
-  else
-  begin
-    writeln('Erreur : Carte inconnue');
-  end;
 end;
 
 end.

@@ -566,29 +566,29 @@ begin
     bouton.texte := '';
 
     bouton.coord := FCoord(1400,25);
-    bouton.valeur := CARTES_TUTORAT.carte1.valeur;
+    bouton.valeur := CARTES_TUTORAT[0].nom;
     ajouterBoutonTableau(bouton,affichage.boutonsAction);
-    affichageCarteTutorat(joueur.CartesTutorat.carte1,FCoord(1400,25),affichage);
+    affichageCarteTutorat(joueur.CartesTutorat[0],FCoord(1400,25),affichage);
     
     bouton.coord := FCoord(1615,25);
-    bouton.valeur := CARTES_TUTORAT.carte2.valeur;
+    bouton.valeur := CARTES_TUTORAT[1].nom;
     ajouterBoutonTableau(bouton,affichage.boutonsAction);
-    affichageCarteTutorat(joueur.CartesTutorat.carte2,FCoord(1615,25),affichage);
+    affichageCarteTutorat(joueur.CartesTutorat[1],FCoord(1615,25),affichage);
 
     bouton.coord := FCoord(1400,340);
-    bouton.valeur := CARTES_TUTORAT.carte3.valeur;
+    bouton.valeur := CARTES_TUTORAT[2].nom;
     ajouterBoutonTableau(bouton,affichage.boutonsAction);
-    affichageCarteTutorat(joueur.CartesTutorat.carte3,FCoord(1400,340),affichage);
+    affichageCarteTutorat(joueur.CartesTutorat[2],FCoord(1400,340),affichage);
 
     bouton.coord := FCoord(1615,340);
-    bouton.valeur := CARTES_TUTORAT.carte4.valeur;
+    bouton.valeur := CARTES_TUTORAT[3].nom;
     ajouterBoutonTableau(bouton,affichage.boutonsAction);
-    affichageCarteTutorat(joueur.CartesTutorat.carte4,FCoord(1615,340),affichage);
+    affichageCarteTutorat(joueur.CartesTutorat[3],FCoord(1615,340),affichage);
 
     bouton.coord := FCoord(1400,655);
-    bouton.valeur := CARTES_TUTORAT.carte5.valeur;
+    bouton.valeur := CARTES_TUTORAT[4].nom;
     ajouterBoutonTableau(bouton,affichage.boutonsAction);
-    affichageCarteTutorat(joueur.CartesTutorat.carte5,FCoord(1400,655),affichage);
+    affichageCarteTutorat(joueur.CartesTutorat[4],FCoord(1400,655),affichage);
 end;
 
 procedure suppressionScores(playerId: Integer; var affichage: TAffichage);

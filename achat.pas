@@ -48,63 +48,85 @@ begin
 end;
 
 procedure tirerCarteTutorat(var cartesTutorat : TCartesTutorat;var  joueur : Tjoueur);
-var  i,nbrTotal: Integer;
+var  i,nbrTotal,min,max: Integer;
 begin
   Randomize();
 
   // TODO penser à verif que il en reste avant d'accepter l'achat 
-  nbrTotal := cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr + cartesTutorat.carte3.nbr + cartesTutorat.carte4.nbr + cartesTutorat.carte5.nbr;
+  nbrTotal :=0;
+  for i := 0 to 4 do
+    nbrTotal :=nbrTotal  + cartesTutorat[i].nbr;
 
   i := Random(nbrTotal) + 1;
-  if (i >= 1) and (i <= cartesTutorat.carte1.nbr) then
+  for i := 0 to 4 do
     begin
-    joueur.cartesTutorat.carte1.nbr := joueur.cartesTutorat.carte1.nbr +1;
-    // carteTutorat.nom := cartesTutorat.carte1.nom;
-    // carteTutorat.description := cartesTutorat.carte1.description;
-    // carteTutorat.nbr := 1;
-
-    cartesTutorat.carte1.nbr := cartesTutorat.carte1.nbr - 1; 
-    end
-  else if (i > cartesTutorat.carte1.nbr) and (i <= cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr) then
-    begin
-    joueur.cartesTutorat.carte2.nbr := joueur.cartesTutorat.carte2.nbr +1;
-
-    // carteTutorat.nom := cartesTutorat.carte2.nom;
-    // carteTutorat.description := cartesTutorat.carte2.description;
-    // carteTutorat.nbr := 1;
-
-    cartesTutorat.carte2.nbr := cartesTutorat.carte2.nbr - 1; 
-    end
-  else if (i > cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr) and (i <= cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr + cartesTutorat.carte3.nbr) then
-    begin
-    joueur.cartesTutorat.carte3.nbr := joueur.cartesTutorat.carte3.nbr +1;
-
-    // carteTutorat.nom := cartesTutorat.carte3.nom;
-    // carteTutorat.description := cartesTutorat.carte3.description;
-    // carteTutorat.nbr := 1;
-
-    cartesTutorat.carte3.nbr := cartesTutorat.carte3.nbr - 1;
-    end
-  else if (i > cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr + cartesTutorat.carte3.nbr) and (i <= cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr + cartesTutorat.carte3.nbr + cartesTutorat.carte4.nbr) then
-    begin
-    joueur.cartesTutorat.carte4.nbr := joueur.cartesTutorat.carte4.nbr +1;
-
-    // carteTutorat.nom := cartesTutorat.carte4.nom;
-    // carteTutorat.description := cartesTutorat.carte4.description;
-    // carteTutorat.nbr := 1;
-
-    cartesTutorat.carte4.nbr := cartesTutorat.carte4.nbr - 1;
-    end
-  else
-    begin
-    joueur.cartesTutorat.carte5.nbr := joueur.cartesTutorat.carte5.nbr +1;
-
-    // carteTutorat.nom := cartesTutorat.carte5.nom;
-    // carteTutorat.description := cartesTutorat.carte5.description;
-    // carteTutorat.nbr := 1;
-
-    cartesTutorat.carte5.nbr := cartesTutorat.carte5.nbr - 1;
+    if(i = 0) then
+      begin
+      min := 1;
+      max := cartesTutorat[i].nbr;
+      end
+    else
+      begin
+      min := cartesTutorat[i-1].nbr;
+      max := nbrTotal;
+      end;
+    
+    if(i>=min) and ((i <= max))then
+      begin
+      joueur.cartesTutorat[i].nbr := joueur.cartesTutorat[i].nbr +1;
+      cartesTutorat[i].nbr := cartesTutorat[i].nbr - 1;
+      end;
     end;
+
+  // if (i >= 1) and (i <= cartesTutorat.carte1.nbr) then
+  //   begin
+  //   joueur.cartesTutorat.carte1.nbr := joueur.cartesTutorat.carte1.nbr +1;
+  //   // carteTutorat.nom := cartesTutorat.carte1.nom;
+  //   // carteTutorat.description := cartesTutorat.carte1.description;
+  //   // carteTutorat.nbr := 1;
+
+  //   cartesTutorat.carte1.nbr := cartesTutorat.carte1.nbr - 1; 
+  //   end
+  // else if (i > cartesTutorat.carte1.nbr) and (i <= cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr) then
+  //   begin
+  //   joueur.cartesTutorat.carte2.nbr := joueur.cartesTutorat.carte2.nbr +1;
+
+  //   // carteTutorat.nom := cartesTutorat.carte2.nom;
+  //   // carteTutorat.description := cartesTutorat.carte2.description;
+  //   // carteTutorat.nbr := 1;
+
+  //   cartesTutorat.carte2.nbr := cartesTutorat.carte2.nbr - 1; 
+  //   end
+  // else if (i > cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr) and (i <= cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr + cartesTutorat.carte3.nbr) then
+  //   begin
+  //   joueur.cartesTutorat.carte3.nbr := joueur.cartesTutorat.carte3.nbr +1;
+
+  //   // carteTutorat.nom := cartesTutorat.carte3.nom;
+  //   // carteTutorat.description := cartesTutorat.carte3.description;
+  //   // carteTutorat.nbr := 1;
+
+  //   cartesTutorat.carte3.nbr := cartesTutorat.carte3.nbr - 1;
+  //   end
+  // else if (i > cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr + cartesTutorat.carte3.nbr) and (i <= cartesTutorat.carte1.nbr + cartesTutorat.carte2.nbr + cartesTutorat.carte3.nbr + cartesTutorat.carte4.nbr) then
+  //   begin
+  //   joueur.cartesTutorat.carte4.nbr := joueur.cartesTutorat.carte4.nbr +1;
+
+  //   // carteTutorat.nom := cartesTutorat.carte4.nom;
+  //   // carteTutorat.description := cartesTutorat.carte4.description;
+  //   // carteTutorat.nbr := 1;
+
+  //   cartesTutorat.carte4.nbr := cartesTutorat.carte4.nbr - 1;
+  //   end
+  // else
+  //   begin
+  //   joueur.cartesTutorat.carte5.nbr := joueur.cartesTutorat.carte5.nbr +1;
+
+  //   // carteTutorat.nom := cartesTutorat.carte5.nom;
+  //   // carteTutorat.description := cartesTutorat.carte5.description;
+  //   // carteTutorat.nbr := 1;
+
+  //   cartesTutorat.carte5.nbr := cartesTutorat.carte5.nbr - 1;
+  //   end;
 
 end;
 
@@ -174,7 +196,7 @@ begin
     // PROFESSEUR
     4:
     //  verif ressource
-    if(plateau.cartesTutorat.carte1.nbr + plateau.cartesTutorat.carte2.nbr + plateau.cartesTutorat.carte3.nbr + plateau.cartesTutorat.carte4.nbr + plateau.cartesTutorat.carte5.nbr >=0 )  then //and a les ressources
+    if(plateau.cartesTutorat[0].nbr + plateau.cartesTutorat[1].nbr + plateau.cartesTutorat[2].nbr + plateau.cartesTutorat[3].nbr + plateau.cartesTutorat[4].nbr >=0 )  then //and a les ressources
     begin
       jouerSonClicAction();
 
@@ -589,9 +611,9 @@ begin
     end;
     
 
-    if(joueur.CartesTutorat.carte2.utilisee >= 3) then
+    if(joueur.CartesTutorat[0].utilisee >= 3) then
       for i := 0 to High(joueurs) do
-        if(joueur.CartesTutorat.carte1.utilisee < joueurs[i].CartesTutorat.carte1.utilisee) then
+        if(joueur.CartesTutorat[0].utilisee < joueurs[i].CartesTutorat[0].utilisee) then
           plusDeplacementSouillard := False;
     if(plusDeplacementSouillard) then
       points[j] := points[j] + 2;
@@ -917,7 +939,7 @@ begin
   until (dansLePlateau(plateau,coord));
 
   plateau.Souillard.Position := coord;
-
+  affichageSouillard(plateau, affichage);
   affichageInformation('Souillard deplace avec succes !', 25, FCouleur(0,255,0,255), affichage);
 end;
 function enContactConnexionConnexion(plateau: TPlateau; coords1: TCoords; coords2: TCoords): Boolean;

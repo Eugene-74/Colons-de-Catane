@@ -19,13 +19,14 @@ type
   end;
 
   // TODO Opti ce type en tableau dynamique de 5 TCarteTutorat (Yann)
-  TCartesTutorat = record
-    carte1 : TCarteTutorat;
-    carte2 : TCarteTutorat;
-    carte3 : TCarteTutorat;
-    carte4 : TCarteTutorat;
-    carte5 : TCarteTutorat;
-  end;
+  TCartesTutorat = array [0..4] of TCarteTutorat;
+    // cartes : 
+    // carte1 : TCarteTutorat;
+    // carte2 : TCarteTutorat;
+    // carte3 : TCarteTutorat;
+    // carte4 : TCarteTutorat;
+    // carte5 : TCarteTutorat;
+  // end;
 
   // Definition de TCoord
   TCoord = record
@@ -35,7 +36,7 @@ type
   TCoords = array of TCoord;
 
   // Definition de TRessources (tableau dynamique de TRessourceValeur)
-  TRessources = array [Aucune..Rien] of Integer;
+  TRessources = array [Physique..Mathematiques] of Integer;
 
   // Definition de TJoueur
   TJoueur = record
@@ -140,11 +141,12 @@ type
 
 const
   CARTES_TUTORAT: TCartesTutorat = (
-    carte1: (nom: 'Discussion'; valeur: 'discussion'; description: 'discussion'; nbr: 10; utilisee : 0);
-    carte2: (nom: 'WordReference'; valeur: 'wordreference'; description: 'discussion'; nbr: 12; utilisee : 0);
-    carte3: (nom: 'Voler'; valeur: 'voler'; description: 'discussion'; nbr: 8; utilisee : 0);
-    carte4: (nom: 'Choisir 2 connaissances'; valeur: 'choix_connaissances'; description: 'discussion'; nbr: 16; utilisee : 0);
-    carte5: (nom: 'le dernier'; valeur: 'dernier'; description: 'discussion'; nbr: 4; utilisee : 0)
+      (nom: 'Discussion'; valeur: 'discussion'; description: 'discussion'; nbr: 10; utilisee : 0),
+      (nom: 'WordReference'; valeur: 'wordreference'; description: 'discussion'; nbr: 12; utilisee : 0),
+      (nom: 'Voler'; valeur: 'voler'; description: 'discussion'; nbr: 8; utilisee : 0),
+      (nom: 'Choisir 2 connaissances'; valeur: 'choix_connaissances'; description: 'discussion'; nbr: 16; utilisee : 0),
+      (nom: 'le dernier'; valeur: 'dernier'; description: 'discussion'; nbr: 4; utilisee : 0)
+    
   );
 
 implementation
