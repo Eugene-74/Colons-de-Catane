@@ -385,6 +385,7 @@ procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueu
 begin
   affichageInformation('Deplacement du souillard par le joueur '+joueur.nom,25,FCouleur(0,0,0,255),affichage);
   deplacementSouillard(plateau,joueurs,affichage);
+  affichageTour(plateau, joueurs, joueur.Id, affichage);
 end;
 
 procedure utiliserCarte3(var plateau : TPlateau; joueur : Tjoueur);

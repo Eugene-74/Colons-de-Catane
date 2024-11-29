@@ -939,7 +939,6 @@ begin
   until (dansLePlateau(plateau,coord));
 
   plateau.Souillard.Position := coord;
-  affichageSouillard(plateau, affichage);
   affichageInformation('Souillard deplace avec succes !', 25, FCouleur(0,255,0,255), affichage);
 end;
 function enContactConnexionConnexion(plateau: TPlateau; coords1: TCoords; coords2: TCoords): Boolean;
