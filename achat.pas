@@ -29,10 +29,11 @@ function VerifierAdjacencePersonnes(HexagonesCoords: TCoords; plateau: TPlateau)
 function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;forward;
 function aucuneConnexionAdjacente(coords: TCoords;  plateau: TPlateau; joueur: TJoueur; var affichage : TAffichage): Boolean;forward;
 function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var joueur:TJoueur; var affichage : TAffichage):Boolean;forward;
-function enContactConnexionConnexion(plateau: TPlateau; coords1: TCoords; coords2: TCoords): Boolean;forward;
+function enContactConnexionConnexion(coords1: TCoords; coords2: TCoords): Boolean;forward;
 function resteEleve(plateau:TPlateau; joueur:Tjoueur): Boolean;forward;
 function enContactEleveConnexions(plateau: TPlateau; eleve: TPersonne; var joueur: TJoueur): TCoords;forward;
 function compterRouteSuite(plateau: TPlateau; joueur: TJoueur): Integer;forward;
+function adjacence3Connexions(coords: TCoords; plateau: TPlateau; joueur: TJoueur; var affichage : TAffichage): Boolean;forward;
 
 
 
@@ -262,7 +263,6 @@ begin
   SetLength(plateau.Personnes, Length(plateau.Personnes) + 1);
   with plateau.Personnes[High(plateau.Personnes)] do
     begin
-        // Assigner les coordonnées des hexagones sélectionnés à l'élève
         SetLength(Position, 3); 
         Position[0] := HexagonesCoords[0];
         Position[1] := HexagonesCoords[1];
@@ -271,7 +271,6 @@ begin
       estEleve := True;
       IdJoueur := joueurActuel.Id;
       end;
-  // ajout d'un point
   joueurActuel.Points:=1+joueurActuel.Points;
     suppressionScores(joueurActuel.id,affichage);
     affichageScore(joueurActuel,affichage);
@@ -363,8 +362,6 @@ var
   i,j, k, nombreCommuns: Integer;
 begin
   VerifierAdjacencePersonnes := False;
-
-  // Vérification des doublons dans HexagonesCoords
   for i := 0 to High(HexagonesCoords) - 1 do
   begin
     for j := i + 1 to High(HexagonesCoords) do
@@ -372,31 +369,24 @@ begin
       if (HexagonesCoords[i].x = HexagonesCoords[j].x) and 
          (HexagonesCoords[i].y = HexagonesCoords[j].y) then
       begin
-        Exit(True); // Il y a des coordonnées identiques
+        Exit(True); 
       end;
     end;
   end;
-
-  // Vérification de l'adjacence avec les personnes sur le plateau
   for i := 0 to High(plateau.Personnes) do
   begin
     nombreCommuns := 0;
-
-    // Vérifier chaque coordonnée dans HexagonesCoords
     for j := 0 to High(HexagonesCoords) do
     begin
-      // Comparer avec les trois positions de la personne
       for k := 0 to 2 do
       begin
         if (HexagonesCoords[j].x = plateau.Personnes[i].Position[k].x) and
            (HexagonesCoords[j].y = plateau.Personnes[i].Position[k].y) then
         begin
           Inc(nombreCommuns);
-          Break; // Passer à la coordonnée suivante après un match
+          Break;
         end;
       end;
-
-      // Si on trouve au moins deux coordonnées identiques, on arrête
       if nombreCommuns >= 2 then
       begin
         VerifierAdjacencePersonnes := True;
@@ -439,18 +429,14 @@ begin
 
   if enContact(HexagonesCoords) then
     begin
-    
-      // Parcourt les personnes du plateau pour trouver un elève appartenant au joueur actuel
       for i := 0 to length(plateau.Personnes)-1 do
       begin
         if (plateau.Personnes[i].IdJoueur = joueurActuel.Id) and
           (plateau.Personnes[i].estEleve) then
         begin
-          compteur := 0; // Reinitialise le compteur pour cette personne
-          // Parcourt les positions de la personne pour verifier la correspondance avec les hexagones selectionnes
+          compteur := 0; 
           for j := 0 to  length(HexagonesCoords)-1 do
           begin
-            // Compare chaque position de la personne avec les coordonnees selectionnees
             for k := 0 to length(HexagonesCoords)-1 do
             begin
               if (plateau.Personnes[i].Position[j].x = HexagonesCoords[k].x) and
@@ -460,8 +446,6 @@ begin
               end;
             end;
           end;
-
-          // Si toutes les positions de la personne correspondent aux hexagones selectionnes, effectuer la conversion
           if compteur = 3 then
           begin
             professeurValide := True;
@@ -474,7 +458,6 @@ begin
     end
     else
     begin
-      // Les hexagones sélectionnés ne sont pas adjacents
       affichageInformation('Conversion invalide. Les hexagones sélectionnés ne sont pas adjacents.', 25, FCouleur(0, 0, 0, 255), affichage);
     end;
 end;
@@ -508,7 +491,7 @@ end;
 function compterRouteSuite(plateau: TPlateau; joueur: TJoueur): Integer;
 var
   i, j, k, l: Integer;
-  connexionsEleve: TCoords; // Tableau contenant les connexions liées à un élève
+  connexionsEleve: TCoords; 
   maxRoute, routeActuelle: Integer;
   connexionCourante: TCoords;
   dejaVisite: array of Boolean;
@@ -516,49 +499,37 @@ var
 begin
   maxRoute := 0;
   setLength (connexionCourante,2);
-  // Initialiser un tableau pour marquer les connexions visitées
   SetLength(dejaVisite, Length(plateau.Connexions));
   for i := 0 to High(dejaVisite) do
     dejaVisite[i] := False;
-
-  // Parcourir les élèves du joueur
   for i := 0 to High(plateau.Personnes) do
   begin
     if plateau.Personnes[i].IdJoueur = joueur.Id then
     begin
-      // Récupérer les connexions liées à l'élève
       connexionsEleve := enContactEleveConnexions(plateau, plateau.Personnes[i],joueur);
-
-      // Parcourir chaque connexion liée à l'élève
       for j := 0 to High(connexionsEleve) do
       begin
-        routeActuelle := 1; // Initialiser le compteur de la route
+        routeActuelle := 1;
         connexionCourante[0]:= connexionsEleve[j];
         connexionCourante[1]:= connexionsEleve[j+1];
-
-
-        // Parcourir les connexions du joueur pour suivre la chaîne
         while True do
         begin
-          // Rechercher une connexion liée à la connexion courante
           l := -1;
           for k := 0 to High(plateau.Connexions) do
           begin
             if (plateau.Connexions[k].IdJoueur = joueur.Id) and
                not dejaVisite[k] and
-               enContactConnexionConnexion(plateau, connexionCourante, plateau.Connexions[k].Position) and
+               enContactConnexionConnexion( connexionCourante, plateau.Connexions[k].Position) and
                not CoordsEgales(connexionCourante, plateau.Connexions[k].Position) then
             begin
-              l := k; // Trouver une connexion liée
+              l := k; 
               Break;
             end;
           end;
 
-          // Si aucune connexion suivante n'est trouvée, arrêter la chaîne
           if l = -1 then
             Break;
 
-          // Marquer la connexion comme visitée et continuer la chaîne
           dejaVisite[l] := True;
           // TODO NE SURTOUT PAS METTRE ça CA CASSE TOUT CAR CA PASSE UN POINTEUR
           // connexionCourante := plateau.Connexions[l].Position;
@@ -569,7 +540,6 @@ begin
           Inc(routeActuelle);
         end;
 
-        // Mettre à jour le maximum si une route plus longue est trouvée
         if routeActuelle > maxRoute then
           maxRoute := routeActuelle;
       end;
@@ -690,7 +660,7 @@ begin
   // enContactAvecAutreConnexion := not aucuneConnexionAdjacente(coords, plateau, joueur,affichage);
 
   // 3. Verifie si en contact avec un eleve ou une connexion
-  if enContactAutreEleveConnexion(plateau,coords,joueur,affichage) then 
+  if enContactAutreEleveConnexion(plateau,coords,joueur,affichage) or adjacence3Connexions(coords,plateau,joueur,affichage) then 
     connexionValide:= False;
 
     // TODO pose probleme de acces violation au  placement de connexion du deuxieme joeuur apres un placement du premier joueur
@@ -735,7 +705,6 @@ var
   i : Integer;
   valide : boolean;
 begin
-  // Demande à l'utilisateur de selectionner deux hexagones pour la connexion
   affichageInformation('Cliquez sur 2 hexagones entre lesquels vous voulez placer la connexion', 25, FCouleur(0,0,0,255), affichage);
 
   repeat
@@ -745,7 +714,6 @@ begin
   until valide;
 
 
-  // Verifie si la connexion est valide avec les hexagones selectionnes
   SetLength(plateau.Connexions, Length(plateau.Connexions) + 1);
   plateau.Connexions[length(plateau.Connexions)-1].IdJoueur := joueur.Id;
 
@@ -800,6 +768,33 @@ begin
     end;
   end;
 end;
+function adjacence3Connexions(coords: TCoords; plateau: TPlateau; joueur: TJoueur; var affichage: TAffichage): Boolean;
+var
+  i, k: Integer;
+  autreCoord: TCoords;
+begin
+  SetLength(autreCoord, 2);  
+  k := 0;  
+  for i := 0 to High(plateau.Connexions) do
+  begin
+    if plateau.Connexions[i].IdJoueur <> joueur.Id then
+    begin
+      autreCoord[0] := plateau.Connexions[i].Position[0];  
+      autreCoord[1] := plateau.Connexions[i].Position[1];  
+      if enContactConnexionConnexion(coords, autreCoord) then
+        Inc(k);
+    end;
+  end;
+  if k = 2 then
+    adjacence3Connexions := True
+  else
+    adjacence3Connexions := False;
+end;
+
+
+
+
+
 function aucuneConnexionAdjacente(coords: TCoords; plateau: TPlateau; joueur: TJoueur; var affichage : TAffichage): Boolean;
 var
   i, j,k: Integer;
@@ -808,13 +803,9 @@ var
 begin
 // TODO NE MARCHE PAS REGARDER POURQUOI VORI FONCTION D'AVANT
 
-
-
-  // Initialisation
   aucuneConnexionAdjacente := True;
   verif := true;
 
-  // Parcourir toutes les connexions du plateau pour verifier les connexions du même joueur
   for i := 0 to High(plateau.Connexions) do
   begin
     if plateau.Connexions[i].IdJoueur = joueur.Id then
@@ -822,7 +813,6 @@ begin
       coord1 := plateau.Connexions[i].Position[0];
       coord2 := plateau.Connexions[i].Position[1];
 
-      // Identifier `autreCoord` et `coordRestante` en fonction des coordonnees
       if (coords[0].x = coord1.x) and (coords[0].y = coord1.y) then
       begin
         autreCoord := coords[1];
@@ -848,7 +838,6 @@ begin
         coordRestante := coord1;
       end;
 
-      // Verifier si `autreCoord` est adjacente à `coordRestante` (connexion du même joueur)
       if sontAdjacents(autreCoord, coordRestante) then
       begin
         verif := False;
@@ -856,12 +845,10 @@ begin
     end;
   end;
 
-  // Verifier si `autreCoord2` est utilise par une connexion d'un joueur different
   for j := 0 to High(plateau.Connexions) do
   begin
     if plateau.Connexions[j].IdJoueur <> joueur.Id then
     begin
-      // Verifier si `autreCoord2` correspond à une extremite de la connexion d'un autr<;:e joueur
       if ((autreCoord2.x = plateau.Connexions[j].Position[0].x) and 
           (autreCoord2.y = plateau.Connexions[j].Position[0].y) and
           sontAdjacents(autreCoord, plateau.Connexions[j].Position[1])) or
@@ -941,34 +928,30 @@ begin
   plateau.Souillard.Position := coord;
   affichageInformation('Souillard deplace avec succes !', 25, FCouleur(0,255,0,255), affichage);
 end;
-function enContactConnexionConnexion(plateau: TPlateau; coords1: TCoords; coords2: TCoords): Boolean;
+function enContactConnexionConnexion( coords1: TCoords; coords2: TCoords): Boolean;
 var
   Coord, autreCoord1, autreCoord2: TCoord;
 begin
   enContactConnexionConnexion := False;
 
-  // Vérifie si coords1[0] correspond à coords2[0]
   if (coords1[0].x = coords2[0].x) and (coords1[0].y = coords2[0].y) then
   begin
     Coord := coords1[0];
     autreCoord1 := coords1[1];
     autreCoord2 := coords2[1];
   end
-  // Vérifie si coords1[0] correspond à coords2[1]
   else if (coords1[0].x = coords2[1].x) and (coords1[0].y = coords2[1].y) then
   begin
     Coord := coords1[0];
     autreCoord1 := coords1[1];
     autreCoord2 := coords2[0];
   end
-  // Vérifie si coords1[1] correspond à coords2[0]
   else if (coords1[1].x = coords2[0].x) and (coords1[1].y = coords2[0].y) then
   begin
     Coord := coords1[1];
     autreCoord1 := coords1[0];
     autreCoord2 := coords2[1];
   end
-  // Vérifie si coords1[1] correspond à coords2[1]
   else if (coords1[1].x = coords2[1].x) and (coords1[1].y = coords2[1].y) then
   begin
     Coord := coords1[1];
@@ -976,19 +959,17 @@ begin
     autreCoord2 := coords2[0];
   end
   else
-    Exit; // Aucune correspondance trouvée
-
-  // Vérifie si les deux autres coordonnées (autreCoord1 et autreCoord2) sont adjacentes
+    Exit;
   if sontAdjacents(autreCoord1, autreCoord2) then
     enContactConnexionConnexion := True;
 end;
+
 
 
 function CoordsEgales(coords1: TCoords; coords2: TCoords): Boolean;
 begin
   CoordsEgales := False;
 
-  // Vérification si les deux ensembles de coordonnées sont identiques (dans n'importe quel ordre)
   if ((coords1[0].x = coords2[0].x) and (coords1[0].y = coords2[0].y) and
       (coords1[1].x = coords2[1].x) and (coords1[1].y = coords2[1].y)) or
      ((coords1[0].x = coords2[1].x) and (coords1[0].y = coords2[1].y) and
@@ -1004,18 +985,13 @@ var
   coord1, coord2, autreCoord, autreCoord2: TCoord;
   connexionTrouvee: Boolean;
 begin
-  enContactConnexions := False; // Initialisation à False par défaut
-
-  // Parcourir toutes les connexions du plateau
+  enContactConnexions := False;
   for i := 0 to High(plateau.Connexions) do
   begin
-    // Vérifier si la connexion appartient au joueur
     if plateau.Connexions[i].IdJoueur = joueur.Id then
     begin
       coord1 := plateau.Connexions[i].Position[0];
       coord2 := plateau.Connexions[i].Position[1];
-
-      // Vérifier si l'une des coordonnées correspond à celles du joueur
       if (coords[0].x = coord1.x) and (coords[0].y = coord1.y) then
       begin
         autreCoord := coords[1];
@@ -1037,13 +1013,11 @@ begin
         autreCoord2 := coord1;
       end
       else
-        Continue; // Passer à la connexion suivante si aucune correspondance trouvée
-
-      // Vérifier si `autreCoord` est adjacente à `autreCoord2`
+        Continue; 
       if sontAdjacents(autreCoord, autreCoord2) then
       begin
         enContactConnexions := True;
-        Exit; // Quitter dès qu'une connexion valide est trouvée
+        Exit; 
       end;
     end;
   end;
@@ -1054,27 +1028,20 @@ var
   connexionsTrouvees: Integer;
 begin
   connexionsTrouvees := 0;
-  SetLength(enContactEleveConnexions, 6); // Initialiser le tableau pour stocker 3 connexions maximum
-
-  // Parcours toutes les connexions du plateau
+  SetLength(enContactEleveConnexions, 6);
   for i := 0 to High(plateau.Connexions) do
   begin
-    // Vérifie si la connexion est en contact avec l'élève
     if enContactEleveConnexion(plateau, plateau.Connexions[i].Position, joueur) then
     begin
-      // Ajoute les coordonnées de la connexion en contact à la liste
       enContactEleveConnexions[connexionsTrouvees] := plateau.Connexions[i].Position[0];
       enContactEleveConnexions[connexionsTrouvees+1] := plateau.Connexions[i].Position[1];
 
       connexionsTrouvees:=+2;
-
-      // Si 3 connexions sont trouvées, arrête la recherche
       if connexionsTrouvees = 6 then
         Exit;
     end;
   end;
 
-  // Si moins de 3 connexions sont trouvées, ajuste la taille du tableau pour ne pas inclure des indices inutiles
   SetLength(enContactEleveConnexions, connexionsTrouvees);
 end;
 
