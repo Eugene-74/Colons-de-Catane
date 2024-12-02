@@ -309,7 +309,7 @@ var res : TRessource;
 begin
   aLesRessources := True;
   for res in [Physique..Mathematiques] do 
-    if(joueur.ressources[res] >= ressources[res]) then
+    if(joueur.ressources[res] < ressources[res]) then
       aLesRessources := False;
 end;
 
@@ -359,6 +359,10 @@ begin
         id1 := joueurs[i].id;
         id2 := joueurs[i+1].id;
         echangeRessources(joueurs,id1, id2 ,ressources1,ressources2,affichage);
+
+        writeln(aLesRessources(joueurs[id1],ressources1));
+        writeln(aLesRessources(joueurs[id2],ressources2));
+
         if(aLesRessources(joueurs[id1],ressources1) and aLesRessources(joueurs[id2],ressources2)) then
         begin
             enleverRessources(joueurs[id1],ressources1);
