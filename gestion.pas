@@ -114,60 +114,91 @@ intialisationTutorat := CARTES_TUTORAT;
 end;
 
 procedure initialisationPartie(var joueurs : TJoueurs;var plateau : TPlateau;var affichage : TAffichage);
-var i,j,num : integer;
+var i,j,num,count : integer;
   text : string;
-  stop,unique : Boolean;
+  valide,unique : Boolean;
   res : TRessources;
   r : Tressource;
   cartesTutorat : TCartesTutorat;
+  noms : TStringTab;
 begin
   
   for r := Aucune to Mathematiques do
     res[r] := 0;
-  stop := false;
-  SetLength(joueurs,0);
-  i:=0;
-  repeat
-    write('rentrer le nom du joueur '+IntToStr(i+1)+' : (Entrer pour arreter)');
-    readln(text);
-    unique := True;
-
-    // for j:=0 to  length(joueurs) -1 do 
-    //   if(joueurs[j].Nom = text) then
-    //     begin
-    //     writeln('Le nom du joueur doit être unique');
-    //     unique := False;
-    //     end;
-
-    // if(((text <> '\n') and (text <> '')) and unique) then
-    if((text <>  '0')) then
-      begin
-      SetLength(joueurs,i+1);
-      joueurs[i].Nom:= text;
-      joueurs[i].Points :=0;
-      joueurs[i].Ressources := res;
-      joueurs[i].Id := i;
-      joueurs[i].cartesTutorat := CARTES_TUTORAT;
-      for j:=0 to length( plateau.cartesTutorat)-1 do
-        begin
-        joueurs[i].cartesTutorat[j].nbr := 0;
-        end;
-
-      
-      i := i + 1;
-      end
-    else 
-      begin
-        if(i < 2)then
-          writeln('Le nombre de joueur invalide ( + 2 joueurs minimum)')
-        else 
-          stop := true;
-      end;
-  until ((i>3) or (stop));
-
-
+  
   initialisationAffichage(affichage);
   
+  SetLength(joueurs,0);
+  repeat
+    valide := True;
+    count := 0;
+    recupererNomsJoueurs(noms,affichage);
+    
+    for i:=0 to length(noms) - 1 do
+    begin
+      if (noms[i] <> '') then
+        Inc(count)
+      else
+        break;
+    end;
+
+    if (count < 2) then
+      valide := False;
+  until valide;
+
+  setlength(noms,count);
+
+  for i:=0 to length(noms) - 1 do
+  begin
+    SetLength(joueurs,i+1);
+    joueurs[i].Nom:= noms[i];
+    joueurs[i].Points :=0;
+    joueurs[i].Ressources := res;
+    joueurs[i].Id := i;
+    joueurs[i].cartesTutorat := CARTES_TUTORAT;
+    for j:=0 to length(plateau.cartesTutorat)-1 do
+    begin
+      joueurs[i].cartesTutorat[j].nbr := 0;
+    end;
+  end;
+
+  //TODO enlever apres
+  //repeat
+  //  write('rentrer le nom du joueur '+IntToStr(i+1)+' : (Entrer pour arreter)');
+  //  readln(text);
+  //  unique := True;
+//
+  //  // for j:=0 to  length(joueurs) -1 do 
+  //  //   if(joueurs[j].Nom = text) then
+  //  //     begin
+  //  //     writeln('Le nom du joueur doit être unique');
+  //  //     unique := False;
+  //  //     end;
+//
+  //  // if(((text <> '\n') and (text <> '')) and unique) then
+  //  if((text <>  '0')) then
+  //  begin
+  //    SetLength(joueurs,i+1);
+  //    joueurs[i].Nom:= text;
+  //    joueurs[i].Points :=0;
+  //    joueurs[i].Ressources := res;
+  //    joueurs[i].Id := i;
+  //    joueurs[i].cartesTutorat := CARTES_TUTORAT;
+  //    for j:=0 to length( plateau.cartesTutorat)-1 do
+  //    begin
+  //      joueurs[i].cartesTutorat[j].nbr := 0;
+  //    end;
+  //    i := i + 1;
+  //  end
+  //  else 
+  //  begin
+  //    if(i < 2)then
+  //      writeln('Le nombre de joueur est invalide ( + 2 joueurs minimum)')
+  //    else 
+  //      stop := true;
+  //  end;
+  //until ((i>3) or (stop));
+
   Randomize;
   num :=nombreAleatoire(2);
 
