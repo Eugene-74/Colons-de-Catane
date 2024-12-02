@@ -6,7 +6,7 @@ interface
 uses sdl2, sdl2_image, sdl2_ttf, types, sysutils, TypInfo, traitement, Math, musique;
 
 procedure initialisationAffichage(var affichage: TAffichage);
-procedure recupererNomsJoueurs(var stringTab: TStringTab; var affichage: TAffichage);
+procedure recupererNomsJoueurs(var stringTab: TStringTab; var affichage: TAffichage;valide : Boolean);
 procedure affichageGrille(plat: TPlateau; var affichage: TAffichage);
 procedure clicHexagone(var plat: TPlateau; var affichage: TAffichage; var coord: Tcoord);
 procedure miseAJourRenderer(var affichage :TAffichage);
@@ -101,8 +101,8 @@ Postconditions :
     - plat : le plateau de jeu
     - affichage : la structure contenant le renderer}
 procedure initialisationTextures(var affichage: TAffichage);
-var i: TRessource;
-    j: Integer;
+var j: Integer;
+    i: TRessource;
 begin
     for i:=Physique to Rien do
     begin
@@ -346,7 +346,8 @@ begin
     cartToHexa(FCoord(coord.x-affichage.xGrid,coord.y-affichage.yGrid),tempCoord,tailleHexagone div 2);
     
     coord := tempCoord;
-    jouerSonClic();
+    jouerSonClic(affichage);
+    
     attendre(66);
 end;
 
@@ -958,7 +959,7 @@ begin
         affichageTexte(' ', tailleTexte, FCoord(coord.x+5,coord.y+5), FCouleur(100,100,100,255), affichage);
 end;
 
-procedure recupererNomsJoueurs(var stringTab: TStringTab; var affichage: TAffichage);
+procedure recupererNomsJoueurs(var stringTab: TStringTab; var affichage: TAffichage;valide : Boolean);
 var nom,valeurBouton: String;
     i: Integer;
     boutons: TBoutons;
@@ -967,6 +968,8 @@ var nom,valeurBouton: String;
     event: TSDL_Event;
 begin
     affichageFond(affichage);
+    
+
     affichageTexte('Entrez les noms des joueurs', 35, FCoord(450,70), FCouleur(0,0,0,255), affichage);
 
     setlength(stringTab,4);
@@ -995,7 +998,15 @@ begin
     affichageBouton(bouton,affichage);
     ajouterBoutonTableau(bouton,boutons);
 
+    if(not valide)then
+        begin
+        affichageInformation('Il faut au moins 2 joueurs',25,FCouleur(255,0,0,255),affichage);
+        jouerSonValide(affichage,valide);
+        end;
+
     miseAJourRenderer(affichage);
+
+
 
     running := True;
     while running do

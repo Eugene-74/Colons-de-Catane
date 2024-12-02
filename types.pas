@@ -2,7 +2,7 @@ unit Types;
 
 interface
 
-uses SDL2, SDL2_image;
+uses SDL2, SDL2_image,SDL2_mixer;
 
 type
   // Definition du type TRessource
@@ -127,6 +127,10 @@ type
 
   end;
 
+  TSon = (sonClicHexagone,sonClicBouton,sonValide,sonInvalide);
+
+  TSons = array [sonClicHexagone..sonInvalide] of PMix_Chunk;
+
   // Definition de TAffichage (pour les transferts et mises à jour via SDL)
   TAffichage = record
     fenetre: PWindow;
@@ -137,7 +141,11 @@ type
     boutonsAction: TBoutons;
     boutonsSysteme: TBoutons;
     musiqueActuelle : TMusique;
+    sons : TSons;
+
   end;
+
+
 
 const
   CARTES_TUTORAT: TCartesTutorat = (

@@ -127,15 +127,19 @@ begin
     res[r] := 0;
   
   initialisationAffichage(affichage);
+  initisationMusique(affichage);
+
 
   setlength(noms,4);
   for i:=0 to 3 do
     noms[i] := '';
   //TODO Check si les joueurs sont bien unique et d'affilée dans les noms
+  valide := True;
   repeat
-    valide := True;
     count := 0;
-    recupererNomsJoueurs(noms,affichage);
+    recupererNomsJoueurs(noms,affichage,valide);
+
+    valide := True;
     
     for i:=0 to length(noms) - 1 do
     begin
@@ -146,8 +150,12 @@ begin
     end;
 
     if (count < 2) then
+      begin
       valide := False;
+        
+      end;
   until valide;
+  jouerSonValide(affichage,true);
 
   setlength(noms,count);
 
@@ -164,43 +172,6 @@ begin
       joueurs[i].cartesTutorat[j].nbr := 0;
     end;
   end;
-
-  //TODO enlever apres
-  //repeat
-  //  write('rentrer le nom du joueur '+IntToStr(i+1)+' : (Entrer pour arreter)');
-  //  readln(text);
-  //  unique := True;
-//
-  //  // for j:=0 to  length(joueurs) -1 do 
-  //  //   if(joueurs[j].Nom = text) then
-  //  //     begin
-  //  //     writeln('Le nom du joueur doit être unique');
-  //  //     unique := False;
-  //  //     end;
-//
-  //  // if(((text <> '\n') and (text <> '')) and unique) then
-  //  if((text <>  '0')) then
-  //  begin
-  //    SetLength(joueurs,i+1);
-  //    joueurs[i].Nom:= text;
-  //    joueurs[i].Points :=0;
-  //    joueurs[i].Ressources := res;
-  //    joueurs[i].Id := i;
-  //    joueurs[i].cartesTutorat := CARTES_TUTORAT;
-  //    for j:=0 to length( plateau.cartesTutorat)-1 do
-  //    begin
-  //      joueurs[i].cartesTutorat[j].nbr := 0;
-  //    end;
-  //    i := i + 1;
-  //  end
-  //  else 
-  //  begin
-  //    if(i < 2)then
-  //      writeln('Le nombre de joueur est invalide ( + 2 joueurs minimum)')
-  //    else 
-  //      stop := true;
-  //  end;
-  //until ((i>3) or (stop));
 
   Randomize;
   num :=nombreAleatoire(2);
@@ -360,9 +331,6 @@ begin
         id2 := joueurs[i+1].id;
         echangeRessources(joueurs,id1, id2 ,ressources1,ressources2,affichage);
 
-        writeln(aLesRessources(joueurs[id1],ressources1));
-        writeln(aLesRessources(joueurs[id2],ressources2));
-
         if(aLesRessources(joueurs[id1],ressources1) and aLesRessources(joueurs[id2],ressources2)) then
         begin
             enleverRessources(joueurs[id1],ressources1);
@@ -370,11 +338,14 @@ begin
 
             affichageTour(plateau, joueurs, i, affichage);
             affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' a ete valide',25,FCouleur(0,255,0,255),affichage);
+            jouerSonValide(affichage,true);
         end
         else
         begin
             affichageTour(plateau, joueurs, i, affichage);
             affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est impossible',25,FCouleur(255,0,0,255),affichage);
+            jouerSonValide(affichage,false);
+
         end;
       end
       else if(valeurBouton = 'demarrer_musique')  then

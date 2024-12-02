@@ -43,7 +43,7 @@ begin
     repeat
         clicHexagone(plateau, affichage, coord);
         valide := dansLePlateau(plateau,coord);
-        jouerSonValide(valide);
+        jouerSonValide(affichage,valide);
     until valide;
 
 end;
@@ -143,7 +143,7 @@ begin
          (joueur.Ressources[Chimie] >= 1) and 
          (joueur.Ressources[Physique] >= 1) then
       begin
-      jouerSonClicAction();
+      jouerSonClicAction(affichage);
 
         PlacementEleve(plateau, affichage, joueur);
 
@@ -155,7 +155,7 @@ begin
       else
         begin
           affichageInformation('Vous n''avez pas les ressources necessaires pour acheter un eleve.', 25, FCouleur(0,0,0,255), affichage);
-          jouerSonValide(false);
+          jouerSonValide(affichage,false);
         end;
 
     // CONNEXION
@@ -164,7 +164,7 @@ begin
       if (joueur.Ressources[Humanites] >= 1) and 
          (joueur.Ressources[Physique] >= 1) then
       begin
-      jouerSonClicAction();
+      jouerSonClicAction(affichage);
 
         placementConnexion(plateau, affichage, joueur);
 
@@ -174,7 +174,7 @@ begin
       else
         begin
           affichageInformation('Vous n''avez pas les ressources necessaires pour acheter une connexion.', 25, FCouleur(0,0,0,255), affichage);
-          jouerSonValide(false);
+          jouerSonValide(affichage,false);
           
         end;
     
@@ -185,21 +185,21 @@ begin
       if (joueur.Ressources[Mathematiques] >= 2) and 
          (joueur.Ressources[Physique] >= 1) then
       begin
-      jouerSonClicAction();
+      jouerSonClicAction(affichage);
 
         changementProfesseur(plateau, affichage, joueur);
       end
       else
         begin
           affichageInformation('Vous n''avez pas les ressources necessaires pour changer un eleve en professeur.', 25, FCouleur(0,0,0,255), affichage);
-          jouerSonValide(false);
+          jouerSonValide(affichage,false);
         end;
     // PROFESSEUR
     4:
     //  verif ressource
     if(plateau.cartesTutorat[0].nbr + plateau.cartesTutorat[1].nbr + plateau.cartesTutorat[2].nbr + plateau.cartesTutorat[3].nbr + plateau.cartesTutorat[4].nbr >=0 )  then //and a les ressources
     begin
-      jouerSonClicAction();
+      jouerSonClicAction(affichage);
 
         tirerCarteTutorat(plateau.CartesTutorat, joueur);
     end
@@ -207,7 +207,7 @@ begin
     begin
     
       affichageInformation('Impossbile d''acheter une carte de tutorat.', 25, FCouleur(255,0,0,255), affichage);
-      jouerSonValide(false);
+      jouerSonValide(affichage,false);
       
     end;
   end;
@@ -256,7 +256,7 @@ begin
   repeat
     HexagonesCoords := ClicPersonne(affichage,plateau,True);
     valide := PersonneValide(plateau, HexagonesCoords, True, joueurActuel,affichage);
-    jouerSonValide(valide);
+    jouerSonValide(affichage,valide);
   until valide;
 
   // TODO MACHE PAS LES HEXAGONES SONT PAS SPECIALEMENT COLLER
@@ -329,7 +329,7 @@ begin
     begin
     PersonneValide:= False;      
 
-    jouerSonValide(false);
+    jouerSonValide(affichage,false);
     affichageInformation('Au moins 1 des hexagones choisis doit etre dans le plateau', 25, FCouleur(0,0,0,255), affichage);
 
     
@@ -716,7 +716,7 @@ begin
   repeat
     ClicConnexion(plateau,affichage,coords);
     valide := connexionValide(coords, plateau, joueur,affichage);
-    jouerSonValide(valide);
+    jouerSonValide(affichage,valide);
   until valide;
 
 
