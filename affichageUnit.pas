@@ -800,9 +800,9 @@ begin
     while valeurBouton <> 'valider_echange' do
     begin
         if valeurBouton = 'joueur_precedent' then
-            idJoueurEchange := (idJoueurEchange - 1 + length(joueurs)) mod length(joueurs)
+            idJoueurEchange := (idJoueurEchange - 1 + length(joueurs) - 1 * Ord(((idJoueurEchange-1+length(joueurs)) mod length(joueurs))=idJoueurActuel)) mod length(joueurs)
         else if valeurBouton = 'joueur_suivant' then
-            idJoueurEchange := (idJoueurEchange + 1) mod length(joueurs)
+            idJoueurEchange := (idJoueurEchange + 1 + 1 * Ord(((idJoueurEchange + 1) mod length(joueurs))=idJoueurActuel)) mod length(joueurs)
         else
         begin
             //TODO opti la verif de ressources pour limiter aux ressources possedees en max
