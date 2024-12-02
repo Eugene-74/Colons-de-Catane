@@ -59,7 +59,6 @@ begin
     nbrTotal :=nbrTotal  + cartesTutorat[i].nbr;
 
   i := Random(nbrTotal) + 1;
-  writeln('i : ',i);
   min := 1;
   max := 0;
 
@@ -144,15 +143,14 @@ begin
     // carte de tutorat
     4:
     //  verif ressource
-    if(plateau.cartesTutorat[0].nbr + plateau.cartesTutorat[1].nbr + plateau.cartesTutorat[2].nbr + plateau.cartesTutorat[3].nbr + plateau.cartesTutorat[4].nbr >=0 )  then //and a les ressources
+    if(plateau.cartesTutorat[0].nbr + plateau.cartesTutorat[1].nbr + plateau.cartesTutorat[2].nbr + plateau.cartesTutorat[3].nbr + plateau.cartesTutorat[4].nbr >0 
+        )  then // <TODO and a les ressources
     begin
       jouerSonClicAction(affichage);
       tirerCarteTutorat(plateau.CartesTutorat, joueur);
-
     end
     else
     begin
-    
       affichageInformation('Impossbile d''acheter une carte de tutorat.', 25, FCouleur(255,0,0,255), affichage);
       jouerSonValide(affichage,false);
       
