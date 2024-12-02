@@ -324,7 +324,20 @@ begin
         achatElements(joueurs[i], plateau, affichage,3);
         end
       else if(valeurBouton = 'achat_carte_tutorat')  then
-          achatElements(joueurs[i], plateau, affichage,4)
+        begin
+          
+          achatElements(joueurs[i], plateau, affichage,4);
+
+          for j := 0 to length(joueurs[i].cartesTutorat) - 1 do
+          begin
+            writeln('Carte ', j, ': ', joueurs[i].cartesTutorat[j].nbr);
+          end;
+
+          // affichageCarteTutorat(joueurs[i].CartesTutorat[0],FCoord(1400,25),affichage);
+          // affichageCartesTutorat(joeurs[i],affichage);
+          
+
+        end
       else if(valeurBouton = 'echange')  then
       begin
         id1 := joueurs[i].id;

@@ -22,21 +22,16 @@ var  son: PMix_Chunk;
     i : TSon;
 begin
 
-writeln('initiation musique');
-
-// Enumération des noms de sons
 if Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0 then
     begin
     WriteLn('Erreur d''initialisation de SDL_mixer: ', Mix_GetError);
     Exit;
     end;
 
-// for son
 for i:= sonClicHexagone to sonInvalide do
     begin
         
     son := Mix_LoadWAV(PChar('Assets/Sons/' + GetEnumName(TypeInfo(TSon), Ord(i)) + '.mp3'));
-    writeln('Assets/Sons/' + GetEnumName(TypeInfo(TSon), Ord(i)) + '.mp3');
 
     if son = nil then
         begin
