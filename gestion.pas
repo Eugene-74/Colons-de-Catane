@@ -148,7 +148,10 @@ begin
       joueurs[i].Ressources := res;
       joueurs[i].Id := i;
       joueurs[i].cartesTutorat := CARTES_TUTORAT;
-      
+      for j:=0 to length( plateau.cartesTutorat)-1 do
+        begin
+        joueurs[i].cartesTutorat[j].nbr := 0;
+        end;
 
       
       i := i + 1;
@@ -175,6 +178,7 @@ begin
 
   cartesTutorat := intialisationTutorat();
   plateau.cartesTutorat := cartesTutorat;
+  
 
   affichageTour(plateau, joueurs, 0, affichage);
   
@@ -448,3 +452,6 @@ begin
 end;
 
 end.
+
+
+
