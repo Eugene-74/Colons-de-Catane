@@ -127,8 +127,11 @@ begin
     res[r] := 0;
   
   initialisationAffichage(affichage);
-  
-  SetLength(joueurs,0);
+
+  setlength(noms,4);
+  for i:=0 to 3 do
+    noms[i] := '';
+  //TODO Check si les joueurs sont bien unique et d'affilée dans les noms
   repeat
     valide := True;
     count := 0;

@@ -963,7 +963,6 @@ var nom,valeurBouton: String;
     i: Integer;
     boutons: TBoutons;
     bouton: TBouton;
-    coord: Tcoord;
     running,ecritureNom: Boolean;
     event: TSDL_Event;
 begin
@@ -973,11 +972,16 @@ begin
     setlength(stringTab,4);
     for i:=0 to length(stringTab)-1 do
     begin
-        stringTab[i] := '';
+        if stringTab[i] <> '' then
+            bouton.texte := stringTab[i]
+        else
+        begin
+            stringTab[i] := '';
+            bouton.texte := 'Veuillez entrer le nom du joueur ' + IntToStr(i+1);
+        end;
         bouton.coord := FCoord(450,130+55*i);
         bouton.w := 1050;
         bouton.h := 50;
-        bouton.texte := 'Veuillez entrer le nom du joueur ' + IntToStr(i+1);
         bouton.valeur := IntToStr(i);
         affichageNomJoueurInput(bouton.texte,bouton.coord,FCoord(bouton.w,bouton.h),25,affichage);
         ajouterBoutonTableau(bouton,boutons);
