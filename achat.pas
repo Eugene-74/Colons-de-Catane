@@ -34,7 +34,7 @@ function resteEleve(plateau:TPlateau; joueur:Tjoueur): Boolean;forward;
 function enContactEleveConnexions(plateau: TPlateau; eleve: TPersonne; var joueur: TJoueur): TCoords;forward;
 function compterRouteSuite(plateau: TPlateau; joueur: TJoueur): Integer;forward;
 function adjacence3Connexions(coords: TCoords; plateau: TPlateau; joueur: TJoueur; var affichage : TAffichage): Boolean;forward;
-
+function encontactAutreconnexionEleve(plateau: TPlateau;Eleve:Tcoords; var joueur:Tjoueur): Boolean;forward;
 
 
 procedure clicHexagoneValide(var plateau: TPlateau; var affichage: TAffichage; var coord: Tcoord);
@@ -1060,6 +1060,47 @@ begin
   end;
 end;
 
+function encontactAutreconnexionEleve(plateau: TPlateau;Eleve:Tcoords; var joueur:Tjoueur): Boolean;
+var
+  i,k,l: Integer;
+  coord1:Tcoords;
+  coord2:Tcoords;
+
+begin
+  encontactAutreconnexionEleve:=False
+  setLength(coord,2);
+  for i:=0 to High(plateau.Connexions)-1 do
+    if plateau.Connexions[i].IdJoueur<> joeur.Id then
+    begin
+      coord1[0]:= plateau.Connexions.Position[O];
+      coord1[1]:=plateau.Connexioins.Position[1];
+      
+      coord2[0]:Eleve[0];
+      coord2[1]:Eleve[1]
+      if CoordsEgales(coord2,coord1) then
+      begin
+        inc(l);
+        exit;
+      end
+      coor[0]:Eleve[1];
+      coord2[1]:Eleve[2]
+      if CoordsEgales(coord2,coord1) then
+      begin
+        inc(l);
+        exit;
+      end
+      coor[0]:Eleve[0];
+      coord2[1]:Eleve[2]
+      if CoordsEgales(coord2,coord1) then
+      begin
+        inc(l);
+        exit;
+      end
+    
+    end;
+    if l<> 0 then
+      encontactAutreconnexionEleve:=True;
+end;
 
 
 
