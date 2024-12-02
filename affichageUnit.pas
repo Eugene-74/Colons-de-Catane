@@ -5,7 +5,6 @@ interface
 
 uses sdl2, sdl2_image, sdl2_ttf, types, sysutils, TypInfo, traitement, Math, musique;
 
-procedure initialisationSDL(var affichage: TAffichage);
 procedure initialisationAffichage(var affichage: TAffichage);
 procedure affichageGrille(plat: TPlateau; var affichage: TAffichage);
 procedure clicHexagone(var plat: TPlateau; var affichage: TAffichage; var coord: Tcoord);
@@ -70,7 +69,7 @@ begin
     end;
 
     //TODO Check si tout est bien initialise
-    affichage.fenetre := SDL_CreateWindow('Catan', SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, SDL_WINDOW_SHOWN);
+    affichage.fenetre := SDL_CreateWindow('Catan', SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, SDL_WINDOW_BORDERLESS);
     affichage.renderer := SDL_CreateRenderer(affichage.fenetre, -1, SDL_RENDERER_ACCELERATED);
 end;
 
@@ -314,7 +313,9 @@ begin
                             if bouton.valeur = 'musique_play' then
                                 demarrerMusique(affichage)
                             else if bouton.valeur = 'musique_stop' then
-                                arreterMusique(affichage);
+                                arreterMusique(affichage)
+                            else if bouton.valeur = 'quitter' then
+                                halt();
                         end;
                     end;
                     
@@ -614,10 +615,13 @@ begin
     ajouterBoutonTableau(bouton,affichage.boutonsSysteme);
 
     bouton.coord := FCoord(WINDOW_W-75,WINDOW_H-75);
-    bouton.w := 50;
-    bouton.h := 50;
     bouton.texte := 'S';
     bouton.valeur := 'musique_stop';
+    ajouterBoutonTableau(bouton,affichage.boutonsSysteme);
+
+    bouton.coord := FCoord(WINDOW_W-75,20);
+    bouton.texte := 'X';
+    bouton.valeur := 'quitter';
     ajouterBoutonTableau(bouton,affichage.boutonsSysteme);
 end;
 
