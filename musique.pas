@@ -9,8 +9,9 @@ procedure arreterMusique(var affichage :TAffichage);
 procedure jouerSonValide(affichage :TAffichage;valide : Boolean);
 procedure jouerSonClic(affichage :TAffichage);
 procedure jouerSonClicAction(affichage :TAffichage);
-procedure initisationMusique(var affichage : TAffichage);
+procedure jouerSonFinDeTour(affichage :TAffichage);
 
+procedure initisationMusique(var affichage : TAffichage);
 
 
 
@@ -196,6 +197,11 @@ end;
 procedure jouerSonClicAction(affichage :TAffichage);
 begin
     demarrerSon(affichage,sonClicHexagone);
+end;
+
+procedure jouerSonFinDeTour(affichage :TAffichage);
+begin
+    demarrerSon(affichage,sonFinDeTour);
 end;
 
 

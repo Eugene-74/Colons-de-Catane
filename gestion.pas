@@ -353,7 +353,10 @@ begin
       else if(valeurBouton = 'arreter_musique')  then
           arreterMusique(affichage)
       else if(valeurBouton = 'fin_tour')  then
-        finTour := True
+        begin
+        finTour := True;
+        jouerSonFinDeTour(affichage);
+        end
       else 
         begin
         writeln(valeurBouton);

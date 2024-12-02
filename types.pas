@@ -127,7 +127,7 @@ type
 
   end;
 
-  TSon = (sonClicHexagone,sonClicBouton,sonValide,sonInvalide);
+  TSon = (sonClicHexagone,sonClicBouton,sonFinDeTour,sonValide,sonInvalide);
 
   TSons = array [sonClicHexagone..sonInvalide] of PMix_Chunk;
 
