@@ -316,6 +316,8 @@ begin
     if  VerifierAdjacencePersonnes(HexagonesCoords,plateau) then
     begin
         PersonneValide := False; 
+        exit;
+       
     end
     else
         personneAdjacente := True; 
@@ -333,7 +335,11 @@ begin
     
     Exit;
     end; 
-
+  if encontactAutreconnexionEleve(plateau,HexagonesCoords,joueurActuel) then
+  begin
+    PersonneValide:=False;
+    exit;
+  end;
   PersonneValide := personneAdjacente;
 
 end;
@@ -1060,46 +1066,50 @@ begin
   end;
 end;
 
-function encontactAutreconnexionEleve(plateau: TPlateau;Eleve:Tcoords; var joueur:Tjoueur): Boolean;
+function encontactAutreconnexionEleve(plateau: TPlateau; Eleve: TCoords; var joueur: TJoueur): Boolean;
 var
-  i,k,l: Integer;
-  coord1:Tcoords;
-  coord2:Tcoords;
-
+  i, l: Integer;
+  coord1, coord2: TCoords;
 begin
-  encontactAutreconnexionEleve:=False
-  setLength(coord,2);
-  for i:=0 to High(plateau.Connexions)-1 do
-    if plateau.Connexions[i].IdJoueur<> joeur.Id then
+  encontactAutreconnexionEleve := False;
+  l := 0;
+  SetLength(coord1, 2);
+  SetLength(coord2, 2);
+
+  for i := 0 to High(plateau.Connexions) do
+  begin
+    if plateau.Connexions[i].IdJoueur <> joueur.Id then
     begin
-      coord1[0]:= plateau.Connexions.Position[O];
-      coord1[1]:=plateau.Connexioins.Position[1];
-      
-      coord2[0]:Eleve[0];
-      coord2[1]:Eleve[1]
-      if CoordsEgales(coord2,coord1) then
+      coord1[0] := plateau.Connexions[i].Position[0];
+      coord1[1] := plateau.Connexions[i].Position[1];
+      coord2[0] := Eleve[0];
+      coord2[1] := Eleve[1];
+      if CoordsEgales(coord2, coord1) then
       begin
-        inc(l);
-        exit;
-      end
-      coor[0]:Eleve[1];
-      coord2[1]:Eleve[2]
-      if CoordsEgales(coord2,coord1) then
+        Inc(l);
+        Break;
+      end;
+
+      coord2[0] := Eleve[1];
+      coord2[1] := Eleve[2];
+      if CoordsEgales(coord2, coord1) then
       begin
-        inc(l);
-        exit;
-      end
-      coor[0]:Eleve[0];
-      coord2[1]:Eleve[2]
-      if CoordsEgales(coord2,coord1) then
+        Inc(l);
+        Break;
+      end;
+
+      coord2[0] := Eleve[0];
+      coord2[1] := Eleve[2];
+      if CoordsEgales(coord2, coord1) then
       begin
-        inc(l);
-        exit;
-      end
-    
+        Inc(l);
+        Break;
+      end;
     end;
-    if l<> 0 then
-      encontactAutreconnexionEleve:=True;
+  end;
+
+  if l > 0 then
+    encontactAutreconnexionEleve := True;
 end;
 
 
