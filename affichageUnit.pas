@@ -1049,7 +1049,7 @@ begin
                             affichageNomJoueurInput(nom+'_',boutons[StrToInt(valeurBouton)],25,affichage);
                             miseAJourRenderer(affichage);
                         end
-                        else if event.key.keysym.sym = SDLK_RETURN then
+                        else if (event.key.keysym.sym = SDLK_RETURN) or (event.key.keysym.sym = SDLK_TAB) then
                         begin
                             if StrToInt(valeurBouton) < length(boutons)-2 then
                             begin
