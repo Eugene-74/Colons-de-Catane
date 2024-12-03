@@ -20,11 +20,13 @@ procedure gestionDes(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TA
 function ressourcesVide(ressources : TRessources):boolean;forward;
 function ressourcesEguale(ressources1 : TRessources;ressources2 : TRessources):boolean;forward;
 procedure tour(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);forward;
-procedure utiliserCarte1(var plateau : TPlateau; var affichage : TAffichage;joueur : Tjoueur);forward;
-procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueurs : Tjoueurs; joueur : Tjoueur);forward;
-procedure utiliserCarte3(var plateau : TPlateau; joueur : Tjoueur);forward;
-procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau;joueurs : Tjoueurs; joueur : Tjoueur);forward;
-procedure utiliserCarte5(var joueurs : TJoueurs;joueur : Tjoueur);forward;
+
+procedure utiliserCarte1(var plateau : TPlateau; var affichage : TAffichage;joueurs : Tjoueurs; id : Integer);forward;
+procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueurs : Tjoueurs; id : Integer);forward;
+procedure utiliserCarte3(var plateau : TPlateau; joueurs : Tjoueurs; id : Integer);forward;
+procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau;var joueurs : Tjoueurs; id : Integer);forward;
+procedure utiliserCarte5(var joueurs : TJoueurs;id :Integer);forward;
+
 procedure utiliserCarteTutorat(var plateau : TPlateau;var affichage : TAffichage;var joueurs : TJoueurs;id : Integer;nom : String);forward;
 
 
@@ -415,20 +417,20 @@ begin
 end;
 
 
-procedure utiliserCarte1(var plateau : TPlateau; var affichage : TAffichage;joueur : Tjoueur);
+procedure utiliserCarte1(var plateau : TPlateau; var affichage : TAffichage;joueurs : Tjoueurs;id : Integer);
 begin
-  placementConnexion(plateau,affichage,joueur);
-  placementConnexion(plateau,affichage,joueur);
+  placementConnexion(plateau,affichage,joueurs[id]);
+  placementConnexion(plateau,affichage,joueurs[id]);
 end;
 
-procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueurs : Tjoueurs; joueur : Tjoueur);
+procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueurs : Tjoueurs; id : Integer);
 begin
-  affichageInformation('Deplacement du souillard par le joueur '+joueur.nom,25,FCouleur(0,0,0,255),affichage);
+  affichageInformation('Deplacement du souillard par le joueur '+joueurs[id].nom,25,FCouleur(0,0,0,255),affichage);
   deplacementSouillard(plateau,joueurs,affichage);
-  affichageTour(plateau, joueurs, joueur.Id, affichage);
+  affichageTour(plateau, joueurs, Id, affichage);
 end;
 
-procedure utiliserCarte3(var plateau : TPlateau; joueur : Tjoueur);
+procedure utiliserCarte3(var plateau : TPlateau; joueurs : Tjoueurs;id : Integer);
 // var joueurAVoler : TJoueur;
 begin
 // VOLER UNE CONNAISSANCE
@@ -440,26 +442,21 @@ begin
 // On s'en fou (Yann)
 end;
 
-procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau; joueurs : Tjoueurs;joueur : Tjoueur);
+procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau; var joueurs : Tjoueurs;id : Integer);
 var ressource : TRessource;
 begin
 // CHOISIR 2 CONNAISSANCE
 
 selectionRessource(affichage,ressource);
-joueur.ressources[ressource] := joueur.ressources[ressource] + 2;
-affichageInformation(joueur.Nom +  'viens de gagner 2 : ' +GetEnumName(TypeInfo(TRessource), Ord(ressource)),25,FCouleur(0,255,0,255),affichage);
+joueurs[id].ressources[ressource] := joueurs[id].ressources[ressource] + 2;
+affichageInformation(joueurs[id].Nom +  'viens de gagner 2 : ' +GetEnumName(TypeInfo(TRessource), Ord(ressource)),25,FCouleur(0,255,0,255),affichage);
 
-affichageTour(plateau, joueurs, joueur.Id, affichage);
+affichageTour(plateau, joueurs, Id, affichage);
 end;
 
-procedure utiliserCarte5(var joueurs : TJoueurs;joueur : Tjoueur);
-var j : Tjoueur;
+procedure utiliserCarte5(var joueurs : TJoueurs;id :Integer);
 begin
-for j in joueurs do
-  if(j.Id = joueur.Id) then
-    joueur.Points := joueur.Points + 1;
-
-
+  joueurs[id].Points := joueurs[id].Points + 1;
 end;
 
 procedure utiliserCarteTutorat(var plateau : TPlateau;var affichage : TAffichage;var joueurs : TJoueurs;id : Integer;nom : String);
@@ -479,11 +476,11 @@ if (i <> -1) and (joueurs[id].CartesTutorat[i].utilisee < joueurs[id].CartesTuto
   begin
   jouerSonValide(affichage, true);
   case i of
-    0: utiliserCarte1(plateau, affichage, joueurs[id]);
-    1: utiliserCarte2(plateau, affichage, joueurs, joueurs[id]);
-    2: utiliserCarte3(plateau, joueurs[id]);
-    3: utiliserCarte4(affichage, plateau, joueurs, joueurs[id]);
-    4: utiliserCarte5(joueurs, joueurs[id]);
+    0: utiliserCarte1(plateau, affichage, joueurs, id);
+    1: utiliserCarte2(plateau, affichage, joueurs, id);
+    2: utiliserCarte3(plateau, joueurs, id);
+    3: utiliserCarte4(affichage, plateau, joueurs, id);
+    4: utiliserCarte5(joueurs, id);
   end;
   joueurs[id].CartesTutorat[i].utilisee := joueurs[id].CartesTutorat[i].utilisee + 1;
   affichageTour(plateau, joueurs, id, affichage);
