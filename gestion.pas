@@ -18,6 +18,8 @@ function nombreAleatoire(n : Integer): Integer;forward;
 procedure distributionConnaissance(var joueurs : TJoueurs;var plateau : TPlateau;des : integer);forward;
 procedure gestionDes(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);forward;
 function aLesRessources(joueur : Tjoueur; ressources : TRessources):boolean;forward;
+function ressourcesVide(ressources : TRessources):boolean;forward;
+function ressourcesEguale(ressources1 : TRessources;ressources2 : TRessources):boolean;forward;
 procedure enleverRessources( var joueur : Tjoueur; ressources : TRessources);forward;
 procedure tour(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);forward;
 procedure utiliserCarte1(var plateau : TPlateau; var affichage : TAffichage;joueur : Tjoueur);forward;
@@ -143,11 +145,14 @@ begin
     
     for i:=0 to length(noms) - 1 do
     begin
-      if (noms[i] <> '') then
+      if ((noms[i] <> '') ) then
+      
         Inc(count)
       else
         break;
     end;
+
+
 
     if (count < 2) then
       begin
@@ -284,6 +289,24 @@ begin
       aLesRessources := False;
 end;
 
+function ressourcesVide(ressources : TRessources):boolean;
+var res : TRessource;
+begin
+  ressourcesVide := True;
+  for res in [Physique..Mathematiques] do 
+    if( ressources[res]>=1) then
+      ressourcesVide := False;
+end;
+
+function ressourcesEguale(ressources1 : TRessources;ressources2 : TRessources):boolean;
+var res : TRessource;
+begin
+  ressourcesEguale := True;
+  for res in [Physique..Mathematiques] do 
+    if( ressources1[res]<> ressources2[res]) then
+      ressourcesEguale := False;
+end;
+
 
 procedure enleverRessources( var joueur : Tjoueur; ressources : TRessources);
 var res : TRessource;
@@ -334,7 +357,19 @@ begin
         id2 := joueurs[i+1].id;
         echangeRessources(joueurs,id1, id2 ,ressources1,ressources2,affichage);
 
-        if(aLesRessources(joueurs[id1],ressources1) and aLesRessources(joueurs[id2],ressources2)) then
+        if(ressourcesVide(ressources1) and ressourcesVide(ressources2))then
+          begin
+          affichageTour(plateau, joueurs, i, affichage);
+          affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est vide',25,FCouleur(255,0,0,255),affichage);
+          jouerSonValide(affichage,false);
+          end
+        else if(ressourcesEguale(ressources1,ressources2))then
+          begin
+          affichageTour(plateau, joueurs, i, affichage);
+          affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est inutile car il ne change rien',25,FCouleur(255,0,0,255),affichage);
+          jouerSonValide(affichage,false);
+          end
+        else if(aLesRessources(joueurs[id1],ressources1) and aLesRessources(joueurs[id2],ressources2)) then
         begin
             enleverRessources(joueurs[id1],ressources1);
             enleverRessources(joueurs[id2],ressources1);
@@ -362,9 +397,7 @@ begin
         end
       else 
         begin
-        // writeln(valeurBouton);
         utiliserCarteTutorat(plateau,affichage, joueurs,joueurs[i].id ,valeurBouton);
-        affichageTour(plateau, joueurs, i, affichage);
 
         end;
 
@@ -451,6 +484,7 @@ if((nom = plateau.cartesTutorat[0].nom) and (joueurs[id].CartesTutorat[0].utilis
   jouerSonValide(affichage,true);
   utiliserCarte1(plateau,affichage,joueurs[id]);
   joueurs[id].CartesTutorat[0].utilisee := joueurs[id].CartesTutorat[0].utilisee + 1;
+  affichageTour(plateau, joueurs, i, affichage);
   exit;
   end
 else if((nom = plateau.cartesTutorat[1].nom) and (joueurs[id].CartesTutorat[1].utilisee < joueurs[id].CartesTutorat[1].nbr)) then
@@ -458,6 +492,7 @@ else if((nom = plateau.cartesTutorat[1].nom) and (joueurs[id].CartesTutorat[1].u
   jouerSonValide(affichage,true);
   utiliserCarte2(plateau,affichage,joueurs,joueurs[id]);
   joueurs[id].CartesTutorat[1].utilisee := joueurs[id].CartesTutorat[1].utilisee + 1;
+  affichageTour(plateau, joueurs, i, affichage);
   exit;
   end
 else if((nom = plateau.cartesTutorat[2].nom) and (joueurs[id].CartesTutorat[2].utilisee < joueurs[id].CartesTutorat[2].nbr)) then
@@ -465,6 +500,7 @@ else if((nom = plateau.cartesTutorat[2].nom) and (joueurs[id].CartesTutorat[2].u
   jouerSonValide(affichage,true);
   utiliserCarte3(plateau,joueurs[id]);
   joueurs[id].CartesTutorat[2].utilisee := joueurs[id].CartesTutorat[2].utilisee + 1;
+  affichageTour(plateau, joueurs, i, affichage);
   exit;
   end
 else if((nom = plateau.cartesTutorat[3].nom) and (joueurs[id].CartesTutorat[3].utilisee < joueurs[id].CartesTutorat[3].nbr)) then
@@ -472,6 +508,7 @@ else if((nom = plateau.cartesTutorat[3].nom) and (joueurs[id].CartesTutorat[3].u
   jouerSonValide(affichage,true);
   utiliserCarte4(affichage,plateau,joueurs,joueurs[id]);
   joueurs[id].CartesTutorat[3].utilisee := joueurs[id].CartesTutorat[3].utilisee + 1;
+  affichageTour(plateau, joueurs, i, affichage);
   exit;
   end
 else if((nom = plateau.cartesTutorat[4].nom) and (joueurs[id].CartesTutorat[4].utilisee < joueurs[id].CartesTutorat[4].nbr)) then
@@ -479,9 +516,9 @@ else if((nom = plateau.cartesTutorat[4].nom) and (joueurs[id].CartesTutorat[4].u
   jouerSonValide(affichage,true);
   utiliserCarte5(joueurs,joueurs[id]);
   joueurs[id].CartesTutorat[4].utilisee := joueurs[id].CartesTutorat[4].utilisee + 1;
+  affichageTour(plateau, joueurs, i, affichage);
   exit;
   end;
-
 
 affichageInformation('Vous avez deja utilise toutes vos cartes de ce type',25,FCouleur(255,0,0,255),affichage);
 jouerSonValide(affichage,false);

@@ -12,7 +12,6 @@ type
 
   TCarteTutorat = record
     nom : String;
-    valeur : String;
     description : String;
     nbr : Integer;
     utilisee : Integer;
@@ -20,13 +19,6 @@ type
 
   // TODO Opti ce type en tableau dynamique de 5 TCarteTutorat (Yann)
   TCartesTutorat = array [0..4] of TCarteTutorat;
-    // cartes : 
-    // carte1 : TCarteTutorat;
-    // carte2 : TCarteTutorat;
-    // carte3 : TCarteTutorat;
-    // carte4 : TCarteTutorat;
-    // carte5 : TCarteTutorat;
-  // end;
 
   // Definition de TCoord
   TCoord = record
@@ -149,11 +141,11 @@ type
 
 const
   CARTES_TUTORAT: TCartesTutorat = (
-      (nom: 'Discussion'; valeur: 'discussion'; description: 'discussion'; nbr: 10; utilisee : 0),
-      (nom: 'WordReference'; valeur: 'wordreference'; description: 'discussion'; nbr: 12; utilisee : 0),
-      (nom: 'Voler'; valeur: 'voler'; description: 'discussion'; nbr: 8; utilisee : 0),
-      (nom: 'Choisir 2 connaissances'; valeur: 'choix_connaissances'; description: 'discussion'; nbr: 16; utilisee : 0),
-      (nom: 'le dernier'; valeur: 'dernier'; description: 'discussion'; nbr: 4; utilisee : 0)
+      (nom: 'Discussion'; description: 'discussion'; nbr: 10; utilisee : 0),
+      (nom: 'WordReference'; description: 'discussion'; nbr: 12; utilisee : 0),
+      (nom: 'Voler'; description: 'discussion'; nbr: 8; utilisee : 0),
+      (nom: 'Choisir 2 connaissances'; description: 'discussion'; nbr: 16; utilisee : 0),
+      (nom: 'le dernier'; description: 'discussion'; nbr: 4; utilisee : 0)
     
   );
 
