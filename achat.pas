@@ -184,9 +184,6 @@ begin
 
 end;
 
-
-
-
 procedure placementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 var HexagonesCoords: TCoords;
   valide : Boolean;
