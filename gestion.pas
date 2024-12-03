@@ -115,8 +115,7 @@ end;
 
 procedure initialisationPartie(var joueurs : TJoueurs;var plateau : TPlateau;var affichage : TAffichage);
 var i,j,num,count : integer;
-  text : string;
-  valide,unique : Boolean;
+  valide,unique,nonVide : Boolean;
   res : TRessources;
   r : Tressource;
   cartesTutorat : TCartesTutorat;
@@ -133,25 +132,35 @@ begin
   setlength(noms,4);
   for i:=0 to 3 do
     noms[i] := '';
-  //TODO Check si les joueurs sont bien unique et d'affilée dans les noms
   valide := True;
+  unique := true;
+  nonVide := true;
   repeat
     count := 0;
-    recupererNomsJoueurs(noms,affichage,valide);
+    recupererNomsJoueurs(noms,affichage,valide,unique,nonVide);
 
     valide := True;
+    unique := true;
+    nonVide := true;
+
     // TODO verifier que le nom est unique et pas que avec des  ' '
     for i:=0 to length(noms) - 1 do
     begin
-      if ((noms[i] <> '') ) then
-
-        Inc(count)
+      if ((noms[i] <> '') and (noms[i] <> ' ') ) then
+        begin
+        for j:=i+1 to length(noms) - 1 do
+          if (noms[i] = noms[j]) then
+            begin
+            unique := False;
+            end;
+        if(unique) then
+          Inc(count)
+        end
       else
-        break;
+        begin
+        nonVide := False;
+        end;
     end;
-
-
-
     if (count < 2) then
       begin
       valide := False;
@@ -298,14 +307,12 @@ begin
       ressourcesEguale := False;
 end;
 
-
 procedure tour(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
-var valeurBouton,text : String;
+var valeurBouton : String;
   finTour : boolean;
   ressources1,ressources2 : TRessources;
-  res : TRessource;
+  // res : TRessource;
   i,id1,id2 : Integer;
-  j,k : Integer;
 begin
   for i := 0 to length(joueurs)-1 do
     begin
@@ -314,7 +321,6 @@ begin
     gestionDes(joueurs,plateau,affichage);
       
     affichageTour(plateau,joueurs,i,affichage);
-
 
     finTour := False;
     repeat
@@ -377,10 +383,9 @@ begin
         finTour := True;
         jouerSonFinDeTour(affichage);
         end
-      else 
+      else
         begin
         utiliserCarteTutorat(plateau,affichage, joueurs,joueurs[i].id ,valeurBouton);
-
         end;
 
 
@@ -461,49 +466,33 @@ procedure utiliserCarteTutorat(var plateau : TPlateau;var affichage : TAffichage
 var i : Integer;
 begin
 // TODO peut etre ameriliorer
-if((nom = plateau.cartesTutorat[0].nom) and (joueurs[id].CartesTutorat[0].utilisee < joueurs[id].CartesTutorat[0].nbr)) then
+
+i := -1;
+for i := 0 to High(plateau.cartesTutorat) do
   begin
-  jouerSonValide(affichage,true);
-  utiliserCarte1(plateau,affichage,joueurs[id]);
-  joueurs[id].CartesTutorat[0].utilisee := joueurs[id].CartesTutorat[0].utilisee + 1;
-  affichageTour(plateau, joueurs, id, affichage);
-  exit;
-  end
-else if((nom = plateau.cartesTutorat[1].nom) and (joueurs[id].CartesTutorat[1].utilisee < joueurs[id].CartesTutorat[1].nbr)) then
-  begin
-  jouerSonValide(affichage,true);
-  utiliserCarte2(plateau,affichage,joueurs,joueurs[id]);
-  joueurs[id].CartesTutorat[1].utilisee := joueurs[id].CartesTutorat[1].utilisee + 1;
-  affichageTour(plateau, joueurs, id, affichage);
-  exit;
-  end
-else if((nom = plateau.cartesTutorat[2].nom) and (joueurs[id].CartesTutorat[2].utilisee < joueurs[id].CartesTutorat[2].nbr)) then
-  begin
-  jouerSonValide(affichage,true);
-  utiliserCarte3(plateau,joueurs[id]);
-  joueurs[id].CartesTutorat[2].utilisee := joueurs[id].CartesTutorat[2].utilisee + 1;
-  affichageTour(plateau, joueurs, id, affichage);
-  exit;
-  end
-else if((nom = plateau.cartesTutorat[3].nom) and (joueurs[id].CartesTutorat[3].utilisee < joueurs[id].CartesTutorat[3].nbr)) then
-  begin
-  jouerSonValide(affichage,true);
-  utiliserCarte4(affichage,plateau,joueurs,joueurs[id]);
-  joueurs[id].CartesTutorat[3].utilisee := joueurs[id].CartesTutorat[3].utilisee + 1;
-  affichageTour(plateau, joueurs, id, affichage);
-  exit;
-  end
-else if((nom = plateau.cartesTutorat[4].nom) and (joueurs[id].CartesTutorat[4].utilisee < joueurs[id].CartesTutorat[4].nbr)) then
-  begin
-  jouerSonValide(affichage,true);
-  utiliserCarte5(joueurs,joueurs[id]);
-  joueurs[id].CartesTutorat[4].utilisee := joueurs[id].CartesTutorat[4].utilisee + 1;
-  affichageTour(plateau, joueurs, id, affichage);
-  exit;
+  if (nom = plateau.cartesTutorat[i].nom) then
+    break;
   end;
 
-affichageInformation('Vous avez deja utilise toutes vos cartes de ce type',25,FCouleur(255,0,0,255),affichage);
-jouerSonValide(affichage,false);
+// Si l'index est valide et la carte peut être utilisée
+if (i <> -1) and (joueurs[id].CartesTutorat[i].utilisee < joueurs[id].CartesTutorat[i].nbr) then
+  begin
+  jouerSonValide(affichage, true);
+  case i of
+    0: utiliserCarte1(plateau, affichage, joueurs[id]);
+    1: utiliserCarte2(plateau, affichage, joueurs, joueurs[id]);
+    2: utiliserCarte3(plateau, joueurs[id]);
+    3: utiliserCarte4(affichage, plateau, joueurs, joueurs[id]);
+    4: utiliserCarte5(joueurs, joueurs[id]);
+  end;
+  joueurs[id].CartesTutorat[i].utilisee := joueurs[id].CartesTutorat[i].utilisee + 1;
+  affichageTour(plateau, joueurs, id, affichage);
+  
+  affichageInformation('Vous avez deja utilise toutes vos cartes de ce type',25,FCouleur(255,0,0,255),affichage);
+  jouerSonValide(affichage,false);
+  end;
+
+
 end;
 
 end.

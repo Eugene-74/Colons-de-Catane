@@ -6,7 +6,7 @@ interface
 uses sdl2, sdl2_image, sdl2_ttf, types, sysutils, TypInfo, traitement, Math, musique;
 
 procedure initialisationAffichage(var affichage: TAffichage);
-procedure recupererNomsJoueurs(var stringTab: TStringTab; var affichage: TAffichage;valide : Boolean);
+procedure recupererNomsJoueurs(var stringTab: TStringTab; var affichage: TAffichage;valide : Boolean;unique : Boolean;nonVide : Boolean);
 procedure affichageGrille(plat: TPlateau; var affichage: TAffichage);
 procedure clicHexagone(var plat: TPlateau; var affichage: TAffichage; var coord: Tcoord);
 procedure miseAJourRenderer(var affichage :TAffichage);
@@ -364,6 +364,7 @@ begin
 	texture := SDL_CreateTextureFromSurface(renderer,surface);
 	
 	LoadTextureFromText := texture;
+    SDL_FreeSurface(surface);
 end;
 
 {Affiche du texte à l'ecran
@@ -959,7 +960,7 @@ begin
         affichageTexte(' ', tailleTexte, FCoord(coord.x+5,coord.y+5), FCouleur(100,100,100,255), affichage);
 end;
 
-procedure recupererNomsJoueurs(var stringTab: TStringTab; var affichage: TAffichage;valide : Boolean);
+procedure recupererNomsJoueurs(var stringTab: TStringTab; var affichage: TAffichage;valide : Boolean;unique : Boolean;nonVide : Boolean);
 var nom,valeurBouton: String;
     i: Integer;
     boutons: TBoutons;
@@ -998,12 +999,21 @@ begin
     affichageBouton(bouton,affichage);
     ajouterBoutonTableau(bouton,boutons);
 
-    if(not valide)then
+    if(not unique)then
+        begin
+        affichageInformation('Il faut des noms differents',25,FCouleur(255,0,0,255),affichage);
+        jouerSonValide(affichage,unique);
+        end
+    else if(not nonVide)then
+        begin
+        affichageInformation('Il faut des noms non vide',25,FCouleur(255,0,0,255),affichage);
+        jouerSonValide(affichage,nonVide);
+        end
+    else if(not valide)then
         begin
         affichageInformation('Il faut au moins 2 joueurs',25,FCouleur(255,0,0,255),affichage);
         jouerSonValide(affichage,valide);
         end;
-
     miseAJourRenderer(affichage);
 
 
@@ -1055,7 +1065,7 @@ begin
                                     nom := '';
                                 nom := nom + event.text.text;
                                 stringTab[StrToInt(valeurBouton)] := nom;
-                                affichageNomJoueurInput(nom,boutons[StrToInt(valeurBouton)].coord,FCoord(boutons[StrToInt(valeurBouton)].w,boutons[StrToInt(valeurBouton)].h),25,affichage);
+                                affichageNomJoueurInput(nom+'_',boutons[StrToInt(valeurBouton)].coord,FCoord(boutons[StrToInt(valeurBouton)].w,boutons[StrToInt(valeurBouton)].h),25,affichage);
                                 miseAJourRenderer(affichage);
                             end;
                         end;
