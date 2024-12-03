@@ -28,6 +28,7 @@ procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau;var j
 procedure utiliserCarte5(var joueurs : TJoueurs;id :Integer);forward;
 
 procedure utiliserCarteTutorat(var plateau : TPlateau;var affichage : TAffichage;var joueurs : TJoueurs;id : Integer;nom : String);forward;
+procedure donnerRessources( var joueur : Tjoueur; ressources : TRessources);forward;
 
 
 function chargerGrille(num : Integer): TGrille;
@@ -280,7 +281,7 @@ begin
 
   if(des = 7)then
     begin
-      affichageDes(plateau.des1,plateau.des2,FCoord(50,500),affichage);
+      affichageDes(plateau.des1,plateau.des2,affichage);
 
       deplacementSouillard(plateau,joueurs,affichage)
     end
