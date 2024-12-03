@@ -95,7 +95,7 @@ begin
       end
       else
         begin
-          affichageInformation('Vous n''avez pas les ressources nécessaires pour acheter un élève.', 25, FCouleur(0,0,0,255), affichage);
+          affichageInformation('Vous n''avez pas les ressources necessaires pour acheter un eleve.', 25, FCouleur(0,0,0,255), affichage);
           jouerSonValide(affichage,false);
         end;
 
@@ -111,7 +111,7 @@ begin
       end
       else
         begin
-          affichageInformation('Vous n''avez pas les ressources nécessaires pour acheter une connexion.', 25, FCouleur(0,0,0,255), affichage);
+          affichageInformation('Vous n''avez pas les ressources necessaires pour acheter une connexion.', 25, FCouleur(0,0,0,255), affichage);
           jouerSonValide(affichage,false);
           
         end;
@@ -129,7 +129,7 @@ begin
       end
       else
         begin
-          affichageInformation('Vous n''avez pas les ressources nécessaires pour changer un élève en professeur.', 25, FCouleur(0,0,0,255), affichage);
+          affichageInformation('Vous n''avez pas les ressources necessaires pour changer un eleve en professeur.', 25, FCouleur(0,0,0,255), affichage);
           jouerSonValide(affichage,false);
         end;
     // carte de tutorat
@@ -219,7 +219,7 @@ begin
 
   miseAJourRenderer(affichage);
   
-  affichageInformation('Élève placé avec succès !', 25, FCouleur(0,255,0,255), affichage);
+  affichageInformation('Eleve place avec succes !', 25, FCouleur(0,255,0,255), affichage);
 
   
 end;
@@ -243,7 +243,7 @@ begin
     // TODO verifier le contact avec une connexion du joueur
     if not enContactEleveConnexion(plateau,HexagonesCoords,joueurActuel) then
     begin
-      PersonneValide:=false;
+    //  writeln('Eleve non liée avec une connexion');
       exit;
     end;
 
@@ -267,7 +267,7 @@ begin
     PersonneValide:= False;      
 
     jouerSonValide(affichage,false);
-    affichageInformation('Au moins un des hexagones choisis doit être dans le plateau.', 25, FCouleur(0,0,0,255), affichage);
+    affichageInformation('Au moins 1 des hexagones choisis doit etre dans le plateau', 25, FCouleur(0,0,0,255), affichage);
 
     
     Exit;
@@ -290,9 +290,9 @@ var
 begin
   SetLength(HexagonesCoords,3);
   if estEleve then
-    affichageInformation('Cliquez sur trois hexagones entre lesquels vous voulez placer l''élève.', 25, FCouleur(0,0,0,255), affichage)
+    affichageInformation('Cliquez sur trois hexagones entre lesquels vous voulez placer l''eleve', 25, FCouleur(0,0,0,255), affichage)
   else
-    affichageInformation('Cliquez sur trois hexagones entre lesquels vous voulez placer le professeur.', 25, FCouleur(0,0,0,255), affichage);
+    affichageInformation('Cliquez sur trois hexagones entre lesquels vous voulez placer le professeur', 25, FCouleur(0,0,0,255), affichage);
   for i := 0 to 2 do
   begin
     clicHexagone(plateau, affichage, HexagonesCoords[i]); 
@@ -383,7 +383,7 @@ begin
           for k := 0 to High(HexagonesCoords) do
           begin
             if (plateau.Personnes[i].Position[j].x = HexagonesCoords[k].x) and
-              (plateau.Personnes[i].Position[j].y = HexagonesCoords[k].y) then
+               (plateau.Personnes[i].Position[j].y = HexagonesCoords[k].y) then
               Inc(compteur);
           end;
         end;
@@ -391,11 +391,11 @@ begin
         if compteur = 3 then
         begin
           professeurValide := True;
-          ProfesseurCoords[0] := HexagonesCoords[0];
+          ProfesseurCoords[0] := HexagonesCoords[0]; 
           ProfesseurCoords[1] := HexagonesCoords[1];
           ProfesseurCoords[2] := HexagonesCoords[2];
-          indexEleve := i;
-          Exit;
+          indexEleve := i; 
+          Exit; 
         end;
       end;
     end;
@@ -445,7 +445,7 @@ end;
 function compterConnexionSuite(plateau: TPlateau; joueur: TJoueur): Integer;
 var
   i, j, k, l: Integer;
-  connexionsEleve: TCoords;
+  connexionsEleve: TCoords; 
   maxRoute, routeActuelle: Integer;
   connexionCourante: TCoords;
   dejaVisite: array of Boolean;
@@ -472,11 +472,11 @@ begin
           for k := 0 to High(plateau.Connexions) do
           begin
             if (plateau.Connexions[k].IdJoueur = joueur.Id) and
-              not dejaVisite[k] and
-              enContactConnexionConnexion( connexionCourante, plateau.Connexions[k].Position) and
-              not CoordsEgales(connexionCourante, plateau.Connexions[k].Position) then
+               not dejaVisite[k] and
+               enContactConnexionConnexion( connexionCourante, plateau.Connexions[k].Position) and
+               not CoordsEgales(connexionCourante, plateau.Connexions[k].Position) then
             begin
-              l := k;
+              l := k; 
               Break;
             end;
           end;
@@ -485,6 +485,8 @@ begin
             Break;
 
           dejaVisite[l] := True;
+          // TODO NE SURTOUT PAS METTRE ça CA CASSE TOUT CAR CA PASSE UN POINTEUR
+          // connexionCourante := plateau.Connexions[l].Position;
           connexionCourante[0] := plateau.Connexions[l].Position[0];
           connexionCourante[1] := plateau.Connexions[l].Position[1];
 
@@ -511,8 +513,8 @@ var
   points : array of Integer;
 
 begin
-  gagner := False;
-  gagnant := -1;
+  gagner := False; 
+  gagnant := -1;    
 
   SetLength(points,Length(joueurs));
   j:=0;
@@ -549,7 +551,7 @@ begin
 
       gagner := True;
       gagnant := j+1; 
-      affichageInformation(joueur.Nom + 'viens de gagner la partie en dépassant les 10 points.', 25, FCouleur(0,0,0,255), affichage);
+      affichageInformation(joueur.Nom + 'viens de gagner la partie en depassant les 10 points', 25, FCouleur(0,0,0,255), affichage);
 
       Break;
     end;
@@ -565,7 +567,7 @@ end;
 procedure affichageGagnant(joueur: TJoueur; affichage: TAffichage);
 var text : String;
 begin
-  text := ('Félicitations, ' + joueur.Nom + ' ! Vous avez gagné la partie avec ' + intToStr(joueur.Points) + ' points.');
+  text := ('Felicitations, ' + joueur.Nom + ' ! Vous avez gagne la partie avec ' + intToStr(joueur.Points) + ' points.');
   affichageInformation(text, 25, FCouleur(0,0,0,255), affichage);
 end;
 
@@ -587,17 +589,17 @@ begin
   for i := 0 to High(plateau.Connexions) do
   begin
     if (((plateau.Connexions[i].Position[0].x = coords[0].x) and
-      (plateau.Connexions[i].Position[0].y = coords[0].y) and
-      (plateau.Connexions[i].Position[1].x = coords[1].x) and
-      (plateau.Connexions[i].Position[1].y = coords[1].y))
-      or
-      ((plateau.Connexions[i].Position[0].x = coords[1].x) and
-      (plateau.Connexions[i].Position[0].y = coords[1].y) and
-      (plateau.Connexions[i].Position[1].x = coords[0].x) and
-      (plateau.Connexions[i].Position[1].y = coords[0].y))) then
+         (plateau.Connexions[i].Position[0].y = coords[0].y) and
+         (plateau.Connexions[i].Position[1].x = coords[1].x) and
+         (plateau.Connexions[i].Position[1].y = coords[1].y))
+        or 
+        ((plateau.Connexions[i].Position[0].x = coords[1].x) and
+         (plateau.Connexions[i].Position[0].y = coords[1].y) and
+         (plateau.Connexions[i].Position[1].x = coords[0].x) and
+         (plateau.Connexions[i].Position[1].y = coords[0].y))) then
     begin
       connexionValide := False;
-      affichageInformation('Position de connexion déjà occupée.', 25, FCouleur(0,0,0,255), affichage);
+      affichageInformation('Position de connexion deja occupee.', 25, FCouleur(0,0,0,255), affichage);
 
       Exit;
     end;
@@ -627,7 +629,7 @@ begin
     if not enContactAvecAutreConnexion then
     begin
       connexionValide := False;
-      affichageInformation('La connexion doit être adjacente a une autre connexion ou en contact avec un élève ou un professeur.', 25, FCouleur(0,0,0,255), affichage);
+      affichageInformation('La connexion doit etre adjacente a une autre connexion ou en contact avec un eleve ou un professeur.', 25, FCouleur(0,0,0,255), affichage);
       Exit;
     end;
   end;
@@ -635,8 +637,8 @@ begin
   // 4. Verifie si au moins 1 des hexagones est dans le plateau
   if (not dansLePlateau(plateau,coords[0]) and not dansLePlateau(plateau,coords[1])) then 
     begin
-    connexionValide:= False;
-    affichageInformation('Au moins 1 des hexagones choisis doit être dans le plateau.', 25, FCouleur(0,0,0,255), affichage);
+    connexionValide:= False;      
+    affichageInformation('Au moins 1 des hexagones choisis doit etre dans le plateau', 25, FCouleur(0,0,0,255), affichage);
 
     Exit;
     end; 
@@ -686,7 +688,7 @@ begin
 
   miseAJourRenderer(affichage);
 
-  affichageInformation('Connexion placée avec succès !', 25, FCouleur(0,255,0,255), affichage);
+  affichageInformation('Connexion placee avec succes !', 25, FCouleur(0,255,0,255), affichage);
 
 end;
 
@@ -704,13 +706,13 @@ begin
       for k := 0 to 2 do
       begin
         if (coords[0].x = plateau.Personnes[i].Position[k].x) and
-          (coords[0].y = plateau.Personnes[i].Position[k].y) then
+           (coords[0].y = plateau.Personnes[i].Position[k].y) then
         begin
           Inc(l);
         end;
 
         if (coords[1].x = plateau.Personnes[i].Position[k].x) and
-          (coords[1].y = plateau.Personnes[i].Position[k].y) then
+           (coords[1].y = plateau.Personnes[i].Position[k].y) then
         begin
           Inc(l);
         end;
@@ -728,14 +730,14 @@ var
   i, k: Integer;
   autreCoord: TCoords;
 begin
-  SetLength(autreCoord, 2);
-  k := 0;
+  SetLength(autreCoord, 2);  
+  k := 0;  
   for i := 0 to High(plateau.Connexions) do
   begin
     if plateau.Connexions[i].IdJoueur <> joueur.Id then
     begin
-      autreCoord[0] := plateau.Connexions[i].Position[0];
-      autreCoord[1] := plateau.Connexions[i].Position[1];
+      autreCoord[0] := plateau.Connexions[i].Position[0];  
+      autreCoord[1] := plateau.Connexions[i].Position[1];  
       if enContactConnexionConnexion(coords, autreCoord) then
         Inc(k);
     end;
@@ -799,6 +801,7 @@ begin
     end;
   end;
     aucuneConnexionAdjacente := verif;
+ 
 end;
 
 function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var joueur:TJoueur; var affichage : TAffichage):Boolean;
@@ -814,22 +817,20 @@ begin
       for k := 0 to 2 do
       begin
         if (coords[0].x = plateau.Personnes[i].Position[k].x) and
-          (coords[0].y = plateau.Personnes[i].Position[k].y) then
+           (coords[0].y = plateau.Personnes[i].Position[k].y) then
         begin
           Inc(l);
         end;
 
         if (coords[1].x = plateau.Personnes[i].Position[k].x) and
-          (coords[1].y = plateau.Personnes[i].Position[k].y) then
+           (coords[1].y = plateau.Personnes[i].Position[k].y) then
         begin
           Inc(l);
         end;
         if l >= 2 then
         begin
           enContactAutreEleveConnexion := True;
-          // TODO pas sencer etre un probleme ???
-          // On enpeche pas ça ...
-          affichageInformation('Connexion en contact avec une personne d''un autre joueur.', 25, FCouleur(0,0,0,255), affichage);
+          affichageInformation('Connexion en contact avec une personne dune autre joueur.', 25, FCouleur(0,0,0,255), affichage);
 
           Exit;
         end;
@@ -842,14 +843,14 @@ end;
 procedure deplacementSouillard(var plateau : TPlateau;var joueurs : TJoueurs ;var affichage : TAffichage);
 var coord : Tcoord;
 begin
-  affichageInformation('Cliquez sur 1 hexagones pour déplacer le souillard.', 25, FCouleur(0,0,0,255), affichage);
+  affichageInformation('Cliquez sur 1 hexagones pour deplacer le souillard.', 25, FCouleur(0,0,0,255), affichage);
 
   repeat
     clicHexagone(plateau, affichage, coord); 
   until (dansLePlateau(plateau,coord));
 
   plateau.Souillard.Position := coord;
-  affichageInformation('Souillard déplacé avec succès !', 25, FCouleur(0,255,0,255), affichage);
+  affichageInformation('Souillard deplace avec succes !', 25, FCouleur(0,255,0,255), affichage);
 end;
 function enContactConnexionConnexion( coords1: TCoords; coords2: TCoords): Boolean;
 var
@@ -895,7 +896,7 @@ begin
 
   if ((coords1[0].x = coords2[0].x) and (coords1[0].y = coords2[0].y) and
       (coords1[1].x = coords2[1].x) and (coords1[1].y = coords2[1].y)) or
-      ((coords1[0].x = coords2[1].x) and (coords1[0].y = coords2[1].y) and
+     ((coords1[0].x = coords2[1].x) and (coords1[0].y = coords2[1].y) and
       (coords1[1].x = coords2[0].x) and (coords1[1].y = coords2[0].y)) then
   begin
     CoordsEgales := True;
@@ -936,11 +937,11 @@ begin
         autreCoord2 := coord1;
       end
       else
-        Continue;
+        Continue; 
       if sontAdjacents(autreCoord, autreCoord2) then
       begin
         enContactConnexions := True;
-        Exit;
+        Exit; 
       end;
     end;
   end;
