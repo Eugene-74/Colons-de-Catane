@@ -37,6 +37,7 @@ function enContactEleveConnexions(plateau: TPlateau; eleve: TPersonne; var joueu
 function compterConnexionSuite(plateau: TPlateau; joueur: TJoueur): Integer;forward;
 function adjacence3Connexions(coords: TCoords; plateau: TPlateau; joueur: TJoueur; var affichage : TAffichage): Boolean;forward;
 function encontactAutreconnexionEleve(plateau: TPlateau;Eleve:Tcoords; var joueur:Tjoueur): Boolean;forward;
+procedure tirerCarteTutorat(var cartesTutorat : TCartesTutorat;var  joueur : Tjoueur);forward;
 
 
 procedure clicHexagoneValide(var plateau: TPlateau; var affichage: TAffichage; var coord: Tcoord);
@@ -142,13 +143,16 @@ begin
         tirerCarteTutorat(plateau.CartesTutorat, joueur);
 
         enleverRessources(joueur,COUT_CARTE_TUTORAT);
+        
+        writeln('carte de tutorat achetee');
+        
+        affichageCartesTutoratAndRender(joueur,affichage);
         end;
     end
     else
     begin
       affichageInformation('Impossible d''acheter une carte de tutorat.', 25, FCouleur(255,0,0,255), affichage);
       jouerSonValide(affichage,false);
-      
     end;
   end;
 end;
@@ -209,15 +213,11 @@ begin
       IdJoueur := joueurActuel.Id;
       end;
   joueurActuel.Points:=1+joueurActuel.Points;
-    suppressionScores(joueurActuel.id,affichage);
-    affichageScore(joueurActuel,affichage);
-    affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
-    miseAJourRenderer(affichage);
 
-  affichageScore(joueurActuel,affichage);
+  affichageScoreAndClear(joueurActuel,affichage);
   affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
-  miseAJourRenderer(affichage);
 
+  miseAJourRenderer(affichage);
   
   affichageInformation('Eleve place avec succes !', 25, FCouleur(0,255,0,255), affichage);
 
@@ -429,10 +429,13 @@ begin
   begin
     plateau.Personnes[indexEleve].Position := ProfesseurCoords;
     plateau.Personnes[indexEleve].estEleve := False;
+    
     joueurActuel.Points := joueurActuel.Points + 1;
-    affichageScore(joueurActuel, affichage);
+    
+    affichageScoreAndClear(joueurActuel, affichage);
     affichagePersonne(plateau.Personnes[indexEleve], affichage);
     miseAJourRenderer(affichage);
+
     affichageInformation('Élève converti en professeur avec succès !', 25, FCouleur(0, 255, 0, 255), affichage);
   end;
 end;
@@ -1041,7 +1044,8 @@ var res : TRessource;
 begin
   for res in [Physique..Mathematiques] do 
     joueur.ressources[res] := joueur.ressources[res] - ressources[res]
-  
 end;
+
+
 
 end.
