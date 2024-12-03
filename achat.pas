@@ -1097,7 +1097,6 @@ begin
         Inc(l);
         Break;
       end;
-
       coord2[0] := Eleve[0];
       coord2[1] := Eleve[2];
       if CoordsEgales(coord2, coord1) then
@@ -1107,7 +1106,6 @@ begin
       end;
     end;
   end;
-
   if l > 0 then
     encontactAutreconnexionEleve := True;
 end;
