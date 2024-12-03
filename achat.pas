@@ -34,7 +34,7 @@ function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var jou
 function enContactConnexionConnexion(coords1: TCoords; coords2: TCoords): Boolean;forward;
 function resteEleve(plateau:TPlateau; joueur:Tjoueur): Boolean;forward;
 function enContactEleveConnexions(plateau: TPlateau; eleve: TPersonne; var joueur: TJoueur): TCoords;forward;
-function compterRouteSuite(plateau: TPlateau; joueur: TJoueur): Integer;forward;
+function compterConnexionSuite(plateau: TPlateau; joueur: TJoueur): Integer;forward;
 function adjacence3Connexions(coords: TCoords; plateau: TPlateau; joueur: TJoueur; var affichage : TAffichage): Boolean;forward;
 function encontactAutreconnexionEleve(plateau: TPlateau;Eleve:Tcoords; var joueur:Tjoueur): Boolean;forward;
 
@@ -443,7 +443,7 @@ end;
 
 
 
-function compterRouteSuite(plateau: TPlateau; joueur: TJoueur): Integer;
+function compterConnexionSuite(plateau: TPlateau; joueur: TJoueur): Integer;
 var
   i, j, k, l: Integer;
   connexionsEleve: TCoords; 
@@ -501,7 +501,7 @@ begin
     end;
   end;
 
-  compterRouteSuite := maxRoute;
+  compterConnexionSuite := maxRoute;
 end;
 
 
@@ -526,10 +526,10 @@ begin
     
     
     plusGrandeRoute := True;
-    if (compterRouteSuite(plateau,joueur) >= 5) then
+    if (compterConnexionSuite(plateau,joueur) >= 5) then
     begin
     for i := 0 to High(joueurs) do
-      if(compterRouteSuite(plateau,joueur) < compterRouteSuite(plateau,joueurs[i])) then
+      if(compterConnexionSuite(plateau,joueur) < compterConnexionSuite(plateau,joueurs[i])) then
         plusGrandeRoute := False;
     if plusGrandeRoute then
       points[j] := points[j] + 2;
