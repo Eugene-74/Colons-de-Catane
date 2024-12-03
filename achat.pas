@@ -24,7 +24,7 @@ implementation
 procedure ClicConnexion(plateau : TPlateau;affichage : TAffichage;var coords : TCoords);forward;
 function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage : TAffichage): Boolean;forward;
 function ClicPersonne(affichage: TAffichage; plateau: TPlateau; estEleve: Boolean): TCoords;forward;
-function CountPersonnes(personnes: array of TPersonne; estEleve: Boolean; joueur: TJoueur): Integer;forward;
+function CountPersonnes(personnes:TPersonnes; estEleve: Boolean; joueur: TJoueur): Integer;forward;
 function professeurValide(affichage: TAffichage; plateau: TPlateau; joueurActuel: TJoueur; HexagonesCoords: TCoords; var ProfesseurCoords: TCoords; var indexEleve: Integer): Boolean;forward;
 function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur;affichage : TAffichage): Boolean;forward;
 function VerifierAdjacencePersonnes(HexagonesCoords: TCoords; plateau: TPlateau): Boolean;forward;
@@ -343,7 +343,7 @@ end;
 
 
 
-function CountPersonnes(personnes: array of TPersonne; estEleve: Boolean; joueur: TJoueur): Integer;
+function CountPersonnes(personnes: TPersonnes; estEleve: Boolean; joueur: TJoueur): Integer;
 var
   i,Result: Integer;
 
@@ -413,15 +413,11 @@ var
   indexEleve, nbProfesseurs, i: Integer;
   valide: Boolean;
 begin
-  nbProfesseurs := 0;
-  for i := 0 to High(plateau.Personnes) do
+  nbProfesseurs := CountPersonnes(plateau.Personnes,false,joueurActuel);
+  
+  if nbProfesseurs > 4 then
   begin
-    if (plateau.Personnes[i].IdJoueur = joueurActuel.Id) and not(plateau.Personnes[i].estEleve) then
-      Inc(nbProfesseurs);
-  end;
-  if nbProfesseurs >= 2 then
-  begin
-    affichageInformation('Vous avez déjà atteint la limite de 2 professeurs.', 25, FCouleur(255, 0, 0, 255), affichage);
+    affichageInformation('Vous avez déjà atteint la limite de 4 professeurs.', 25, FCouleur(255, 0, 0, 255), affichage);
     Exit;
   end;
   repeat
