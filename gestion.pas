@@ -539,7 +539,7 @@ else
   joueurs[id].CartesTutorat[i].utilisee := joueurs[id].CartesTutorat[i].utilisee + 1;
   affichageTour(plateau, joueurs, id, affichage);
   
-  affichageInformation('Vous avez deja utilise toutes vos cartes de ce type',25,FCouleur(255,0,0,255),affichage);
+  affichageInformation('Vous avez déjà utilise toutes vos cartes de ce type',25,FCouleur(255,0,0,255),affichage);
   jouerSonValide(affichage,false);
   end;
 
