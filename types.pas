@@ -176,6 +176,12 @@ const
     (1), // Humanites
     (0)  // Mathematiques
   );
+
+  WINDOW_W = 1920;
+  WINDOW_H = 1080;
+  tailleHexagone = 180;
+  tailleEleve = tailleHexagone div 3;
+  tailleSouillard = tailleHexagone div 2;
 implementation
 
 end.

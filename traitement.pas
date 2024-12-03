@@ -2,7 +2,7 @@ unit traitement;
 
 interface
 
-uses Types,SDL2;
+uses Types,SDL2,Math;
 
 procedure hexaToCart(coord: TCoord; var coord_output: TCoord; taille:Integer);
 procedure cartToHexa(coord: TCoord; var coord_output: TCoord; taille:Integer);
@@ -12,6 +12,12 @@ function sontAdjacents(coord1, coord2: TCoord): Boolean;
 function splitValeur(texte: String): TStringTab;
 function FCoord(x, y: Integer): TCoord;
 function FCouleur(r, g, b, a: Integer): TSDL_Color;
+function FRect(x, y, w, h: Integer): TSDL_Rect;
+function FBouton(x, y, w, h: Integer; texte,valeur: String): TBouton;
+procedure calculPosConnexion(connexion: TConnexion; var coord: Tcoord; var longueur: Real; var angle: Real);
+procedure recupererCouleurJoueur(joueurId: Integer; var couleur: TSDL_Color);
+function calculPosPersonne(personne : TPersonne): Tcoord;
+procedure ajouterBoutonTableau(bouton: TBouton; var boutons: TBoutons);
 
 implementation
 
@@ -107,6 +113,95 @@ begin
     FCouleur.g := g;
     FCouleur.b := b;
     FCouleur.a := a;
+end;
+
+function FRect(x, y, w, h: Integer): TSDL_Rect;
+begin
+    FRect.x := x;
+    FRect.y := y;
+    FRect.w := w;
+    FRect.h := h;
+end;
+
+function FBouton(x, y, w, h: Integer; texte,valeur: String): TBouton;
+begin
+    FBouton.coord := FCoord(x, y);
+    FBouton.w := w;
+    FBouton.h := h;
+    FBouton.texte := texte;
+    FBouton.valeur := valeur;
+end;
+
+{Calcul les coordonnees d'une connexion
+Preconditions :
+    - connexion : la connexion à calculer
+Postconditions :
+    - coord (TCoord) : les coordonnees du milieu de la connexion
+    - longueur (Real) : la longueur de la connexion
+    - angle (Real) : l'angle de la connexion}
+procedure calculPosConnexion(connexion: TConnexion; var coord: Tcoord; var longueur: Real; var angle: Real);
+var dx,dy: Integer;
+    coord2: Tcoord;
+begin
+    hexaToCart(connexion.Position[0],coord,tailleHexagone div 2);
+    hexaToCart(connexion.Position[1],coord2,tailleHexagone div 2);
+
+    dx := coord2.x - coord.x;
+    dy := coord2.y - coord.y;
+
+    coord := FCoord((coord.x + coord2.x) div 2,(coord.y + coord2.y) div 2);
+
+    longueur := tailleHexagone div 2;
+    angle := RadToDeg(arctan2(dy,dx)+PI/2);
+end;
+
+{Renvoie la couleur associe au joueur
+Preconditions :
+    - joueurId : l'identifiant du joueur
+Postconditions :
+    - couleur (TSDL_Color) : la couleur associee au joueur}
+procedure recupererCouleurJoueur(joueurId: Integer; var couleur: TSDL_Color);
+begin
+    case joueurId of
+        0: begin
+            couleur.r := 255; couleur.g := 0; couleur.b := 0;
+        end;
+        1: begin
+            couleur.r := 0; couleur.g := 255; couleur.b := 0;
+        end;
+        2: begin
+            couleur.r := 0; couleur.g := 0; couleur.b := 255;
+        end;
+        3: begin
+        couleur.r := 255; couleur.g := 255; couleur.b := 0;
+        end;
+    end;
+end;
+
+{Calcul les coordonnees d'une personne
+Preconditions :
+    - personne : la personne à calculer
+Postconditions :
+    - TCoord : les coordonnees de la personne}
+function calculPosPersonne(personne : TPersonne): Tcoord;
+var scoord,coord: Tcoord;
+    i: Integer;
+begin
+    scoord := FCoord(0,0);
+    
+    for i:=0 to length(personne.Position)-1 do
+    begin
+        hexaToCart(personne.Position[i],coord,tailleHexagone div 2);
+        scoord := FCoord(scoord.x + coord.x,scoord.y + coord.y);
+    end;
+
+    calculPosPersonne := FCoord(scoord.x div 3,scoord.y div 3);
+end;
+
+procedure ajouterBoutonTableau(bouton: TBouton; var boutons: TBoutons);
+begin
+    setLength(boutons, length(boutons)+1);
+    boutons[length(boutons)-1] := bouton;
 end;
 
 end.

@@ -27,13 +27,6 @@ procedure attendre(ms: Integer);
 
 implementation
 
-const
-    WINDOW_W = 1920;
-    WINDOW_H = 1080;
-    tailleHexagone = 180;
-    tailleEleve = tailleHexagone div 3;
-    tailleSouillard = tailleHexagone div 2;
-
 procedure attendre(ms: Integer);
 begin
     SDL_Delay(ms);
@@ -49,16 +42,10 @@ function chargerTexture(affichage : TAffichage;filename : String): PSDL_Texture;
 var image : PSDL_Texture;
 	chemin : AnsiString;
 begin
-	// Construit le chemin complet du fichier image
-	chemin := 'Assets/' + filename + '.png';
-
+	chemin := 'Assets/' + filename + '.png'; // Construit le chemin complet du fichier image
 	image := IMG_LoadTexture(affichage.renderer, PChar(chemin));
-	
-	// Verifie si le chargement a reussi
-	if image = nil then
-		writeln('Could not load image : ',IMG_GetError);
-	
-	chargerTexture := image;
+	if image = nil then writeln('Could not load image : ',IMG_GetError) // Verifie si le chargement a reussi
+	else chargerTexture := image;
 end;
 
 procedure initialisationSDL(var affichage: TAffichage);
@@ -66,9 +53,8 @@ begin
     if SDL_Init(SDL_INIT_VIDEO) < 0 then
     begin
         writeln('Erreur lors de l''initialisation de la SDL');
-        Halt(1);
+        HALT;
     end;
-
     //TODO Check si tout est bien initialise
     affichage.fenetre := SDL_CreateWindow('Catan', SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, SDL_WINDOW_BORDERLESS);
     affichage.renderer := SDL_CreateRenderer(affichage.fenetre, -1, SDL_RENDERER_ACCELERATED);
@@ -83,13 +69,8 @@ end;
 procedure affichageImage(x,y,w,h: Integer; texture: PSDL_Texture; var affichage: TAffichage);
 var destination_rect: TSDL_RECT;
 begin
-    destination_rect.x:=x;
-    destination_rect.y:=y;
-    destination_rect.w:=w;
-    destination_rect.h:=h;
-
-    if SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect)<>0 then
-        WriteLn('Erreur SDL: ', SDL_GetError());
+    destination_rect := FRect(x,y,w,h);
+    if SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect)<>0 then WriteLn('Erreur SDL: ', SDL_GetError());
 end;
 
 
@@ -114,9 +95,6 @@ begin
     for j:=1 to 5 do
         affichage.texturePlateau.textureIconesCartesTutorat[j] := chargerTexture(affichage, 'IconesCartesTutorat/'+IntToStr(j));
 
-    //TODO Clean up
-    // affichage.texturePlateau.textureContourHexagone := chargerTexture(affichage, 'bordureCercle');
-    // affichage.texturePlateau.textureContourVide := chargerTexture(affichage, 'bordure');
     affichage.texturePlateau.textureContourHexagone := chargerTexture(affichage, 'hexagoneCercle');
     affichage.texturePlateau.textureContourVide := chargerTexture(affichage, 'hexagone');
 
@@ -136,29 +114,6 @@ begin
         WriteLn('Erreur SDL: ', SDL_GetError());
 end;
 
-{Renvoie la couleur associe au joueur
-Preconditions :
-    - joueurId : l'identifiant du joueur
-Postconditions :
-    - couleur (TSDL_Color) : la couleur associee au joueur}
-procedure recupererCouleurJoueur(joueurId: Integer; var couleur: TSDL_Color);
-begin
-    case joueurId of
-        0: begin
-            couleur.r := 255; couleur.g := 0; couleur.b := 0;
-        end;
-        1: begin
-            couleur.r := 0; couleur.g := 255; couleur.b := 0;
-        end;
-        2: begin
-            couleur.r := 0; couleur.g := 0; couleur.b := 255;
-        end;
-        3: begin
-        couleur.r := 255; couleur.g := 255; couleur.b := 0;
-        end;
-    end;
-end;
-
 {Cree une texture de couleur
 Preconditions :
     - affichage : la structure contenant le renderer
@@ -170,35 +125,10 @@ var surface : PSDL_Surface;
     texture : PSDL_Texture;
 begin
     surface := SDL_CreateRGBSurface(0, 1, 1, 32, 0, 0, 0, 0);
-    if SDL_FillRect(surface, nil, SDL_MapRGB(surface^.format, couleur.r, couleur.g, couleur.b)) <> 0 then
-        WriteLn('Erreur SDL: ', SDL_GetError());
+    if SDL_FillRect(surface, nil, SDL_MapRGB(surface^.format, couleur.r, couleur.g, couleur.b)) <> 0 then WriteLn('Erreur SDL: ', SDL_GetError());
 
     texture := SDL_CreateTextureFromSurface(affichage.renderer, surface);
-
     creerTextureCouleur := texture;
-end;
-
-{Calcul les coordonnees d'une connexion
-Preconditions :
-    - connexion : la connexion à calculer
-Postconditions :
-    - coord (TCoord) : les coordonnees du milieu de la connexion
-    - longueur (Real) : la longueur de la connexion
-    - angle (Real) : l'angle de la connexion}
-procedure calculPosConnexion(connexion: TConnexion; var coord: Tcoord; var longueur: Real; var angle: Real);
-var dx,dy: Integer;
-    coord2: Tcoord;
-begin
-    hexaToCart(connexion.Position[0],coord,tailleHexagone div 2);
-    hexaToCart(connexion.Position[1],coord2,tailleHexagone div 2);
-
-    dx := coord2.x - coord.x;
-    dy := coord2.y - coord.y;
-
-    coord := FCoord((coord.x + coord2.x) div 2,(coord.y + coord2.y) div 2);
-
-    longueur := tailleHexagone div 2;
-    angle := RadToDeg(arctan2(dy,dx)+PI/2);
 end;
 
 {Affiche la connexion à l'ecran
@@ -219,39 +149,15 @@ begin
     recupererCouleurJoueur(connexion.IdJoueur,couleur);
     calculPosConnexion(connexion,coord,longueur,angle);
 
-    destination_rect.x:=affichage.xGrid + coord.x - Round(epaisseur*abs(Sin(angle)) / 2) - tailleHexagone div 4 + epaisseur div 2;
-    destination_rect.y:=affichage.yGrid + coord.y - Round(epaisseur*abs(Cos(angle)) / 2) - epaisseur div 3;
+    destination_rect.x:=affichage.xGrid+coord.x-Round(epaisseur*abs(Sin(angle))/2)-tailleHexagone div 4+epaisseur div 2;
+    destination_rect.y:=affichage.yGrid+coord.y-Round(epaisseur*abs(Cos(angle))/2)-epaisseur div 3;
     destination_rect.w:=Round(longueur);
     destination_rect.h:=epaisseur;
-
-    //TODO Voir pour le placement + l'angle de rotation (si besoin faire une condition pour le sens de la rotation)
-
     colorTexture := creerTextureCouleur(affichage,couleur);
 
-    if SDL_RenderCopyEx(affichage.renderer, colorTexture, nil, @destination_rect, angle, nil, SDL_FLIP_NONE) <> 0 then
-        WriteLn('Erreur SDL: ', SDL_GetError());
-
-    SDL_DestroyTexture(colorTexture);
-end;
-
-{Calcul les coordonnees d'une personne
-Preconditions :
-    - personne : la personne à calculer
-Postconditions :
-    - TCoord : les coordonnees de la personne}
-function calculPosPersonne(personne : TPersonne): Tcoord;
-var scoord,coord: Tcoord;
-    i: Integer;
-begin
-    scoord := FCoord(0,0);
+    if SDL_RenderCopyEx(affichage.renderer, colorTexture, nil, @destination_rect, angle, nil, SDL_FLIP_NONE) <> 0 then WriteLn('Erreur SDL: ', SDL_GetError());
     
-    for i:=0 to length(personne.Position)-1 do
-    begin
-        hexaToCart(personne.Position[i],coord,tailleHexagone div 2);
-        scoord := FCoord(scoord.x + coord.x,scoord.y + coord.y);
-    end;
-
-    calculPosPersonne := FCoord(scoord.x div 3,scoord.y div 3);
+    SDL_DestroyTexture(colorTexture);
 end;
 
 {Affiche la personne à l'ecran
@@ -290,36 +196,25 @@ var running : Boolean;
     buttonClicked: Boolean;
 begin
     running := True;
-
     while running do
     begin
         attendre(66);
         while SDL_PollEvent(@event) <> 0 do
-        begin
             case event.type_ of
-                SDL_QUITEV:
-                begin
-                    halt();
-                end;
+                SDL_QUITEV: HALT;
                 SDL_MOUSEBUTTONDOWN:
                 begin
                     coord := FCoord(event.button.x,event.button.y);
-
                     buttonClicked := False;
                     for bouton in affichage.boutonsSysteme do
                     begin
-                        if (coord.x >= bouton.coord.x) and (coord.x <= bouton.coord.x + bouton.w) and (coord.y >= bouton.coord.y) and (coord.y <= bouton.coord.y + bouton.h) then
-                        begin
-                            buttonClicked := True;
-                            if bouton.valeur = 'musique_play' then
-                                demarrerMusique(affichage)
-                            else if bouton.valeur = 'musique_stop' then
-                                arreterMusique(affichage)
-                            else if bouton.valeur = 'quitter' then
-                                halt();
-                        end;
+                        if not ((coord.x >= bouton.coord.x) and (coord.x <= bouton.coord.x + bouton.w) and (coord.y >= bouton.coord.y) and (coord.y <= bouton.coord.y + bouton.h)) then
+                            continue;
+                        buttonClicked := True;
+                        if bouton.valeur = 'musique_play' then demarrerMusique(affichage)
+                        else if bouton.valeur = 'musique_stop' then arreterMusique(affichage)
+                        else if bouton.valeur = 'quitter' then HALT;
                     end;
-                    
                     if not buttonClicked then
                     begin
                         running := False;
@@ -327,7 +222,6 @@ begin
                     end;
                 end;
             end;
-        end;
     end;
 end;
 
@@ -342,12 +236,10 @@ procedure clicHexagone(var plat: TPlateau; var affichage: TAffichage; var coord:
 var tempCoord: Tcoord;
 begin
     clicCart(affichage,coord);
-
     cartToHexa(FCoord(coord.x-affichage.xGrid,coord.y-affichage.yGrid),tempCoord,tailleHexagone div 2);
-    
     coord := tempCoord;
+
     jouerSonClic(affichage);
-    
     attendre(66);
 end;
 
@@ -359,10 +251,7 @@ var surface : PSDL_Surface;
 begin
 	text_compa := text;
 	surface := TTF_RenderText_Solid(police,PChar(text_compa),color);
-	
-	// Cree une surface SDL contenant le texte rendu avec la police specifiee et la couleur donnee
-	texture := SDL_CreateTextureFromSurface(renderer,surface);
-	
+	texture := SDL_CreateTextureFromSurface(renderer,surface); // Cree une surface SDL contenant le texte rendu avec la police specifiee et la couleur donnee
 	LoadTextureFromText := texture;
     SDL_FreeSurface(surface);
 end;
@@ -380,21 +269,15 @@ var police:PTTF_Font;
 	texteTexture: PSDL_Texture;
 	textRect : TSDL_Rect;
 begin
-	// Definit le rectangle de destination pour le texte
-	textRect.x := coord.x;
-	textRect.y := coord.y;
-	textRect.w := 0;
-	textRect.h := 0;
+    textRect := FRect(coord.x,coord.y,0,0);
 	
-	if TTF_INIT=-1 then halt;
+	if TTF_INIT=-1 then HALT;
 	
 	police := TTF_OpenFont('Assets/OpenSans-Regular.ttf', taille);
-	
 	texteTexture := LoadTextureFromText(affichage.renderer,police,text,couleur);
 	SDL_QueryTexture(texteTexture,nil,nil,@textRect.w,@textRect.h);
 	
-	if SDL_RenderCopy(affichage.renderer,texteTexture,nil,@textRect)<>0 then
-        WriteLn('Erreur SDL: ', SDL_GetError());
+	if SDL_RenderCopy(affichage.renderer,texteTexture,nil,@textRect)<>0 then WriteLn('Erreur SDL: ', SDL_GetError());
 	
 	TTF_CloseFont(police);
 	TTF_Quit();
@@ -404,11 +287,7 @@ end;
 procedure affichageDe(de,rotation:Integer; coord:TCoord; var affichage: TAffichage);
 var destination_rect: TSDL_RECT;
 begin
-    destination_rect.x:=coord.x;
-    destination_rect.y:=coord.y;
-    destination_rect.w:=75;
-    destination_rect.h:=75;
-
+    destination_rect := FRect(coord.x,coord.y,75,75);
     SDL_RenderCopyEx(affichage.renderer, chargerTexture(affichage, 'DiceFaces/' + IntToStr(de)), nil, @destination_rect, rotation, nil, SDL_FLIP_NONE);
 end;
 
@@ -460,7 +339,6 @@ begin
     hexaToCart(plat.Souillard.Position,coord,tailleHexagone div 2);
     
     affichageImage(affichage.xGrid+coord.x-(tailleSouillard div 2),affichage.yGrid+coord.y-(Round(tailleSouillard*1.3) div 2),tailleSouillard,Round(tailleSouillard*1.3),affichage.texturePlateau.textureSouillard,affichage);
-    
     affichageDetailsHexagone(plat.Souillard.Position,coord,plat,affichage);
 end;
 
@@ -476,7 +354,6 @@ begin
     affichageFond(affichage);
 
     taille := length(plat.Grille);
-
     for q:=0 to taille-1 do
         for r:=0 to taille-1 do
             if (plat.Grille[q,r].ressource <> Aucune) then
@@ -494,57 +371,34 @@ var coord: Tcoord;
     ressource: TRessource;
 begin
     coord := FCoord(25,25+joueur.id*75);
-
     affichageTexte(joueur.Nom + ': ', 25, coord, FCouleur(0,0,0,255), affichage);
 
     coord.x := coord.x + 13*(length(joueur.Nom)+2);
-
     affichageImage(coord.x,coord.y+7,25,25,affichage.texturePlateau.texturePoint,affichage);
     affichageTexte(IntToStr(joueur.Points), 25, FCoord(coord.x+30,coord.y), FCouleur(0,0,0,255), affichage);
 
-
     coord.x := 25;
     coord.y := coord.y + 35;
-
     for ressource := Physique to Mathematiques do
     begin
         affichageImage(coord.x,coord.y,25,25,affichage.texturePlateau.textureIconesRessources[ressource],affichage);
-
         coord.x := coord.x + 25;
-
         affichageTexte(' ' + IntToStr(joueur.Ressources[ressource]), 25, FCoord(coord.x,coord.y-5), FCouleur(0,0,0,255), affichage);
-
         coord.x := coord.x + 40;
     end;
 end;
 
-procedure ajouterBoutonTableau(bouton: TBouton; var boutons: TBoutons);
-begin
-    setLength(boutons, length(boutons)+1);
-    boutons[length(boutons)-1].coord := bouton.coord;
-    boutons[length(boutons)-1].w := bouton.w;
-    boutons[length(boutons)-1].h := bouton.h;
-    boutons[length(boutons)-1].texte := bouton.texte;
-    boutons[length(boutons)-1].valeur := bouton.valeur;
-end;
-
 procedure affichageZone(x,y,w,h,epaisseurBord: Integer; var affichage: TAffichage);
-var bordure,interieur: TSDL_Rect;
+var destination_rect: TSDL_Rect;
 begin
     SDL_SetRenderDrawColor(affichage.renderer, 0, 0, 0, 255);
-    bordure.x := x;
-    bordure.y := y;
-    bordure.w := w;
-    bordure.h := h;
-    if SDL_RenderFillRect(affichage.renderer, @bordure) <> 0 then
+    destination_rect := FRect(x,y,w,h);
+    if SDL_RenderFillRect(affichage.renderer, @destination_rect) <> 0 then
         WriteLn('Erreur SDL: ', SDL_GetError());
 
     SDL_SetRenderDrawColor(affichage.renderer, 255, 255, 255, 255);
-    interieur.x := x+epaisseurBord;
-    interieur.y := y+epaisseurBord;
-    interieur.w := w-epaisseurBord*2;
-    interieur.h := h-epaisseurBord*2;
-    if SDL_RenderFillRect(affichage.renderer, @interieur) <> 0 then
+    destination_rect := FRect(x+epaisseurBord,y+epaisseurBord,w-epaisseurBord*2,h-epaisseurBord*2);
+    if SDL_RenderFillRect(affichage.renderer, @destination_rect) <> 0 then
         WriteLn('Erreur SDL: ', SDL_GetError());
 end;
 
@@ -565,12 +419,7 @@ end;
 procedure affichageCartesTutorat(joueur: TJoueur; var affichage: TAffichage);
 var bouton: TBouton;
 begin
-    bouton.w := 200;
-    bouton.h := 300;
-    bouton.texte := '';
-
-    bouton.coord := FCoord(1400,25);
-    bouton.valeur := CARTES_TUTORAT[0].nom;
+    bouton := FBouton(1400,25,200,300,'',CARTES_TUTORAT[0].nom);
     ajouterBoutonTableau(bouton,affichage.boutonsAction);
     affichageCarteTutorat(joueur.CartesTutorat[0],FCoord(1400,25),affichage);
     
@@ -603,7 +452,6 @@ end;
 procedure affichageBouton(bouton: TBouton; var affichage: TAffichage);
 begin
     affichageZone(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,2,affichage);
-
     affichageTexte(' '+bouton.texte, 25, bouton.coord, FCouleur(0,0,0,255), affichage);
 end;
 
@@ -616,21 +464,13 @@ procedure initialisationBoutonsSysteme(var affichage: TAffichage);
 var bouton: TBouton;
 begin
     setLength(affichage.boutonsSysteme, 0);
-    bouton.coord := FCoord(WINDOW_W-130,WINDOW_H-75);
-    bouton.w := 50;
-    bouton.h := 50;
-    bouton.texte := '/IconesMusique/demarrer';
-    bouton.valeur := 'musique_play';
+    bouton := FBouton(WINDOW_W-130,WINDOW_H-75,50,50,'/IconesMusique/demarrer','musique_play');
     ajouterBoutonTableau(bouton,affichage.boutonsSysteme);
 
-    bouton.coord := FCoord(WINDOW_W-75,WINDOW_H-75);
-    bouton.texte := '/IconesMusique/arreter';
-    bouton.valeur := 'musique_stop';
+    bouton := FBouton(WINDOW_W-75,WINDOW_H-75,50,50,'/IconesMusique/arreter','musique_stop');
     ajouterBoutonTableau(bouton,affichage.boutonsSysteme);
 
-    bouton.coord := FCoord(WINDOW_W-75,20);
-    bouton.texte := 'croix';
-    bouton.valeur := 'quitter';
+    bouton := FBouton(WINDOW_W-75,20,50,50,'croix','quitter');
     ajouterBoutonTableau(bouton,affichage.boutonsSysteme);
 end;
 
@@ -664,24 +504,20 @@ begin
 
     if length(boutons) = 0 then
     begin
-        running := False;
         writeln('Erreur : Pas de boutons');
+        exit;
     end;
 
     while running do
     begin
         clicCart(affichage,coord);
-        
         for i:=0 to length(boutons)-1 do
-        begin
             if (coord.x >= boutons[i].coord.x) and (coord.x <= boutons[i].coord.x + boutons[i].w) and (coord.y >= boutons[i].coord.y) and (coord.y <= boutons[i].coord.y + boutons[i].h) then
             begin
                 valeurBouton := boutons[i].valeur;
                 running := False;
                 break;
             end;
-        end;
-        
         attendre(66);
     end;
 end;
@@ -689,19 +525,11 @@ end;
 procedure affichageIntegerInput(coord:TCoord; ressource: String; id: String; ressources: TRessources; var affichage: TAffichage; var boutons: TBoutons);
 var bouton: TBouton;
 begin
-    bouton.coord := coord;
-    bouton.w := 30;
-    bouton.h := 30;
-
-    bouton.coord.x := coord.x + 120;
-    bouton.texte := 'plus';
-    bouton.valeur := ressource + '_plus_' + id;
+    bouton := FBouton(coord.x + 120,coord.y,30,30,'plus',ressource + '_plus_' + id);
     affichageImageBouton(bouton,affichage);
     ajouterBoutonTableau(bouton, boutons);
 
-    bouton.coord.x := coord.x + 155;
-    bouton.texte := 'moins';
-    bouton.valeur := ressource + '_moins_' + id;
+    bouton := FBouton(coord.x + 155,coord.y,30,30,'moins',ressource + '_moins_' + id);
     affichageImageBouton(bouton,affichage);
     ajouterBoutonTableau(bouton, boutons);
 
@@ -712,19 +540,11 @@ end;
 procedure affichageJoueurInput(joueurs: TJoueurs; id: Integer; coord:TCoord; var affichage: TAffichage; var boutons: TBoutons);
 var bouton: TBouton;
 begin
-    bouton.coord := coord;
-    bouton.w := 30;
-    bouton.h := 33;
-
-    bouton.coord.x := coord.x + 120;
-    bouton.texte := 'gauche';
-    bouton.valeur := 'joueur_precedent';
+    bouton := FBouton(coord.x + 120,coord.y,30,30,'gauche','joueur_precedent');
     affichageImageBouton(bouton,affichage);
     ajouterBoutonTableau(bouton, boutons);
 
-    bouton.coord.x := coord.x + 155;
-    bouton.texte := 'droite';
-    bouton.valeur := 'joueur_suivant';
+    bouton := FBouton(coord.x + 155,coord.y,30,30,'droite','joueur_suivant');
     affichageImageBouton(bouton,affichage);
     ajouterBoutonTableau(bouton, boutons);
 
@@ -739,17 +559,14 @@ var coord: Tcoord;
     i: Integer;
 begin
     affichageFond(affichage);
-
     attendre(66);
 
     coord := FCoord(450,70);
     affichageZone(coord.x,coord.y,1050,930,3,affichage);
-
     for i:=0 to length(joueurs)-1 do
         affichageScore(joueurs[i],affichage);
 
-    coord := FCoord(890,90);
-    affichageTexte('Echange', 35, coord, FCouleur(0,0,0,255), affichage);
+    affichageTexte('Echange', 35, FCoord(890,90), FCouleur(0,0,0,255), affichage);
 
     coord := FCoord(650,160);
     affichageTexte(joueurs[idJoueurActuel].Nom, 25, coord, FCouleur(0,0,0,255), affichage);
@@ -770,11 +587,7 @@ begin
         affichageIntegerInput(coord,GetEnumName(TypeInfo(TRessource), Ord(ressource)),'2',ressources2,affichage,boutons);
     end;
 
-    bouton.coord := FCoord(900,450);
-    bouton.w := 95;
-    bouton.h := 45;
-    bouton.texte := 'Valider';
-    bouton.valeur := 'valider_echange';
+    bouton := FBouton(900,450,95,45,'Valider','valider_echange');
     affichageBouton(bouton,affichage);
     ajouterBoutonTableau(bouton, boutons);
 end;
@@ -849,17 +662,14 @@ var ressource: TRessource;
     i,j: Integer;
 begin
     affichageFond(affichage);
-
     attendre(66);
 
     coord := FCoord(450,70);
     affichageZone(coord.x,coord.y,1050,930,3,affichage);
 
-    coord := FCoord(750,90);
-    affichageTexte('Selection de ressource', 35, coord, FCouleur(0,0,0,255), affichage);
+    affichageTexte('Selection de ressource', 35, FCoord(750,90), FCouleur(0,0,0,255), affichage);
 
-    coord := FCoord(680,130);
-    affichageTexte('Selectionnez la ressource que vous souhaitez', 25, coord, FCouleur(0,0,0,255), affichage);
+    affichageTexte('Selectionnez la ressource que vous souhaitez', 25, FCoord(680,130), FCouleur(0,0,0,255), affichage);
 
     coord := FCoord(800,300);
     SetLength(Grille,3,2);
@@ -871,7 +681,6 @@ begin
         if ressource <> Rien then
             affichageImage(coord.x+coordCart.x-(tailleHexagone div 2),coord.y+coordCart.y-(tailleHexagone div 2),tailleHexagone,tailleHexagone,affichage.texturePlateau.textureRessource[ressource],affichage);
         grille[i,j].ressource := ressource;
-
         Inc(i);
         if i > 2 then
         begin
@@ -880,11 +689,7 @@ begin
         end;
     end;
 
-    boutonValider.coord := FCoord(900,930);
-    boutonValider.w := 95;
-    boutonValider.h := 50;
-    boutonValider.texte := 'Valider';
-    boutonValider.valeur := 'valider';
+    boutonValider := FBouton(900,930,95,50,'valider','Valider');
     affichageBouton(boutonValider,affichage);
 end;
 
@@ -896,7 +701,6 @@ var coord,coordHexa: Tcoord;
 begin
     nettoyageAffichage(affichage);
     attendre(66);
-
     affichageSelectionRessource(boutonValider,affichage,grille);
     miseAJourRenderer(affichage);
 
@@ -906,10 +710,8 @@ begin
     begin
         clicCart(affichage,coord);
         cartToHexa(FCoord(coord.x-800,coord.y-300),coordHexa,tailleHexagone div 2);
-
         if (coordHexa.x >= 0) and (coordHexa.x <= 2) and (coordHexa.y >= 0) and (coordHexa.y <= 1) then
             ressource := grille[coordHexa.x,coordHexa.y].ressource;
-        
         if (boutonValider.coord.x <= coord.x) and (coord.x <= boutonValider.coord.x + boutonValider.w) and (boutonValider.coord.y <= coord.y) and (coord.y <= boutonValider.coord.y + boutonValider.h) and (ressource <> Rien) then
             valider := True;
     end;
@@ -974,7 +776,6 @@ var nom,valeurBouton: String;
     event: TSDL_Event;
 begin
     affichageFond(affichage);
-    
     affichageTexte('Entrez les noms des joueurs', 35, FCoord(450,70), FCouleur(0,0,0,255), affichage);
 
     setlength(stringTab,4);
@@ -987,19 +788,12 @@ begin
             stringTab[i] := '';
             bouton.texte := 'Veuillez entrer le nom du joueur ' + IntToStr(i+1);
         end;
-        bouton.coord := FCoord(450,130+55*i);
-        bouton.w := 1050;
-        bouton.h := 50;
-        bouton.valeur := IntToStr(i);
+        bouton := FBouton(450,130+55*i,1050,50,bouton.texte,IntToStr(i));
         affichageNomJoueurInput(bouton.texte,bouton,25,affichage);
         ajouterBoutonTableau(bouton,boutons);
     end;
 
-    bouton.coord := FCoord(900,930);
-    bouton.w := 95;
-    bouton.h := 50;
-    bouton.texte := 'Valider';
-    bouton.valeur := 'valider';
+    bouton := FBouton(900,930,95,50,'Valider','valider');
     affichageBouton(bouton,affichage);
     ajouterBoutonTableau(bouton,boutons);
 
@@ -1027,8 +821,8 @@ begin
     begin
         if valeurBouton <> '-1' then
             affichageNomJoueurInput(nom,boutons[StrToInt(valeurBouton)],25,affichage);
+        
         clicBouton(affichage,boutons,valeurBouton);
-
         if valeurBouton = 'valider' then break;
 
         nom := '';
@@ -1126,38 +920,23 @@ procedure initialisationBoutonsAction(var affichage: TAffichage);
 var bouton: TBouton;
 begin
     setLength(affichage.boutonsAction, 0);
-    bouton.w := 270;
-    bouton.h := 50;
-
-    bouton.coord.x := 25;
-    bouton.coord.y := WINDOW_H - 370;
-    bouton.texte := 'Achat connexion';
-    bouton.valeur := 'achat_connexion';
+    
+    bouton := FBouton(25,WINDOW_H - 370,270,50,'Achat connexion','achat_connexion');
     ajouterBoutonTableau(bouton, affichage.boutonsAction);
 
-    bouton.coord.y := WINDOW_H - 310;
-    bouton.texte := 'Achat eleve';
-    bouton.valeur := 'achat_eleve';
+    bouton := FBouton(25,WINDOW_H - 310,270,50,'Achat eleve','achat_eleve');
     ajouterBoutonTableau(bouton, affichage.boutonsAction);
 
-    bouton.coord.y := WINDOW_H - 250;
-    bouton.texte := 'Achat carte tutorat';
-    bouton.valeur := 'achat_carte_tutorat';
+    bouton := FBouton(25,WINDOW_H - 250,270,50,'Achat carte tutorat','achat_carte_tutorat');
     ajouterBoutonTableau(bouton, affichage.boutonsAction);
 
-    bouton.coord.y := WINDOW_H - 190;
-    bouton.texte := 'Changement en prof';
-    bouton.valeur := 'changement_en_prof';
+    bouton := FBouton(25,WINDOW_H - 190,270,50,'Changement en prof','changement_en_prof');
     ajouterBoutonTableau(bouton, affichage.boutonsAction);
 
-    bouton.coord.y := WINDOW_H - 130;
-    bouton.texte := 'Echange ressources';
-    bouton.valeur := 'echange';
+    bouton := FBouton(25,WINDOW_H - 130,270,50,'Echange ressources','echange');
     ajouterBoutonTableau(bouton, affichage.boutonsAction);
 
-    bouton.coord.y := WINDOW_H - 70;
-    bouton.texte := 'Fin du tour';
-    bouton.valeur := 'fin_tour';
+    bouton := FBouton(25,WINDOW_H - 70,270,50,'Fin du tour','fin_tour');
     ajouterBoutonTableau(bouton, affichage.boutonsAction);
 end;
 
