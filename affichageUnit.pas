@@ -21,26 +21,21 @@ procedure selectionRessource(var affichage: TAffichage; var ressource: TRessourc
 procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
 procedure clicAction(var affichage: TAffichage; var valeurBouton: String);
 
-
 procedure affichageInformation(texte: String; taille: Integer; couleur: TSDL_Color; var affichage: TAffichage);
 procedure affichageJoueurActuel(joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
 procedure suppressionInformation(var affichage: TAffichage);
 procedure attendre(ms: Integer);
 
-
 procedure affichageScoreAndClear(joueur:TJoueur; var affichage: TAffichage);
-// procedure affichageDesAndRender(de1,de2:Integer; var affichage: TAffichage);
 procedure affichageCartesTutoratAndRender(joueur: TJoueur; var affichage: TAffichage);
 procedure affichageCartesTutorat(joueur: TJoueur; var affichage: TAffichage);
 procedure affichageDes(de1,de2:Integer; var affichage: TAffichage);
 
-
 implementation
+
 procedure affichageScore(joueur: TJoueur; var affichage: TAffichage);forward;
 procedure affichageCarteTutorat(carteTutorat: TCarteTutorat; coord: TCoord; var affichage: TAffichage);forward;
-
 procedure suppressionScores(playerId: Integer; var affichage: TAffichage);forward;
-
 
 procedure attendre(ms: Integer);
 begin
@@ -75,7 +70,6 @@ begin
     affichage.renderer := SDL_CreateRenderer(affichage.fenetre, -1, SDL_RENDERER_ACCELERATED);
 end;
 
-
 procedure nettoyageAffichage(var affichage: TAffichage);
 begin
     SDL_RenderClear(affichage.renderer);
@@ -87,7 +81,6 @@ begin
     destination_rect := FRect(x,y,w,h);
     if SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect)<>0 then WriteLn('Erreur SDL: ', SDL_GetError());
 end;
-
 
 {Initialise le plateau de jeu
 Preconditions :
@@ -265,7 +258,6 @@ var surface : PSDL_Surface;
 	text_compa : Ansistring;
 begin
 	text_compa := text;
-    // TTTTTTTT
 	surface := TTF_RenderUTF8_Blended(police,PChar(text_compa),color);
 	texture := SDL_CreateTextureFromSurface(renderer,surface); // Cree une surface SDL contenant le texte rendu avec la police specifiee et la couleur donnee
 	LoadTextureFromText := texture;
@@ -365,7 +357,6 @@ begin
     miseAJourRenderer(affichage);
 end;
 
-
 {Affiche la grille à l'ecran
 Preconditions :
     - plat : le plateau de jeu
@@ -390,14 +381,6 @@ begin
     affichageDe(de2,20,FCoord(POSITION_DES.x+75,POSITION_DES.y),affichage);
 end;
 
-
-// procedure affichageDesAndRender(de1,de2:Integer; var affichage: TAffichage);
-// begin
-//     // TODO clear la zone avant d'afficher les dés (pour Yann)
-//     affichageDes(de1,de2,affichage);
-//     miseAJourRenderer(affichage);
-// end;
-
 procedure affichageScore(joueur:TJoueur; var affichage: TAffichage);
 var coord: Tcoord;
     ressource: TRessource;
@@ -419,7 +402,6 @@ begin
         coord.x := coord.x + 40;
     end;
 end;
-
 
 procedure affichageScoreAndClear(joueur:TJoueur; var affichage: TAffichage);
 begin
@@ -455,8 +437,6 @@ begin
     affichageTexte(carteTutorat.nom, 25, FCoord(coord.x+10,coord.y+130), FCouleur(0,0,0,255), affichage);
     affichageTexte(carteTutorat.description, 17, FCoord(coord.x+10,coord.y+170), FCouleur(0,0,0,255), affichage);
 end;
-
-
 
 procedure affichageCartesTutorat(joueur: TJoueur; var affichage: TAffichage);
 var bouton: TBouton;
