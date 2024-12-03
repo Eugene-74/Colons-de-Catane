@@ -15,16 +15,17 @@ procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var j
 procedure affichageGagnant(joueur: TJoueur; affichage: TAffichage);
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
 procedure verificationPointsVictoire(plateau : TPlateau; joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer;var affichage : TAffichage);
+procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 
 
 implementation
 
 
-procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);forward;
 procedure ClicConnexion(plateau : TPlateau;affichage : TAffichage;var coords : TCoords);forward;
 function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage : TAffichage): Boolean;forward;
 function ClicPersonne(affichage: TAffichage; plateau: TPlateau; estEleve: Boolean): TCoords;forward;
 function CountPersonnes(personnes: array of TPersonne; estEleve: Boolean; joueur: TJoueur): Integer;forward;
+function professeurValide(affichage: TAffichage; plateau: TPlateau; joueurActuel: TJoueur; HexagonesCoords: TCoords; var ProfesseurCoords: TCoords; var indexEleve: Integer): Boolean;forward;
 function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur;affichage : TAffichage): Boolean;forward;
 function VerifierAdjacencePersonnes(HexagonesCoords: TCoords; plateau: TPlateau): Boolean;forward;
 function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;forward;
@@ -356,78 +357,90 @@ begin
   CountPersonnes:= Result;
 end;
 
-function professeurValide(affichage : TAffichage;plateau : TPlateau;joueurActuel : TJoueur;HexagonesCoords : Tcoords):Boolean;
-var i,j,compteur,k : Integer;
-
+function professeurValide(affichage: TAffichage; plateau: TPlateau; joueurActuel: TJoueur; HexagonesCoords: TCoords; var ProfesseurCoords: TCoords; var indexEleve: Integer): Boolean;
+var
+  i, j, k, compteur: Integer;
 begin
-  professeurValide := false;
+  professeurValide := False;
+  indexEleve := -1; 
+  setLength(ProfesseurCoords, 3);
 
-// TODO deplacer dans achat element, si il peut pas poser faut pas lui enlever les ressources.
-  if not resteEleve(plateau,joueurActuel) then
+  if not resteEleve(plateau, joueurActuel) then
   begin
-    affichageInformation('plus d''éléve à changer', 25, FCouleur(0, 0, 0, 255), affichage);
+    affichageInformation('Plus d''élève à changer.', 25, FCouleur(255, 0, 0, 255), affichage);
+    Exit;
   end;
 
-
   if enContact(HexagonesCoords) then
+  begin
+    for i := 0 to High(plateau.Personnes) do
     begin
-      for i := 0 to length(plateau.Personnes)-1 do
+      if (plateau.Personnes[i].IdJoueur = joueurActuel.Id) and (plateau.Personnes[i].estEleve) then
       begin
-        if (plateau.Personnes[i].IdJoueur = joueurActuel.Id) and
-          (plateau.Personnes[i].estEleve) then
+        compteur := 0;
+        for j := 0 to High(HexagonesCoords) do
         begin
-          compteur := 0; 
-          for j := 0 to  length(HexagonesCoords)-1 do
+          for k := 0 to High(HexagonesCoords) do
           begin
-            for k := 0 to length(HexagonesCoords)-1 do
-            begin
-              if (plateau.Personnes[i].Position[j].x = HexagonesCoords[k].x) and
-                (plateau.Personnes[i].Position[j].y = HexagonesCoords[k].y) then
-              begin
-                compteur := compteur + 1;
-              end;
-            end;
-          end;
-          if compteur = 3 then
-          begin
-            professeurValide := True;
-
+            if (plateau.Personnes[i].Position[j].x = HexagonesCoords[k].x) and
+               (plateau.Personnes[i].Position[j].y = HexagonesCoords[k].y) then
+              Inc(compteur);
           end;
         end;
-        // if estConverti then
+
+        if compteur = 3 then
+        begin
+          professeurValide := True;
+          ProfesseurCoords[0] := HexagonesCoords[0]; 
+          ProfesseurCoords[1] := HexagonesCoords[1];
+          ProfesseurCoords[2] := HexagonesCoords[2];
+          indexEleve := i; 
+          Exit; 
+        end;
       end;
-      
-    end
-    else
-    begin
-      affichageInformation('Conversion invalide. Les hexagones sélectionnés ne sont pas adjacents.', 25, FCouleur(0, 0, 0, 255), affichage);
     end;
+  end
+  else
+  begin
+    affichageInformation('Les hexagones sélectionnés ne sont pas adjacents.', 25, FCouleur(255, 0, 0, 255), affichage);
+  end;
 end;
+
 
 procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 var
-  HexagonesCoords: TCoords;
-  i, j, k, compteur: Integer;
-  estConverti: Boolean;
-  valide : Boolean;
+  HexagonesCoords, ProfesseurCoords: TCoords;
+  indexEleve, nbProfesseurs, i: Integer;
+  valide: Boolean;
 begin
+  nbProfesseurs := 0;
+  for i := 0 to High(plateau.Personnes) do
+  begin
+    if (plateau.Personnes[i].IdJoueur = joueurActuel.Id) and not(plateau.Personnes[i].estEleve) then
+      Inc(nbProfesseurs);
+  end;
+  if nbProfesseurs >= 2 then
+  begin
+    affichageInformation('Vous avez déjà atteint la limite de 2 professeurs.', 25, FCouleur(255, 0, 0, 255), affichage);
+    Exit;
+  end;
   repeat
-    affichageInformation('Cliquez sur 3 hexagones entre lesquels vous voulez placer le professeur', 25, FCouleur(0,0,0,255), affichage);
+    affichageInformation('Cliquez sur 3 hexagones entre lesquels vous voulez placer le professeur.', 25, FCouleur(0, 0, 0, 255), affichage);
     HexagonesCoords := ClicPersonne(affichage, plateau, False);
-    valide := professeurValide(affichage,plateau,joueurActuel,HexagonesCoords);
+    valide := professeurValide(affichage, plateau, joueurActuel, HexagonesCoords, ProfesseurCoords, indexEleve);
   until valide;
-
-  joueurActuel.Points:=1+joueurActuel.Points;
-  
-  // changer en prof ici
-  // plateau.Personnes[i].estEleve := False; // Convertir l'elève en professeur
-
-  affichageScore(joueurActuel,affichage);
-  affichagePersonne(plateau.Personnes[i], affichage);
-  miseAJourRenderer(affichage);
-
-  affichageInformation('Eleve converti en professeur avec succes !', 25, FCouleur(0,255,0,255), affichage);
+  if indexEleve <> -1 then
+  begin
+    plateau.Personnes[indexEleve].Position := ProfesseurCoords;
+    plateau.Personnes[indexEleve].estEleve := False;
+    joueurActuel.Points := joueurActuel.Points + 1;
+    affichageScore(joueurActuel, affichage);
+    affichagePersonne(plateau.Personnes[indexEleve], affichage);
+    miseAJourRenderer(affichage);
+    affichageInformation('Élève converti en professeur avec succès !', 25, FCouleur(0, 255, 0, 255), affichage);
+  end;
 end;
+
 
 
 function compterRouteSuite(plateau: TPlateau; joueur: TJoueur): Integer;

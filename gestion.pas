@@ -208,6 +208,7 @@ begin
     
     // placementEleve(plateau,affichage,joueurs[i-1]);
     // placementConnexion(plateau,affichage,joueurs[i-1]);
+    
     end;
 
   for i:=length(joueurs) downto 1 do
