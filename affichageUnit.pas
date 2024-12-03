@@ -265,7 +265,8 @@ var surface : PSDL_Surface;
 	text_compa : Ansistring;
 begin
 	text_compa := text;
-	surface := TTF_RenderText_Solid(police,PChar(text_compa),color);
+    // TTTTTTTT
+	surface := TTF_RenderUTF8_Blended(police,PChar(text_compa),color);
 	texture := SDL_CreateTextureFromSurface(renderer,surface); // Cree une surface SDL contenant le texte rendu avec la police specifiee et la couleur donnee
 	LoadTextureFromText := texture;
     SDL_FreeSurface(surface);

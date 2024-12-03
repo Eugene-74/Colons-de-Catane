@@ -143,7 +143,7 @@ begin
         tirerCarteTutorat(plateau.CartesTutorat, joueur);
 
         enleverRessources(joueur,COUT_CARTE_TUTORAT);
-                
+
         affichageCartesTutorat(joueur,affichage);
         affichageScoreAndClear(joueur,affichage);
         miseAJourRenderer(affichage);

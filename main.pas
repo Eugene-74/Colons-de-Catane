@@ -9,7 +9,7 @@ var
 
 begin
     initialisationPartie(joueurs,plateau,affichage);
-
+    
     // A elever jusqu'
     SetLength(plateau.Connexions, 1);
     SetLength(plateau.Connexions[0].Position, 2);
@@ -47,6 +47,5 @@ begin
     joueurs[1].Ressources[Humanites] := 99;
     joueurs[1].Ressources[Physique] := 99;
     // ici
-
     partie(joueurs,plateau,affichage);
 end.
