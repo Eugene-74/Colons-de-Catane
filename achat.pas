@@ -146,7 +146,7 @@ begin
     end
     else
     begin
-      affichageInformation('Impossbile d''acheter une carte de tutorat.', 25, FCouleur(255,0,0,255), affichage);
+      affichageInformation('Impossible d''acheter une carte de tutorat.', 25, FCouleur(255,0,0,255), affichage);
       jouerSonValide(affichage,false);
       
     end;
