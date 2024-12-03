@@ -265,7 +265,6 @@ var surface : PSDL_Surface;
 	text_compa : Ansistring;
 begin
 	text_compa := text;
-    // TTTTTTTT
 	surface := TTF_RenderUTF8_Blended(police,PChar(text_compa),color);
 	texture := SDL_CreateTextureFromSurface(renderer,surface); // Cree une surface SDL contenant le texte rendu avec la police specifiee et la couleur donnee
 	LoadTextureFromText := texture;
@@ -847,17 +846,17 @@ begin
 
     if(not unique)then
     begin
-        affichageInformation('Il faut des noms differents',25,FCouleur(255,0,0,255),affichage);
+        affichageInformation('Il faut des noms différents.',25,FCouleur(255,0,0,255),affichage);
         jouerSonValide(affichage,unique);
     end
     else if(not nonVide)then
     begin
-        affichageInformation('Il faut des noms non vide',25,FCouleur(255,0,0,255),affichage);
+        affichageInformation('Il faut des noms non vide.',25,FCouleur(255,0,0,255),affichage);
         jouerSonValide(affichage,nonVide);
     end
     else if(not valide)then
     begin
-        affichageInformation('Il faut au moins 2 joueurs',25,FCouleur(255,0,0,255),affichage);
+        affichageInformation('Il faut au moins 2 joueurs.',25,FCouleur(255,0,0,255),affichage);
         jouerSonValide(affichage,valide);
     end;
     miseAJourRenderer(affichage);
@@ -972,7 +971,7 @@ begin
     bouton := FBouton(25,WINDOW_H - 370,270,50,'Achat connexion','achat_connexion');
     ajouterBoutonTableau(bouton, affichage.boutonsAction);
 
-    bouton := FBouton(25,WINDOW_H - 310,270,50,'Achat eleve','achat_eleve');
+    bouton := FBouton(25,WINDOW_H - 310,270,50,'Achat élève','achat_eleve');
     ajouterBoutonTableau(bouton, affichage.boutonsAction);
 
     bouton := FBouton(25,WINDOW_H - 250,270,50,'Achat carte tutorat','achat_carte_tutorat');
@@ -981,7 +980,7 @@ begin
     bouton := FBouton(25,WINDOW_H - 190,270,50,'Changement en prof','changement_en_prof');
     ajouterBoutonTableau(bouton, affichage.boutonsAction);
 
-    bouton := FBouton(25,WINDOW_H - 130,270,50,'Echange ressources','echange');
+    bouton := FBouton(25,WINDOW_H - 130,270,50,'Échange ressources','echange');
     ajouterBoutonTableau(bouton, affichage.boutonsAction);
 
     bouton := FBouton(25,WINDOW_H - 70,270,50,'Fin du tour','fin_tour');

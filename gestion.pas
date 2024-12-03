@@ -312,13 +312,13 @@ echangeRessources(joueurs,id1, id2 ,ressources1,ressources2,affichage);
 if(ressourcesVide(ressources1) and ressourcesVide(ressources2))then
   begin
   affichageTour(plateau, joueurs, id, affichage);
-  affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est vide',25,FCouleur(255,0,0,255),affichage);
+  affichageInformation('l''échange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est vide.',25,FCouleur(255,0,0,255),affichage);
   jouerSonValide(affichage,false);
   end
 else if(ressourcesEguale(ressources1,ressources2))then
   begin
   affichageTour(plateau, joueurs, id, affichage);
-  affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est inutile car il ne change rien',25,FCouleur(255,0,0,255),affichage);
+  affichageInformation('l''échange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est inutile car il ne change rien.',25,FCouleur(255,0,0,255),affichage);
   jouerSonValide(affichage,false);
   end
 else if(aLesRessources(joueurs[id1],ressources1) and aLesRessources(joueurs[id2],ressources2)) then
@@ -330,13 +330,13 @@ else if(aLesRessources(joueurs[id1],ressources1) and aLesRessources(joueurs[id2]
     donnerRessources(joueurs[id2],ressources1);
 
     affichageTour(plateau, joueurs, id, affichage);
-    affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' a ete valide',25,FCouleur(0,255,0,255),affichage);
+    affichageInformation('l''échange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' a été validé.',25,FCouleur(0,255,0,255),affichage);
     jouerSonValide(affichage,true);
   end
 else
   begin
     affichageTour(plateau, joueurs, id, affichage);
-    affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est impossible un des 2 joueurs n''a pas les ressources',25,FCouleur(255,0,0,255),affichage);
+    affichageInformation('l''échange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est impossible un des 2 joueurs n''a pas les ressources.',25,FCouleur(255,0,0,255),affichage);
     jouerSonValide(affichage,false);
 
   end;
@@ -420,7 +420,7 @@ end;
 
 procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueurs : Tjoueurs; id : Integer);
 begin
-  affichageInformation('Deplacement du souillard par le joueur '+joueurs[id].nom,25,FCouleur(0,0,0,255),affichage);
+  affichageInformation('Déplacement du souillard par le joueur '+joueurs[id].nom+'.',25,FCouleur(0,0,0,255),affichage);
   deplacementSouillard(plateau,joueurs,affichage);
 
   affichageSouillardAndRender(plateau,affichage);
@@ -446,7 +446,7 @@ begin
 
 selectionRessource(affichage,ressource);
 joueurs[id].ressources[ressource] := joueurs[id].ressources[ressource] + 2;
-affichageInformation(joueurs[id].Nom +  'viens de gagner 2 : ' +GetEnumName(TypeInfo(TRessource), Ord(ressource)),25,FCouleur(0,255,0,255),affichage);
+affichageInformation(joueurs[id].Nom +  'viens de gagner 2 : ' +GetEnumName(TypeInfo(TRessource), Ord(ressource))+'.',25,FCouleur(0,255,0,255),affichage);
 
 affichageTour(plateau, joueurs, Id, affichage);
 end;
@@ -486,7 +486,7 @@ if (i <> -1) and (joueurs[id].CartesTutorat[i].utilisee < joueurs[id].CartesTuto
 else
   begin
   jouerSonValide(affichage,false);
-  affichageInformation('Vous avez deja utilise toutes vos cartes de ce type',25,FCouleur(255,0,0,255),affichage);
+  affichageInformation('Vous avez déjà utilisé toutes vos cartes de ce type.',25,FCouleur(255,0,0,255),affichage);
   end;
 end;
 
