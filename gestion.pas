@@ -7,6 +7,8 @@ procedure initialisationPartie(var joueurs : TJoueurs;var  plateau : TPlateau;va
 procedure partie(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 
 implementation
+procedure gestionEchange(affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);forward;
+
 function chargementPlateau(num : Integer): TPlateau;forward;
 function chargerGrille(num : Integer): TGrille; forward;
 function intialisationTutorat():TCartesTutorat;forward;
@@ -25,6 +27,7 @@ procedure utiliserCarte3(var plateau : TPlateau; joueurs : Tjoueurs; id : Intege
 procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau;var joueurs : Tjoueurs; id : Integer);forward;
 procedure utiliserCarte5(var joueurs : TJoueurs;id :Integer);forward;
 
+procedure donnerRessources( var joueur : Tjoueur; ressources : TRessources);forward;
 
 
 function chargerGrille(num : Integer): TGrille;
@@ -279,8 +282,6 @@ begin
   miseAJourRenderer(affichage);
 end;
 
-
-
 function ressourcesVide(ressources : TRessources):boolean;
 var res : TRessource;
 begin
@@ -299,11 +300,52 @@ begin
       ressourcesEguale := False;
 end;
 
+procedure gestionEchange(affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);
+var id1,id2 : Integer;
+  ressources1,ressources2 : TRessources;
+
+begin
+id1 := joueurs[id].id;
+id2 := joueurs[id+1].id;
+echangeRessources(joueurs,id1, id2 ,ressources1,ressources2,affichage);
+
+if(ressourcesVide(ressources1) and ressourcesVide(ressources2))then
+  begin
+  affichageTour(plateau, joueurs, id, affichage);
+  affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est vide',25,FCouleur(255,0,0,255),affichage);
+  jouerSonValide(affichage,false);
+  end
+else if(ressourcesEguale(ressources1,ressources2))then
+  begin
+  affichageTour(plateau, joueurs, id, affichage);
+  affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est inutile car il ne change rien',25,FCouleur(255,0,0,255),affichage);
+  jouerSonValide(affichage,false);
+  end
+else if(aLesRessources(joueurs[id1],ressources1) and aLesRessources(joueurs[id2],ressources2)) then
+  begin
+    enleverRessources(joueurs[id1],ressources1);
+    enleverRessources(joueurs[id2],ressources2);
+
+    donnerRessources(joueurs[id1],ressources2);
+    donnerRessources(joueurs[id2],ressources1);
+
+    affichageTour(plateau, joueurs, id, affichage);
+    affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' a ete valide',25,FCouleur(0,255,0,255),affichage);
+    jouerSonValide(affichage,true);
+  end
+else
+  begin
+    affichageTour(plateau, joueurs, id, affichage);
+    affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est impossible',25,FCouleur(255,0,0,255),affichage);
+    jouerSonValide(affichage,false);
+
+  end;
+end;
+
 procedure tour(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 var valeurBouton : String;
   finTour : boolean;
-  ressources1,ressources2 : TRessources;
-  i,id1,id2 : Integer;
+  i : Integer;
 begin
   for i := 0 to length(joueurs)-1 do
     begin
@@ -311,8 +353,6 @@ begin
 
     
     gestionDes(joueurs,plateau,affichage);
-
-    // affichageDesAndRender(plateau.des1,plateau.des2,FCoord(50,500),affichage);
 
     finTour := False;
     repeat
@@ -331,40 +371,8 @@ begin
         achatElements(joueurs[i], plateau, affichage,4);
         end
       else if(valeurBouton = 'echange')  then
-      begin
-        id1 := joueurs[i].id;
-        id2 := joueurs[i+1].id;
-        echangeRessources(joueurs,id1, id2 ,ressources1,ressources2,affichage);
-
-        if(ressourcesVide(ressources1) and ressourcesVide(ressources2))then
-          begin
-          affichageTour(plateau, joueurs, i, affichage);
-          affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est vide',25,FCouleur(255,0,0,255),affichage);
-          jouerSonValide(affichage,false);
-          end
-        else if(ressourcesEguale(ressources1,ressources2))then
-          begin
-          affichageTour(plateau, joueurs, i, affichage);
-          affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est inutile car il ne change rien',25,FCouleur(255,0,0,255),affichage);
-          jouerSonValide(affichage,false);
-          end
-        else if(aLesRessources(joueurs[id1],ressources1) and aLesRessources(joueurs[id2],ressources2)) then
-        begin
-            enleverRessources(joueurs[id1],ressources1);
-            enleverRessources(joueurs[id2],ressources1);
-
-            affichageTour(plateau, joueurs, i, affichage);
-            affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' a ete valide',25,FCouleur(0,255,0,255),affichage);
-            jouerSonValide(affichage,true);
-        end
-        else
-        begin
-            affichageTour(plateau, joueurs, i, affichage);
-            affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est impossible',25,FCouleur(255,0,0,255),affichage);
-            jouerSonValide(affichage,false);
-
-        end;
-      end
+        gestionEchange(affichage,plateau,joueurs,i)
+      
       else if(valeurBouton = 'demarrer_musique')  then
           demarrerMusique(affichage)
       else if(valeurBouton = 'arreter_musique')  then
@@ -387,11 +395,7 @@ begin
 
     // TODO enlever apres
     verificationMusique(affichage);
-
-
     end;
-
-
 end;
 
 procedure partie(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
@@ -484,8 +488,13 @@ else
   jouerSonValide(affichage,false);
   affichageInformation('Vous avez deja utilise toutes vos cartes de ce type',25,FCouleur(255,0,0,255),affichage);
   end;
+end;
 
-
+procedure donnerRessources( var joueur : Tjoueur; ressources : TRessources);
+var res : TRessource;
+begin
+  for res in [Physique..Mathematiques] do 
+    joueur.ressources[res] := joueur.ressources[res] + ressources[res]
 end;
 
 end.

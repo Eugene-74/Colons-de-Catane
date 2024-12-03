@@ -1078,7 +1078,8 @@ var res : TRessource;
 begin
   for res in [Physique..Mathematiques] do 
     joueur.ressources[res] := joueur.ressources[res] - ressources[res]
-  
 end;
+
+
 
 end.
