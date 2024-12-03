@@ -614,19 +614,25 @@ begin
     Exit;
   end;
   // TODO inutile
-  // enContactAvecPersonne := enContactEleveConnexion(plateau, coords, joueur);
-  // enContactAvecAutreConnexion := not aucuneConnexionAdjacente(coords, plateau, joueur,affichage);
+    enContactAvecPersonne := enContactEleveConnexion(plateau, coords, joueur);
+    enContactAvecAutreConnexion := not aucuneConnexionAdjacente(coords, plateau, joueur,affichage);
 
   // 3. Verifie si en contact avec un eleve ou une connexion
-  if enContactAutreEleveConnexion(plateau,coords,joueur,affichage) or adjacence3Connexions(coords,plateau,joueur,affichage) then 
+  if enContactAutreEleveConnexion(plateau,coords,joueur,affichage)  or adjacence3Connexions(coords,plateau,joueur,affichage) then 
+  begin
     connexionValide:= False;
-
+    exit;
+  end;
     // TODO pose probleme de acces violation au  placement de connexion du deuxieme joeuur apres un placement du premier joueur
-  // if(aucuneConnexionAdjacente(coords, plateau, joueur,affichage))then
-  //   begin
-  //     connexionValide:= False;
-  //   Exit;
-  //   end;
+  if not enContactAvecPersonne then
+  begin
+    if not enContactAvecAutreConnexion then
+    begin
+      connexionValide := False;
+      affichageInformation('La connexion doit etre adjacente a une autre connexion ou en contact avec un eleve ou un professeur.', 25, FCouleur(0,0,0,255), affichage);
+      Exit;
+    end;
+  end;
 
   // 4. Verifie si au moins 1 des hexagones est dans le plateau
   if (not dansLePlateau(plateau,coords[0]) and not dansLePlateau(plateau,coords[1])) then 
@@ -636,13 +642,6 @@ begin
 
     Exit;
     end; 
-
-
-
-  // affichageInformation('La connexion doit etre adjacente a une autre connexion ou en contact avec un eleve ou un professeur.', 25, FCouleur(0,0,0,255), affichage);
-
-
-
 end;
 
 
@@ -761,7 +760,6 @@ var
 begin
 // TODO NE MARCHE PAS REGARDER POURQUOI VORI FONCTION D'AVANT
 
-  aucuneConnexionAdjacente := True;
   verif := true;
 
   for i := 0 to High(plateau.Connexions) do
@@ -802,38 +800,6 @@ begin
       end;
     end;
   end;
-
-  for j := 0 to High(plateau.Connexions) do
-  begin
-    if plateau.Connexions[j].IdJoueur <> joueur.Id then
-    begin
-      if ((autreCoord2.x = plateau.Connexions[j].Position[0].x) and 
-          (autreCoord2.y = plateau.Connexions[j].Position[0].y) and
-          sontAdjacents(autreCoord, plateau.Connexions[j].Position[1])) or
-         ((autreCoord2.x = plateau.Connexions[j].Position[1].x) and 
-          (autreCoord2.y = plateau.Connexions[j].Position[1].y) and
-          sontAdjacents(autreCoord, plateau.Connexions[j].Position[0])) then
-      begin
-        verif := True;
-        affichageInformation('Erreur : autreCoord est utilise par une connexion d''un autre joueur, et coordRestante est adjacente à cette connexion.', 25, FCouleur(0,0,0,255), affichage);
-        
-        Break;
-      end;
-    end;
-  end;
-  for k:=0 to High(plateau.Personnes)-1 do
-  Begin
-    if plateau.Personnes[k].IdJoueur <> joueur.Id then 
-    begin
-      if (coords[0].x = plateau.Personnes[i].Position[k].x) and
-           (coords[0].y = plateau.Personnes[i].Position[k].y) then
-           verif:=True;
-    end;
-
-  end;
-
-
-
     aucuneConnexionAdjacente := verif;
  
 end;
