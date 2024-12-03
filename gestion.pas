@@ -336,7 +336,7 @@ else if(aLesRessources(joueurs[id1],ressources1) and aLesRessources(joueurs[id2]
 else
   begin
     affichageTour(plateau, joueurs, id, affichage);
-    affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est impossible',25,FCouleur(255,0,0,255),affichage);
+    affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est impossible un des 2 joueurs n''a pas les ressources',25,FCouleur(255,0,0,255),affichage);
     jouerSonValide(affichage,false);
 
   end;
@@ -493,7 +493,7 @@ end;
 procedure donnerRessources( var joueur : Tjoueur; ressources : TRessources);
 var res : TRessource;
 begin
-  for res in [Physique..Mathematiques] do 
+  for res in [Physique..Mathematiques] do
     joueur.ressources[res] := joueur.ressources[res] + ressources[res]
 end;
 

@@ -143,10 +143,10 @@ begin
         tirerCarteTutorat(plateau.CartesTutorat, joueur);
 
         enleverRessources(joueur,COUT_CARTE_TUTORAT);
-        
-        writeln('carte de tutorat achetee');
-        
-        affichageCartesTutoratAndRender(joueur,affichage);
+                
+        affichageCartesTutorat(joueur,affichage);
+        affichageScoreAndClear(joueur,affichage);
+        miseAJourRenderer(affichage);
         end;
     end
     else
@@ -1013,7 +1013,7 @@ begin
     if (plateau.Personnes[i].IdJoueur = joueur.Id) and (plateau.Personnes[i].estEleve) then
     begin
       resteEleve := True;
-      Exit; 
+      Exit;
     end;
   end;
 end;
@@ -1068,7 +1068,7 @@ function aLesRessources(joueur : Tjoueur; ressources : TRessources):boolean;
 var res : TRessource;
 begin
   aLesRessources := True;
-  for res in [Physique..Mathematiques] do 
+  for res in [Physique..Mathematiques] do
     if(joueur.ressources[res] < ressources[res]) then
       aLesRessources := False;
 end;
@@ -1076,7 +1076,7 @@ end;
 procedure enleverRessources( var joueur : Tjoueur; ressources : TRessources);
 var res : TRessource;
 begin
-  for res in [Physique..Mathematiques] do 
+  for res in [Physique..Mathematiques] do
     joueur.ressources[res] := joueur.ressources[res] - ressources[res]
 end;
 
