@@ -148,7 +148,34 @@ const
       (nom: 'le dernier'; description: 'discussion'; nbr: 4; utilisee : 0)
     
   );
-
+  COUT_ELEVE: TRessources = (
+    (1), // Physique
+    (0), // Informatique
+    (1), // Chimie
+    (1), // Humanites
+    (1)  // Mathematiques
+  );
+  COUT_PROFESSEUR: TRessources = (
+    (0), // Physique
+    (3), // Informatique
+    (0), // Chimie
+    (0), // Humanites
+    (2)  // Mathematiques
+  );
+  COUT_CONNEXION: TRessources = (
+    (0), // Physique
+    (0), // Informatique
+    (1), // Chimie
+    (1), // Humanites
+    (0)  // Mathematiques
+  );
+  COUT_CARTE_TUTORAT: TRessources = (
+    (1), // Physique
+    (0), // Informatique
+    (0), // Chimie
+    (1), // Humanites
+    (0)  // Mathematiques
+  );
 implementation
 
 end.

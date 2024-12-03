@@ -17,10 +17,8 @@ function intialisationTutorat():TCartesTutorat;forward;
 function nombreAleatoire(n : Integer): Integer;forward;
 procedure distributionConnaissance(var joueurs : TJoueurs;var plateau : TPlateau;des : integer);forward;
 procedure gestionDes(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);forward;
-function aLesRessources(joueur : Tjoueur; ressources : TRessources):boolean;forward;
 function ressourcesVide(ressources : TRessources):boolean;forward;
 function ressourcesEguale(ressources1 : TRessources;ressources2 : TRessources):boolean;forward;
-procedure enleverRessources( var joueur : Tjoueur; ressources : TRessources);forward;
 procedure tour(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);forward;
 procedure utiliserCarte1(var plateau : TPlateau; var affichage : TAffichage;joueur : Tjoueur);forward;
 procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueurs : Tjoueurs; joueur : Tjoueur);forward;
@@ -280,14 +278,7 @@ begin
     end;
 end;
 
-function aLesRessources(joueur : Tjoueur; ressources : TRessources):boolean;
-var res : TRessource;
-begin
-  aLesRessources := True;
-  for res in [Physique..Mathematiques] do 
-    if(joueur.ressources[res] < ressources[res]) then
-      aLesRessources := False;
-end;
+
 
 function ressourcesVide(ressources : TRessources):boolean;
 var res : TRessource;
@@ -305,15 +296,6 @@ begin
   for res in [Physique..Mathematiques] do 
     if( ressources1[res]<> ressources2[res]) then
       ressourcesEguale := False;
-end;
-
-
-procedure enleverRessources( var joueur : Tjoueur; ressources : TRessources);
-var res : TRessource;
-begin
-  for res in [Physique..Mathematiques] do 
-    joueur.ressources[res] := joueur.ressources[res] - ressources[res]
-  
 end;
 
 

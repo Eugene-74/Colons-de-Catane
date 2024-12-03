@@ -8,7 +8,8 @@ uses
 function dansLePlateau(plateau : TPlateau; coord : Tcoord): boolean;
 function CoordsEgales(coords1: TCoords; coords2: TCoords): Boolean;
 procedure deplacementSouillard(var plateau : TPlateau; var joueurs : TJoueurs ;var affichage : TAffichage);
-
+function aLesRessources(joueur : Tjoueur; ressources : TRessources):boolean;
+procedure enleverRessources( var joueur : Tjoueur; ressources : TRessources);
 procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 procedure affichageGagnant(joueur: TJoueur; affichage: TAffichage);
@@ -53,7 +54,7 @@ var  i,j,nbrTotal,min,max: Integer;
 begin
   Randomize();
 
-  // TODO penser à verif que il en reste avant d'accepter l'achat 
+  // TODO penser à verif que il en reste avant d'accepter l'achat
   nbrTotal :=0;
   for i := 0 to 4 do
     nbrTotal :=nbrTotal  + cartesTutorat[i].nbr;
@@ -79,24 +80,16 @@ end;
 
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
 begin
-  
   case choix of
    // ELEVE
     1: 
-     
-      if (joueur.Ressources[Mathematiques] >= 1) and 
-         (joueur.Ressources[Humanites] >= 1) and 
-         (joueur.Ressources[Chimie] >= 1) and 
-         (joueur.Ressources[Physique] >= 1) then
+      if(aLesRessources(joueur,COUT_ELEVE)) then
       begin
       jouerSonClicAction(affichage);
 
         PlacementEleve(plateau, affichage, joueur);
 
-        joueur.Ressources[Mathematiques] := joueur.Ressources[Mathematiques] - 1;
-        joueur.Ressources[Humanites] := joueur.Ressources[Humanites] - 1;
-        joueur.Ressources[Chimie] := joueur.Ressources[Chimie] - 1;
-        joueur.Ressources[Physique] := joueur.Ressources[Physique] - 1;
+        enleverRessources(joueur,COUT_ELEVE);
       end
       else
         begin
@@ -106,16 +99,13 @@ begin
 
     // CONNEXION
     2:
-     
-      if (joueur.Ressources[Humanites] >= 1) and 
-         (joueur.Ressources[Physique] >= 1) then
+      if(aLesRessources(joueur,COUT_CONNEXION)) then
       begin
       jouerSonClicAction(affichage);
 
         placementConnexion(plateau, affichage, joueur);
 
-        joueur.Ressources[Physique] := joueur.Ressources[Physique] - 1;
-        joueur.Ressources[Chimie] := joueur.Ressources[Chimie] - 1;
+        enleverRessources(joueur,COUT_CONNEXION);
       end
       else
         begin
@@ -127,17 +117,13 @@ begin
 
     // PROFESSEUR
     3: 
-        // TODO mettre le bon cout
-      if (joueur.Ressources[Mathematiques] >= 2) and 
-         (joueur.Ressources[Physique] >= 1) then
+      if(aLesRessources(joueur,COUT_PROFESSEUR)) then
       begin
       jouerSonClicAction(affichage);
 
         changementProfesseur(plateau, affichage, joueur);
         
-        // TODO mettre le bon cout
-        joueur.Ressources[Mathematiques] := joueur.Ressources[Mathematiques] - 2;
-        joueur.Ressources[Physique] := joueur.Ressources[Physique] - 1;
+        enleverRessources(joueur,COUT_PROFESSEUR);
       end
       else
         begin
@@ -147,19 +133,14 @@ begin
     // carte de tutorat
     4:
     //  verif ressource
-    if(plateau.cartesTutorat[0].nbr + plateau.cartesTutorat[1].nbr + plateau.cartesTutorat[2].nbr + plateau.cartesTutorat[3].nbr + plateau.cartesTutorat[4].nbr >0 
-        )  then // <TODO and a les ressources
+    if(plateau.cartesTutorat[0].nbr + plateau.cartesTutorat[1].nbr + plateau.cartesTutorat[2].nbr + plateau.cartesTutorat[3].nbr + plateau.cartesTutorat[4].nbr >0) then
     begin
-      // TODO mettre le bon cout
-      if (joueur.Ressources[Mathematiques] >= 2) and 
-        (joueur.Ressources[Physique] >= 1) then
+      if(aLesRessources(joueur,COUT_CARTE_TUTORAT)) then
         begin
         jouerSonClicAction(affichage);
         tirerCarteTutorat(plateau.CartesTutorat, joueur);
 
-        // TODO mettre le bon cout
-        joueur.Ressources[Physique] := joueur.Ressources[Physique] - 1;
-        joueur.Ressources[Chimie] := joueur.Ressources[Chimie] - 1;
+        enleverRessources(joueur,COUT_CARTE_TUTORAT);
         end;
     end
     else
@@ -1069,5 +1050,22 @@ begin
 end;
 
 
+
+function aLesRessources(joueur : Tjoueur; ressources : TRessources):boolean;
+var res : TRessource;
+begin
+  aLesRessources := True;
+  for res in [Physique..Mathematiques] do 
+    if(joueur.ressources[res] < ressources[res]) then
+      aLesRessources := False;
+end;
+
+procedure enleverRessources( var joueur : Tjoueur; ressources : TRessources);
+var res : TRessource;
+begin
+  for res in [Physique..Mathematiques] do 
+    joueur.ressources[res] := joueur.ressources[res] - ressources[res]
+  
+end;
 
 end.
