@@ -310,6 +310,48 @@ begin
       ressourcesEguale := False;
 end;
 
+procedure gestionEchange(affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);
+var id1,id2 : Integer;
+  ressources1,ressources2 : TRessources;
+
+begin
+id1 := joueurs[id].id;
+id2 := joueurs[id+1].id;
+echangeRessources(joueurs,id1, id2 ,ressources1,ressources2,affichage);
+
+if(ressourcesVide(ressources1) and ressourcesVide(ressources2))then
+  begin
+  affichageTour(plateau, joueurs, id, affichage);
+  affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est vide',25,FCouleur(255,0,0,255),affichage);
+  jouerSonValide(affichage,false);
+  end
+else if(ressourcesEguale(ressources1,ressources2))then
+  begin
+  affichageTour(plateau, joueurs, id, affichage);
+  affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est inutile car il ne change rien',25,FCouleur(255,0,0,255),affichage);
+  jouerSonValide(affichage,false);
+  end
+else if(aLesRessources(joueurs[id1],ressources1) and aLesRessources(joueurs[id2],ressources2)) then
+  begin
+    enleverRessources(joueurs[id1],ressources1);
+    enleverRessources(joueurs[id2],ressources2);
+
+    donnerRessources(joueurs[id1],ressources2);
+    donnerRessources(joueurs[id2],ressources1);
+
+    affichageTour(plateau, joueurs, id, affichage);
+    affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' a ete valide',25,FCouleur(0,255,0,255),affichage);
+    jouerSonValide(affichage,true);
+  end
+else
+  begin
+    affichageTour(plateau, joueurs, id, affichage);
+    affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est impossible un des 2 joueurs n''a pas les ressources',25,FCouleur(255,0,0,255),affichage);
+    jouerSonValide(affichage,false);
+
+  end;
+end;
+
 procedure tour(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 var valeurBouton : String;
   finTour : boolean;
@@ -491,6 +533,11 @@ if (i <> -1) and (joueurs[id].CartesTutorat[i].utilisee < joueurs[id].CartesTuto
   end;
 
 
+procedure donnerRessources( var joueur : Tjoueur; ressources : TRessources);
+var res : TRessource;
+begin
+  for res in [Physique..Mathematiques] do
+    joueur.ressources[res] := joueur.ressources[res] + ressources[res]
 end;
 
 end.
