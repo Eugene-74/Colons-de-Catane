@@ -526,6 +526,10 @@ begin
     
     
     plusGrandeRoute := True;
+
+    writeln('compterConnexionSuite(plateau,joueur) : ',compterConnexionSuite(plateau,joueur));
+    writeln('joueur : ',joueur.nom);
+
     if (compterConnexionSuite(plateau,joueur) >= 5) then
     begin
     for i := 0 to High(joueurs) do
