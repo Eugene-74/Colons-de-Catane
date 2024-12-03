@@ -243,7 +243,7 @@ begin
     // TODO verifier le contact avec une connexion du joueur
     if not enContactEleveConnexion(plateau,HexagonesCoords,joueurActuel) then
     begin
-    //  writeln('Eleve non liée avec une connexion');
+      PersonneValide:=false;
       exit;
     end;
 
