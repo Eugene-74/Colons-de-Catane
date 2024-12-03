@@ -176,6 +176,7 @@ const
     (1), // Humanites
     (0)  // Mathematiques
   );
+  POSITION_DES : TCoord = (x: 50; y: 500);
 
   WINDOW_W = 1920;
   WINDOW_H = 1080;

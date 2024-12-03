@@ -11,21 +11,36 @@ procedure affichageGrille(plat: TPlateau; var affichage: TAffichage);
 procedure clicHexagone(var plat: TPlateau; var affichage: TAffichage; var coord: Tcoord);
 procedure miseAJourRenderer(var affichage :TAffichage);
 procedure affichagePersonne(personne: TPersonne; var affichage: TAffichage);
+
 procedure affichageSouillard(plat: TPlateau; var affichage: TAffichage);
+procedure affichageSouillardAndRender(plat: TPlateau; var affichage: TAffichage);
+
 procedure affichageConnexion(connexion : TConnexion; var affichage : TAffichage);
-procedure affichageDes(de1,de2:Integer; coord: TCoord; var affichage: TAffichage);
 procedure echangeRessources(joueurs: TJoueurs; idJoueurActuel:Integer; var idJoueurEchange: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
 procedure selectionRessource(var affichage: TAffichage; var ressource: TRessource);
 procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
 procedure clicAction(var affichage: TAffichage; var valeurBouton: String);
-procedure affichageScore(joueur: TJoueur; var affichage: TAffichage);
+
+
 procedure affichageInformation(texte: String; taille: Integer; couleur: TSDL_Color; var affichage: TAffichage);
 procedure affichageJoueurActuel(joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
 procedure suppressionInformation(var affichage: TAffichage);
-procedure suppressionScores(playerId: Integer; var affichage: TAffichage);
 procedure attendre(ms: Integer);
 
+
+procedure affichageScoreAndClear(joueur:TJoueur; var affichage: TAffichage);
+// procedure affichageDesAndRender(de1,de2:Integer; var affichage: TAffichage);
+procedure affichageCartesTutoratAndRender(joueur: TJoueur; var affichage: TAffichage);
+procedure affichageCartesTutorat(joueur: TJoueur; var affichage: TAffichage);
+procedure affichageDes(de1,de2:Integer; var affichage: TAffichage);
+
+
 implementation
+procedure affichageScore(joueur: TJoueur; var affichage: TAffichage);forward;
+procedure affichageCarteTutorat(carteTutorat: TCarteTutorat; coord: TCoord; var affichage: TAffichage);forward;
+
+procedure suppressionScores(playerId: Integer; var affichage: TAffichage);forward;
+
 
 procedure attendre(ms: Integer);
 begin
@@ -342,6 +357,14 @@ begin
     affichageDetailsHexagone(plat.Souillard.Position,coord,plat,affichage);
 end;
 
+procedure affichageSouillardAndRender(plat: TPlateau; var affichage: TAffichage);
+begin
+    // TODO clear l'ancienne position du souillard (pour Yann)
+    affichageSouillard(plat,affichage);
+    miseAJourRenderer(affichage);
+end;
+
+
 {Affiche la grille à l'ecran
 Preconditions :
     - plat : le plateau de jeu
@@ -360,11 +383,19 @@ begin
                 affichageHexagone(plat,affichage,FCoord(q,r));
 end;
 
-procedure affichageDes(de1,de2:Integer; coord: TCoord; var affichage: TAffichage);
+procedure affichageDes(de1,de2:Integer; var affichage: TAffichage);
 begin
-    affichageDe(de1,-15,coord,affichage);
-    affichageDe(de2,20,FCoord(coord.x+75,coord.y),affichage);
+    affichageDe(de1,-15,POSITION_DES,affichage);
+    affichageDe(de2,20,FCoord(POSITION_DES.x+75,POSITION_DES.y),affichage);
 end;
+
+
+// procedure affichageDesAndRender(de1,de2:Integer; var affichage: TAffichage);
+// begin
+//     // TODO clear la zone avant d'afficher les dés (pour Yann)
+//     affichageDes(de1,de2,affichage);
+//     miseAJourRenderer(affichage);
+// end;
 
 procedure affichageScore(joueur:TJoueur; var affichage: TAffichage);
 var coord: Tcoord;
@@ -386,6 +417,14 @@ begin
         affichageTexte(' ' + IntToStr(joueur.Ressources[ressource]), 25, FCoord(coord.x,coord.y-5), FCouleur(0,0,0,255), affichage);
         coord.x := coord.x + 40;
     end;
+end;
+
+
+procedure affichageScoreAndClear(joueur:TJoueur; var affichage: TAffichage);
+begin
+    suppressionScores(joueur.id,affichage);
+    affichageScore(joueur,affichage);
+
 end;
 
 procedure affichageZone(x,y,w,h,epaisseurBord: Integer; var affichage: TAffichage);
@@ -416,6 +455,8 @@ begin
     affichageTexte(carteTutorat.description, 17, FCoord(coord.x+10,coord.y+170), FCouleur(0,0,0,255), affichage);
 end;
 
+
+
 procedure affichageCartesTutorat(joueur: TJoueur; var affichage: TAffichage);
 var bouton: TBouton;
 begin
@@ -442,6 +483,12 @@ begin
     bouton.valeur := CARTES_TUTORAT[4].nom;
     ajouterBoutonTableau(bouton,affichage.boutonsAction);
     affichageCarteTutorat(joueur.CartesTutorat[4],FCoord(1400,655),affichage);
+end;
+
+procedure affichageCartesTutoratAndRender(joueur: TJoueur; var affichage: TAffichage);
+begin
+    affichageCartesTutorat(joueur,affichage);
+    miseAJourRenderer(affichage);
 end;
 
 procedure suppressionScores(playerId: Integer; var affichage: TAffichage);
@@ -736,7 +783,7 @@ begin
     affichageFond(affichage);
     affichageGrille(plat,affichage);
     affichageSouillard(plat,affichage);
-    affichageDes(plat.des1,plat.des2,FCoord(50,500),affichage);
+    affichageDes(plat.des1,plat.des2,affichage);
 
     for i:=0 to length(plat.Connexions)-1 do
         affichageConnexion(plat.Connexions[i],affichage);
