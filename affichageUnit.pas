@@ -607,6 +607,11 @@ begin
     affichageTexte(' '+bouton.texte, 25, bouton.coord, FCouleur(0,0,0,255), affichage);
 end;
 
+procedure affichageImageBouton(bouton: TBouton; var affichage: TAffichage);
+begin
+    affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,chargerTexture(affichage, bouton.texte),affichage);
+end;
+
 procedure initialisationBoutonsSysteme(var affichage: TAffichage);
 var bouton: TBouton;
 begin
@@ -614,17 +619,17 @@ begin
     bouton.coord := FCoord(WINDOW_W-130,WINDOW_H-75);
     bouton.w := 50;
     bouton.h := 50;
-    bouton.texte := 'P';
+    bouton.texte := '/IconesMusique/demarrer';
     bouton.valeur := 'musique_play';
     ajouterBoutonTableau(bouton,affichage.boutonsSysteme);
 
     bouton.coord := FCoord(WINDOW_W-75,WINDOW_H-75);
-    bouton.texte := 'S';
+    bouton.texte := '/IconesMusique/arreter';
     bouton.valeur := 'musique_stop';
     ajouterBoutonTableau(bouton,affichage.boutonsSysteme);
 
     bouton.coord := FCoord(WINDOW_W-75,20);
-    bouton.texte := 'X';
+    bouton.texte := 'croix';
     bouton.valeur := 'quitter';
     ajouterBoutonTableau(bouton,affichage.boutonsSysteme);
 end;
@@ -686,18 +691,18 @@ var bouton: TBouton;
 begin
     bouton.coord := coord;
     bouton.w := 30;
-    bouton.h := 33;
+    bouton.h := 30;
 
     bouton.coord.x := coord.x + 120;
-    bouton.texte := '+';
+    bouton.texte := 'plus';
     bouton.valeur := ressource + '_plus_' + id;
-    affichageBouton(bouton,affichage);
+    affichageImageBouton(bouton,affichage);
     ajouterBoutonTableau(bouton, boutons);
 
     bouton.coord.x := coord.x + 155;
-    bouton.texte := ' -';
+    bouton.texte := 'moins';
     bouton.valeur := ressource + '_moins_' + id;
-    affichageBouton(bouton,affichage);
+    affichageImageBouton(bouton,affichage);
     ajouterBoutonTableau(bouton, boutons);
 
     coord.x := coord.x + 200;
@@ -712,15 +717,15 @@ begin
     bouton.h := 33;
 
     bouton.coord.x := coord.x + 120;
-    bouton.texte := '<';
+    bouton.texte := 'gauche';
     bouton.valeur := 'joueur_precedent';
-    affichageBouton(bouton,affichage);
+    affichageImageBouton(bouton,affichage);
     ajouterBoutonTableau(bouton, boutons);
 
     bouton.coord.x := coord.x + 155;
-    bouton.texte := '>';
+    bouton.texte := 'droite';
     bouton.valeur := 'joueur_suivant';
-    affichageBouton(bouton,affichage);
+    affichageImageBouton(bouton,affichage);
     ajouterBoutonTableau(bouton, boutons);
 
     coord.x := coord.x + 200;
@@ -1112,7 +1117,7 @@ procedure miseAJourRenderer(var affichage :TAffichage);
 var i: Integer;
 begin
     for i:=0 to length(affichage.boutonsSysteme)-1 do
-        affichageBouton(affichage.boutonsSysteme[i],affichage);
+        affichageImageBouton(affichage.boutonsSysteme[i],affichage);
     
     SDL_RenderPresent(affichage.renderer);
 end;
