@@ -142,11 +142,11 @@ begin
     recupererNomsJoueurs(noms,affichage,valide);
 
     valide := True;
-    
+    // TODO verifier que le nom est unique et pas que avec des  ' '
     for i:=0 to length(noms) - 1 do
     begin
       if ((noms[i] <> '') ) then
-      
+
         Inc(count)
       else
         break;
@@ -484,7 +484,7 @@ if((nom = plateau.cartesTutorat[0].nom) and (joueurs[id].CartesTutorat[0].utilis
   jouerSonValide(affichage,true);
   utiliserCarte1(plateau,affichage,joueurs[id]);
   joueurs[id].CartesTutorat[0].utilisee := joueurs[id].CartesTutorat[0].utilisee + 1;
-  affichageTour(plateau, joueurs, i, affichage);
+  affichageTour(plateau, joueurs, id, affichage);
   exit;
   end
 else if((nom = plateau.cartesTutorat[1].nom) and (joueurs[id].CartesTutorat[1].utilisee < joueurs[id].CartesTutorat[1].nbr)) then
@@ -492,7 +492,7 @@ else if((nom = plateau.cartesTutorat[1].nom) and (joueurs[id].CartesTutorat[1].u
   jouerSonValide(affichage,true);
   utiliserCarte2(plateau,affichage,joueurs,joueurs[id]);
   joueurs[id].CartesTutorat[1].utilisee := joueurs[id].CartesTutorat[1].utilisee + 1;
-  affichageTour(plateau, joueurs, i, affichage);
+  affichageTour(plateau, joueurs, id, affichage);
   exit;
   end
 else if((nom = plateau.cartesTutorat[2].nom) and (joueurs[id].CartesTutorat[2].utilisee < joueurs[id].CartesTutorat[2].nbr)) then
@@ -500,7 +500,7 @@ else if((nom = plateau.cartesTutorat[2].nom) and (joueurs[id].CartesTutorat[2].u
   jouerSonValide(affichage,true);
   utiliserCarte3(plateau,joueurs[id]);
   joueurs[id].CartesTutorat[2].utilisee := joueurs[id].CartesTutorat[2].utilisee + 1;
-  affichageTour(plateau, joueurs, i, affichage);
+  affichageTour(plateau, joueurs, id, affichage);
   exit;
   end
 else if((nom = plateau.cartesTutorat[3].nom) and (joueurs[id].CartesTutorat[3].utilisee < joueurs[id].CartesTutorat[3].nbr)) then
@@ -508,7 +508,7 @@ else if((nom = plateau.cartesTutorat[3].nom) and (joueurs[id].CartesTutorat[3].u
   jouerSonValide(affichage,true);
   utiliserCarte4(affichage,plateau,joueurs,joueurs[id]);
   joueurs[id].CartesTutorat[3].utilisee := joueurs[id].CartesTutorat[3].utilisee + 1;
-  affichageTour(plateau, joueurs, i, affichage);
+  affichageTour(plateau, joueurs, id, affichage);
   exit;
   end
 else if((nom = plateau.cartesTutorat[4].nom) and (joueurs[id].CartesTutorat[4].utilisee < joueurs[id].CartesTutorat[4].nbr)) then
@@ -516,7 +516,7 @@ else if((nom = plateau.cartesTutorat[4].nom) and (joueurs[id].CartesTutorat[4].u
   jouerSonValide(affichage,true);
   utiliserCarte5(joueurs,joueurs[id]);
   joueurs[id].CartesTutorat[4].utilisee := joueurs[id].CartesTutorat[4].utilisee + 1;
-  affichageTour(plateau, joueurs, i, affichage);
+  affichageTour(plateau, joueurs, id, affichage);
   exit;
   end;
 

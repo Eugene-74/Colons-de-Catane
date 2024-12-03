@@ -127,13 +127,17 @@ begin
 
     // PROFESSEUR
     3: 
-    
+        // TODO mettre le bon cout
       if (joueur.Ressources[Mathematiques] >= 2) and 
          (joueur.Ressources[Physique] >= 1) then
       begin
       jouerSonClicAction(affichage);
 
         changementProfesseur(plateau, affichage, joueur);
+        
+        // TODO mettre le bon cout
+        joueur.Ressources[Mathematiques] := joueur.Ressources[Mathematiques] - 2;
+        joueur.Ressources[Physique] := joueur.Ressources[Physique] - 1;
       end
       else
         begin
@@ -146,8 +150,17 @@ begin
     if(plateau.cartesTutorat[0].nbr + plateau.cartesTutorat[1].nbr + plateau.cartesTutorat[2].nbr + plateau.cartesTutorat[3].nbr + plateau.cartesTutorat[4].nbr >0 
         )  then // <TODO and a les ressources
     begin
-      jouerSonClicAction(affichage);
-      tirerCarteTutorat(plateau.CartesTutorat, joueur);
+      // TODO mettre le bon cout
+      if (joueur.Ressources[Mathematiques] >= 2) and 
+        (joueur.Ressources[Physique] >= 1) then
+        begin
+        jouerSonClicAction(affichage);
+        tirerCarteTutorat(plateau.CartesTutorat, joueur);
+
+        // TODO mettre le bon cout
+        joueur.Ressources[Physique] := joueur.Ressources[Physique] - 1;
+        joueur.Ressources[Chimie] := joueur.Ressources[Chimie] - 1;
+        end;
     end
     else
     begin
