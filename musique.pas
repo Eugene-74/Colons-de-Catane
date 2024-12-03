@@ -1,20 +1,48 @@
 unit musique;
 
 interface
-uses SDL2, SDL2_mixer,types,SysUtils,DateUtils;
+uses SDL2, SDL2_mixer,types,SysUtils,DateUtils,TypInfo;
 
 procedure demarrerMusique(var affichage :TAffichage);
 procedure verificationMusique(var affichage :TAffichage);
 procedure arreterMusique(var affichage :TAffichage);
-procedure jouerSonValide(valide : Boolean);
-procedure jouerSonClic();
-procedure jouerSonClicAction();
+procedure jouerSonValide(affichage :TAffichage;valide : Boolean);
+procedure jouerSonClic(affichage :TAffichage);
+procedure jouerSonClicAction(affichage :TAffichage);
+procedure jouerSonFinDeTour(affichage :TAffichage);
 
+procedure initisationMusique(var affichage : TAffichage);
 
 
 
 implementation
 
+procedure initisationMusique(var affichage : TAffichage);
+var  son: PMix_Chunk;
+    i : TSon;
+begin
+
+if Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0 then
+    begin
+    WriteLn('Erreur d''initialisation de SDL_mixer: ', Mix_GetError);
+    Exit;
+    end;
+
+for i:= sonClicHexagone to sonInvalide do
+    begin
+        
+    son := Mix_LoadWAV(PChar('Assets/Sons/' + GetEnumName(TypeInfo(TSon), Ord(i)) + '.mp3'));
+
+    if son = nil then
+        begin
+        WriteLn('Erreur de chargement du son: ', Mix_GetError);
+        Exit;
+        end;
+    affichage.sons[i] := son;
+
+    end;
+
+end;
 
 
 procedure demarrerMusique(var affichage :TAffichage);
@@ -131,54 +159,44 @@ end;
 
 
 
-procedure demarrerSon(cheminSon : Pchar);
-var
-  son: PMix_Chunk;
+procedure demarrerSon(affichage : TAffichage;son : TSon);
+var pSon: PMix_Chunk;
 begin
-
-  if Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0 then
-  begin
-    WriteLn('Erreur d''initialisation de SDL_mixer: ', Mix_GetError);
-    Exit;
-  end;
-
-  son := Mix_LoadWAV(cheminSon);
-
-  if son = nil then
-  begin
-    WriteLn('Erreur de chargement du son: ', Mix_GetError);
-    Exit;
-  end;
-
+    pSon := affichage.sons[son];
   // Jouer le son sur le premier canal disponible (-1) une seule fois (0)
-  if Mix_PlayChannel(-1, son, 0) = -1 then
+  if Mix_PlayChannel(-1, pSon, 0) = -1 then
   begin
     WriteLn('Erreur de lecture du son: ', Mix_GetError);
   end;
 end;
 
 
-procedure jouerSonValide(valide: Boolean);
+procedure jouerSonValide(affichage :TAffichage;valide: Boolean);
 var
-    cheminSon: PChar;
+    son: TSon;
 begin
 
     if valide then
-        cheminSon := 'Assets/Sons/valide.mp3'
+        son := sonValide
     else
-        cheminSon := 'Assets/Sons/refus.mp3';
-    demarrerSon(cheminSon);
+        son := sonInvalide;
+    demarrerSon(affichage,son);
 end;
 
 
-procedure jouerSonClic();
+procedure jouerSonClic(affichage :TAffichage);
 begin
-    demarrerSon('Assets/Sons/clic.mp3');
+    demarrerSon(affichage,sonClicBouton);
 end;
 
-procedure jouerSonClicAction();
+procedure jouerSonClicAction(affichage :TAffichage);
 begin
-    demarrerSon('Assets/Sons/clicAction.mp3');
+    demarrerSon(affichage,sonClicHexagone);
+end;
+
+procedure jouerSonFinDeTour(affichage :TAffichage);
+begin
+    demarrerSon(affichage,sonFinDeTour);
 end;
 
 

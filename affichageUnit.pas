@@ -6,6 +6,7 @@ interface
 uses sdl2, sdl2_image, sdl2_ttf, types, sysutils, TypInfo, traitement, Math, musique;
 
 procedure initialisationAffichage(var affichage: TAffichage);
+procedure recupererNomsJoueurs(var stringTab: TStringTab; var affichage: TAffichage;valide : Boolean);
 procedure affichageGrille(plat: TPlateau; var affichage: TAffichage);
 procedure clicHexagone(var plat: TPlateau; var affichage: TAffichage; var coord: Tcoord);
 procedure miseAJourRenderer(var affichage :TAffichage);
@@ -100,8 +101,8 @@ Postconditions :
     - plat : le plateau de jeu
     - affichage : la structure contenant le renderer}
 procedure initialisationTextures(var affichage: TAffichage);
-var i: TRessource;
-    j: Integer;
+var j: Integer;
+    i: TRessource;
 begin
     for i:=Physique to Rien do
     begin
@@ -345,7 +346,8 @@ begin
     cartToHexa(FCoord(coord.x-affichage.xGrid,coord.y-affichage.yGrid),tempCoord,tailleHexagone div 2);
     
     coord := tempCoord;
-    jouerSonClic();
+    jouerSonClic(affichage);
+    
     attendre(66);
 end;
 
@@ -607,6 +609,7 @@ end;
 procedure initialisationBoutonsSysteme(var affichage: TAffichage);
 var bouton: TBouton;
 begin
+    setLength(affichage.boutonsSysteme, 0);
     bouton.coord := FCoord(WINDOW_W-130,WINDOW_H-75);
     bouton.w := 50;
     bouton.h := 50;
@@ -800,9 +803,9 @@ begin
     while valeurBouton <> 'valider_echange' do
     begin
         if valeurBouton = 'joueur_precedent' then
-            idJoueurEchange := (idJoueurEchange - 1 + length(joueurs)) mod length(joueurs)
+            idJoueurEchange := (idJoueurEchange - 1 + length(joueurs) - 1 * Ord(((idJoueurEchange-1+length(joueurs)) mod length(joueurs))=idJoueurActuel)) mod length(joueurs)
         else if valeurBouton = 'joueur_suivant' then
-            idJoueurEchange := (idJoueurEchange + 1) mod length(joueurs)
+            idJoueurEchange := (idJoueurEchange + 1 + 1 * Ord(((idJoueurEchange + 1) mod length(joueurs))=idJoueurActuel)) mod length(joueurs)
         else
         begin
             //TODO opti la verif de ressources pour limiter aux ressources possedees en max
@@ -944,6 +947,127 @@ begin
     affichageJoueurActuel(joueurs,idJoueurActuel,affichage);
 
     miseAJourRenderer(affichage);
+end;
+
+procedure affichageNomJoueurInput(nomActuel:String; coord: TCoord; tailleZone: TCoord; tailleTexte: Integer; var affichage: TAffichage);
+begin
+    affichageZone(coord.x,coord.y,tailleZone.x,tailleZone.y,3,affichage);
+    affichageTexte('Nom du joueur : ', tailleTexte, FCoord(coord.x-210,coord.y+5), FCouleur(0,0,0,255), affichage);
+    if nomActuel <> ' ' then
+        affichageTexte(nomActuel, tailleTexte, FCoord(coord.x+5,coord.y+5), FCouleur(0,0,0,255), affichage)
+    else
+        affichageTexte(' ', tailleTexte, FCoord(coord.x+5,coord.y+5), FCouleur(100,100,100,255), affichage);
+end;
+
+procedure recupererNomsJoueurs(var stringTab: TStringTab; var affichage: TAffichage;valide : Boolean);
+var nom,valeurBouton: String;
+    i: Integer;
+    boutons: TBoutons;
+    bouton: TBouton;
+    running,ecritureNom: Boolean;
+    event: TSDL_Event;
+begin
+    affichageFond(affichage);
+    
+
+    affichageTexte('Entrez les noms des joueurs', 35, FCoord(450,70), FCouleur(0,0,0,255), affichage);
+
+    setlength(stringTab,4);
+    for i:=0 to length(stringTab)-1 do
+    begin
+        if stringTab[i] <> '' then
+            bouton.texte := stringTab[i]
+        else
+        begin
+            stringTab[i] := '';
+            bouton.texte := 'Veuillez entrer le nom du joueur ' + IntToStr(i+1);
+        end;
+        bouton.coord := FCoord(450,130+55*i);
+        bouton.w := 1050;
+        bouton.h := 50;
+        bouton.valeur := IntToStr(i);
+        affichageNomJoueurInput(bouton.texte,bouton.coord,FCoord(bouton.w,bouton.h),25,affichage);
+        ajouterBoutonTableau(bouton,boutons);
+    end;
+
+    bouton.coord := FCoord(900,930);
+    bouton.w := 95;
+    bouton.h := 50;
+    bouton.texte := 'Valider';
+    bouton.valeur := 'valider';
+    affichageBouton(bouton,affichage);
+    ajouterBoutonTableau(bouton,boutons);
+
+    if(not valide)then
+        begin
+        affichageInformation('Il faut au moins 2 joueurs',25,FCouleur(255,0,0,255),affichage);
+        jouerSonValide(affichage,valide);
+        end;
+
+    miseAJourRenderer(affichage);
+
+
+
+    running := True;
+    while running do
+    begin
+        clicBouton(affichage,boutons,valeurBouton);
+        if valeurBouton <> 'valider' then
+        begin
+            affichageNomJoueurInput(' ',boutons[StrToInt(valeurBouton)].coord,FCoord(boutons[StrToInt(valeurBouton)].w,boutons[StrToInt(valeurBouton)].h),25,affichage);
+            miseAJourRenderer(affichage);
+
+            SDL_StartTextInput();
+            ecritureNom := True;
+            nom := '';
+            while ecritureNom do
+            begin
+                attendre(66);
+                while SDL_PollEvent(@event) <> 0 do
+                begin
+                    case event.type_ of
+                        SDL_QUITEV: HALT;
+                        SDL_KEYDOWN:
+                        begin;
+                            if event.key.keysym.sym = SDLK_BACKSPACE then
+                            begin
+                                attendre(16);
+                                if (length(nom) > 0) then
+                                begin
+                                    Delete(nom,length(nom),1);
+                                    if length(nom) = 0 then
+                                        nom := ' ';
+                                    
+                                    stringTab[StrToInt(valeurBouton)] := nom;
+                                    affichageNomJoueurInput(nom,boutons[StrToInt(valeurBouton)].coord,FCoord(boutons[StrToInt(valeurBouton)].w,boutons[StrToInt(valeurBouton)].h),25,affichage);
+                                    miseAJourRenderer(affichage);
+                                end;
+                            end
+                            else if event.key.keysym.sym = SDLK_RETURN then
+                                ecritureNom := False;
+                        end;
+                        SDL_TEXTINPUT:
+                        begin
+                            attendre(16);
+                            if length(nom) < 10 then
+                            begin
+                                if nom = ' ' then
+                                    nom := '';
+                                nom := nom + event.text.text;
+                                stringTab[StrToInt(valeurBouton)] := nom;
+                                affichageNomJoueurInput(nom,boutons[StrToInt(valeurBouton)].coord,FCoord(boutons[StrToInt(valeurBouton)].w,boutons[StrToInt(valeurBouton)].h),25,affichage);
+                                miseAJourRenderer(affichage);
+                            end;
+                        end;
+                        SDL_MOUSEBUTTONDOWN: ecritureNom := False;
+                    end;
+                end;
+            end;
+            SDL_StopTextInput();
+        end
+        else
+            running := False;
+    end;
 end;
 
 {Met à jour l'affichage

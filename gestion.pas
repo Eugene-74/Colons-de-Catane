@@ -25,7 +25,7 @@ procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueu
 procedure utiliserCarte3(var plateau : TPlateau; joueur : Tjoueur);forward;
 procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau;joueurs : Tjoueurs; joueur : Tjoueur);forward;
 procedure utiliserCarte5(var joueurs : TJoueurs;joueur : Tjoueur);forward;
-procedure utiliserCarteTutorat(var plateau : TPlateau;var affichage : TAffichage;var joueurs : TJoueurs; joueur : Tjoueur;nom : String);forward;
+procedure utiliserCarteTutorat(var plateau : TPlateau;var affichage : TAffichage;var joueurs : TJoueurs;id : Integer;nom : String);forward;
 
 
 function chargerGrille(num : Integer): TGrille;
@@ -114,60 +114,65 @@ intialisationTutorat := CARTES_TUTORAT;
 end;
 
 procedure initialisationPartie(var joueurs : TJoueurs;var plateau : TPlateau;var affichage : TAffichage);
-var i,j,num : integer;
+var i,j,num,count : integer;
   text : string;
-  stop,unique : Boolean;
+  valide,unique : Boolean;
   res : TRessources;
   r : Tressource;
   cartesTutorat : TCartesTutorat;
+  noms : TStringTab;
 begin
   
   for r := Aucune to Mathematiques do
     res[r] := 0;
-  stop := false;
-  SetLength(joueurs,0);
-  i:=0;
-  repeat
-    write('rentrer le nom du joueur '+IntToStr(i+1)+' : (Entrer pour arreter)');
-    readln(text);
-    unique := True;
-
-    // for j:=0 to  length(joueurs) -1 do 
-    //   if(joueurs[j].Nom = text) then
-    //     begin
-    //     writeln('Le nom du joueur doit être unique');
-    //     unique := False;
-    //     end;
-
-    // if(((text <> '\n') and (text <> '')) and unique) then
-    if((text <>  '0')) then
-      begin
-      SetLength(joueurs,i+1);
-      joueurs[i].Nom:= text;
-      joueurs[i].Points :=0;
-      joueurs[i].Ressources := res;
-      joueurs[i].Id := i;
-      joueurs[i].cartesTutorat := CARTES_TUTORAT;
-      for j:=0 to length( plateau.cartesTutorat)-1 do
-        begin
-        joueurs[i].cartesTutorat[j].nbr := 0;
-        end;
-
-      
-      i := i + 1;
-      end
-    else 
-      begin
-        if(i < 2)then
-          writeln('Le nombre de joueur invalide ( + 2 joueurs minimum)')
-        else 
-          stop := true;
-      end;
-  until ((i>3) or (stop));
-
-
-  initialisationAffichage(affichage);
   
+  initialisationAffichage(affichage);
+  initisationMusique(affichage);
+
+
+  setlength(noms,4);
+  for i:=0 to 3 do
+    noms[i] := '';
+  //TODO Check si les joueurs sont bien unique et d'affilée dans les noms
+  valide := True;
+  repeat
+    count := 0;
+    recupererNomsJoueurs(noms,affichage,valide);
+
+    valide := True;
+    
+    for i:=0 to length(noms) - 1 do
+    begin
+      if (noms[i] <> '') then
+        Inc(count)
+      else
+        break;
+    end;
+
+    if (count < 2) then
+      begin
+      valide := False;
+        
+      end;
+  until valide;
+  jouerSonValide(affichage,true);
+
+  setlength(noms,count);
+
+  for i:=0 to length(noms) - 1 do
+  begin
+    SetLength(joueurs,i+1);
+    joueurs[i].Nom:= noms[i];
+    joueurs[i].Points :=0;
+    joueurs[i].Ressources := res;
+    joueurs[i].Id := i;
+    joueurs[i].cartesTutorat := CARTES_TUTORAT;
+    for j:=0 to length(plateau.cartesTutorat)-1 do
+    begin
+      joueurs[i].cartesTutorat[j].nbr := 0;
+    end;
+  end;
+
   Randomize;
   num :=nombreAleatoire(2);
 
@@ -275,7 +280,7 @@ var res : TRessource;
 begin
   aLesRessources := True;
   for res in [Physique..Mathematiques] do 
-    if(joueur.ressources[res] >= ressources[res]) then
+    if(joueur.ressources[res] < ressources[res]) then
       aLesRessources := False;
 end;
 
@@ -319,12 +324,16 @@ begin
         achatElements(joueurs[i], plateau, affichage,3);
         end
       else if(valeurBouton = 'achat_carte_tutorat')  then
-          achatElements(joueurs[i], plateau, affichage,4)
+        begin
+        achatElements(joueurs[i], plateau, affichage,4);
+        affichageTour(plateau, joueurs, i, affichage);
+        end
       else if(valeurBouton = 'echange')  then
       begin
         id1 := joueurs[i].id;
         id2 := joueurs[i+1].id;
         echangeRessources(joueurs,id1, id2 ,ressources1,ressources2,affichage);
+
         if(aLesRessources(joueurs[id1],ressources1) and aLesRessources(joueurs[id2],ressources2)) then
         begin
             enleverRessources(joueurs[id1],ressources1);
@@ -332,11 +341,14 @@ begin
 
             affichageTour(plateau, joueurs, i, affichage);
             affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' a ete valide',25,FCouleur(0,255,0,255),affichage);
+            jouerSonValide(affichage,true);
         end
         else
         begin
             affichageTour(plateau, joueurs, i, affichage);
             affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est impossible',25,FCouleur(255,0,0,255),affichage);
+            jouerSonValide(affichage,false);
+
         end;
       end
       else if(valeurBouton = 'demarrer_musique')  then
@@ -344,11 +356,15 @@ begin
       else if(valeurBouton = 'arreter_musique')  then
           arreterMusique(affichage)
       else if(valeurBouton = 'fin_tour')  then
-        finTour := True
+        begin
+        finTour := True;
+        jouerSonFinDeTour(affichage);
+        end
       else 
         begin
-        writeln(valeurBouton);
-        utiliserCarteTutorat(plateau,affichage, joueurs,joueurs[i] ,valeurBouton);
+        // writeln(valeurBouton);
+        utiliserCarteTutorat(plateau,affichage, joueurs,joueurs[i].id ,valeurBouton);
+        affichageTour(plateau, joueurs, i, affichage);
 
         end;
 
@@ -426,29 +442,49 @@ for j in joueurs do
 
 end;
 
-procedure utiliserCarteTutorat(var plateau : TPlateau;var affichage : TAffichage;var joueurs : TJoueurs; joueur : Tjoueur;nom : String);
+procedure utiliserCarteTutorat(var plateau : TPlateau;var affichage : TAffichage;var joueurs : TJoueurs;id : Integer;nom : String);
 var i : Integer;
 begin
-  for i:=0 to 4 do
-    begin
-    if(joueur.CartesTutorat[i].nom = nom) then
-      begin
-      if(joueur.CartesTutorat[i].utilisee < joueur.CartesTutorat[i].nbr) then
-        begin
-        if(nom = plateau.cartesTutorat[0].nom) then
-          utiliserCarte1(plateau,affichage,joueur)
-        else if(nom = plateau.cartesTutorat[1].nom) then
-          utiliserCarte2(plateau,affichage,joueurs,joueur)
-        else if(nom = plateau.cartesTutorat[2].nom) then
-          utiliserCarte3(plateau,joueur)
-        else if(nom = plateau.cartesTutorat[3].nom) then
-          utiliserCarte4(affichage,plateau,joueurs,joueur)
-        else if(nom = plateau.cartesTutorat[4].nom) then
-          utiliserCarte5(joueurs,joueur);
-        joueur.CartesTutorat[i].utilisee := joueur.CartesTutorat[i].utilisee + 1;
-        end;
-      end;
-    end;
+// TODO peut etre ameriliorer
+if((nom = plateau.cartesTutorat[0].nom) and (joueurs[id].CartesTutorat[0].utilisee < joueurs[id].CartesTutorat[0].nbr)) then
+  begin
+  jouerSonValide(affichage,true);
+  utiliserCarte1(plateau,affichage,joueurs[id]);
+  joueurs[id].CartesTutorat[0].utilisee := joueurs[id].CartesTutorat[0].utilisee + 1;
+  exit;
+  end
+else if((nom = plateau.cartesTutorat[1].nom) and (joueurs[id].CartesTutorat[1].utilisee < joueurs[id].CartesTutorat[1].nbr)) then
+  begin
+  jouerSonValide(affichage,true);
+  utiliserCarte2(plateau,affichage,joueurs,joueurs[id]);
+  joueurs[id].CartesTutorat[1].utilisee := joueurs[id].CartesTutorat[1].utilisee + 1;
+  exit;
+  end
+else if((nom = plateau.cartesTutorat[2].nom) and (joueurs[id].CartesTutorat[2].utilisee < joueurs[id].CartesTutorat[2].nbr)) then
+  begin
+  jouerSonValide(affichage,true);
+  utiliserCarte3(plateau,joueurs[id]);
+  joueurs[id].CartesTutorat[2].utilisee := joueurs[id].CartesTutorat[2].utilisee + 1;
+  exit;
+  end
+else if((nom = plateau.cartesTutorat[3].nom) and (joueurs[id].CartesTutorat[3].utilisee < joueurs[id].CartesTutorat[3].nbr)) then
+  begin
+  jouerSonValide(affichage,true);
+  utiliserCarte4(affichage,plateau,joueurs,joueurs[id]);
+  joueurs[id].CartesTutorat[3].utilisee := joueurs[id].CartesTutorat[3].utilisee + 1;
+  exit;
+  end
+else if((nom = plateau.cartesTutorat[4].nom) and (joueurs[id].CartesTutorat[4].utilisee < joueurs[id].CartesTutorat[4].nbr)) then
+  begin
+  jouerSonValide(affichage,true);
+  utiliserCarte5(joueurs,joueurs[id]);
+  joueurs[id].CartesTutorat[4].utilisee := joueurs[id].CartesTutorat[4].utilisee + 1;
+  exit;
+  end;
+
+
+affichageInformation('Vous avez deja utilise toutes vos cartes de ce type',25,FCouleur(255,0,0,255),affichage);
+jouerSonValide(affichage,false);
 end;
 
 end.

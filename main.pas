@@ -16,6 +16,7 @@ begin
     testYann := False;
     if not testYann then
     begin
+
         initialisationPartie(joueurs,plateau,affichage);
 
         SetLength(plateau.Connexions, 1);
@@ -54,6 +55,8 @@ begin
         joueurs[1].Ressources[Informatique] := 99;
         joueurs[1].Ressources[Humanites] := 99;
         joueurs[1].Ressources[Physique] := 99;
+
+
 
         partie(joueurs,plateau,affichage);
 
