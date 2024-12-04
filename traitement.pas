@@ -175,6 +175,19 @@ begin
         3: begin
         couleur.r := 255; couleur.g := 255; couleur.b := 0;
         end;
+        // previsualisation joueur
+        -1: begin
+            couleur.r := 155; couleur.g := 0; couleur.b := 0;
+        end;
+        -2: begin
+            couleur.r := 0; couleur.g := 155; couleur.b := 0;
+        end;
+        -3: begin
+            couleur.r := 0; couleur.g := 0; couleur.b := 155;
+        end;
+        -4: begin
+        couleur.r := 155; couleur.g := 155; couleur.b := 0;
+        end;
     end;
 end;
 

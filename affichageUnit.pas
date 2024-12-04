@@ -366,7 +366,7 @@ Postconditions :
 procedure affichageGrille(plat: TPlateau; var affichage: TAffichage);
 var q,r,taille: Integer;
 begin
-    affichageFond(affichage);
+    // affichageFond(affichage);
 
     taille := length(plat.Grille);
     for q:=0 to taille-1 do
