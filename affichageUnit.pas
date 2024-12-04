@@ -30,6 +30,7 @@ procedure affichageScoreAndClear(joueur:TJoueur; var affichage: TAffichage);
 procedure affichageCartesTutoratAndRender(joueur: TJoueur; var affichage: TAffichage);
 procedure affichageCartesTutorat(joueur: TJoueur; var affichage: TAffichage);
 procedure affichageDes(de1,de2:Integer; var affichage: TAffichage);
+procedure affichageHexagone(plat: TPlateau; var affichage: TAffichage; coordHexa: TCoord);
 
 implementation
 
