@@ -624,15 +624,15 @@ begin
   //   exit;
   // end;
     // TODO pose probleme de acces violation au  placement de connexion du deuxieme joeuur apres un placement du premier joueur
-  // if not enContactAvecPersonne then
-  // begin
+  if not enContactAvecPersonne then
+  begin
     if not enContactAvecAutreConnexion then
     begin
       connexionValide := False;
       affichageInformation('La connexion doit etre adjacente a une autre connexion ou en contact avec un eleve ou un professeur.', 25, FCouleur(0,0,0,255), affichage);
       Exit;
     end;
-  // end;
+  end;
 
   // 4. Verifie si au moins 1 des hexagones est dans le plateau
   if (not dansLePlateau(plateau,coords[0]) and not dansLePlateau(plateau,coords[1])) then 
