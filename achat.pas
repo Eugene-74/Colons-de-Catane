@@ -35,6 +35,7 @@ function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var jou
 function enContactConnexionConnexion(coords1: TCoords; coords2: TCoords): Boolean;forward;
 function resteEleve(plateau:TPlateau; joueur:Tjoueur): Boolean;forward;
 function resteEmplacementEleve(affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;forward;
+function resteEmplacementConnexion(affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;forward;
 
 function enContactEleveConnexions(plateau: TPlateau; eleve: TPersonne; var joueur: TJoueur): TCoords;forward;
 function compterConnexionSuite(plateau: TPlateau; joueur: TJoueur): Integer;forward;
@@ -83,11 +84,14 @@ begin
 
 end;
 
+
+
+
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
 begin
   case choix of
    // ELEVE
-    1: 
+    1:
       if(resteEmplacementEleve(affichage,plateau,joueur))then
         if(aLesRessources(joueur,COUT_ELEVE)) then
         begin
@@ -110,18 +114,22 @@ begin
 
     // CONNEXION
     2:
-      if(aLesRessources(joueur,COUT_CONNEXION)) then
-      begin
-      jouerSonClicAction(affichage);
-
-        placementConnexion(plateau, affichage, joueur);
-
-        enleverRessources(joueur,COUT_CONNEXION);
-      end
+      if(resteEmplacementConnexion(affichage,plateau,joueur))then
+        if(aLesRessources(joueur,COUT_CONNEXION)) then
+          begin
+          jouerSonClicAction(affichage);
+          placementConnexion(plateau, affichage, joueur);
+          enleverRessources(joueur,COUT_CONNEXION);
+        end
+        else
+          begin
+            affichageInformation('Vous n''avez pas les ressources necessaires pour acheter une connexion.', 25, FCouleur(0,0,0,255), affichage);
+            jouerSonValide(affichage,false);
+          end
       else
         begin
-          affichageInformation('Vous n''avez pas les ressources necessaires pour acheter une connexion.', 25, FCouleur(0,0,0,255), affichage);
-          jouerSonValide(affichage,false);
+        affichageInformation('Vous n''avez pas d''emplacement pour mettre une connexion.', 25, FCouleur(255,0,0,255), affichage);
+        jouerSonValide(affichage,false);
         end;
     
 
@@ -231,11 +239,11 @@ begin
 
   affichageGrille(plateau,affichage);
   affichageScoreAndClear(joueurActuel, affichage);
-  // affichagePersonne(plateau.Personnes[High(plateau.Personnes)], affichage);
-  for i:=0 to length(plateau.Personnes)-1 do
-        affichagePersonne(plateau.Personnes[i],affichage);
+  affichageSouillard(plateau,affichage);
   for i:=0 to length(plateau.Connexions)-1 do
     affichageConnexion(plateau.Connexions[i],affichage);
+  for i:=0 to length(plateau.Personnes)-1 do
+        affichagePersonne(plateau.Personnes[i],affichage);
   miseAJourRenderer(affichage);
 
   affichageInformation('Eleve place avec succes !', 25, FCouleur(0,255,0,255), affichage);
@@ -862,12 +870,21 @@ end;
 
 procedure deplacementSouillard(var plateau : TPlateau;var joueurs : TJoueurs ;var affichage : TAffichage);
 var coord : Tcoord;
+  i : Integer;
 begin
   affichageInformation('Cliquez sur 1 hexagones pour deplacer le souillard.', 25, FCouleur(0,0,0,255), affichage);
 
   repeat
-    clicHexagone(plateau, affichage, coord); 
+    clicHexagone(plateau, affichage, coord);
   until (dansLePlateau(plateau,coord));
+
+  affichageGrille(plateau,affichage);
+  affichageSouillard(plateau,affichage);
+  for i:=0 to length(plateau.Connexions)-1 do
+    affichageConnexion(plateau.Connexions[i],affichage);
+  for i:=0 to length(plateau.Personnes)-1 do
+        affichagePersonne(plateau.Personnes[i],affichage);
+  miseAJourRenderer(affichage);
 
   plateau.Souillard.Position := coord;
   affichageInformation('Souillard deplace avec succes !', 25, FCouleur(0,255,0,255), affichage);
@@ -1004,6 +1021,18 @@ begin
   end;
 end;
 
+function resteEmplacementConnexion(affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
+begin
+  // resteEmplacementConnexion := False;
+  // for i := 0 to High(plateau.connexions) do
+
+  // if CountPersonnes(plateau.Personnes, False, joueur) < 2 then
+  // begin
+  //   resteEmplacementConnexion := True;
+  //   Exit;
+  // end;
+  resteEmplacementConnexion := True;
+end;
 
 function resteEmplacementEleve(affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
 var
@@ -1018,9 +1047,6 @@ begin
   begin
     if (plateau.connexions[i].IdJoueur = joueur.Id) then
     begin
-    // writeln('Coordonnées de la connexion: (', plateau.connexions[i].Position[0].x, ', ', plateau.connexions[i].Position[0].y, ') et (', plateau.connexions[i].Position[1].x, ', ', plateau.connexions[i].Position[1].y, ')');
-      // resteEmplacementEleve := True;
-      // Exit;
     setLength(coords1,3);
     setLength(coords2,3);
 
@@ -1079,7 +1105,6 @@ begin
         end;
     end;
   end;
-
 end;
 
 procedure placeFauxEleve(affichage : TAffichage;plateau : TPlateau;coords : Tcoords; id : Integer);
