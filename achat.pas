@@ -19,6 +19,7 @@ procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage;
 
 
 implementation
+procedure placeFauxEleve(affichage : TAffichage;plateau : TPlateau;coords : Tcoords);forward;
 
 
 procedure ClicConnexion(plateau : TPlateau;affichage : TAffichage;var coords : TCoords);forward;
@@ -33,7 +34,7 @@ function aucuneConnexionAdjacente(coords: TCoords;  plateau: TPlateau; joueur: T
 function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var joueur:TJoueur; var affichage : TAffichage):Boolean;forward;
 function enContactConnexionConnexion(coords1: TCoords; coords2: TCoords): Boolean;forward;
 function resteEleve(plateau:TPlateau; joueur:Tjoueur): Boolean;forward;
-function resteEmplacementEleve(plateau: TPlateau; joueur: TJoueur): Boolean;forward;
+function resteEmplacementEleve(affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;forward;
 
 function enContactEleveConnexions(plateau: TPlateau; eleve: TPersonne; var joueur: TJoueur): TCoords;forward;
 function compterConnexionSuite(plateau: TPlateau; joueur: TJoueur): Integer;forward;
@@ -87,7 +88,7 @@ begin
   case choix of
    // ELEVE
     1: 
-      if(resteEmplacementEleve(plateau,joueur))then
+      if(resteEmplacementEleve(affichage,plateau,joueur))then
         if(aLesRessources(joueur,COUT_ELEVE)) then
         begin
         jouerSonClicAction(affichage);
@@ -999,10 +1000,13 @@ begin
 end;
 
 
-function resteEmplacementEleve(plateau: TPlateau; joueur: TJoueur): Boolean;
+function resteEmplacementEleve(affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
 var
   i: Integer;
   coords1,coords2 : Tcoords;
+  x1,x2,y1,y2: Integer;
+  j : Boolean;
+
 begin
   resteEmplacementEleve := False;
   for i := 0 to High(plateau.connexions) do
@@ -1020,64 +1024,76 @@ begin
 
     coords2[0] := plateau.connexions[i].Position[0];
     coords2[1] := plateau.connexions[i].Position[1];
-
+    j := false;
+    // diagonale 1
     if(plateau.connexions[i].Position[0].x = plateau.connexions[i].Position[1].x)then
       begin
-      writeln('diagonale');
-
-      writeln('Coordonnées de la connexion 1: (', coords1[0].x, ', ', coords1[0].y, '), (', coords1[1].x, ', ', coords1[1].y, '), (', coords1[2].x, ', ', coords1[2].y, ')');
-      writeln('Coordonnées de la connexion 2: (', coords2[0].x, ', ', coords2[0].y, '), (', coords2[1].x, ', ', coords2[1].y, '), (', coords2[2].x, ', ', coords2[2].y, ')');
-
-
+      x1:=-1; y1:=1;
+      x2:=1; y2:=0;
       if(plateau.connexions[i].Position[0].y < plateau.connexions[i].Position[1].y)then
-        begin
-        coords1[2] := FCoord(plateau.connexions[i].Position[0].x-1,plateau.connexions[i].Position[0].y);
-        coords2[2] := FCoord(plateau.connexions[i].Position[0].x+1,plateau.connexions[i].Position[0].y+1);
-        end
-      else
-        begin
-        coords1[2] := FCoord(plateau.connexions[i].Position[1].x+1,plateau.connexions[i].Position[1].y-1);
-        coords2[2] := FCoord(plateau.connexions[i].Position[1].x,plateau.connexions[i].Position[1].y+1);
-        end;
+        j:=true;
       end
+    // horizontale
     else if(plateau.connexions[i].Position[0].y = plateau.connexions[i].Position[1].y)then
       begin
-      writeln('horizontale');
-
+      x1:=1; y1:=-1;
+      x2:=0; y2:=1;
       if(plateau.connexions[i].Position[0].x < plateau.connexions[i].Position[1].x)then
-        begin
-        coords1[2] := FCoord(plateau.connexions[i].Position[0].x+1,plateau.connexions[i].Position[0].y-1);
-        coords2[2] := FCoord(plateau.connexions[i].Position[0].x,plateau.connexions[i].Position[0].y+1);
-        end
-      else
-        begin
-        coords1[2] := FCoord(plateau.connexions[i].Position[1].x+1,plateau.connexions[i].Position[1].y-1);
-        coords2[2] := FCoord(plateau.connexions[i].Position[1].x,plateau.connexions[i].Position[1].y+1);
-        end;
-    end
+        j:=true;
+      end
+    // diagonale 2
     else
       begin
-      writeln('diago 2');
-
-      if(plateau.connexions[i].Position[0].y < plateau.connexions[i].Position[1].y)then
-        begin
-        coords1[2] := FCoord(plateau.connexions[i].Position[0].x-1,plateau.connexions[i].Position[0].y);
-        coords2[2] := FCoord(plateau.connexions[i].Position[0].x,plateau.connexions[i].Position[0].y-1);
-        end
-      else
-        begin
-        coords1[2] := FCoord(plateau.connexions[i].Position[1].x-1,plateau.connexions[i].Position[1].y);
-        coords2[2] := FCoord(plateau.connexions[i].Position[1].x,plateau.connexions[i].Position[1].y-1);
-        end;
+      x1:=1; y1:=0;
+      x2:=0; y2:=-1;
+      if(plateau.connexions[i].Position[0].x < plateau.connexions[i].Position[1].x)then
+        j:=true;
       end;
+    if(j)then
+      begin
+      coords1[2] := FCoord(plateau.connexions[i].Position[0].x+x1,plateau.connexions[i].Position[0].y+y1);
+      coords2[2] := FCoord(plateau.connexions[i].Position[0].x+x2,plateau.connexions[i].Position[0].y+y2);
+      end
+    else
+      begin
+      coords1[2] := FCoord(plateau.connexions[i].Position[1].x+x1,plateau.connexions[i].Position[1].y+y1);
+      coords2[2] := FCoord(plateau.connexions[i].Position[1].x+x2,plateau.connexions[i].Position[1].y+y2);
+      end;
+
       if (not VerifierAdjacencePersonnes(coords1,plateau) or not VerifierAdjacencePersonnes(coords2,plateau))  then
         begin
         resteEmplacementEleve := True;
-        Exit;
+        if(not VerifierAdjacencePersonnes(coords1,plateau))then
+          begin
+          placeFauxEleve(affichage, plateau, coords1);
+          end;
+        if(not VerifierAdjacencePersonnes(coords2,plateau))then
+          begin
+          placeFauxEleve(affichage, plateau, coords2);
+          end;
         end;
     end;
   end;
 
+end;
+
+procedure placeFauxEleve(affichage : TAffichage;plateau : TPlateau;coords : Tcoords);
+begin
+
+SetLength(plateau.Personnes, Length(plateau.Personnes) + 1);
+with plateau.Personnes[High(plateau.Personnes)] do
+  begin
+      SetLength(Position, 3);
+      Position[0] := coords[0];
+      Position[1] := coords[1];
+      Position[2] := coords[2];
+
+    estEleve := True;
+    IdJoueur := 5;
+    end;
+affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
+
+miseAJourRenderer(affichage);
 end;
 
 function encontactAutreconnexionEleve(plateau: TPlateau; Eleve: TCoords; var joueur: TJoueur): Boolean;
