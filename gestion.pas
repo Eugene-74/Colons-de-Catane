@@ -306,7 +306,10 @@ var id1,id2 : Integer;
 
 begin
 id1 := joueurs[id].id;
-id2 := joueurs[id+1].id;
+if(id1< length(joueurs)-1) then
+  id2 := id1 + 1
+else
+  id2 := 0;
 echangeRessources(joueurs,id1, id2 ,ressources1,ressources2,affichage);
 
 if(ressourcesVide(ressources1) and ressourcesVide(ressources2))then
