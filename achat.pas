@@ -20,7 +20,10 @@ procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage;
 
 implementation
 procedure placeFauxEleve(affichage : TAffichage;plateau : TPlateau;coords : Tcoords;id : Integer);forward;
+procedure placeFauxConnexion(affichage : TAffichage;plateau : TPlateau;coord1 : Tcoord;coord2 : Tcoord; id : Integer);forward;
+function connexionExisteDeja(plateau: TPlateau; coord1: TCoord; coord2: TCoord): Boolean;forward;
 
+procedure trouver3EmeHexagone(plateau : TPlateau;coords1: TCoords; coords2: TCoords;i : Integer);forward;
 
 procedure ClicConnexion(plateau : TPlateau;affichage : TAffichage;var coords : TCoords);forward;
 function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage : TAffichage): Boolean;forward;
@@ -65,7 +68,7 @@ begin
   // begin
   //  if plateau.Personnes[i].CarteTutorat[]
 
-  end;
+  // end;
   nbrTotal :=0;
   for i := 0 to 4 do
     nbrTotal :=nbrTotal  + cartesTutorat[i].nbr;
@@ -105,6 +108,9 @@ begin
           PlacementEleve(plateau, affichage, joueur);
 
           enleverRessources(joueur,COUT_ELEVE);
+
+          // affichageScoreAndClear(joueur, affichage);
+          // miseAJourRenderer(affichage);
         end
         else
           begin
@@ -123,8 +129,10 @@ begin
         if(aLesRessources(joueur,COUT_CONNEXION)) then
           begin
           jouerSonClicAction(affichage);
-          placementConnexion(plateau, affichage, joueur);
           enleverRessources(joueur,COUT_CONNEXION);
+          placementConnexion(plateau, affichage, joueur);
+          
+          
         end
         else
           begin
@@ -142,13 +150,15 @@ begin
     3: 
       if(resteEleve(plateau,joueur))then
         if(aLesRessources(joueur,COUT_PROFESSEUR)) then
-        begin
-        jouerSonClicAction(affichage);
+          begin
+          jouerSonClicAction(affichage);
 
+          enleverRessources(joueur,COUT_PROFESSEUR);
           changementProfesseur(plateau, affichage, joueur);
           
-          enleverRessources(joueur,COUT_PROFESSEUR);
-        end
+          // affichageScoreAndClear(joueur, affichage);
+          // miseAJourRenderer(affichage);
+          end
         else
           begin
             affichageInformation('Vous n''avez pas les ressources necessaires pour changer un eleve en professeur.', 25, FCouleur(0,0,0,255), affichage);
@@ -604,6 +614,24 @@ begin
 end;
 
 
+function connexionExisteDeja(plateau: TPlateau; coord1: TCoord; coord2: TCoord): Boolean;
+var i : Integer;
+begin
+for i := 0 to High(plateau.Connexions) do
+  begin
+  if (((plateau.Connexions[i].Position[0].x = coord1.x) and
+        (plateau.Connexions[i].Position[0].y = coord1.y) and
+        (plateau.Connexions[i].Position[1].x = coord2.x) and
+        (plateau.Connexions[i].Position[1].y = coord2.y))
+      or
+      ((plateau.Connexions[i].Position[0].x = coord2.x) and
+        (plateau.Connexions[i].Position[0].y = coord2.y) and
+        (plateau.Connexions[i].Position[1].x = coord1.x) and
+        (plateau.Connexions[i].Position[1].y = coord1.y))) then
+  exit(True);
+  end;
+exit(False);
+end;
 
 
 function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage :TAffichage): Boolean;
@@ -618,24 +646,13 @@ begin
 
 
   // 1. Verifie si une connexion existe dejà avec les mêmes coordonnees (independamment de l'ordre)
-  for i := 0 to High(plateau.Connexions) do
-  begin
-    if (((plateau.Connexions[i].Position[0].x = coords[0].x) and
-         (plateau.Connexions[i].Position[0].y = coords[0].y) and
-         (plateau.Connexions[i].Position[1].x = coords[1].x) and
-         (plateau.Connexions[i].Position[1].y = coords[1].y))
-        or 
-        ((plateau.Connexions[i].Position[0].x = coords[1].x) and
-         (plateau.Connexions[i].Position[0].y = coords[1].y) and
-         (plateau.Connexions[i].Position[1].x = coords[0].x) and
-         (plateau.Connexions[i].Position[1].y = coords[0].y))) then
+  if(connexionExisteDeja(plateau, coords[0],coords[1]))then
     begin
       connexionValide := False;
       affichageInformation('Position de connexion deja occupee.', 25, FCouleur(0,0,0,255), affichage);
-
       Exit;
     end;
-  end;
+  // end;
 
   // 2. Verifie si les deux hexagones sont adjacents
   if not enContact(coords) then
@@ -715,9 +732,13 @@ begin
   affichageConnexion(plateau.Connexions[length(plateau.Connexions)-1], affichage);
 
   //TODO opti ça (pour YANN)
+  
+  affichageGrille(plateau,affichage);
+  affichageSouillard(plateau,affichage);
+  for i:=0 to length(plateau.Connexions)-1 do
+    affichageConnexion(plateau.Connexions[i],affichage);
   for i:=0 to length(plateau.Personnes)-1 do
-      affichagePersonne(plateau.Personnes[i],affichage);
-
+    affichagePersonne(plateau.Personnes[i],affichage);
   miseAJourRenderer(affichage);
 
   affichageInformation('Connexion placee avec succes !', 25, FCouleur(0,255,0,255), affichage);
@@ -883,6 +904,8 @@ begin
     clicHexagone(plateau, affichage, coord);
   until (dansLePlateau(plateau,coord));
 
+  plateau.Souillard.Position := coord;
+  
   affichageGrille(plateau,affichage);
   affichageSouillard(plateau,affichage);
   for i:=0 to length(plateau.Connexions)-1 do
@@ -891,7 +914,6 @@ begin
         affichagePersonne(plateau.Personnes[i],affichage);
   miseAJourRenderer(affichage);
 
-  plateau.Souillard.Position := coord;
   affichageInformation('Souillard deplace avec succes !', 25, FCouleur(0,255,0,255), affichage);
 end;
 function enContactConnexionConnexion( coords1: TCoords; coords2: TCoords): Boolean;
@@ -1026,25 +1048,122 @@ begin
   end;
 end;
 
-function resteEmplacementConnexion(affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
+procedure placeFauxConnexion(affichage : TAffichage;plateau : TPlateau;coord1 : Tcoord;coord2 : Tcoord; id : Integer);
 begin
-  // resteEmplacementConnexion := False;
-  // for i := 0 to High(plateau.connexions) do
+SetLength(plateau.Connexions, Length(plateau.Connexions) + 1);
 
-  // if CountPersonnes(plateau.Personnes, False, joueur) < 2 then
-  // begin
-  //   resteEmplacementConnexion := True;
-  //   Exit;
-  // end;
-  resteEmplacementConnexion := True;
+with plateau.Connexions[High(plateau.Connexions)] do
+  begin
+  SetLength(Position, 2);
+  Position[0] := coord1;
+  Position[1] := coord2;
+
+  IdJoueur := -id-1;
+  end;
+  affichageConnexion(plateau.Connexions[High(plateau.Connexions)], affichage);
 end;
+
+function resteEmplacementConnexion(affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
+var i: Integer;
+  coords1,coords2 : Tcoords;
+begin
+  resteEmplacementConnexion := False;
+  for i := 0 to High(plateau.connexions) do
+  begin
+    if (plateau.connexions[i].IdJoueur = joueur.Id) then
+    begin
+      setLength(coords1,3);
+      setLength(coords2,3);
+
+      coords1[0] := plateau.connexions[i].Position[0];
+      coords1[1] := plateau.connexions[i].Position[1];
+
+      coords2[0] := plateau.connexions[i].Position[0];
+      coords2[1] := plateau.connexions[i].Position[1];
+
+      trouver3EmeHexagone(plateau,coords1,coords2,i);
+
+      resteEmplacementConnexion := True;
+
+      if(not connexionExisteDeja(plateau, coords1[0],coords1[2]))then
+        begin
+        placeFauxConnexion(affichage,plateau, coords1[0],coords1[2], joueur.Id);
+        resteEmplacementConnexion := True;
+        end;
+      if(not connexionExisteDeja(plateau, coords1[1],coords1[2]))then
+        begin
+        placeFauxConnexion(affichage,plateau, coords1[1],coords1[2], joueur.Id);
+        resteEmplacementConnexion := True;
+        end;
+      if(not connexionExisteDeja(plateau, coords2[0],coords2[2]))then
+        begin
+        placeFauxConnexion(affichage,plateau, coords2[0],coords2[2], joueur.Id);
+        resteEmplacementConnexion := True;
+        end;
+      if(not connexionExisteDeja(plateau, coords2[1],coords2[2]))then
+        begin
+        placeFauxConnexion(affichage,plateau, coords2[1],coords2[2], joueur.Id);
+        resteEmplacementConnexion := True;
+        end;
+
+    end;
+  end;
+  //TODO opti ça (pour YANN)
+  for i:=0 to length(plateau.connexions)-1 do
+    affichageConnexion(plateau.connexions[i],affichage);
+
+  for i:=0 to length(plateau.personnes)-1 do
+        affichagePersonne(plateau.personnes[i],affichage);
+
+  miseAJourRenderer(affichage);
+end;
+
+procedure trouver3EmeHexagone(plateau : TPlateau;coords1: TCoords; coords2: TCoords;i : Integer);
+var x1,x2,y1,y2: Integer;
+  j : Boolean;
+begin
+j := false;
+// diagonale 1
+if(plateau.connexions[i].Position[0].x = plateau.connexions[i].Position[1].x)then
+  begin
+  x1:=-1; y1:=1;
+  x2:=1; y2:=0;
+  if(plateau.connexions[i].Position[0].y < plateau.connexions[i].Position[1].y)then
+    j:=true;
+  end
+// horizontale
+else if(plateau.connexions[i].Position[0].y = plateau.connexions[i].Position[1].y)then
+  begin
+  x1:=1; y1:=-1;
+  x2:=0; y2:=1;
+  if(plateau.connexions[i].Position[0].x < plateau.connexions[i].Position[1].x)then
+    j:=true;
+  end
+// diagonale 2
+else
+  begin
+  x1:=1; y1:=0;
+  x2:=0; y2:=-1;
+  if(plateau.connexions[i].Position[0].x < plateau.connexions[i].Position[1].x)then
+    j:=true;
+  end;
+if(j)then
+  begin
+  coords1[2] := FCoord(plateau.connexions[i].Position[0].x+x1,plateau.connexions[i].Position[0].y+y1);
+  coords2[2] := FCoord(plateau.connexions[i].Position[0].x+x2,plateau.connexions[i].Position[0].y+y2);
+  end
+else
+  begin
+  coords1[2] := FCoord(plateau.connexions[i].Position[1].x+x1,plateau.connexions[i].Position[1].y+y1);
+  coords2[2] := FCoord(plateau.connexions[i].Position[1].x+x2,plateau.connexions[i].Position[1].y+y2);
+  end;
+end;
+
 
 function resteEmplacementEleve(affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
 var
   i: Integer;
   coords1,coords2 : Tcoords;
-  x1,x2,y1,y2: Integer;
-  j : Boolean;
 
 begin
   resteEmplacementEleve := False;
@@ -1060,57 +1179,26 @@ begin
 
     coords2[0] := plateau.connexions[i].Position[0];
     coords2[1] := plateau.connexions[i].Position[1];
-    j := false;
-    // diagonale 1
-    if(plateau.connexions[i].Position[0].x = plateau.connexions[i].Position[1].x)then
-      begin
-      x1:=-1; y1:=1;
-      x2:=1; y2:=0;
-      if(plateau.connexions[i].Position[0].y < plateau.connexions[i].Position[1].y)then
-        j:=true;
-      end
-    // horizontale
-    else if(plateau.connexions[i].Position[0].y = plateau.connexions[i].Position[1].y)then
-      begin
-      x1:=1; y1:=-1;
-      x2:=0; y2:=1;
-      if(plateau.connexions[i].Position[0].x < plateau.connexions[i].Position[1].x)then
-        j:=true;
-      end
-    // diagonale 2
-    else
-      begin
-      x1:=1; y1:=0;
-      x2:=0; y2:=-1;
-      if(plateau.connexions[i].Position[0].x < plateau.connexions[i].Position[1].x)then
-        j:=true;
-      end;
-    if(j)then
-      begin
-      coords1[2] := FCoord(plateau.connexions[i].Position[0].x+x1,plateau.connexions[i].Position[0].y+y1);
-      coords2[2] := FCoord(plateau.connexions[i].Position[0].x+x2,plateau.connexions[i].Position[0].y+y2);
-      end
-    else
-      begin
-      coords1[2] := FCoord(plateau.connexions[i].Position[1].x+x1,plateau.connexions[i].Position[1].y+y1);
-      coords2[2] := FCoord(plateau.connexions[i].Position[1].x+x2,plateau.connexions[i].Position[1].y+y2);
-      end;
 
-      if (not VerifierAdjacencePersonnes(coords1,plateau) or not VerifierAdjacencePersonnes(coords2,plateau))  then
-        begin
-        resteEmplacementEleve := True;
-        if(not VerifierAdjacencePersonnes(coords1,plateau))then
-          begin
-          placeFauxEleve(affichage, plateau, coords1,joueur.Id);
-          end;
-        if(not VerifierAdjacencePersonnes(coords2,plateau))then
-          begin
-          placeFauxEleve(affichage, plateau, coords2,joueur.Id);
-          end;
-        end;
+    trouver3EmeHexagone(plateau,coords1,coords2,i);
+
+    if(not VerifierAdjacencePersonnes(coords1,plateau))then
+      begin
+      placeFauxEleve(affichage, plateau, coords1,joueur.Id);
+      resteEmplacementEleve := True;
+      end;
+    if(not VerifierAdjacencePersonnes(coords2,plateau))then
+      begin
+      placeFauxEleve(affichage, plateau, coords2,joueur.Id);
+      resteEmplacementEleve := True;
+      end;
     end;
   end;
+
+  miseAJourRenderer(affichage);
 end;
+
+
 
 procedure placeFauxEleve(affichage : TAffichage;plateau : TPlateau;coords : Tcoords; id : Integer);
 begin
@@ -1118,17 +1206,15 @@ begin
 SetLength(plateau.Personnes, Length(plateau.Personnes) + 1);
 with plateau.Personnes[High(plateau.Personnes)] do
   begin
-      SetLength(Position, 3);
-      Position[0] := coords[0];
-      Position[1] := coords[1];
-      Position[2] := coords[2];
+  SetLength(Position, 3);
+  Position[0] := coords[0];
+  Position[1] := coords[1];
+  Position[2] := coords[2];
 
-    estEleve := True;
-    IdJoueur := -id-1;
-    end;
-affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
-
-miseAJourRenderer(affichage);
+  estEleve := True;
+  IdJoueur := -id-1;
+  end;
+  affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
 end;
 
 function encontactAutreconnexionEleve(plateau: TPlateau; Eleve: TCoords; var joueur: TJoueur): Boolean;
