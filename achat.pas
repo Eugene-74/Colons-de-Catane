@@ -64,7 +64,7 @@ begin
   // begin
   //  if plateau.Personnes[i].CarteTutorat[]
 
-  end;
+ // end;
   nbrTotal :=0;
   for i := 0 to 4 do
     nbrTotal :=nbrTotal  + cartesTutorat[i].nbr;
@@ -638,7 +638,7 @@ begin
     Exit;
   end;
   // TODO inutile
-    // enContactAvecPersonne := enContactEleveConnexion(plateau, coords, joueur);
+    enContactAvecPersonne := enContactEleveConnexion(plateau, coords, joueur);
     enContactAvecAutreConnexion := not aucuneConnexionAdjacente(coords, plateau, joueur,affichage);
 
   // 3. Verifie si en contact avec un eleve ou une connexion
@@ -650,7 +650,7 @@ begin
     // TODO pose probleme de acces violation au  placement de connexion du deuxieme joeuur apres un placement du premier joueur
   if not enContactAvecPersonne then
   begin
-    if not enContactAvecAutreConnexion then
+    if  not enContactAvecAutreConnexion then
     begin
       connexionValide := False;
       affichageInformation('La connexion doit etre adjacente a une autre connexion ou en contact avec un eleve ou un professeur.', 25, FCouleur(0,0,0,255), affichage);
@@ -821,7 +821,6 @@ begin
       if sontAdjacents(autreCoord, coordRestante) then
       begin
         verif := False;
- writeln('sjgdofj');
 
       end;
     end;
