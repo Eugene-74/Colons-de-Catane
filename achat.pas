@@ -33,6 +33,8 @@ function aucuneConnexionAdjacente(coords: TCoords;  plateau: TPlateau; joueur: T
 function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var joueur:TJoueur; var affichage : TAffichage):Boolean;forward;
 function enContactConnexionConnexion(coords1: TCoords; coords2: TCoords): Boolean;forward;
 function resteEleve(plateau:TPlateau; joueur:Tjoueur): Boolean;forward;
+function resteEmplacementEleve(plateau: TPlateau; joueur: TJoueur): Boolean;forward;
+
 function enContactEleveConnexions(plateau: TPlateau; eleve: TPersonne; var joueur: TJoueur): TCoords;forward;
 function compterConnexionSuite(plateau: TPlateau; joueur: TJoueur): Integer;forward;
 function adjacence3Connexions(coords: TCoords; plateau: TPlateau; joueur: TJoueur; var affichage : TAffichage): Boolean;forward;
@@ -85,18 +87,24 @@ begin
   case choix of
    // ELEVE
     1: 
-      if(aLesRessources(joueur,COUT_ELEVE)) then
-      begin
-      jouerSonClicAction(affichage);
+      if(resteEmplacementEleve(plateau,joueur))then
+        if(aLesRessources(joueur,COUT_ELEVE)) then
+        begin
+        jouerSonClicAction(affichage);
 
-        PlacementEleve(plateau, affichage, joueur);
+          PlacementEleve(plateau, affichage, joueur);
 
-        enleverRessources(joueur,COUT_ELEVE);
-      end
+          enleverRessources(joueur,COUT_ELEVE);
+        end
+        else
+          begin
+            affichageInformation('Vous n''avez pas les ressources necessaires pour acheter un eleve.', 25, FCouleur(0,0,0,255), affichage);
+            jouerSonValide(affichage,false);
+          end
       else
         begin
-          affichageInformation('Vous n''avez pas les ressources necessaires pour acheter un eleve.', 25, FCouleur(0,0,0,255), affichage);
-          jouerSonValide(affichage,false);
+        affichageInformation('Vous n''avez pas d''emplacement pour mettre un élève.', 25, FCouleur(255,0,0,255), affichage);
+        jouerSonValide(affichage,false);
         end;
 
     // CONNEXION
@@ -113,25 +121,31 @@ begin
         begin
           affichageInformation('Vous n''avez pas les ressources necessaires pour acheter une connexion.', 25, FCouleur(0,0,0,255), affichage);
           jouerSonValide(affichage,false);
-          
         end;
     
 
     // PROFESSEUR
     3: 
-      if(aLesRessources(joueur,COUT_PROFESSEUR)) then
-      begin
-      jouerSonClicAction(affichage);
+      if(resteEleve(plateau,joueur))then
+        if(aLesRessources(joueur,COUT_PROFESSEUR)) then
+        begin
+        jouerSonClicAction(affichage);
 
-        changementProfesseur(plateau, affichage, joueur);
-        
-        enleverRessources(joueur,COUT_PROFESSEUR);
-      end
+          changementProfesseur(plateau, affichage, joueur);
+          
+          enleverRessources(joueur,COUT_PROFESSEUR);
+        end
+        else
+          begin
+            affichageInformation('Vous n''avez pas les ressources necessaires pour changer un eleve en professeur.', 25, FCouleur(0,0,0,255), affichage);
+            jouerSonValide(affichage,false);
+          end
       else
         begin
-          affichageInformation('Vous n''avez pas les ressources necessaires pour changer un eleve en professeur.', 25, FCouleur(0,0,0,255), affichage);
-          jouerSonValide(affichage,false);
+        affichageInformation('Vous n''avez plus d''élève à modifier.', 25, FCouleur(255,0,0,255), affichage);
+        jouerSonValide(affichage,false);
         end;
+
     // carte de tutorat
     4:
     //  verif ressource
@@ -200,7 +214,6 @@ begin
     jouerSonValide(affichage,valide);
   until valide;
 
-  // TODO MACHE PAS LES HEXAGONES SONT PAS SPECIALEMENT COLLER
   SetLength(plateau.Personnes, Length(plateau.Personnes) + 1);
   with plateau.Personnes[High(plateau.Personnes)] do
     begin
@@ -239,11 +252,13 @@ begin
     Exit;
   end;
 
-  if(joueurActuel.Points > 2 ) then
+  if(joueurActuel.Points >= 2 ) then
     // TODO verifier le contact avec une connexion du joueur
     if not enContactEleveConnexion(plateau,HexagonesCoords,joueurActuel) then
     begin
     //  writeln('Eleve non liée avec une connexion');
+      PersonneValide := False;
+    // TODO verifier que on peut encore poser un eleve (a mettre dans avant dans achat element)
       exit;
     end;
 
@@ -310,9 +325,9 @@ begin
     for j := i + 1 to High(HexagonesCoords) do
     begin
       if (HexagonesCoords[i].x = HexagonesCoords[j].x) and 
-         (HexagonesCoords[i].y = HexagonesCoords[j].y) then
+        (HexagonesCoords[i].y = HexagonesCoords[j].y) then
       begin
-        Exit(True); 
+        Exit(True);
       end;
     end;
   end;
@@ -365,11 +380,11 @@ begin
   indexEleve := -1; 
   setLength(ProfesseurCoords, 3);
 
-  if not resteEleve(plateau, joueurActuel) then
-  begin
-    affichageInformation('Plus d''élève à changer.', 25, FCouleur(255, 0, 0, 255), affichage);
-    Exit;
-  end;
+  // if not resteEleve(plateau, joueurActuel) then
+  // begin
+  //   affichageInformation('Plus d''élève à changer.', 25, FCouleur(255, 0, 0, 255), affichage);
+  //   Exit;
+  // end;
 
   if enContact(HexagonesCoords) then
   begin
@@ -982,6 +997,86 @@ begin
       Exit;
     end;
   end;
+end;
+
+
+function resteEmplacementEleve(plateau: TPlateau; joueur: TJoueur): Boolean;
+var
+  i: Integer;
+  coords1,coords2 : Tcoords;
+begin
+  resteEmplacementEleve := False;
+  for i := 0 to High(plateau.connexions) do
+  begin
+    if (plateau.connexions[i].IdJoueur = joueur.Id) then
+    begin
+    // writeln('Coordonnées de la connexion: (', plateau.connexions[i].Position[0].x, ', ', plateau.connexions[i].Position[0].y, ') et (', plateau.connexions[i].Position[1].x, ', ', plateau.connexions[i].Position[1].y, ')');
+      // resteEmplacementEleve := True;
+      // Exit;
+    setLength(coords1,3);
+    setLength(coords2,3);
+
+    coords1[0] := plateau.connexions[i].Position[0];
+    coords1[1] := plateau.connexions[i].Position[1];
+
+    coords2[0] := plateau.connexions[i].Position[0];
+    coords2[1] := plateau.connexions[i].Position[1];
+
+    if(plateau.connexions[i].Position[0].x = plateau.connexions[i].Position[1].x)then
+      begin
+      // writeln('diagonale');
+
+      if(plateau.connexions[i].Position[0].y < plateau.connexions[i].Position[1].y)then
+        begin
+        coords1[2] := FCoord(plateau.connexions[i].Position[0].x+1,plateau.connexions[i].Position[0].y-1);
+        coords2[2] := FCoord(plateau.connexions[i].Position[0].x,plateau.connexions[i].Position[0].y+1);
+        end
+      else
+        begin
+        coords1[2] := FCoord(plateau.connexions[i].Position[1].x+1,plateau.connexions[i].Position[1].y-1);
+        coords2[2] := FCoord(plateau.connexions[i].Position[1].x,plateau.connexions[i].Position[1].y+1);
+        end;
+      end
+    else if(plateau.connexions[i].Position[0].y = plateau.connexions[i].Position[1].y)then
+      begin
+      // writeln('horizontale');
+
+      if(plateau.connexions[i].Position[0].x < plateau.connexions[i].Position[1].x)then
+        begin
+        // writeln('premier petit');
+        coords1[2] := FCoord(plateau.connexions[i].Position[0].x+1,plateau.connexions[i].Position[0].y-1);
+        coords2[2] := FCoord(plateau.connexions[i].Position[0].x,plateau.connexions[i].Position[0].y+1);
+        end
+      else
+        begin
+        // writeln('premier grand');
+        coords1[2] := FCoord(plateau.connexions[i].Position[1].x+1,plateau.connexions[i].Position[1].y-1);
+        coords2[2] := FCoord(plateau.connexions[i].Position[1].x,plateau.connexions[i].Position[1].y+1);
+        end;
+    end
+    else
+      begin
+      // writeln('diago 2');
+
+      if(plateau.connexions[i].Position[0].y < plateau.connexions[i].Position[1].y)then
+        begin
+        coords1[2] := FCoord(plateau.connexions[i].Position[0].x-1,plateau.connexions[i].Position[0].y);
+        coords2[2] := FCoord(plateau.connexions[i].Position[0].x,plateau.connexions[i].Position[0].y-1);
+        end
+      else
+        begin
+        coords1[2] := FCoord(plateau.connexions[i].Position[1].x-1,plateau.connexions[i].Position[1].y);
+        coords2[2] := FCoord(plateau.connexions[i].Position[1].x,plateau.connexions[i].Position[1].y-1);
+        end;
+      end;
+      if (not VerifierAdjacencePersonnes(coords1,plateau) or not VerifierAdjacencePersonnes(coords2,plateau))  then
+        begin
+        resteEmplacementEleve := True;
+        Exit;
+        end;
+    end;
+  end;
+
 end;
 
 function encontactAutreconnexionEleve(plateau: TPlateau; Eleve: TCoords; var joueur: TJoueur): Boolean;
