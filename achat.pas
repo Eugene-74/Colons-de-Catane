@@ -239,11 +239,11 @@ begin
     Exit;
   end;
 
-  if(joueurActuel.Points > 2 ) then
+  if(joueurActuel.Points >=2 ) then
     // TODO verifier le contact avec une connexion du joueur
     if not enContactEleveConnexion(plateau,HexagonesCoords,joueurActuel) then
     begin
-    //  writeln('Eleve non liée avec une connexion');
+      PersonneValide:=false;
       exit;
     end;
 
@@ -618,11 +618,11 @@ begin
     enContactAvecAutreConnexion := not aucuneConnexionAdjacente(coords, plateau, joueur,affichage);
 
   // 3. Verifie si en contact avec un eleve ou une connexion
-  if enContactAutreEleveConnexion(plateau,coords,joueur,affichage)  or adjacence3Connexions(coords,plateau,joueur,affichage) then 
-  begin
-    connexionValide:= False;
-    exit;
-  end;
+  // if enContactAutreEleveConnexion(plateau,coords,joueur,affichage)  or adjacence3Connexions(coords,plateau,joueur,affichage) then 
+  // begin
+  //   connexionValide:= False;
+  //   exit;
+  // end;
     // TODO pose probleme de acces violation au  placement de connexion du deuxieme joeuur apres un placement du premier joueur
   // if not enContactAvecPersonne then
   // begin
@@ -797,11 +797,12 @@ begin
       if sontAdjacents(autreCoord, coordRestante) then
       begin
         verif := False;
+ writeln('sjgdofj');
+
       end;
     end;
   end;
     aucuneConnexionAdjacente := verif;
- 
 end;
 
 function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var joueur:TJoueur; var affichage : TAffichage):Boolean;
