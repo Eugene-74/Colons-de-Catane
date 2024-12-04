@@ -252,13 +252,11 @@ begin
     Exit;
   end;
 
-  if(joueurActuel.Points >= 2 ) then
+  if(joueurActuel.Points >=2 ) then
     // TODO verifier le contact avec une connexion du joueur
     if not enContactEleveConnexion(plateau,HexagonesCoords,joueurActuel) then
     begin
-    //  writeln('Eleve non liée avec une connexion');
-      PersonneValide := False;
-    // TODO verifier que on peut encore poser un eleve (a mettre dans avant dans achat element)
+      PersonneValide:=false;
       exit;
     end;
 
@@ -633,21 +631,21 @@ begin
     enContactAvecAutreConnexion := not aucuneConnexionAdjacente(coords, plateau, joueur,affichage);
 
   // 3. Verifie si en contact avec un eleve ou une connexion
-  if enContactAutreEleveConnexion(plateau,coords,joueur,affichage)  or adjacence3Connexions(coords,plateau,joueur,affichage) then 
-  begin
-    connexionValide:= False;
-    exit;
-  end;
-    // TODO pose probleme de acces violation au  placement de connexion du deuxieme joeuur apres un placement du premier joueur
-  // if not enContactAvecPersonne then
+  // if enContactAutreEleveConnexion(plateau,coords,joueur,affichage)  or adjacence3Connexions(coords,plateau,joueur,affichage) then 
   // begin
+  //   connexionValide:= False;
+  //   exit;
+  // end;
+    // TODO pose probleme de acces violation au  placement de connexion du deuxieme joeuur apres un placement du premier joueur
+  if not enContactAvecPersonne then
+  begin
     if not enContactAvecAutreConnexion then
     begin
       connexionValide := False;
       affichageInformation('La connexion doit etre adjacente a une autre connexion ou en contact avec un eleve ou un professeur.', 25, FCouleur(0,0,0,255), affichage);
       Exit;
     end;
-  // end;
+  end;
 
   // 4. Verifie si au moins 1 des hexagones est dans le plateau
   if (not dansLePlateau(plateau,coords[0]) and not dansLePlateau(plateau,coords[1])) then 
@@ -812,11 +810,12 @@ begin
       if sontAdjacents(autreCoord, coordRestante) then
       begin
         verif := False;
+ writeln('sjgdofj');
+
       end;
     end;
   end;
     aucuneConnexionAdjacente := verif;
- 
 end;
 
 function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var joueur:TJoueur; var affichage : TAffichage):Boolean;
