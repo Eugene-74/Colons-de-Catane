@@ -59,15 +59,15 @@ var  i,j,nbrTotal,min,max: Integer;
 begin
   Randomize();
 
-  // TODO penser à verif que il en reste avant d'accepter l'achat
-  // for i:=0 to high(plateau.Personnones.CarteTutorat do
-  // begin
-  //  if plateau.Personnes[i].CarteTutorat[]
 
- // end;
   nbrTotal :=0;
   for i := 0 to 4 do
     nbrTotal :=nbrTotal  + cartesTutorat[i].nbr;
+    
+  if nbrTotal = 0 then
+  begin
+    Exit;
+  end;
 
   i := Random(nbrTotal) + 1;
   min := 1;
@@ -637,7 +637,6 @@ begin
 
     Exit;
   end;
-  // TODO inutile
     enContactAvecPersonne := enContactEleveConnexion(plateau, coords, joueur);
     enContactAvecAutreConnexion := not aucuneConnexionAdjacente(coords, plateau, joueur,affichage);
 
