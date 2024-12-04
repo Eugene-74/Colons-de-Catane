@@ -1024,12 +1024,16 @@ begin
 
     if(plateau.connexions[i].Position[0].x = plateau.connexions[i].Position[1].x)then
       begin
-      // writeln('diagonale');
+      writeln('diagonale');
+
+      writeln('Coordonnées de la connexion 1: (', coords1[0].x, ', ', coords1[0].y, '), (', coords1[1].x, ', ', coords1[1].y, '), (', coords1[2].x, ', ', coords1[2].y, ')');
+      writeln('Coordonnées de la connexion 2: (', coords2[0].x, ', ', coords2[0].y, '), (', coords2[1].x, ', ', coords2[1].y, '), (', coords2[2].x, ', ', coords2[2].y, ')');
+
 
       if(plateau.connexions[i].Position[0].y < plateau.connexions[i].Position[1].y)then
         begin
-        coords1[2] := FCoord(plateau.connexions[i].Position[0].x+1,plateau.connexions[i].Position[0].y-1);
-        coords2[2] := FCoord(plateau.connexions[i].Position[0].x,plateau.connexions[i].Position[0].y+1);
+        coords1[2] := FCoord(plateau.connexions[i].Position[0].x-1,plateau.connexions[i].Position[0].y);
+        coords2[2] := FCoord(plateau.connexions[i].Position[0].x+1,plateau.connexions[i].Position[0].y+1);
         end
       else
         begin
@@ -1039,24 +1043,22 @@ begin
       end
     else if(plateau.connexions[i].Position[0].y = plateau.connexions[i].Position[1].y)then
       begin
-      // writeln('horizontale');
+      writeln('horizontale');
 
       if(plateau.connexions[i].Position[0].x < plateau.connexions[i].Position[1].x)then
         begin
-        // writeln('premier petit');
         coords1[2] := FCoord(plateau.connexions[i].Position[0].x+1,plateau.connexions[i].Position[0].y-1);
         coords2[2] := FCoord(plateau.connexions[i].Position[0].x,plateau.connexions[i].Position[0].y+1);
         end
       else
         begin
-        // writeln('premier grand');
         coords1[2] := FCoord(plateau.connexions[i].Position[1].x+1,plateau.connexions[i].Position[1].y-1);
         coords2[2] := FCoord(plateau.connexions[i].Position[1].x,plateau.connexions[i].Position[1].y+1);
         end;
     end
     else
       begin
-      // writeln('diago 2');
+      writeln('diago 2');
 
       if(plateau.connexions[i].Position[0].y < plateau.connexions[i].Position[1].y)then
         begin
