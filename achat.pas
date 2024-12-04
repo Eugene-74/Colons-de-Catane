@@ -19,7 +19,7 @@ procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage;
 
 
 implementation
-procedure placeFauxEleve(affichage : TAffichage;plateau : TPlateau;coords : Tcoords);forward;
+procedure placeFauxEleve(affichage : TAffichage;plateau : TPlateau;coords : Tcoords;id : Integer);forward;
 
 
 procedure ClicConnexion(plateau : TPlateau;affichage : TAffichage;var coords : TCoords);forward;
@@ -207,6 +207,7 @@ end;
 procedure placementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 var HexagonesCoords: TCoords;
   valide : Boolean;
+  i : Integer;
 begin
 
   repeat
@@ -228,11 +229,15 @@ begin
       end;
   joueurActuel.Points:=1+joueurActuel.Points;
 
-  affichageScoreAndClear(joueurActuel,affichage);
-  affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
-
+  affichageGrille(plateau,affichage);
+  affichageScoreAndClear(joueurActuel, affichage);
+  // affichagePersonne(plateau.Personnes[High(plateau.Personnes)], affichage);
+  for i:=0 to length(plateau.Personnes)-1 do
+        affichagePersonne(plateau.Personnes[i],affichage);
+  for i:=0 to length(plateau.Connexions)-1 do
+    affichageConnexion(plateau.Connexions[i],affichage);
   miseAJourRenderer(affichage);
-  
+
   affichageInformation('Eleve place avec succes !', 25, FCouleur(0,255,0,255), affichage);
 
   
@@ -1065,11 +1070,11 @@ begin
         resteEmplacementEleve := True;
         if(not VerifierAdjacencePersonnes(coords1,plateau))then
           begin
-          placeFauxEleve(affichage, plateau, coords1);
+          placeFauxEleve(affichage, plateau, coords1,joueur.Id);
           end;
         if(not VerifierAdjacencePersonnes(coords2,plateau))then
           begin
-          placeFauxEleve(affichage, plateau, coords2);
+          placeFauxEleve(affichage, plateau, coords2,joueur.Id);
           end;
         end;
     end;
@@ -1077,7 +1082,7 @@ begin
 
 end;
 
-procedure placeFauxEleve(affichage : TAffichage;plateau : TPlateau;coords : Tcoords);
+procedure placeFauxEleve(affichage : TAffichage;plateau : TPlateau;coords : Tcoords; id : Integer);
 begin
 
 SetLength(plateau.Personnes, Length(plateau.Personnes) + 1);
@@ -1089,7 +1094,7 @@ with plateau.Personnes[High(plateau.Personnes)] do
       Position[2] := coords[2];
 
     estEleve := True;
-    IdJoueur := 5;
+    IdJoueur := -id-1;
     end;
 affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
 
