@@ -281,6 +281,7 @@ begin
     // TODO verifier le contact avec une connexion du joueur
     if not enContactEleveConnexion(plateau,HexagonesCoords,joueurActuel) then
     begin
+      writeln('pas en contact avec une connexion');
       PersonneValide:=false;
       exit;
     end;
@@ -735,6 +736,7 @@ end;
 function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;
 var
   i, k, l: Integer;
+  // TODO ne marche pas
 begin
   enContactEleveConnexion := False;
   for i := 0 to High(plateau.Personnes) do
