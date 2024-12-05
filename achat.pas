@@ -744,10 +744,10 @@ begin
               enContactEleveConnexion := True;
               Exit;
             end;
-        begin
-          enContactEleveConnexion := True;
-          Exit;
-      end;
+        // begin
+          // enContactEleveConnexion := True;
+          // Exit;
+      // end;
     end;
   end;
 end;
