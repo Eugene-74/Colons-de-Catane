@@ -35,6 +35,8 @@ function professeurValide(affichage: TAffichage; plateau: TPlateau; joueurActuel
 function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur;affichage : TAffichage): Boolean;forward;
 function VerifierAdjacencePersonnes(HexagonesCoords: TCoords; plateau: TPlateau): Boolean;forward;
 function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;forward;
+function enContactConnexionEleve( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;forward;
+
 function aucuneConnexionAdjacente(coords: TCoords;  plateau: TPlateau; joueur: TJoueur; var affichage : TAffichage): Boolean;forward;
 function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var joueur:TJoueur; var affichage : TAffichage):Boolean;forward;
 function enContactConnexionConnexion(coords1: TCoords; coords2: TCoords): Boolean;forward;
@@ -657,7 +659,7 @@ begin
 
     Exit;
   end;
-    enContactAvecPersonne := enContactEleveConnexion(plateau, coords, joueur);
+    enContactAvecPersonne := enContactConnexionEleve(plateau, coords, joueur);
     enContactAvecAutreConnexion := not aucuneConnexionAdjacente(coords, plateau, joueur,affichage);
 
   // 3. Verifie si en contact avec un eleve ou une connexion
@@ -1282,6 +1284,39 @@ var res : TRessource;
 begin
   for res in [Physique..Mathematiques] do
     joueur.ressources[res] := joueur.ressources[res] - ressources[res]
+end;
+
+function enContactConnexionEleve( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;
+var
+  i, k, l: Integer;
+begin
+  enContactConnexionEleve := False;
+  for i := 0 to High(plateau.Personnes) do
+  begin
+    if plateau.Personnes[i].IdJoueur = joueur.Id then
+    begin
+      l := 0; 
+      for k := 0 to 2 do
+      begin
+        if (coords[0].x = plateau.Personnes[i].Position[k].x) and
+           (coords[0].y = plateau.Personnes[i].Position[k].y) then
+        begin
+          Inc(l);
+        end;
+
+        if (coords[1].x = plateau.Personnes[i].Position[k].x) and
+           (coords[1].y = plateau.Personnes[i].Position[k].y) then
+        begin
+          Inc(l);
+        end;
+        if l >= 2 then
+        begin
+         enContactConnexionEleve := True;
+          Exit;
+        end;
+      end;
+    end;
+  end;
 end;
 
 
