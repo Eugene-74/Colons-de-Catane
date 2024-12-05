@@ -6,13 +6,16 @@ uses Types,affichageUnit,SysUtils,achat,traitement,musique,TypInfo;
 procedure initialisationPartie(var joueurs : TJoueurs;var  plateau : TPlateau;var affichage : TAffichage);
 procedure partie(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 
+
+
 implementation
+
 procedure gestionEchange(affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);forward;
 
-function chargementPlateau(num : Integer): TPlateau;forward;
 function chargerGrille(num : Integer): TGrille; forward;
+function chargementPlateau(num : Integer): TPlateau;forward;
+
 function intialisationTutorat():TCartesTutorat;forward;
-function nombreAleatoire(n : Integer): Integer;forward;
 procedure distributionConnaissance(var joueurs : TJoueurs;var plateau : TPlateau;des : integer);forward;
 procedure gestionDes(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);forward;
 function ressourcesVide(ressources : TRessources):boolean;forward;
@@ -28,6 +31,8 @@ procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau;var j
 procedure utiliserCarte5(var joueurs : TJoueurs;id :Integer);forward;
 
 procedure donnerRessources( var joueur : Tjoueur; ressources : TRessources);forward;
+
+function nombreAleatoire(n : Integer): Integer;forward;
 
 
 function chargerGrille(num : Integer): TGrille;
@@ -180,6 +185,7 @@ begin
     end;
   end;
 
+  // on le fait avant sinon ça ne marche pas
   Randomize;
   num :=nombreAleatoire(2);
 
@@ -198,7 +204,7 @@ begin
   for i:=0 to length(joueurs)-1 do
     begin
     // TODO re mettre apres
-    
+    affichageJoueurActuel(joueurs,i,affichage);
     // placementEleve(plateau,affichage,joueurs[i]);
     // placementConnexion(plateau,affichage,joueurs[i]);
     
@@ -207,7 +213,7 @@ begin
   for i:=length(joueurs)-1 downto 0 do
     begin
     // TODO re mettre apres
-
+    affichageJoueurActuel(joueurs,i,affichage);
     // placementEleve(plateau,affichage,joueurs[i]);
     // placementConnexion(plateau,affichage,joueurs[i]);
     end;
