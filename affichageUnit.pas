@@ -9,7 +9,7 @@ procedure initialisationAffichage(var affichage: TAffichage);
 procedure recupererNomsJoueurs(var stringTab: TStringTab; var affichage: TAffichage);
 procedure affichageGrille(plat: TPlateau; var affichage: TAffichage);
 procedure affichagePlateau(plat: TPlateau; var affichage: TAffichage);
-procedure clicHexagone(var plat: TPlateau; var affichage: TAffichage; var coord: Tcoord);
+procedure clicHexagone(var affichage: TAffichage; var coord: Tcoord);
 procedure miseAJourRenderer(var affichage :TAffichage);
 procedure affichagePersonne(personne: TPersonne; var affichage: TAffichage);
 
@@ -18,6 +18,7 @@ procedure affichageSouillard(plat: TPlateau; var affichage: TAffichage);
 procedure affichageConnexion(connexion : TConnexion; var affichage : TAffichage);
 procedure echangeRessources(joueurs: TJoueurs; idJoueurActuel:Integer; var idJoueurEchange: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
 procedure selectionRessource(var affichage: TAffichage; var ressource: TRessource);
+procedure selectionDepouiller(var ressource: TRessource; idJoueurActuel:Integer; var idJoueurAVoler: Integer; joueurs: TJoueurs; var affichage: TAffichage);
 procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
 procedure clicAction(var affichage: TAffichage; var valeurBouton: String);
 
@@ -243,8 +244,7 @@ Preconditions :
     - affichage : la structure contenant le renderer
 Postconditions :
     - coord (TCoord): les coordonnees du clic (système hexagonal)}
-// TODO pk il y a un plateau ? (Yann)
-procedure clicHexagone(var plat: TPlateau; var affichage: TAffichage; var coord: Tcoord);
+procedure clicHexagone(var affichage: TAffichage; var coord: Tcoord);
 var tempCoord: Tcoord;
 begin
     clicCart(affichage,coord);
@@ -741,6 +741,53 @@ begin
             ressource := grille[coordHexa.x,coordHexa.y].ressource;
         if (boutonValider.coord.x <= coord.x) and (coord.x <= boutonValider.coord.x + boutonValider.w) and (boutonValider.coord.y <= coord.y) and (coord.y <= boutonValider.coord.y + boutonValider.h) and (ressource <> Rien) then
             valider := True;
+    end;
+end;
+
+procedure selectionDepouiller(var ressource: TRessource; idJoueurActuel:Integer; var idJoueurAVoler: Integer; joueurs: TJoueurs; var affichage: TAffichage);
+var boutonValider: TBouton;
+    grille: TGrille;
+    valider: Boolean;
+    coord,coordHexa: Tcoord;
+    boutons: TBoutons;
+    valeurBouton: String;
+    i: Integer;
+begin
+    nettoyageAffichage(affichage);
+    attendre(66);
+    affichageSelectionRessource(boutonValider,affichage,grille);
+    affichageJoueurInput(joueurs,idJoueurAVoler,FCoord(800,600),affichage,boutons);
+    miseAJourRenderer(affichage);
+
+    valider := False;
+    ressource := Rien;
+    while not valider do
+    begin
+        clicCart(affichage,coord);
+
+        cartToHexa(FCoord(coord.x-800,coord.y-300),coordHexa,tailleHexagone div 2);
+        if (coordHexa.x >= 0) and (coordHexa.x <= 2) and (coordHexa.y >= 0) and (coordHexa.y <= 1) then
+            ressource := grille[coordHexa.x,coordHexa.y].ressource
+        else if (boutonValider.coord.x <= coord.x) and (coord.x <= boutonValider.coord.x + boutonValider.w) and (boutonValider.coord.y <= coord.y) and (coord.y <= boutonValider.coord.y + boutonValider.h) and (ressource <> Rien) then
+            valider := True
+        else
+        begin
+            for i:=0 to length(boutons)-1 do
+                if (coord.x >= boutons[i].coord.x) and (coord.x <= boutons[i].coord.x + boutons[i].w) and (coord.y >= boutons[i].coord.y) and (coord.y <= boutons[i].coord.y + boutons[i].h) then
+                begin
+                    valeurBouton := boutons[i].valeur;
+                    break;
+                end;
+            if valeurBouton = 'joueur_precedent' then
+                idJoueurAVoler := (idJoueurAVoler - 1 + length(joueurs) - 1 * Ord(((idJoueurAVoler-1+length(joueurs)) mod length(joueurs))=idJoueurActuel)) mod length(joueurs)
+            else if valeurBouton = 'joueur_suivant' then
+                idJoueurAVoler := (idJoueurAVoler + 1 + 1 * Ord(((idJoueurAVoler + 1) mod length(joueurs))=idJoueurActuel)) mod length(joueurs);
+            
+            affichageZone(900,600,300,40,0,affichage);
+            affichageJoueurInput(joueurs,idJoueurAVoler,FCoord(800,600),affichage,boutons);
+            attendre(16);
+            miseAJourRenderer(affichage);
+        end;
     end;
 end;
 

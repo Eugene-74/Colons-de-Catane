@@ -19,14 +19,14 @@ function intialisationTutorat():TCartesTutorat;forward;
 procedure distributionConnaissance(var joueurs : TJoueurs;var plateau : TPlateau;des : integer);forward;
 procedure gestionDes(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);forward;
 function ressourcesVide(ressources : TRessources):boolean;forward;
-function ressourcesEguale(ressources1 : TRessources;ressources2 : TRessources):boolean;forward;
+function ressourcesEgales(ressources1 : TRessources;ressources2 : TRessources):boolean;forward;
 procedure tour(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);forward;
 
 procedure utiliserCarteTutorat(var plateau : TPlateau;var affichage : TAffichage;var joueurs : TJoueurs;id : Integer;nom : String);forward;
 
 procedure utiliserCarte1(var plateau : TPlateau; var affichage : TAffichage;joueurs : Tjoueurs; id : Integer);forward;
 procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueurs : Tjoueurs; id : Integer);forward;
-procedure utiliserCarte3(var plateau : TPlateau; joueurs : Tjoueurs; id : Integer);forward;
+procedure utiliserCarte3(var plateau : TPlateau; var affichage: TAffichage; joueurs : Tjoueurs;id : Integer);forward;
 procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau;var joueurs : Tjoueurs; id : Integer);forward;
 procedure utiliserCarte5(var joueurs : TJoueurs;id :Integer);forward;
 
@@ -296,13 +296,13 @@ begin
       ressourcesVide := False;
 end;
 
-function ressourcesEguale(ressources1 : TRessources;ressources2 : TRessources):boolean;
+function ressourcesEgales(ressources1 : TRessources;ressources2 : TRessources):boolean;
 var res : TRessource;
 begin
-  ressourcesEguale := True;
+  ressourcesEgales := True;
   for res in [Physique..Mathematiques] do
     if( ressources1[res]<> ressources2[res]) then
-      ressourcesEguale := False;
+      ressourcesEgales := False;
 end;
 
 procedure gestionEchange(affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);
@@ -323,7 +323,7 @@ if(ressourcesVide(ressources1) and ressourcesVide(ressources2))then
   affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est vide',25,FCouleur(255,0,0,255),affichage);
   jouerSonValide(affichage,false);
   end
-else if(ressourcesEguale(ressources1,ressources2))then
+else if(ressourcesEgales(ressources1,ressources2))then
   begin
   affichageTour(plateau, joueurs, id, affichage);
   affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est inutile car il ne change rien',25,FCouleur(255,0,0,255),affichage);
@@ -430,16 +430,18 @@ begin
   // affichageTour(plateau, joueurs, Id, affichage);
 end;
 
-procedure utiliserCarte3(var plateau : TPlateau; joueurs : Tjoueurs;id : Integer);
-// var joueurAVoler : TJoueur;
+procedure utiliserCarte3(var plateau : TPlateau; var affichage: TAffichage; joueurs : Tjoueurs; id : Integer);
+var ressource : TRessource;
+  idJoueurAVoler : Integer;
 begin
-// VOLER UNE CONNAISSANCE
-
-// choix du joueur
-
-// choix du type de ressources a voler
-// ON EST PAS SENCER CONNAITER LES CARTES DES AUTRES
-// On s'en fou (Yann)
+  if(id< length(joueurs)-1) then
+    idJoueurAVoler := id + 1
+  else
+    idJoueurAVoler := 0;
+  selectionDepouiller(ressource,id,idJoueurAVoler,joueurs,affichage);
+  // TODO enlever après avoir lu, ici tu recup ce que tu veux, juste que il faut peut être pas afficher le tour après (Yann)
+  // TODO Tu peux recuperer Rien en ressource, c'est normal, c'est pour dire que tu veux rien voler (une idée) (Yann)
+  affichageTour(plateau, joueurs, id, affichage);
 end;
 
 procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau; var joueurs : Tjoueurs;id : Integer);
@@ -475,7 +477,7 @@ if (i <> -1) and (joueurs[id].CartesTutorat[i].utilisee < joueurs[id].CartesTuto
   case i of
     0: utiliserCarte1(plateau, affichage, joueurs, id);
     1: utiliserCarte2(plateau, affichage, joueurs, id);
-    2: utiliserCarte3(plateau, joueurs, id);
+    2: utiliserCarte3(plateau, affichage, joueurs, id);
     3: utiliserCarte4(affichage, plateau, joueurs, id);
     4: utiliserCarte5(joueurs, id);
     end;

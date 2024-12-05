@@ -12,7 +12,7 @@ function aLesRessources(joueur : Tjoueur; ressources : TRessources):boolean;
 procedure enleverRessources( var joueur : Tjoueur; ressources : TRessources);
 procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
-procedure affichageGagnant(joueur: TJoueur; affichage: TAffichage);
+procedure affichageGagnant(joueur: TJoueur; var affichage: TAffichage);
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
 procedure verificationPointsVictoire(plateau : TPlateau; joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer;var affichage : TAffichage);
 procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
@@ -27,12 +27,12 @@ function connexionExisteDeja(plateau: TPlateau; coord1: TCoord; coord2: TCoord):
 
 procedure trouver3EmeHexagone(plateau : TPlateau;coords1: TCoords; coords2: TCoords;i : Integer);forward;
 
-procedure ClicConnexion(plateau : TPlateau;affichage : TAffichage;var coords : TCoords);forward;
+procedure ClicConnexion(var affichage : TAffichage;var coords : TCoords);forward;
 function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage : TAffichage): Boolean;forward;
-function ClicPersonne(affichage: TAffichage; plateau: TPlateau; estEleve: Boolean): TCoords;forward;
+function ClicPersonne(var affichage: TAffichage; estEleve: Boolean): TCoords;forward;
 function CountPersonnes(personnes:TPersonnes; estEleve: Boolean; joueur: TJoueur): Integer;forward;
-function professeurValide(affichage: TAffichage; plateau: TPlateau; joueurActuel: TJoueur; HexagonesCoords: TCoords; var ProfesseurCoords: TCoords; var indexEleve: Integer): Boolean;forward;
-function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur;affichage : TAffichage): Boolean;forward;
+function professeurValide(var affichage: TAffichage; plateau: TPlateau; joueurActuel: TJoueur; HexagonesCoords: TCoords; var ProfesseurCoords: TCoords; var indexEleve: Integer): Boolean;forward;
+function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur;var affichage : TAffichage): Boolean;forward;
 function VerifierAdjacencePersonnes(HexagonesCoords: TCoords; plateau: TPlateau): Boolean;forward;
 function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;forward;
 function enContactConnexionEleve( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;forward;
@@ -40,9 +40,9 @@ function enContactConnexionEleve( plateau: TPlateau; coords: TCoords; var joueur
 function aucuneConnexionAdjacente(coords: TCoords;  plateau: TPlateau; joueur: TJoueur; var affichage : TAffichage): Boolean;forward;
 function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var joueur:TJoueur; var affichage : TAffichage):Boolean;forward;
 function enContactConnexionConnexion(coords1: TCoords; coords2: TCoords): Boolean;forward;
-function resteEleve(affichage : TAffichage;plateau:TPlateau; joueur:Tjoueur): Boolean;forward;
-function resteEmplacementEleve(affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;forward;
-function resteEmplacementConnexion(affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;forward;
+function resteEleve(var affichage : TAffichage;plateau:TPlateau; joueur:Tjoueur): Boolean;forward;
+function resteEmplacementEleve(var affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;forward;
+function resteEmplacementConnexion(var affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;forward;
 
 function enContactEleveConnexions(plateau: TPlateau; eleve: TPersonne; var joueur: TJoueur): TCoords;forward;
 function compterConnexionSuite(plateau: TPlateau; joueur: TJoueur): Integer;forward;
@@ -55,7 +55,7 @@ procedure clicHexagoneValide(var plateau: TPlateau; var affichage: TAffichage; v
 var valide : boolean;
 begin
     repeat
-        clicHexagone(plateau, affichage, coord);
+        clicHexagone(affichage, coord);
         valide := dansLePlateau(plateau,coord);
         jouerSonValide(affichage,valide);
     until valide;
@@ -234,7 +234,7 @@ var HexagonesCoords: TCoords;
 begin
 
   repeat
-    HexagonesCoords := ClicPersonne(affichage,plateau,True);
+    HexagonesCoords := ClicPersonne(affichage,True);
     valide := PersonneValide(plateau, HexagonesCoords, True, joueur,affichage);
     jouerSonValide(affichage,valide);
   until valide;
@@ -263,7 +263,7 @@ end;
 
 
 
-function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur;affichage : TAffichage): Boolean;
+function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur;var affichage : TAffichage): Boolean;
 var
   personneAdjacente: Boolean;
 begin
@@ -314,7 +314,7 @@ begin
 end;
 
 
-function ClicPersonne(affichage: TAffichage; plateau: TPlateau; estEleve: Boolean): TCoords;
+function ClicPersonne(var affichage: TAffichage; estEleve: Boolean): TCoords;
 var
   i: Integer;
   HexagonesCoords: TCoords;
@@ -327,7 +327,7 @@ begin
     affichageInformation('Cliquez sur trois hexagones entre lesquels vous voulez placer le professeur', 25, FCouleur(0,0,0,255), affichage);
   for i := 0 to 2 do
   begin
-    clicHexagone(plateau, affichage, HexagonesCoords[i]); 
+    clicHexagone(affichage, HexagonesCoords[i]); 
   end;
   ClicPersonne := HexagonesCoords;
 end;
@@ -389,7 +389,7 @@ begin
   CountPersonnes:= Result;
 end;
 
-function professeurValide(affichage: TAffichage; plateau: TPlateau; joueurActuel: TJoueur; HexagonesCoords: TCoords; var ProfesseurCoords: TCoords; var indexEleve: Integer): Boolean;
+function professeurValide(var affichage: TAffichage; plateau: TPlateau; joueurActuel: TJoueur; HexagonesCoords: TCoords; var ProfesseurCoords: TCoords; var indexEleve: Integer): Boolean;
 var
   i, j, k, compteur: Integer;
 begin
@@ -449,7 +449,7 @@ begin
   repeat
     // ne pas reaficher a chaque fois pour avoir les erreur
     // affichageInformation('Cliquez sur 3 hexagones entre lesquels vous voulez placer le professeur.', 25, FCouleur(0, 0, 0, 255), affichage);
-    HexagonesCoords := ClicPersonne(affichage, plateau, False);
+    HexagonesCoords := ClicPersonne(affichage, False);
     valide := professeurValide(affichage, plateau, joueurActuel, HexagonesCoords, ProfesseurCoords, indexEleve);
   until valide;
   if indexEleve <> -1 then
@@ -593,7 +593,7 @@ begin
 end;
 
 
-procedure affichageGagnant(joueur: TJoueur; affichage: TAffichage);
+procedure affichageGagnant(joueur: TJoueur; var affichage: TAffichage);
 var text : String;
 begin
   text := ('Felicitations, ' + joueur.Nom + ' ! Vous avez gagne la partie avec ' + intToStr(joueur.Points) + ' points.');
@@ -682,12 +682,12 @@ end;
 
 
 
-procedure ClicConnexion(plateau : TPlateau; affichage : TAffichage;var coords : TCoords);
+procedure ClicConnexion(var affichage : TAffichage;var coords : TCoords);
 begin
 
   SetLength(coords, 2);
-  clicHexagone(plateau, affichage,coords[0]);
-  clicHexagone(plateau, affichage,coords[1]);
+  clicHexagone(affichage,coords[0]);
+  clicHexagone(affichage,coords[1]);
 
 end;
 
@@ -700,7 +700,7 @@ begin
   affichageInformation('Cliquez sur 2 hexagones entre lesquels vous voulez placer la connexion', 25, FCouleur(0,0,0,255), affichage);
 
   repeat
-    ClicConnexion(plateau,affichage,coords);
+    ClicConnexion(affichage,coords);
     valide := connexionValide(coords, plateau, joueur,affichage);
     jouerSonValide(affichage,valide);
   until valide;
@@ -873,7 +873,7 @@ begin
   affichageInformation('Cliquez sur 1 hexagones pour deplacer le souillard.', 25, FCouleur(0,0,0,255), affichage);
 
   repeat
-    clicHexagone(plateau, affichage, coord);
+    clicHexagone(affichage, coord);
   until (dansLePlateau(plateau,coord));
 
   plateau.Souillard.Position := coord;
@@ -1000,7 +1000,7 @@ begin
   SetLength(enContactEleveConnexions, connexionsTrouvees);
 end;
 
-function resteEleve(affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
+function resteEleve(var affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
 var i: Integer;
 begin
 resteEleve := False;
@@ -1030,7 +1030,7 @@ with plateau.Connexions[High(plateau.Connexions)] do
 affichageConnexion(plateau.Connexions[High(plateau.Connexions)], affichage);
 end;
 
-function resteEmplacementConnexion(affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
+function resteEmplacementConnexion(var affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
 var i: Integer;
   coords1,coords2 : Tcoords;
 begin
@@ -1130,7 +1130,7 @@ else
 end;
 
 
-function resteEmplacementEleve(affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
+function resteEmplacementEleve(var affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
 var
   i: Integer;
   coords1,coords2 : Tcoords;
