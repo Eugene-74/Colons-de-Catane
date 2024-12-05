@@ -38,7 +38,7 @@ procedure affichageFond(var affichage: TAffichage);
 implementation
 
 procedure affichageScore(joueur: TJoueur; var affichage: TAffichage);forward;
-procedure affichageCarteTutorat(carteTutorat: TCarteTutorat; coord: TCoord; var affichage: TAffichage);forward;
+procedure affichageCarteTutorat(carteTutorat: TCarteTutorat; idCarte: Integer; coord: TCoord; var affichage: TAffichage);forward;
 procedure suppressionScore(playerId: Integer; var affichage: TAffichage);forward;
 
 procedure attendre(ms: Integer);
@@ -104,7 +104,7 @@ begin
             affichage.texturePlateau.textureIconesRessources[i] := chargerTexture(affichage, 'IconesRessources/'+GetEnumName(TypeInfo(TRessource), Ord(i)));
     end;
 
-    for j:=1 to 5 do
+    for j := 1 to 5 do
         affichage.texturePlateau.textureIconesCartesTutorat[j] := chargerTexture(affichage, 'IconesCartesTutorat/'+IntToStr(j));
 
     affichage.texturePlateau.textureContourHexagone := chargerTexture(affichage, 'hexagoneCercle');
@@ -419,10 +419,10 @@ begin
         WriteLn('Erreur SDL: ', SDL_GetError());
 end;
 
-procedure affichageCarteTutorat(carteTutorat: TCarteTutorat; coord: TCoord; var affichage: TAffichage);
+procedure affichageCarteTutorat(carteTutorat: TCarteTutorat; idCarte: Integer; coord: TCoord; var affichage: TAffichage);
 begin
     affichageZone(coord.x,coord.y,200,300,2,affichage);
-    affichageImage(coord.x+75,coord.y+35,50,50,affichage.texturePlateau.textureIconesCartesTutorat[1],affichage);
+    affichageImage(coord.x+75,coord.y+35,50,50,affichage.texturePlateau.textureIconesCartesTutorat[idCarte+1],affichage);
 
     affichageZone(coord.x+150,coord.y-10,60,60,2,affichage);
     affichageTexte(IntToStr(carteTutorat.nbr), 25, FCoord(coord.x+160,coord.y-10), FCouleur(0,200,0,255), affichage);
@@ -438,27 +438,27 @@ var bouton: TBouton;
 begin
     bouton := FBouton(1400,25,200,300,'',CARTES_TUTORAT[0].nom);
     ajouterBoutonTableau(bouton,affichage.boutonsAction);
-    affichageCarteTutorat(joueur.CartesTutorat[0],FCoord(1400,25),affichage);
+    affichageCarteTutorat(joueur.CartesTutorat[0],0,FCoord(1400,25),affichage);
     
     bouton.coord := FCoord(1615,25);
     bouton.valeur := CARTES_TUTORAT[1].nom;
     ajouterBoutonTableau(bouton,affichage.boutonsAction);
-    affichageCarteTutorat(joueur.CartesTutorat[1],FCoord(1615,25),affichage);
+    affichageCarteTutorat(joueur.CartesTutorat[1],1,FCoord(1615,25),affichage);
 
     bouton.coord := FCoord(1400,340);
     bouton.valeur := CARTES_TUTORAT[2].nom;
     ajouterBoutonTableau(bouton,affichage.boutonsAction);
-    affichageCarteTutorat(joueur.CartesTutorat[2],FCoord(1400,340),affichage);
+    affichageCarteTutorat(joueur.CartesTutorat[2],2,FCoord(1400,340),affichage);
 
     bouton.coord := FCoord(1615,340);
     bouton.valeur := CARTES_TUTORAT[3].nom;
     ajouterBoutonTableau(bouton,affichage.boutonsAction);
-    affichageCarteTutorat(joueur.CartesTutorat[3],FCoord(1615,340),affichage);
+    affichageCarteTutorat(joueur.CartesTutorat[3],3,FCoord(1615,340),affichage);
 
     bouton.coord := FCoord(1400,655);
     bouton.valeur := CARTES_TUTORAT[4].nom;
     ajouterBoutonTableau(bouton,affichage.boutonsAction);
-    affichageCarteTutorat(joueur.CartesTutorat[4],FCoord(1400,655),affichage);
+    affichageCarteTutorat(joueur.CartesTutorat[4],4,FCoord(1400,655),affichage);
 end;
 
 procedure affichageCartesTutoratAndRender(joueur: TJoueur; var affichage: TAffichage);
@@ -487,10 +487,10 @@ procedure initialisationBoutonsSysteme(var affichage: TAffichage);
 var bouton: TBouton;
 begin
     setLength(affichage.boutonsSysteme, 0);
-    bouton := FBouton(WINDOW_W-130,WINDOW_H-75,50,50,'/IconesMusique/demarrer','musique_play');
+    bouton := FBouton(WINDOW_W-160,WINDOW_H-85,60,60,'/IconesMusique/demarrer','musique_play');
     ajouterBoutonTableau(bouton,affichage.boutonsSysteme);
 
-    bouton := FBouton(WINDOW_W-75,WINDOW_H-75,50,50,'/IconesMusique/arreter','musique_stop');
+    bouton := FBouton(WINDOW_W-85,WINDOW_H-85,60,60,'/IconesMusique/arreter','musique_stop');
     ajouterBoutonTableau(bouton,affichage.boutonsSysteme);
 
     bouton := FBouton(WINDOW_W-75,20,50,50,'croix','quitter');
@@ -614,8 +614,8 @@ begin
         affichageIntegerInput(coord,GetEnumName(TypeInfo(TRessource), Ord(ressource)),'2',ressources2,affichage,boutons);
     end;
 
-    bouton := FBouton(900,450,95,45,'Valider','valider_echange');
-    affichageBouton(bouton,affichage);
+    bouton := FBouton(850,450,160,50,'valider','valider_echange');
+    affichageImageBouton(bouton,affichage);
     ajouterBoutonTableau(bouton, boutons);
 end;
 
@@ -716,8 +716,8 @@ begin
         end;
     end;
 
-    boutonValider := FBouton(900,930,95,50,'valider','Valider');
-    affichageBouton(boutonValider,affichage);
+    boutonValider := FBouton(900,930,160,50,'valider','Valider');
+    affichageImageBouton(boutonValider,affichage);
 end;
 
 procedure selectionRessource(var affichage: TAffichage; var ressource: TRessource);
@@ -870,8 +870,8 @@ begin
         ajouterBoutonTableau(bouton,boutons);
     end;
 
-    bouton := FBouton(900,930,95,50,'Valider','valider');
-    affichageBouton(bouton,affichage);
+    bouton := FBouton(900,930,160,50,'valider','valider');
+    affichageImageBouton(bouton,affichage);
     ajouterBoutonTableau(bouton,boutons);
 
     miseAJourRenderer(affichage);
