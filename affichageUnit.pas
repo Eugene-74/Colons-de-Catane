@@ -930,7 +930,6 @@ var i: Integer;
 begin
     for i:=0 to length(affichage.boutonsSysteme)-1 do
         affichageImageBouton(affichage.boutonsSysteme[i],affichage);
-    
     SDL_RenderPresent(affichage.renderer);
 end;
 
