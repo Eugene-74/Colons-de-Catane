@@ -38,7 +38,7 @@ implementation
 
 procedure affichageScore(joueur: TJoueur; var affichage: TAffichage);forward;
 procedure affichageCarteTutorat(carteTutorat: TCarteTutorat; coord: TCoord; var affichage: TAffichage);forward;
-procedure suppressionScores(playerId: Integer; var affichage: TAffichage);forward;
+procedure suppressionScore(playerId: Integer; var affichage: TAffichage);forward;
 
 procedure attendre(ms: Integer);
 begin
@@ -395,8 +395,7 @@ begin
     affichageImage(coord.x,coord.y+7,25,25,affichage.texturePlateau.texturePoint,affichage);
     affichageTexte(IntToStr(joueur.Points), 25, FCoord(coord.x+30,coord.y), FCouleur(0,0,0,255), affichage);
 
-    coord.x := 25;
-    coord.y := coord.y + 35;
+    coord := FCoord(25,coord.y+35);
     for ressource := Physique to Mathematiques do
     begin
         affichageImage(coord.x,coord.y,25,25,affichage.texturePlateau.textureIconesRessources[ressource],affichage);
@@ -408,9 +407,8 @@ end;
 
 procedure affichageScoreAndClear(joueur:TJoueur; var affichage: TAffichage);
 begin
-    suppressionScores(joueur.id,affichage);
+    suppressionScore(joueur.id,affichage);
     affichageScore(joueur,affichage);
-
 end;
 
 procedure affichageZone(x,y,w,h,epaisseurBord: Integer; var affichage: TAffichage);
@@ -475,9 +473,9 @@ begin
     miseAJourRenderer(affichage);
 end;
 
-procedure suppressionScores(playerId: Integer; var affichage: TAffichage);
+procedure suppressionScore(playerId: Integer; var affichage: TAffichage);
 begin
-    affichageZone(25,25+playerId*75,325,65,0,affichage);
+    affichageZone(25,25+playerId*75,320,65,0,affichage);
 end;
 
 procedure affichageBouton(bouton: TBouton; var affichage: TAffichage);
@@ -521,7 +519,7 @@ end;
 
 procedure affichageJoueurActuel(joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
 begin
-    affichageZone(25,350,300,30,0,affichage);
+    affichageZone(25,350,300,40,0,affichage);
     affichageTexte('Tour : ' + joueurs[idJoueurActuel].Nom, 25, FCoord(25,350), FCouleur(0,0,0,255), affichage);
 end;
 
@@ -845,15 +843,19 @@ begin
 
         nom := '';
         affichageNomJoueurInput(nom+'_',boutons[StrToInt(valeurBouton)],25,affichage);
-        miseAJourRenderer(affichage);
 
         SDL_StartTextInput();
         ecritureNom := True;
         while ecritureNom do
         begin
-            attendre(66);
+            miseAJourRenderer(affichage);
+            attendre(16);
             while SDL_PollEvent(@event) <> 0 do
             begin
+                if not ecritureNom then
+                begin
+                    continue;
+                end;
                 case event.type_ of
                     SDL_QUITEV: HALT;
                     SDL_KEYDOWN:
@@ -861,21 +863,17 @@ begin
                         if (event.key.keysym.sym = SDLK_BACKSPACE) and (length(nom) > 0) then
                         begin
                             Delete(nom,length(nom),1);
-                            attendre(16);
                             stringTab[StrToInt(valeurBouton)] := nom;
                             affichageNomJoueurInput(nom+'_',boutons[StrToInt(valeurBouton)],25,affichage);
-                            miseAJourRenderer(affichage);
                         end
                         else if (event.key.keysym.sym = SDLK_RETURN) or (event.key.keysym.sym = SDLK_TAB) then
                         begin
                             if StrToInt(valeurBouton) < length(boutons)-2 then
                             begin
-                                attendre(16);
                                 affichageNomJoueurInput(nom,boutons[StrToInt(valeurBouton)],25,affichage);
                                 valeurBouton := IntToStr(StrToInt(valeurBouton)+1);
                                 nom := '';
                                 affichageNomJoueurInput(nom,boutons[StrToInt(valeurBouton)],25,affichage);
-                                miseAJourRenderer(affichage);
                             end
                             else
                             begin
@@ -887,11 +885,9 @@ begin
                     SDL_TEXTINPUT:
                         if length(nom) < 10 then
                         begin
-                            attendre(32);
                             nom := nom + event.text.text;
                             stringTab[StrToInt(valeurBouton)] := nom;
                             affichageNomJoueurInput(nom+'_',boutons[StrToInt(valeurBouton)],25,affichage);
-                            miseAJourRenderer(affichage);
                         end;
                     SDL_MOUSEBUTTONDOWN:
                     begin
@@ -904,13 +900,12 @@ begin
                                 valeurBouton := boutons[i].valeur;
                                 nom := '';
                                 affichageNomJoueurInput(nom+'_',boutons[StrToInt(valeurBouton)],25,affichage);
-                                miseAJourRenderer(affichage);
-                                break;
                             end;
-                        if not ecritureNom then
+                        if ecritureNom = false then
                         begin
                             affichageNomJoueurInput(nom,boutons[StrToInt(valeurBouton)],25,affichage);
                             miseAJourRenderer(affichage);
+                            valeurBouton := '-1';
                         end;
                     end;
                 end;
