@@ -653,22 +653,15 @@ begin
 
     Exit;
   end;
+    // 3. Verifie si en contact avec un eleve ou une connexion
     enContactAvecPersonne := enContactEleveConnexion(plateau, coords, joueur);
     enContactAvecAutreConnexion := not aucuneConnexionAdjacente(coords, plateau, joueur,affichage);
-
-  // 3. Verifie si en contact avec un eleve ou une connexion
-  // if enContactAutreEleveConnexion(plateau,coords,joueur,affichage)  or adjacence3Connexions(coords,plateau,joueur,affichage) then 
-  // begin
-  //   connexionValide:= False;
-  //   exit;
-  // end;
-    // TODO pose probleme de acces violation au  placement de connexion du deuxieme joeuur apres un placement du premier joueur
   if not enContactAvecPersonne then
   begin
     if  not enContactAvecAutreConnexion then
     begin
       connexionValide := False;
-      affichageInformation('La connexion doit etre adjacente a une autre connexion ou en contact avec un eleve ou un professeur.', 25, FCouleur(0,0,0,255), affichage);
+      affichageInformation('La connexion doit être adjacente à une autre connexion ou en contact avec un élève ou un professeur.', 25, FCouleur(0,0,0,255), affichage);
       Exit;
     end;
   end;
@@ -677,7 +670,7 @@ begin
   if (not dansLePlateau(plateau,coords[0]) and not dansLePlateau(plateau,coords[1])) then 
     begin
     connexionValide:= False;      
-    affichageInformation('Au moins 1 des hexagones choisis doit etre dans le plateau', 25, FCouleur(0,0,0,255), affichage);
+    affichageInformation('Au moins 1 des hexagones choisis doit être dans le plateau', 25, FCouleur(0,0,0,255), affichage);
 
     Exit;
     end; 
