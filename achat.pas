@@ -164,7 +164,7 @@ begin
           end
         else
           begin
-            affichageInformation('Vous n''avez pas les ressources necessaires pour changer un eleve en professeur.', 25, FCouleur(0,0,0,255), affichage);
+            affichageInformation('Vous n''avez pas les ressources nécessaires pour changer un eleve en professeur.', 25, FCouleur(0,0,0,255), affichage);
             jouerSonValide(affichage,false);
           end
       else
@@ -188,11 +188,16 @@ begin
         affichageScoreAndClear(joueur,affichage);
         miseAJourRenderer(affichage);
         end;
+      else
+        begin
+        affichageInformation('Impossible d''acheter une carte de tutorat car il n''y en a plus.', 25, FCouleur(255,0,0,255), affichage);
+        jouerSonValide(affichage,false);
+        end;
     else
-    begin
-      affichageInformation('Impossible d''acheter une carte de tutorat.', 25, FCouleur(255,0,0,255), affichage);
+      begin
+      affichageInformation('Vous n''avez pas les ressources nécessaires pour acheter une carte de tutorat.', 25, FCouleur(255,0,0,255), affichage);
       jouerSonValide(affichage,false);
-    end;
+      end;
   end;
 end;
 
