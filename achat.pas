@@ -550,8 +550,8 @@ var
   points : array of Integer;
 
 begin
-  gagner := False; 
-  gagnant := -1;    
+  gagner := False;
+  gagnant := -1;
 
   SetLength(points,Length(joueurs));
   j:=0;
@@ -583,12 +583,12 @@ begin
     if(plusDeplacementSouillard) then
       points[j] := points[j] + 2;
     
-    if points[j] >= 10 then
+    if points[j] >= 12 then
     begin
 
       gagner := True;
-      gagnant := j+1; 
-      affichageInformation(joueur.Nom + 'viens de gagner la partie en depassant les 10 points', 25, FCouleur(0,0,0,255), affichage);
+      gagnant := j+1;
+      affichageInformation(joueur.Nom + 'viens de gagner la partie en depassant les 12 points', 25, FCouleur(0,0,0,255), affichage);
 
       Break;
     end;
@@ -610,20 +610,16 @@ end;
 
 
 function connexionExisteDeja(plateau: TPlateau; coord1: TCoord; coord2: TCoord): Boolean;
-var i : Integer;
+var i,j : Integer;
 begin
 for i := 0 to High(plateau.Connexions) do
   begin
-  if (((plateau.Connexions[i].Position[0].x = coord1.x) and
-        (plateau.Connexions[i].Position[0].y = coord1.y) and
-        (plateau.Connexions[i].Position[1].x = coord2.x) and
-        (plateau.Connexions[i].Position[1].y = coord2.y))
-      or
-      ((plateau.Connexions[i].Position[0].x = coord2.x) and
-        (plateau.Connexions[i].Position[0].y = coord2.y) and
-        (plateau.Connexions[i].Position[1].x = coord1.x) and
-        (plateau.Connexions[i].Position[1].y = coord1.y))) then
-  exit(True);
+  for j := 0 to 1 do
+    if ((plateau.Connexions[i].Position[j].x = coord1.x) and
+        (plateau.Connexions[i].Position[j].y = coord1.y) and
+        (plateau.Connexions[i].Position[1-j].x = coord2.x) and
+        (plateau.Connexions[i].Position[1-j].y = coord2.y))then
+      exit(True);
   end;
 exit(False);
 end;
@@ -644,7 +640,7 @@ begin
   if(connexionExisteDeja(plateau, coords[0],coords[1]))then
     begin
       connexionValide := False;
-      affichageInformation('Position de connexion deja occupee.', 25, FCouleur(0,0,0,255), affichage);
+      affichageInformation('Position de connexion déjaà occupée.', 25, FCouleur(0,0,0,255), affichage);
       Exit;
     end;
   // end;
