@@ -22,10 +22,11 @@ implementation
 procedure placeFauxEleve(affichage : TAffichage;plateau : TPlateau;coords : Tcoords;id : Integer);forward;
 procedure placeFauxConnexion(affichage : TAffichage;plateau : TPlateau;coord1 : Tcoord;coord2 : Tcoord; id : Integer);forward;
 procedure placeFauxProfesseur(affichage : TAffichage;plateau : TPlateau;coords : Tcoords; id : Integer);forward;
+function compterConnexionAutour(var connexionDejaVisite : Tconnexions;var nombreDeConnexion : Integer;connexion : TConnexion;plateau: TPlateau; joueur: TJoueur): Integer;forward;
 
 function connexionExisteDeja(plateau: TPlateau; coord1: TCoord; coord2: TCoord): Boolean;forward;
 
-procedure trouver3EmeHexagone(plateau : TPlateau;coords1: TCoords; coords2: TCoords;i : Integer);forward;
+procedure trouver3EmeHexagone(plateau : TPlateau;coords1: TCoords; coords2: TCoords;connexion : Tconnexion);forward;
 
 procedure ClicConnexion(plateau : TPlateau;affichage : TAffichage;var coords : TCoords);forward;
 function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage : TAffichage): Boolean;forward;
@@ -49,6 +50,7 @@ function compterConnexionSuite(plateau: TPlateau; joueur: TJoueur): Integer;forw
 function adjacence3Connexions(coords: TCoords; plateau: TPlateau; joueur: TJoueur; var affichage : TAffichage): Boolean;forward;
 function encontactAutreconnexionEleve(plateau: TPlateau;Eleve:Tcoords; var joueur:Tjoueur): Boolean;forward;
 procedure tirerCarteTutorat(var cartesTutorat : TCartesTutorat;var  joueur : Tjoueur);forward;
+function coordsDansTableau(connexion: TConnexion; tableau: array of TConnexion): Boolean;forward;
 
 
 procedure clicHexagoneValide(var plateau: TPlateau; var affichage: TAffichage; var coord: Tcoord);
@@ -469,39 +471,122 @@ begin
 end;
 
 
-
-function compterConnexionSuite(plateau: TPlateau; joueur: TJoueur): Integer;
+function trouverPremiereConnexion(plateau: TPlateau; joueur: TJoueur): TConnexion;
 var
-  i : Integer;
-  coords1,coords2 : TCoords;
-// TODO ne marche pas dutout
-// méthode a revoir ...
+  i: Integer;
+  connexion: TConnexion;
 begin
-  for i := 0 to High(plateau.connexions) do
+  // trouverPremiereConnexion := -1;
+  for i := 0 to High(plateau.Connexions) do
   begin
-    if (plateau.connexions[i].IdJoueur = joueur.Id) then
+    if plateau.Connexions[i].IdJoueur = joueur.Id then
     begin
-      setLength(coords1,3);
-      setLength(coords2,3);
+      setlength(connexion.position,2);
+      connexion.position[0] := plateau.Connexions[i].Position[0];
+      connexion.position[1] := plateau.Connexions[i].Position[1];
+      connexion.IdJoueur := plateau.Connexions[i].IdJoueur;
+      trouverPremiereConnexion := connexion;
+      Exit;
+    end;
+  end;
+end;
 
-      coords1[0] := plateau.connexions[i].Position[0];
-      coords1[1] := plateau.connexions[i].Position[1];
-
-      coords2[0] := plateau.connexions[i].Position[0];
-      coords2[1] := plateau.connexions[i].Position[1];
-
-      trouver3EmeHexagone(plateau,coords1,coords2,i);
-
-      // 4 routes possibles :
-      // coords1[0],coords1[2]
-      // coords1[1],coords1[2]
-      // coords2[0],coords2[2]
-      // coords2[1],coords2[2]
+function coordsDansTableau(connexion: TConnexion; tableau: array of TConnexion): Boolean;
+var
+  i: Integer;
+begin
+  coordsDansTableau := False;
+  for i := 0 to High(tableau) do
+  begin
+    if CoordsEgales(connexion.position, tableau[i].position) then
+    begin
+      coordsDansTableau := True;
+      Exit;
     end;
   end;
 end;
 
 
+function compterConnexionSuite(plateau: TPlateau; joueur: TJoueur): Integer;
+var
+  nombreDeConnexion : Integer;
+  coords1,coords2,premiereCoords : TCoords;
+  connexionDejaVisite : array of Tconnexion;
+  
+begin
+nombreDeConnexion := 0;
+compterConnexionAutour(connexionDejaVisite,nombreDeConnexion,trouverPremiereConnexion(plateau,joueur),plateau,joueur);
+writeln('nombreDeConnexion : ',nombreDeConnexion);
+end;
+
+
+function trouverConnexion(plateau: TPlateau; coord1, coord2: TCoord): TConnexion;
+var
+  i: Integer;
+  coords: TCoords;
+begin
+  SetLength(coords, 2);
+  coords[0] := coord1;
+  coords[1] := coord2;
+
+  for i := 0 to High(plateau.Connexions) do
+  begin
+    if CoordsEgales(plateau.Connexions[i].Position, coords) then
+    begin
+      trouverConnexion := plateau.Connexions[i];
+      Exit;
+    end;
+  end;
+
+  // SetLength(trouverConnexion.Position, 2);
+  // trouverConnexion.Position[0] := FCoord(-1, -1);
+  // trouverConnexion.Position[1] := FCoord(-1, -1);
+  trouverConnexion.IdJoueur := -1;
+end;
+
+function compterConnexionAutour(var connexionDejaVisite : Tconnexions;var nombreDeConnexion : Integer;connexion : TConnexion;plateau: TPlateau; joueur: TJoueur): Integer;
+var coords1,coords2 : TCoords;
+coord1,coord2 : TCoord;
+
+  coords : TCoords;
+  nouvelleConnexion : TConnexion;
+begin
+
+if ((connexion.IdJoueur = joueur.Id) and not coordsDansTableau(connexion,connexionDejaVisite)) then
+  begin
+    SetLength(connexionDejaVisite, Length(connexionDejaVisite) + 1);
+    connexionDejaVisite[High(connexionDejaVisite)] := connexion;
+
+    nombreDeConnexion := nombreDeConnexion + 1;
+    setLength(coords1,3);
+    setLength(coords2,3);
+    
+    
+    coords1[0] := connexion.Position[0];
+    coords1[1] := connexion.Position[1];
+    
+    coords2[0] := connexion.Position[0];
+    coords2[1] := connexion.Position[1];
+
+    trouver3EmeHexagone(plateau,coords1,coords2,connexion);
+    
+    nouvelleConnexion := trouverConnexion(plateau,coords1[0],coords1[2]);
+    if(nouvelleConnexion.IdJoueur <> -1)then
+      compterConnexionAutour(connexionDejaVisite,nombreDeConnexion,nouvelleConnexion ,plateau,joueur);
+    
+    nouvelleConnexion := trouverConnexion(plateau,coords1[1],coords1[2]);
+    if(nouvelleConnexion.IdJoueur <> -1)then
+      compterConnexionAutour(connexionDejaVisite,nombreDeConnexion,nouvelleConnexion ,plateau,joueur);
+    
+    nouvelleConnexion := trouverConnexion(plateau,coords2[0],coords2[2]);
+    if(nouvelleConnexion.IdJoueur <> -1)then
+      compterConnexionAutour(connexionDejaVisite,nombreDeConnexion,nouvelleConnexion ,plateau,joueur);
+    
+    nouvelleConnexion := trouverConnexion(plateau,coords2[1],coords2[2]);
+    if(nouvelleConnexion.IdJoueur <> -1)then
+      compterConnexionAutour(connexionDejaVisite,nombreDeConnexion,nouvelleConnexion ,plateau,joueur);
+  end;
+end;
 
 procedure verificationPointsVictoire(plateau : TPlateau; joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer;var affichage : TAffichage);
 var
@@ -1017,7 +1102,7 @@ begin
       coords2[0] := plateau.connexions[i].Position[0];
       coords2[1] := plateau.connexions[i].Position[1];
 
-      trouver3EmeHexagone(plateau,coords1,coords2,i);
+      trouver3EmeHexagone(plateau,coords1,coords2,plateau.connexions[i]);
 
 
       if(not connexionExisteDeja(plateau, coords1[0],coords1[2]) 
@@ -1057,25 +1142,26 @@ begin
   miseAJourRenderer(affichage);
 end;
 
-procedure trouver3EmeHexagone(plateau : TPlateau;coords1: TCoords; coords2: TCoords;i : Integer);
+procedure trouver3EmeHexagone(plateau : TPlateau;coords1: TCoords; coords2: TCoords;connexion : TConnexion);
 var x1,x2,y1,y2: Integer;
   j : Boolean;
 begin
 j := false;
 // diagonale 1
-if(plateau.connexions[i].Position[0].x = plateau.connexions[i].Position[1].x)then
+if(connexion.Position[0].x = connexion.Position[1].x)then
   begin
   x1:=-1; y1:=1;
   x2:=1; y2:=0;
-  if(plateau.connexions[i].Position[0].y < plateau.connexions[i].Position[1].y)then
+  if(connexion.Position[0].y < connexion.Position[1].y)then
     j:=true;
   end
 // horizontale
-else if(plateau.connexions[i].Position[0].y = plateau.connexions[i].Position[1].y)then
+
+else if(connexion.Position[0].y = connexion.Position[1].y)then
   begin
   x1:=1; y1:=-1;
   x2:=0; y2:=1;
-  if(plateau.connexions[i].Position[0].x < plateau.connexions[i].Position[1].x)then
+  if(connexion.Position[0].x < connexion.Position[1].x)then
     j:=true;
   end
 // diagonale 2
@@ -1083,19 +1169,20 @@ else
   begin
   x1:=1; y1:=0;
   x2:=0; y2:=-1;
-  if(plateau.connexions[i].Position[0].x < plateau.connexions[i].Position[1].x)then
+  if(connexion.Position[0].x < connexion.Position[1].x)then
     j:=true;
   end;
 if(j)then
   begin
-  coords1[2] := FCoord(plateau.connexions[i].Position[0].x+x1,plateau.connexions[i].Position[0].y+y1);
-  coords2[2] := FCoord(plateau.connexions[i].Position[0].x+x2,plateau.connexions[i].Position[0].y+y2);
+  coords1[2] := FCoord(connexion.Position[0].x+x1,connexion.Position[0].y+y1);
+  coords2[2] := FCoord(connexion.Position[0].x+x2,connexion.Position[0].y+y2);
   end
 else
   begin
-  coords1[2] := FCoord(plateau.connexions[i].Position[1].x+x1,plateau.connexions[i].Position[1].y+y1);
-  coords2[2] := FCoord(plateau.connexions[i].Position[1].x+x2,plateau.connexions[i].Position[1].y+y2);
+  coords1[2] := FCoord(connexion.Position[1].x+x1,connexion.Position[1].y+y1);
+  coords2[2] := FCoord(connexion.Position[1].x+x2,connexion.Position[1].y+y2);
   end;
+
 end;
 
 
@@ -1119,7 +1206,7 @@ begin
     coords2[0] := plateau.connexions[i].Position[0];
     coords2[1] := plateau.connexions[i].Position[1];
 
-    trouver3EmeHexagone(plateau,coords1,coords2,i);
+    trouver3EmeHexagone(plateau,coords1,coords2,plateau.connexions[i]);
 
     if(not VerifierAdjacencePersonnes(coords1,plateau))then
       begin
