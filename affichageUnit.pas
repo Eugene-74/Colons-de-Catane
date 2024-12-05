@@ -519,7 +519,7 @@ end;
 
 procedure affichageJoueurActuel(joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
 begin
-    affichageZone(25,350,300,30,0,affichage);
+    affichageZone(25,350,300,40,0,affichage);
     affichageTexte('Tour : ' + joueurs[idJoueurActuel].Nom, 25, FCoord(25,350), FCouleur(0,0,0,255), affichage);
 end;
 
