@@ -109,8 +109,8 @@ begin
   case choix of
    // ELEVE
     1:
-      if(resteEmplacementEleve(affichage,plateau,joueur))then
-        if(aLesRessources(joueur,COUT_ELEVE)) then
+      if(aLesRessources(joueur,COUT_ELEVE)) then
+        if(resteEmplacementEleve(affichage,plateau,joueur))then
           begin
           jouerSonClicAction(affichage);
           enleverRessources(joueur,COUT_ELEVE);
@@ -129,8 +129,8 @@ begin
 
     // CONNEXION
     2:
-      if(resteEmplacementConnexion(affichage,plateau,joueur))then
-        if(aLesRessources(joueur,COUT_CONNEXION)) then
+      if(aLesRessources(joueur,COUT_CONNEXION)) then
+        if(resteEmplacementConnexion(affichage,plateau,joueur))then
           begin
           jouerSonClicAction(affichage);
           enleverRessources(joueur,COUT_CONNEXION);
@@ -151,8 +151,8 @@ begin
 
     // PROFESSEUR
     3: 
-      if(resteEleve(affichage,plateau,joueur))then
-        if(aLesRessources(joueur,COUT_PROFESSEUR)) then
+      if(aLesRessources(joueur,COUT_PROFESSEUR)) then
+        if(resteEleve(affichage,plateau,joueur))then
           begin
 
       
@@ -177,9 +177,8 @@ begin
     // carte de tutorat
     4:
     //  verif ressource
-    if(plateau.cartesTutorat[0].nbr + plateau.cartesTutorat[1].nbr + plateau.cartesTutorat[2].nbr + plateau.cartesTutorat[3].nbr + plateau.cartesTutorat[4].nbr >0) then
-    begin
-      if(aLesRessources(joueur,COUT_CARTE_TUTORAT)) then
+    if(aLesRessources(joueur,COUT_CARTE_TUTORAT)) then
+      if(plateau.cartesTutorat[0].nbr + plateau.cartesTutorat[1].nbr + plateau.cartesTutorat[2].nbr + plateau.cartesTutorat[3].nbr + plateau.cartesTutorat[4].nbr >0) then
         begin
         jouerSonClicAction(affichage);
         tirerCarteTutorat(plateau.CartesTutorat, joueur);
@@ -190,7 +189,6 @@ begin
         affichageScoreAndClear(joueur,affichage);
         miseAJourRenderer(affichage);
         end;
-    end
     else
     begin
       affichageInformation('Impossible d''acheter une carte de tutorat.', 25, FCouleur(255,0,0,255), affichage);
