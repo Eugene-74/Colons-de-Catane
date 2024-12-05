@@ -569,13 +569,16 @@ end;
 procedure affichageJoueurInput(joueurs: TJoueurs; id: Integer; coord:TCoord; var affichage: TAffichage; var boutons: TBoutons);
 var bouton: TBouton;
 begin
-    bouton := FBouton(coord.x + 120,coord.y,30,30,'gauche','joueur_precedent');
-    affichageImageBouton(bouton,affichage);
-    ajouterBoutonTableau(bouton, boutons);
+    if(length(joueurs) > 2) then
+    begin
+        bouton := FBouton(coord.x + 120,coord.y,30,30,'gauche','joueur_precedent');
+        affichageImageBouton(bouton,affichage);
+        ajouterBoutonTableau(bouton, boutons);
 
-    bouton := FBouton(coord.x + 155,coord.y,30,30,'droite','joueur_suivant');
-    affichageImageBouton(bouton,affichage);
-    ajouterBoutonTableau(bouton, boutons);
+        bouton := FBouton(coord.x + 155,coord.y,30,30,'droite','joueur_suivant');
+        affichageImageBouton(bouton,affichage);
+        ajouterBoutonTableau(bouton, boutons);
+    end;
 
     coord.x := coord.x + 200;
     affichageTexte(joueurs[id].Nom, 25, coord, FCouleur(0,0,0,255), affichage);

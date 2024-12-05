@@ -353,7 +353,6 @@ begin
   for i := 0 to length(joueurs)-1 do
     begin
     affichageJoueurActuel(joueurs,i,affichage);
-
     
     gestionDes(joueurs,plateau,affichage);
 
@@ -389,8 +388,6 @@ begin
         begin
         utiliserCarteTutorat(plateau,affichage, joueurs,joueurs[i].id ,valeurBouton);
         end;
-
-
 
     until (finTour);
     affichageJoueurActuel(joueurs,i,affichage);

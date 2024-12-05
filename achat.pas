@@ -299,19 +299,14 @@ begin
       exit;
     end;
 
-  //  writeln('placement d''eleve apres le debut de partie');
-  // Vérifie la présence d'une personne adjacente
-
     if  VerifierAdjacencePersonnes(HexagonesCoords,plateau) then
     begin
-        PersonneValide := False; 
+        PersonneValide := False;
         exit;
-       
     end
     else
-        personneAdjacente := True; 
-   
-  
+        personneAdjacente := True;
+
   // 4. Vérifie si au moins 1 des hexagones est dans le plateau
   if (( not dansLePlateau(plateau,HexagonesCoords[0]) and not dansLePlateau(plateau,HexagonesCoords[1]) and not dansLePlateau(plateau,HexagonesCoords[2]) )
       ) then 
