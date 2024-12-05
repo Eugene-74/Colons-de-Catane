@@ -472,64 +472,33 @@ end;
 
 function compterConnexionSuite(plateau: TPlateau; joueur: TJoueur): Integer;
 var
-  i, j, k, l: Integer;
-  connexionsEleve: TCoords; 
-  maxRoute, routeActuelle: Integer;
-  connexionCourante: TCoords;
-  dejaVisite: array of Boolean;
+  i : Integer;
+  coords1,coords2 : TCoords;
 // TODO ne marche pas dutout
 // méthode a revoir ...
 begin
-  maxRoute := 0;
-  setLength (connexionCourante,2);
-  SetLength(dejaVisite, Length(plateau.Connexions));
-  for i := 0 to High(dejaVisite) do
-    dejaVisite[i] := False;
-  for i := 0 to High(plateau.Personnes) do
+  for i := 0 to High(plateau.connexions) do
   begin
-    if plateau.Personnes[i].IdJoueur = joueur.Id then
+    if (plateau.connexions[i].IdJoueur = joueur.Id) then
     begin
-      connexionsEleve := enContactEleveConnexions(plateau, plateau.Personnes[i],joueur);
-      for j := 0 to High(connexionsEleve) do
-      begin
-        routeActuelle := 1;
-        connexionCourante[0]:= connexionsEleve[j];
-        connexionCourante[1]:= connexionsEleve[j+1];
-        while True do
-        begin
-          l := -1;
-          for k := 0 to High(plateau.Connexions) do
-          begin
-            if (plateau.Connexions[k].IdJoueur = joueur.Id) and
-               not dejaVisite[k] and
-               enContactConnexionConnexion( connexionCourante, plateau.Connexions[k].Position) and
-               not CoordsEgales(connexionCourante, plateau.Connexions[k].Position) then
-            begin
-              l := k; 
-              Break;
-            end;
-          end;
+      setLength(coords1,3);
+      setLength(coords2,3);
 
-          if l = -1 then
-            Break;
+      coords1[0] := plateau.connexions[i].Position[0];
+      coords1[1] := plateau.connexions[i].Position[1];
 
-          dejaVisite[l] := True;
-          // TODO NE SURTOUT PAS METTRE ça CA CASSE TOUT CAR CA PASSE UN POINTEUR
-          // connexionCourante := plateau.Connexions[l].Position;
-          connexionCourante[0] := plateau.Connexions[l].Position[0];
-          connexionCourante[1] := plateau.Connexions[l].Position[1];
+      coords2[0] := plateau.connexions[i].Position[0];
+      coords2[1] := plateau.connexions[i].Position[1];
 
+      trouver3EmeHexagone(plateau,coords1,coords2,i);
 
-          Inc(routeActuelle);
-        end;
-
-        if routeActuelle > maxRoute then
-          maxRoute := routeActuelle;
-      end;
+      // 4 routes possibles :
+      // coords1[0],coords1[2]
+      // coords1[1],coords1[2]
+      // coords2[0],coords2[2]
+      // coords2[1],coords2[2]
     end;
   end;
-
-  compterConnexionSuite := maxRoute;
 end;
 
 
