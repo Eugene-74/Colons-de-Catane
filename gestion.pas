@@ -397,6 +397,7 @@ begin
     until (finTour);
     affichageJoueurActuel(joueurs,i,affichage);
     affichageCartesTutoratAndRender(joueurs[i],affichage);
+    attendre(16);
 
     // TODO enlever apres
     verificationMusique(affichage);
@@ -409,7 +410,7 @@ var gagnant : integer;
 begin
   repeat
     tour(joueurs,plateau,affichage);
-  gagner := false;
+    gagner := false;
     verificationPointsVictoire(plateau,joueurs,gagner,gagnant,affichage);
   until (gagner);
   affichageGagnant(joueurs[gagnant],affichage);

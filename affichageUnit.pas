@@ -8,6 +8,7 @@ uses sdl2, sdl2_image, sdl2_ttf, types, sysutils, TypInfo, traitement, Math, mus
 procedure initialisationAffichage(var affichage: TAffichage);
 procedure recupererNomsJoueurs(var stringTab: TStringTab; var affichage: TAffichage);
 procedure affichageGrille(plat: TPlateau; var affichage: TAffichage);
+procedure affichagePlateau(plat: TPlateau; var affichage: TAffichage);
 procedure clicHexagone(var plat: TPlateau; var affichage: TAffichage; var coord: Tcoord);
 procedure miseAJourRenderer(var affichage :TAffichage);
 procedure affichagePersonne(personne: TPersonne; var affichage: TAffichage);
@@ -754,6 +755,17 @@ begin
     clicBouton(affichage,affichage.boutonsAction,valeurBouton);
 end;
 
+procedure affichagePlateau(plat: TPlateau; var affichage: TAffichage);
+var i: Integer;
+begin
+    affichageGrille(plat,affichage);
+    affichageSouillard(plat,affichage);
+    for i:=0 to length(plat.Connexions)-1 do
+        affichageConnexion(plat.Connexions[i],affichage);
+    for i:=0 to length(plat.Personnes)-1 do
+        affichagePersonne(plat.Personnes[i],affichage);
+end;
+
 {Affiche le tour à l'ecran
 Preconditions :
     - plat : le plateau de jeu
@@ -766,15 +778,8 @@ begin
     nettoyageAffichage(affichage);
 
     affichageFond(affichage);
-    affichageGrille(plat,affichage);
-    affichageSouillard(plat,affichage);
     affichageDes(plat.des1,plat.des2,affichage);
-
-    for i:=0 to length(plat.Connexions)-1 do
-        affichageConnexion(plat.Connexions[i],affichage);
-    
-    for i:=0 to length(plat.Personnes)-1 do
-        affichagePersonne(plat.Personnes[i],affichage);
+    affichagePlateau(plat,affichage);
     
     for i:=0 to length(affichage.boutonsAction)-1 do
         affichageBouton(affichage.boutonsAction[i],affichage);
@@ -925,7 +930,6 @@ var i: Integer;
 begin
     for i:=0 to length(affichage.boutonsSysteme)-1 do
         affichageImageBouton(affichage.boutonsSysteme[i],affichage);
-    
     SDL_RenderPresent(affichage.renderer);
 end;
 
