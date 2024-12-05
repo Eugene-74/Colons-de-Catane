@@ -112,7 +112,7 @@ begin
           end
         else
           begin
-          affichageInformation('Vous n''avez pas les ressources nécessaires pour acheter un élève.', 25, FCouleur(0,0,0,255), affichage);
+          affichageInformation('Vous n''avez pas les ressources necessaires pour acheter un eleve.', 25, FCouleur(0,0,0,255), affichage);
           jouerSonValide(affichage,false);
           end
       else
@@ -133,7 +133,7 @@ begin
         end
         else
           begin
-            affichageInformation('Vous n''avez pas les ressources nécessaires pour acheter une connexion.', 25, FCouleur(0,0,0,255), affichage);
+            affichageInformation('Vous n''avez pas les ressources necessaires pour acheter une connexion.', 25, FCouleur(0,0,0,255), affichage);
             jouerSonValide(affichage,false);
           end
       else
@@ -159,7 +159,7 @@ begin
           end
         else
           begin
-            affichageInformation('Vous n''avez pas les ressources nécessaires pour changer un eélève en professeur.', 25, FCouleur(0,0,0,255), affichage);
+            affichageInformation('Vous n''avez pas les ressources necessaires pour changer un eleve en professeur.', 25, FCouleur(0,0,0,255), affichage);
             jouerSonValide(affichage,false);
           end
       else
@@ -865,7 +865,7 @@ begin
         if l >= 2 then
         begin
           enContactAutreEleveConnexion := True;
-          affichageInformation('Connexion en contact avec une personne d''un autre joueur.', 25, FCouleur(0,0,0,255), affichage);
+          affichageInformation('Connexion en contact avec une personne dune autre joueur.', 25, FCouleur(0,0,0,255), affichage);
 
           Exit;
         end;
@@ -879,7 +879,7 @@ procedure deplacementSouillard(var plateau : TPlateau;var joueurs : TJoueurs ;va
 var coord : Tcoord;
   i : Integer;
 begin
-  affichageInformation('Cliquez sur 1 hexagones pour déplacer le souillard.', 25, FCouleur(0,0,0,255), affichage);
+  affichageInformation('Cliquez sur 1 hexagones pour deplacer le souillard.', 25, FCouleur(0,0,0,255), affichage);
 
   repeat
     clicHexagone(plateau, affichage, coord);
@@ -895,7 +895,7 @@ begin
         affichagePersonne(plateau.Personnes[i],affichage);
   miseAJourRenderer(affichage);
 
-  affichageInformation('Souillard déplacé avec succès !', 25, FCouleur(0,255,0,255), affichage);
+  affichageInformation('Souillard deplace avec succes !', 25, FCouleur(0,255,0,255), affichage);
 end;
 function enContactConnexionConnexion( coords1: TCoords; coords2: TCoords): Boolean;
 var
