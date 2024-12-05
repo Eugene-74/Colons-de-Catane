@@ -14,7 +14,6 @@ procedure miseAJourRenderer(var affichage :TAffichage);
 procedure affichagePersonne(personne: TPersonne; var affichage: TAffichage);
 
 procedure affichageSouillard(plat: TPlateau; var affichage: TAffichage);
-procedure affichageSouillardAndRender(plat: TPlateau; var affichage: TAffichage);
 
 procedure affichageConnexion(connexion : TConnexion; var affichage : TAffichage);
 procedure echangeRessources(joueurs: TJoueurs; idJoueurActuel:Integer; var idJoueurEchange: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
@@ -354,13 +353,6 @@ begin
     affichageDetailsHexagone(plat.Souillard.Position,coord,plat,affichage);
 end;
 
-procedure affichageSouillardAndRender(plat: TPlateau; var affichage: TAffichage);
-begin
-    // TODO clear l'ancienne position du souillard (pour Yann)
-    affichageSouillard(plat,affichage);
-    miseAJourRenderer(affichage);
-end;
-
 {Affiche la grille à l'ecran
 Preconditions :
     - plat : le plateau de jeu
@@ -512,10 +504,11 @@ end;
 
 procedure affichageInformation(texte: String; taille: Integer; couleur: TSDL_Color; var affichage: TAffichage);
 begin
+    attendre(30);
     suppressionInformation(affichage);
     affichageTexte(texte, taille, FCoord(400,1025), couleur, affichage);
     miseAJourRenderer(affichage);
-    attendre(66);
+    attendre(30);
 end;
 
 procedure affichageJoueurActuel(joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
@@ -790,8 +783,8 @@ begin
     affichageCartesTutorat(joueurs[idJoueurActuel],affichage);
 
     affichageJoueurActuel(joueurs,idJoueurActuel,affichage);
-
     miseAJourRenderer(affichage);
+    attendre(66);
 end;
 
 procedure affichageNomJoueurInput(nomActuel:String; bouton: TBouton; tailleTexte: Integer; var affichage: TAffichage);
@@ -928,6 +921,7 @@ Postconditions :
 procedure miseAJourRenderer(var affichage :TAffichage);
 var i: Integer;
 begin
+    writeln('Mise à jour du renderer');
     for i:=0 to length(affichage.boutonsSysteme)-1 do
         affichageImageBouton(affichage.boutonsSysteme[i],affichage);
     SDL_RenderPresent(affichage.renderer);

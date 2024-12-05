@@ -358,7 +358,6 @@ begin
   for i := 0 to length(joueurs)-1 do
     begin
     affichageJoueurActuel(joueurs,i,affichage);
-    
     gestionDes(joueurs,plateau,affichage);
 
     finTour := False;
@@ -395,6 +394,7 @@ begin
         end;
 
     until (finTour);
+    attendre(16);
     affichageJoueurActuel(joueurs,i,affichage);
     affichageCartesTutoratAndRender(joueurs[i],affichage);
     attendre(16);
@@ -428,8 +428,8 @@ procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueu
 begin
   affichageInformation('Deplacement du souillard par le joueur '+joueurs[id].nom,25,FCouleur(0,0,0,255),affichage);
   deplacementSouillard(plateau,joueurs,affichage);
-
-  affichageSouillardAndRender(plateau,affichage);
+  attendre(16);
+  miseAJourRenderer(affichage);
   // affichageTour(plateau, joueurs, Id, affichage);
 end;
 
@@ -472,7 +472,6 @@ for i := 0 to High(plateau.cartesTutorat) do
   if (nom = plateau.cartesTutorat[i].nom) then
     break;
   end;
-
 if (i <> -1) and (joueurs[id].CartesTutorat[i].utilisee < joueurs[id].CartesTutorat[i].nbr) then
   begin
   jouerSonValide(affichage, true);
@@ -483,11 +482,12 @@ if (i <> -1) and (joueurs[id].CartesTutorat[i].utilisee < joueurs[id].CartesTuto
     3: utiliserCarte4(affichage, plateau, joueurs, id);
     4: utiliserCarte5(joueurs, id);
     end;
+  attendre(16);
   joueurs[id].CartesTutorat[i].utilisee := joueurs[id].CartesTutorat[i].utilisee + 1;
 
-  affichageCartesTutorat(joueurs[id],affichage);
   affichageScoreAndClear(joueurs[id],affichage);
-  miseAJourRenderer(affichage);
+  affichageCartesTutoratAndRender(joueurs[id],affichage);
+  attendre(16);
   end
 else
   begin
