@@ -38,7 +38,7 @@ implementation
 
 procedure affichageScore(joueur: TJoueur; var affichage: TAffichage);forward;
 procedure affichageCarteTutorat(carteTutorat: TCarteTutorat; coord: TCoord; var affichage: TAffichage);forward;
-procedure suppressionScores(playerId: Integer; var affichage: TAffichage);forward;
+procedure suppressionScore(playerId: Integer; var affichage: TAffichage);forward;
 
 procedure attendre(ms: Integer);
 begin
@@ -395,8 +395,7 @@ begin
     affichageImage(coord.x,coord.y+7,25,25,affichage.texturePlateau.texturePoint,affichage);
     affichageTexte(IntToStr(joueur.Points), 25, FCoord(coord.x+30,coord.y), FCouleur(0,0,0,255), affichage);
 
-    coord.x := 25;
-    coord.y := coord.y + 35;
+    coord := FCoord(25,coord.y+35);
     for ressource := Physique to Mathematiques do
     begin
         affichageImage(coord.x,coord.y,25,25,affichage.texturePlateau.textureIconesRessources[ressource],affichage);
@@ -408,9 +407,8 @@ end;
 
 procedure affichageScoreAndClear(joueur:TJoueur; var affichage: TAffichage);
 begin
-    suppressionScores(joueur.id,affichage);
+    suppressionScore(joueur.id,affichage);
     affichageScore(joueur,affichage);
-
 end;
 
 procedure affichageZone(x,y,w,h,epaisseurBord: Integer; var affichage: TAffichage);
@@ -475,9 +473,9 @@ begin
     miseAJourRenderer(affichage);
 end;
 
-procedure suppressionScores(playerId: Integer; var affichage: TAffichage);
+procedure suppressionScore(playerId: Integer; var affichage: TAffichage);
 begin
-    affichageZone(25,25+playerId*75,325,65,0,affichage);
+    affichageZone(25,25+playerId*75,320,65,0,affichage);
 end;
 
 procedure affichageBouton(bouton: TBouton; var affichage: TAffichage);
