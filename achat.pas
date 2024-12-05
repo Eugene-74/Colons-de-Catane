@@ -21,6 +21,8 @@ procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage;
 implementation
 procedure placeFauxEleve(affichage : TAffichage;plateau : TPlateau;coords : Tcoords;id : Integer);forward;
 procedure placeFauxConnexion(affichage : TAffichage;plateau : TPlateau;coord1 : Tcoord;coord2 : Tcoord; id : Integer);forward;
+procedure placeFauxProfesseur(affichage : TAffichage;plateau : TPlateau;coords : Tcoords; id : Integer);forward;
+
 function connexionExisteDeja(plateau: TPlateau; coord1: TCoord; coord2: TCoord): Boolean;forward;
 
 procedure trouver3EmeHexagone(plateau : TPlateau;coords1: TCoords; coords2: TCoords;i : Integer);forward;
@@ -146,12 +148,13 @@ begin
       if(resteEleve(affichage,plateau,joueur))then
         if(aLesRessources(joueur,COUT_PROFESSEUR)) then
           begin
-          jouerSonClicAction(affichage);
 
+      
+
+          jouerSonClicAction(affichage);
           enleverRessources(joueur,COUT_PROFESSEUR);
 
           changementProfesseur(plateau, affichage, joueur);
-          
           
           end
         else
@@ -278,6 +281,7 @@ begin
     // TODO verifier le contact avec une connexion du joueur
     if not enContactEleveConnexion(plateau,HexagonesCoords,joueurActuel) then
     begin
+      writeln('pas en contact avec une connexion');
       PersonneValide:=false;
       exit;
     end;
@@ -395,12 +399,6 @@ begin
   indexEleve := -1; 
   setLength(ProfesseurCoords, 3);
 
-  // if not resteEleve(plateau, joueurActuel) then
-  // begin
-  //   affichageInformation('Plus d''élève à changer.', 25, FCouleur(255, 0, 0, 255), affichage);
-  //   Exit;
-  // end;
-
   if enContact(HexagonesCoords) then
   begin
     for i := 0 to High(plateau.Personnes) do
@@ -413,19 +411,18 @@ begin
           for k := 0 to High(HexagonesCoords) do
           begin
             if (plateau.Personnes[i].Position[j].x = HexagonesCoords[k].x) and
-               (plateau.Personnes[i].Position[j].y = HexagonesCoords[k].y) then
+              (plateau.Personnes[i].Position[j].y = HexagonesCoords[k].y) then
               Inc(compteur);
           end;
         end;
-
         if compteur = 3 then
         begin
           professeurValide := True;
-          ProfesseurCoords[0] := HexagonesCoords[0]; 
+          ProfesseurCoords[0] := HexagonesCoords[0];
           ProfesseurCoords[1] := HexagonesCoords[1];
           ProfesseurCoords[2] := HexagonesCoords[2];
-          indexEleve := i; 
-          Exit; 
+          indexEleve := i;
+          Exit;
         end;
       end;
     end;
@@ -739,6 +736,7 @@ end;
 function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;
 var
   i, k, l: Integer;
+  // TODO ne marche pas
 begin
   enContactEleveConnexion := False;
   for i := 0 to High(plateau.Personnes) do
@@ -1023,24 +1021,18 @@ begin
 end;
 
 function resteEleve(affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
-var
-  i: Integer;
+var i: Integer;
 begin
-  resteEleve := False;
-  for i := 0 to High(plateau.Personnes) do
+resteEleve := False;
+for i := 0 to High(plateau.Personnes) do
+begin
+  if (plateau.Personnes[i].IdJoueur = joueur.Id) and (plateau.Personnes[i].estEleve) then
   begin
-    if (plateau.Personnes[i].IdJoueur = joueur.Id) and (plateau.Personnes[i].estEleve) then
-    begin
-      plateau.Personnes[i].estEleve := False;
-      plateau.Personnes[i].IdJoueur := -joueur.Id-1;
-      resteEleve := True;
-    end;
+    placeFauxProfesseur(affichage,plateau, plateau.Personnes[i].position,  joueur.Id);
+    resteEleve := True;
   end;
-
-  for i:=0 to length(plateau.personnes)-1 do
-        affichagePersonne(plateau.personnes[i],affichage);
-
-  miseAJourRenderer(affichage);
+end;
+miseAJourRenderer(affichage);
 end;
 
 procedure placeFauxConnexion(affichage : TAffichage;plateau : TPlateau;coord1 : Tcoord;coord2 : Tcoord; id : Integer);
@@ -1210,6 +1202,23 @@ with plateau.Personnes[High(plateau.Personnes)] do
   Position[2] := coords[2];
 
   estEleve := True;
+  IdJoueur := -id-1;
+  end;
+affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
+end;
+
+procedure placeFauxProfesseur(affichage : TAffichage;plateau : TPlateau;coords : Tcoords; id : Integer);
+begin
+
+SetLength(plateau.Personnes, Length(plateau.Personnes) + 1);
+with plateau.Personnes[High(plateau.Personnes)] do
+  begin
+  SetLength(Position, 3);
+  Position[0] := coords[0];
+  Position[1] := coords[1];
+  Position[2] := coords[2];
+
+  estEleve := False;
   IdJoueur := -id-1;
   end;
 affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
