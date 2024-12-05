@@ -116,7 +116,7 @@ end;
 
 procedure initialisationPartie(var joueurs : TJoueurs;var plateau : TPlateau;var affichage : TAffichage);
 var i,j,num,count : integer;
-  valide,unique,nonVide : Boolean;
+  valide,unique : Boolean;
   res : TRessources;
   r : Tressource;
   cartesTutorat : TCartesTutorat;
@@ -133,16 +133,15 @@ begin
   setlength(noms,4);
   for i:=0 to 3 do
     noms[i] := '';
-  valide := True;
-  unique := true;
-  nonVide := true;
+  
+  affichageFond(affichage);
+  
   repeat
     count := 0;
-    recupererNomsJoueurs(noms,affichage,valide,unique,nonVide);
+    recupererNomsJoueurs(noms,affichage);
 
     valide := True;
     unique := true;
-    nonVide := true;
 
     for i:=0 to length(noms) - 1 do
     begin
@@ -152,19 +151,21 @@ begin
           if (noms[i] = noms[j]) then
             begin
             unique := False;
+            jouerSonValide(affichage,unique);
+            affichageInformation('Il faut des noms différents.',25,FCouleur(255,0,0,255),affichage);
             end;
         if(unique) then
           Inc(count)
-        end
-      else
-        begin
-        nonVide := False;
         end;
     end;
-    if (count < 2) then
+    if ((count < 2)) then
       begin
       valide := False;
-        
+      if(unique)then
+        begin
+        jouerSonValide(affichage,valide);
+        affichageInformation('Il faut au moins 2 joueurs.',25,FCouleur(255,0,0,255),affichage);
+        end;
       end;
   until valide;
   jouerSonValide(affichage,true);
@@ -197,9 +198,7 @@ begin
   cartesTutorat := intialisationTutorat();
   plateau.cartesTutorat := cartesTutorat;
   
-
   affichageTour(plateau, joueurs, 0, affichage);
-  
 
   for i:=0 to length(joueurs)-1 do
     begin
