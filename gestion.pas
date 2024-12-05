@@ -195,21 +195,21 @@ begin
   affichageTour(plateau, joueurs, 0, affichage);
   
 
-  for i:=1 to length(joueurs) do
+  for i:=0 to length(joueurs)-1 do
     begin
     // TODO re mettre apres
     
-    // placementEleve(plateau,affichage,joueurs[i-1]);
-    // placementConnexion(plateau,affichage,joueurs[i-1]);
+    // placementEleve(plateau,affichage,joueurs[i]);
+    // placementConnexion(plateau,affichage,joueurs[i]);
     
     end;
 
-  for i:=length(joueurs) downto 1 do
+  for i:=length(joueurs)-1 downto 0 do
     begin
     // TODO re mettre apres
 
-    // placementEleve(plateau,affichage,joueurs[i-1]);
-    // placementConnexion(plateau,affichage,joueurs[i-1]);
+    // placementEleve(plateau,affichage,joueurs[i]);
+    // placementConnexion(plateau,affichage,joueurs[i]);
     end;
 
   // mise a jour de l'affichage

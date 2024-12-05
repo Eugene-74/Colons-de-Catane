@@ -103,19 +103,15 @@ begin
     1:
       if(resteEmplacementEleve(affichage,plateau,joueur))then
         if(aLesRessources(joueur,COUT_ELEVE)) then
-        begin
-        jouerSonClicAction(affichage);
-
+          begin
+          jouerSonClicAction(affichage);
           enleverRessources(joueur,COUT_ELEVE);
           PlacementEleve(plateau, affichage, joueur);
-
-          
-
-        end
+          end
         else
           begin
-            affichageInformation('Vous n''avez pas les ressources necessaires pour acheter un eleve.', 25, FCouleur(0,0,0,255), affichage);
-            jouerSonValide(affichage,false);
+          affichageInformation('Vous n''avez pas les ressources necessaires pour acheter un eleve.', 25, FCouleur(0,0,0,255), affichage);
+          jouerSonValide(affichage,false);
           end
       else
         begin
@@ -153,15 +149,10 @@ begin
           jouerSonClicAction(affichage);
 
           enleverRessources(joueur,COUT_PROFESSEUR);
+
           changementProfesseur(plateau, affichage, joueur);
           
-          affichageGrille(plateau,affichage);
-          affichageSouillard(plateau,affichage);
-          for i:=0 to length(plateau.Connexions)-1 do
-            affichageConnexion(plateau.Connexions[i],affichage);
-          for i:=0 to length(plateau.Personnes)-1 do
-            affichagePersonne(plateau.Personnes[i],affichage);
-          miseAJourRenderer(affichage);
+          
           end
         else
           begin
@@ -474,7 +465,17 @@ begin
     joueurActuel.Points := joueurActuel.Points + 1;
 
     affichageInformation('Élève converti en professeur avec succès !', 25, FCouleur(0, 255, 0, 255), affichage);
+    
+    affichageScoreAndClear(joueurActuel, affichage);
+    affichageGrille(plateau,affichage);
+    affichageSouillard(plateau,affichage);
+    for i:=0 to length(plateau.Connexions)-1 do
+      affichageConnexion(plateau.Connexions[i],affichage);
+    for i:=0 to length(plateau.Personnes)-1 do
+      affichagePersonne(plateau.Personnes[i],affichage);
+    miseAJourRenderer(affichage);
   end;
+  
 end;
 
 
@@ -722,12 +723,9 @@ begin
   plateau.Connexions[length(plateau.Connexions)-1].Position[0] := coords[0];
   plateau.Connexions[length(plateau.Connexions)-1].Position[1] := coords[1];
 
-  
-  affichageConnexion(plateau.Connexions[length(plateau.Connexions)-1], affichage);
-
   affichageInformation('Connexion placee avec succes !', 25, FCouleur(0,255,0,255), affichage);
 
-  //TODO opti ça (pour YANN)
+  affichageScoreAndClear(joueur, affichage);
   affichageGrille(plateau,affichage);
   affichageSouillard(plateau,affichage);
   for i:=0 to length(plateau.Connexions)-1 do
@@ -1057,7 +1055,7 @@ with plateau.Connexions[High(plateau.Connexions)] do
 
   IdJoueur := -id-1;
   end;
-  affichageConnexion(plateau.Connexions[High(plateau.Connexions)], affichage);
+affichageConnexion(plateau.Connexions[High(plateau.Connexions)], affichage);
 end;
 
 function resteEmplacementConnexion(affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
@@ -1080,7 +1078,6 @@ begin
 
       trouver3EmeHexagone(plateau,coords1,coords2,i);
 
-      resteEmplacementConnexion := True;
 
       if(not connexionExisteDeja(plateau, coords1[0],coords1[2]) 
         and (dansLePlateau(plateau,coords1[0]) or dansLePlateau(plateau,coords1[2])))then
@@ -1109,9 +1106,9 @@ begin
 
     end;
   end;
-  //TODO opti ça (pour YANN)
-  for i:=0 to length(plateau.connexions)-1 do
-    affichageConnexion(plateau.connexions[i],affichage);
+
+  // for i:=0 to length(plateau.connexions)-1 do
+  //   affichageConnexion(plateau.connexions[i],affichage);
 
   for i:=0 to length(plateau.personnes)-1 do
         affichagePersonne(plateau.personnes[i],affichage);
@@ -1215,7 +1212,7 @@ with plateau.Personnes[High(plateau.Personnes)] do
   estEleve := True;
   IdJoueur := -id-1;
   end;
-  affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
+affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
 end;
 
 function encontactAutreconnexionEleve(plateau: TPlateau; Eleve: TCoords; var joueur: TJoueur): Boolean;
