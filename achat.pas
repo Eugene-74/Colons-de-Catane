@@ -485,7 +485,8 @@ var
   maxRoute, routeActuelle: Integer;
   connexionCourante: TCoords;
   dejaVisite: array of Boolean;
-
+// TODO ne marche pas dutout
+// méthode a revoir ...
 begin
   maxRoute := 0;
   setLength (connexionCourante,2);
