@@ -28,7 +28,7 @@ procedure utiliserCarte1(var plateau : TPlateau; var affichage : TAffichage;joue
 procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueurs : Tjoueurs; id : Integer);forward;
 procedure utiliserCarte3(var plateau : TPlateau; var affichage: TAffichage; joueurs : Tjoueurs;id : Integer);forward;
 procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau;var joueurs : Tjoueurs; id : Integer);forward;
-procedure utiliserCarte5(var joueurs : TJoueurs;id :Integer);forward;
+procedure utiliserCarte5(var affichage : TAffichage;var joueurs : TJoueurs;id :Integer);forward;
 
 procedure donnerRessources( var joueur : Tjoueur; ressources : TRessources);forward;
 
@@ -418,16 +418,16 @@ end;
 procedure utiliserCarte1(var plateau : TPlateau; var affichage : TAffichage;joueurs : Tjoueurs;id : Integer);
 begin
   placementConnexion(plateau,affichage,joueurs[id]);
-  placementConnexion(plateau,affichage,joueurs[id]);
+  if (resteEmplacementConnexion(affichage,plateau,joueurs[id]))then
+    placementConnexion(plateau,affichage,joueurs[id])
+  else
+    affichageInformation('Vous n''avez plus d''emplacement pour placer la deuxième connexion',25,FCouleur(255,0,0,255),affichage);
 end;
 
 procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueurs : Tjoueurs; id : Integer);
 begin
   affichageInformation('Deplacement du souillard par le joueur '+joueurs[id].nom,25,FCouleur(0,0,0,255),affichage);
   deplacementSouillard(plateau,joueurs,affichage);
-  attendre(16);
-  miseAJourRenderer(affichage);
-  // affichageTour(plateau, joueurs, Id, affichage);
 end;
 
 procedure utiliserCarte3(var plateau : TPlateau; var affichage: TAffichage; joueurs : Tjoueurs; id : Integer);
@@ -438,10 +438,20 @@ begin
     idJoueurAVoler := id + 1
   else
     idJoueurAVoler := 0;
+  
   selectionDepouiller(ressource,id,idJoueurAVoler,joueurs,affichage);
-  // TODO enlever après avoir lu, ici tu recup ce que tu veux, juste que il faut peut être pas afficher le tour après (Yann)
-  // TODO Tu peux recuperer Rien en ressource, c'est normal, c'est pour dire que tu veux rien voler (une idée) (Yann)
+  
+  if(ressource <> Rien) then
+    begin
+    joueurs[id].ressources[ressource] := joueurs[id].ressources[ressource] + joueurs[idJoueurAVoler].ressources[ressource];
+    joueurs[idJoueurAVoler].ressources[ressource] := 0;
+    end;
+    
   affichageTour(plateau, joueurs, id, affichage);
+  jouerSonValide(affichage, true);
+  
+  affichageInformation(joueurs[id].Nom +  ' viens de gagner toutes les ressources du type '+ GetEnumName(TypeInfo(TRessource), Ord(ressource)) +' de '+joueurs[idJoueurAVoler].Nom+'.' ,25,FCouleur(0,255,0,255),affichage);
+
 end;
 
 procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau; var joueurs : Tjoueurs;id : Integer);
@@ -451,14 +461,18 @@ begin
 
 selectionRessource(affichage,ressource);
 joueurs[id].ressources[ressource] := joueurs[id].ressources[ressource] + 2;
-affichageInformation(joueurs[id].Nom +  'viens de gagner 2 : ' +GetEnumName(TypeInfo(TRessource), Ord(ressource)),25,FCouleur(0,255,0,255),affichage);
 
 affichageTour(plateau, joueurs, Id, affichage);
+  jouerSonValide(affichage, true);
+
+affichageInformation(joueurs[id].Nom +  ' viens de gagner 2 : ' +GetEnumName(TypeInfo(TRessource), Ord(ressource)),25,FCouleur(0,255,0,255),affichage);
 end;
 
-procedure utiliserCarte5(var joueurs : TJoueurs;id :Integer);
+procedure utiliserCarte5(var affichage : TAffichage;var joueurs : TJoueurs;id :Integer);
 begin
   joueurs[id].Points := joueurs[id].Points + 1;
+  affichageInformation(joueurs[id].Nom +  ' viens de gagner 1 point de victoire.',25,FCouleur(0,255,0,255),affichage);
+
 end;
 
 procedure utiliserCarteTutorat(var plateau : TPlateau;var affichage : TAffichage;var joueurs : TJoueurs;id : Integer;nom : String);
@@ -475,11 +489,17 @@ if (i <> -1) and (joueurs[id].CartesTutorat[i].utilisee < joueurs[id].CartesTuto
   begin
   jouerSonValide(affichage, true);
   case i of
-    0: utiliserCarte1(plateau, affichage, joueurs, id);
+    0:
+    begin
+    if(resteEmplacementConnexion(affichage,plateau,joueurs[id]))then
+      utiliserCarte1(plateau, affichage, joueurs, id)
+    else
+      exit;
+    end;
     1: utiliserCarte2(plateau, affichage, joueurs, id);
     2: utiliserCarte3(plateau, affichage, joueurs, id);
     3: utiliserCarte4(affichage, plateau, joueurs, id);
-    4: utiliserCarte5(joueurs, id);
+    4: utiliserCarte5(affichage,joueurs, id);
     end;
   attendre(16);
   joueurs[id].CartesTutorat[i].utilisee := joueurs[id].CartesTutorat[i].utilisee + 1;
