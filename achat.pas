@@ -879,6 +879,7 @@ begin
   plateau.Souillard.Position := coord;
   
   affichagePlateau(plateau,affichage);
+  attendre(16);
 
   affichageInformation('Souillard deplace avec succes !', 25, FCouleur(0,255,0,255), affichage);
 end;
