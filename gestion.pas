@@ -213,7 +213,7 @@ begin
     end;
 
   // mise a jour de l'affichage
-  affichageTour(plateau, joueurs, 0, affichage);
+  // affichageTour(plateau, joueurs, 0, affichage);
   
 
 end;
