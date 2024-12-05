@@ -252,13 +252,8 @@ begin
 
   affichageInformation('Eleve place avec succes !', 25, FCouleur(0,255,0,255), affichage);
 
-  affichageGrille(plateau,affichage);
   affichageScoreAndClear(joueur, affichage);
-  affichageSouillard(plateau,affichage);
-  for i:=0 to length(plateau.Connexions)-1 do
-    affichageConnexion(plateau.Connexions[i],affichage);
-  for i:=0 to length(plateau.Personnes)-1 do
-        affichagePersonne(plateau.Personnes[i],affichage);
+  affichagePlateau(plateau,affichage);
   miseAJourRenderer(affichage);
 end;
 
@@ -464,12 +459,7 @@ begin
     affichageInformation('Élève converti en professeur avec succès !', 25, FCouleur(0, 255, 0, 255), affichage);
     
     affichageScoreAndClear(joueurActuel, affichage);
-    affichageGrille(plateau,affichage);
-    affichageSouillard(plateau,affichage);
-    for i:=0 to length(plateau.Connexions)-1 do
-      affichageConnexion(plateau.Connexions[i],affichage);
-    for i:=0 to length(plateau.Personnes)-1 do
-      affichagePersonne(plateau.Personnes[i],affichage);
+    affichagePlateau(plateau,affichage);
     miseAJourRenderer(affichage);
   end;
   
@@ -723,12 +713,7 @@ begin
   affichageInformation('Connexion placee avec succes !', 25, FCouleur(0,255,0,255), affichage);
 
   affichageScoreAndClear(joueur, affichage);
-  affichageGrille(plateau,affichage);
-  affichageSouillard(plateau,affichage);
-  for i:=0 to length(plateau.Connexions)-1 do
-    affichageConnexion(plateau.Connexions[i],affichage);
-  for i:=0 to length(plateau.Personnes)-1 do
-    affichagePersonne(plateau.Personnes[i],affichage);
+  affichagePlateau(plateau,affichage);
   miseAJourRenderer(affichage);
 end;
 
@@ -893,12 +878,7 @@ begin
 
   plateau.Souillard.Position := coord;
   
-  affichageGrille(plateau,affichage);
-  affichageSouillard(plateau,affichage);
-  for i:=0 to length(plateau.Connexions)-1 do
-    affichageConnexion(plateau.Connexions[i],affichage);
-  for i:=0 to length(plateau.Personnes)-1 do
-        affichagePersonne(plateau.Personnes[i],affichage);
+  affichagePlateau(plateau,affichage);
   miseAJourRenderer(affichage);
 
   affichageInformation('Souillard déplacé avec succès !', 25, FCouleur(0,255,0,255), affichage);
