@@ -553,8 +553,8 @@ begin
     
     plusGrandeRoute := True;
 
-    writeln('compterConnexionSuite(plateau,joueur) : ',compterConnexionSuite(plateau,joueur));
-    writeln('joueur : ',joueur.nom);
+    //writeln('compterConnexionSuite(plateau,joueur) : ',compterConnexionSuite(plateau,joueur));
+    //writeln('joueur : ',joueur.nom);
 
     if (compterConnexionSuite(plateau,joueur) >= 5) then
     begin
@@ -994,7 +994,7 @@ for i := 0 to High(plateau.Personnes) do
 begin
   if (plateau.Personnes[i].IdJoueur = joueur.Id) and (plateau.Personnes[i].estEleve) then
   begin
-    placeFauxProfesseur(affichage,plateau, plateau.Personnes[i].position,  joueur.Id);
+    placeFauxProfesseur(affichage,plateau, plateau.Personnes[i].position,joueur.Id);
     resteEleve := True;
   end;
 end;
