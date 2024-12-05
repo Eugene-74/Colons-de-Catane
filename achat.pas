@@ -288,6 +288,7 @@ begin
 
     if  VerifierAdjacencePersonnes(HexagonesCoords,plateau) then
     begin
+        writeln('VerifierAdjacencePersonnes');
         PersonneValide := False;
         exit;
     end
@@ -736,32 +737,28 @@ end;
 function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;
 var
   i, k, l: Integer;
-  // TODO ne marche pas
+  // TODO ne marchais pas
+  // TU VERIFIAIS DES ELEVES AVEC LES AUTRES ELEVES ET CA NA PAS DE SENS
+  // coords est l'eleve
+  // plateau.Connexions est les connexions
 begin
   enContactEleveConnexion := False;
-  for i := 0 to High(plateau.Personnes) do
+  for i := 0 to High(plateau.Connexions) do
   begin
-    if plateau.Personnes[i].IdJoueur = joueur.Id then
+    if plateau.Connexions[i].IdJoueur = joueur.Id then
     begin
-      l := 0; 
-      for k := 0 to 2 do
-      begin
-        if (coords[0].x = plateau.Personnes[i].Position[k].x) and
-           (coords[0].y = plateau.Personnes[i].Position[k].y) then
-        begin
-          Inc(l);
-        end;
-
-        if (coords[1].x = plateau.Personnes[i].Position[k].x) and
-           (coords[1].y = plateau.Personnes[i].Position[k].y) then
-        begin
-          Inc(l);
-        end;
-        if l >= 2 then
+      l := 0;
+        for k := 0 to 1 do
+          for l := 0 to 1 do
+            if (coords[k].x = plateau.Connexions[i].Position[l].x) and
+                (coords[k].y = plateau.Connexions[i].Position[l].y) then
+            begin
+              enContactEleveConnexion := True;
+              Exit;
+            end;
         begin
           enContactEleveConnexion := True;
           Exit;
-        end;
       end;
     end;
   end;
