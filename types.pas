@@ -140,11 +140,11 @@ type
 
 const
   CARTES_TUTORAT: TCartesTutorat = (
-      (nom: 'Discussion'; description: 'discussion'; nbr: 10; utilisee : 0),
-      (nom: 'WordReference'; description: 'discussion'; nbr: 12; utilisee : 0),
-      (nom: 'Voler'; description: 'discussion'; nbr: 8; utilisee : 0),
-      (nom: 'Choisir 2 connaissances'; description: 'discussion'; nbr: 16; utilisee : 0),
-      (nom: 'le dernier'; description: 'discussion'; nbr: 4; utilisee : 0)
+      (nom: 'Discussion'; description: 'Une superbe discurtion entre ami.e.s qui vous permettra de faire 2 nouvelles connexions.'; nbr: 10; utilisee : 0),
+      (nom: 'WordReference'; description: 'Une recherche sur worldReference qui vous permetra de vous débarasser du souillard au moins un moment.'; nbr: 12; utilisee : 0),
+      (nom: 'Vole de cahier'; description: 'Subtiliser en douce le cours de vos camarades pour leurs voler leurs connaissances dans une matière.'; nbr: 8; utilisee : 0),
+      (nom: 'Annal'; description: 'Profiter d''un Annal pour développer vos connaissance dans dans une matière (2 connaissances).'; nbr: 16; utilisee : 0),
+      (nom: 'Majorant'; description: 'En tant que majorant de votre classe vous avez le prestige de gagner un point de victoire'; nbr: 4; utilisee : 0)
     
   );
   COUT_ELEVE: TRessources = (

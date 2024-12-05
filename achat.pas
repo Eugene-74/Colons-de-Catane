@@ -630,7 +630,7 @@ end;
 procedure verificationPointsVictoire(plateau : TPlateau; joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer;var affichage : TAffichage);
 var
   joueur : TJoueur;
-  plusGrandeRoute,plusDeplacementSouillard : Boolean;
+  plusGrandeConnexion,plusDeplacementSouillard : Boolean;
   i,j : Integer;
   points : array of Integer;
 
@@ -646,34 +646,36 @@ begin
     points[j] := joueur.points;
     
     
-    plusGrandeRoute := True;
+    plusGrandeConnexion := True;
 
 
     if (compterConnexionSuite(plateau,joueur) >= 5) then
     begin
     for i := 0 to High(joueurs) do
       if(compterConnexionSuite(plateau,joueur) < compterConnexionSuite(plateau,joueurs[i])) then
-        plusGrandeRoute := False;
-    if plusGrandeRoute then
+        plusGrandeConnexion := False;
+    if plusGrandeConnexion then
       begin
-        writeln('plusGrandeRoute : ',joueur.nom);
+        writeln('plusGrandeConnexion : ',joueur.nom);
       points[j] := points[j] + 2;
       end;
     end;
     
 
-    if(joueur.CartesTutorat[0].utilisee >= 3) then
+    if(joueur.CartesTutorat[1].utilisee >= 3) then
       for i := 0 to High(joueurs) do
-        if(joueur.CartesTutorat[0].utilisee < joueurs[i].CartesTutorat[0].utilisee) then
+        if(joueur.CartesTutorat[1].utilisee < joueurs[i].CartesTutorat[1].utilisee) then
           plusDeplacementSouillard := False;
     if(plusDeplacementSouillard) then
       points[j] := points[j] + 2;
     
+    writeln('points : ',points[j]);
     if points[j] >= 10 then
     begin
 
       gagner := True;
-      gagnant := j+1; 
+      gagnant := j+1;
+      writeln('gagnant : ',joueur.nom);
       affichageInformation(joueur.Nom + 'viens de gagner la partie en depassant les 10 points', 25, FCouleur(0,0,0,255), affichage);
 
       Break;
