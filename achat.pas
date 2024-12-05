@@ -38,6 +38,7 @@ function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var jou
 function enContactConnexionConnexion(coords1: TCoords; coords2: TCoords): Boolean;forward;
 function resteEleve(affichage : TAffichage;plateau:TPlateau; joueur:Tjoueur): Boolean;forward;
 function resteEmplacementEleve(affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;forward;
+function resteEmplacementConnexion(affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;forward;
 
 function enContactEleveConnexions(plateau: TPlateau; eleve: TPersonne; var joueur: TJoueur): TCoords;forward;
 function compterConnexionSuite(plateau: TPlateau; joueur: TJoueur): Integer;forward;
@@ -91,12 +92,15 @@ begin
 
 end;
 
+
+
+
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
 var i : Integer;
 begin
   case choix of
    // ELEVE
-    1: 
+    1:
       if(resteEmplacementEleve(affichage,plateau,joueur))then
         if(aLesRessources(joueur,COUT_ELEVE)) then
           begin
@@ -106,7 +110,7 @@ begin
           end
         else
           begin
-          affichageInformation('Vous n''avez pas les ressources nécessaires pour acheter un élève.', 25, FCouleur(0,0,0,255), affichage);
+          affichageInformation('Vous n''avez pas les ressources necessaires pour acheter un eleve.', 25, FCouleur(0,0,0,255), affichage);
           jouerSonValide(affichage,false);
           end
       else
@@ -117,16 +121,6 @@ begin
 
     // CONNEXION
     2:
-<<<<<<< HEAD
-      if(aLesRessources(joueur,COUT_CONNEXION)) then
-      begin
-      jouerSonClicAction(affichage);
-
-        placementConnexion(plateau, affichage, joueur);
-
-        enleverRessources(joueur,COUT_CONNEXION);
-      end
-=======
       if(resteEmplacementConnexion(affichage,plateau,joueur))then
         if(aLesRessources(joueur,COUT_CONNEXION)) then
           begin
@@ -137,14 +131,13 @@ begin
         end
         else
           begin
-            affichageInformation('Vous n''avez pas les ressources nécessaires pour acheter une connexion.', 25, FCouleur(0,0,0,255), affichage);
+            affichageInformation('Vous n''avez pas les ressources necessaires pour acheter une connexion.', 25, FCouleur(0,0,0,255), affichage);
             jouerSonValide(affichage,false);
           end
->>>>>>> b73b87feb4cb23b0aab54fbe399cb3dc533735ac
       else
         begin
-          affichageInformation('Vous n''avez pas les ressources necessaires pour acheter une connexion.', 25, FCouleur(0,0,0,255), affichage);
-          jouerSonValide(affichage,false);
+        affichageInformation('Vous n''avez pas d''emplacement pour mettre une connexion.', 25, FCouleur(255,0,0,255), affichage);
+        jouerSonValide(affichage,false);
         end;
     
 
@@ -163,7 +156,7 @@ begin
           end
         else
           begin
-            affichageInformation('Vous n''avez pas les ressources nécessaires pour changer un eélève en professeur.', 25, FCouleur(0,0,0,255), affichage);
+            affichageInformation('Vous n''avez pas les ressources necessaires pour changer un eleve en professeur.', 25, FCouleur(0,0,0,255), affichage);
             jouerSonValide(affichage,false);
           end
       else
@@ -257,19 +250,12 @@ begin
   affichageInformation('Eleve place avec succes !', 25, FCouleur(0,255,0,255), affichage);
 
   affichageGrille(plateau,affichage);
-<<<<<<< HEAD
-  affichageScoreAndClear(joueurActuel, affichage);
-  // affichagePersonne(plateau.Personnes[High(plateau.Personnes)], affichage);
-=======
   affichageScoreAndClear(joueur, affichage);
   affichageSouillard(plateau,affichage);
   for i:=0 to length(plateau.Connexions)-1 do
     affichageConnexion(plateau.Connexions[i],affichage);
->>>>>>> b73b87feb4cb23b0aab54fbe399cb3dc533735ac
   for i:=0 to length(plateau.Personnes)-1 do
         affichagePersonne(plateau.Personnes[i],affichage);
-  for i:=0 to length(plateau.Connexions)-1 do
-    affichageConnexion(plateau.Connexions[i],affichage);
   miseAJourRenderer(affichage);
 end;
 
@@ -887,7 +873,7 @@ begin
         if l >= 2 then
         begin
           enContactAutreEleveConnexion := True;
-          affichageInformation('Connexion en contact avec une personne d''un autre joueur.', 25, FCouleur(0,0,0,255), affichage);
+          affichageInformation('Connexion en contact avec une personne dune autre joueur.', 25, FCouleur(0,0,0,255), affichage);
 
           Exit;
         end;
@@ -899,17 +885,15 @@ end;
 
 procedure deplacementSouillard(var plateau : TPlateau;var joueurs : TJoueurs ;var affichage : TAffichage);
 var coord : Tcoord;
+  i : Integer;
 begin
-  affichageInformation('Cliquez sur 1 hexagones pour déplacer le souillard.', 25, FCouleur(0,0,0,255), affichage);
+  affichageInformation('Cliquez sur 1 hexagones pour deplacer le souillard.', 25, FCouleur(0,0,0,255), affichage);
 
   repeat
-    clicHexagone(plateau, affichage, coord); 
+    clicHexagone(plateau, affichage, coord);
   until (dansLePlateau(plateau,coord));
 
   plateau.Souillard.Position := coord;
-<<<<<<< HEAD
-  affichageInformation('Souillard deplace avec succes !', 25, FCouleur(0,255,0,255), affichage);
-=======
   
   affichageGrille(plateau,affichage);
   affichageSouillard(plateau,affichage);
@@ -919,8 +903,7 @@ begin
         affichagePersonne(plateau.Personnes[i],affichage);
   miseAJourRenderer(affichage);
 
-  affichageInformation('Souillard déplacé avec succès !', 25, FCouleur(0,255,0,255), affichage);
->>>>>>> b73b87feb4cb23b0aab54fbe399cb3dc533735ac
+  affichageInformation('Souillard deplace avec succes !', 25, FCouleur(0,255,0,255), affichage);
 end;
 function enContactConnexionConnexion( coords1: TCoords; coords2: TCoords): Boolean;
 var
@@ -1075,8 +1058,6 @@ with plateau.Connexions[High(plateau.Connexions)] do
 affichageConnexion(plateau.Connexions[High(plateau.Connexions)], affichage);
 end;
 
-<<<<<<< HEAD
-=======
 function resteEmplacementConnexion(affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
 var i: Integer;
   coords1,coords2 : Tcoords;
@@ -1134,7 +1115,6 @@ begin
 
   miseAJourRenderer(affichage);
 end;
->>>>>>> b73b87feb4cb23b0aab54fbe399cb3dc533735ac
 
 procedure trouver3EmeHexagone(plateau : TPlateau;coords1: TCoords; coords2: TCoords;i : Integer);
 var x1,x2,y1,y2: Integer;
@@ -1189,9 +1169,6 @@ begin
   begin
     if (plateau.connexions[i].IdJoueur = joueur.Id) then
     begin
-    // writeln('Coordonnées de la connexion: (', plateau.connexions[i].Position[0].x, ', ', plateau.connexions[i].Position[0].y, ') et (', plateau.connexions[i].Position[1].x, ', ', plateau.connexions[i].Position[1].y, ')');
-      // resteEmplacementEleve := True;
-      // Exit;
     setLength(coords1,3);
     setLength(coords2,3);
 
@@ -1216,10 +1193,7 @@ begin
     end;
   end;
 
-<<<<<<< HEAD
-=======
   miseAJourRenderer(affichage);
->>>>>>> b73b87feb4cb23b0aab54fbe399cb3dc533735ac
 end;
 
 
