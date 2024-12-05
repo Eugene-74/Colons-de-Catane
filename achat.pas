@@ -187,12 +187,12 @@ begin
         affichageCartesTutorat(joueur,affichage);
         affichageScoreAndClear(joueur,affichage);
         miseAJourRenderer(affichage);
-        end;
+        end
       else
         begin
         affichageInformation('Impossible d''acheter une carte de tutorat car il n''y en a plus.', 25, FCouleur(255,0,0,255), affichage);
         jouerSonValide(affichage,false);
-        end;
+        end
     else
       begin
       affichageInformation('Vous n''avez pas les ressources nécessaires pour acheter une carte de tutorat.', 25, FCouleur(255,0,0,255), affichage);
