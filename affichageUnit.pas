@@ -6,7 +6,7 @@ interface
 uses sdl2, sdl2_image, sdl2_ttf, types, sysutils, TypInfo, traitement, Math, musique;
 
 procedure initialisationAffichage(var affichage: TAffichage);
-procedure recupererNomsJoueurs(var stringTab: TStringTab; var affichage: TAffichage;valide : Boolean;unique : Boolean;nonVide : Boolean);
+procedure recupererNomsJoueurs(var stringTab: TStringTab; var affichage: TAffichage);
 procedure affichageGrille(plat: TPlateau; var affichage: TAffichage);
 procedure clicHexagone(var plat: TPlateau; var affichage: TAffichage; var coord: Tcoord);
 procedure miseAJourRenderer(var affichage :TAffichage);
@@ -31,6 +31,8 @@ procedure affichageCartesTutoratAndRender(joueur: TJoueur; var affichage: TAffic
 procedure affichageCartesTutorat(joueur: TJoueur; var affichage: TAffichage);
 procedure affichageDes(de1,de2:Integer; var affichage: TAffichage);
 procedure affichageHexagone(plat: TPlateau; var affichage: TAffichage; coordHexa: TCoord);
+
+procedure affichageFond(var affichage: TAffichage);
 
 implementation
 
@@ -569,13 +571,16 @@ end;
 procedure affichageJoueurInput(joueurs: TJoueurs; id: Integer; coord:TCoord; var affichage: TAffichage; var boutons: TBoutons);
 var bouton: TBouton;
 begin
-    bouton := FBouton(coord.x + 120,coord.y,30,30,'gauche','joueur_precedent');
-    affichageImageBouton(bouton,affichage);
-    ajouterBoutonTableau(bouton, boutons);
+    if(length(joueurs) > 2) then
+    begin
+        bouton := FBouton(coord.x + 120,coord.y,30,30,'gauche','joueur_precedent');
+        affichageImageBouton(bouton,affichage);
+        ajouterBoutonTableau(bouton, boutons);
 
-    bouton := FBouton(coord.x + 155,coord.y,30,30,'droite','joueur_suivant');
-    affichageImageBouton(bouton,affichage);
-    ajouterBoutonTableau(bouton, boutons);
+        bouton := FBouton(coord.x + 155,coord.y,30,30,'droite','joueur_suivant');
+        affichageImageBouton(bouton,affichage);
+        ajouterBoutonTableau(bouton, boutons);
+    end;
 
     coord.x := coord.x + 200;
     affichageTexte(joueurs[id].Nom, 25, coord, FCouleur(0,0,0,255), affichage);
@@ -796,7 +801,7 @@ begin
     affichageTexte(nomActuel, tailleTexte, FCoord(bouton.coord.x+5,bouton.coord.y+5), FCouleur(0,0,0,255), affichage);
 end;
 
-procedure recupererNomsJoueurs(var stringTab: TStringTab; var affichage: TAffichage;valide : Boolean;unique : Boolean;nonVide : Boolean);
+procedure recupererNomsJoueurs(var stringTab: TStringTab; var affichage: TAffichage);
 var nom,valeurBouton: String;
     i: Integer;
     boutons: TBoutons;
@@ -804,7 +809,6 @@ var nom,valeurBouton: String;
     running,ecritureNom: Boolean;
     event: TSDL_Event;
 begin
-    affichageFond(affichage);
     affichageTexte('Entrez les noms des joueurs', 35, FCoord(450,70), FCouleur(0,0,0,255), affichage);
 
     setlength(stringTab,4);
@@ -826,21 +830,6 @@ begin
     affichageBouton(bouton,affichage);
     ajouterBoutonTableau(bouton,boutons);
 
-    if(not unique)then
-    begin
-        affichageInformation('Il faut des noms différents.',25,FCouleur(255,0,0,255),affichage);
-        jouerSonValide(affichage,unique);
-    end
-    else if(not nonVide)then
-    begin
-        affichageInformation('Il faut des noms non vide.',25,FCouleur(255,0,0,255),affichage);
-        jouerSonValide(affichage,nonVide);
-    end
-    else if(not valide)then
-    begin
-        affichageInformation('Il faut au moins 2 joueurs.',25,FCouleur(255,0,0,255),affichage);
-        jouerSonValide(affichage,valide);
-    end;
     miseAJourRenderer(affichage);
 
     running := True;

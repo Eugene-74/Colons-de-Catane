@@ -6,13 +6,16 @@ uses Types,affichageUnit,SysUtils,achat,traitement,musique,TypInfo;
 procedure initialisationPartie(var joueurs : TJoueurs;var  plateau : TPlateau;var affichage : TAffichage);
 procedure partie(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 
+
+
 implementation
+
 procedure gestionEchange(affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);forward;
 
-function chargementPlateau(num : Integer): TPlateau;forward;
 function chargerGrille(num : Integer): TGrille; forward;
+function chargementPlateau(num : Integer): TPlateau;forward;
+
 function intialisationTutorat():TCartesTutorat;forward;
-function nombreAleatoire(n : Integer): Integer;forward;
 procedure distributionConnaissance(var joueurs : TJoueurs;var plateau : TPlateau;des : integer);forward;
 procedure gestionDes(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);forward;
 function ressourcesVide(ressources : TRessources):boolean;forward;
@@ -28,6 +31,8 @@ procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau;var j
 procedure utiliserCarte5(var joueurs : TJoueurs;id :Integer);forward;
 
 procedure donnerRessources( var joueur : Tjoueur; ressources : TRessources);forward;
+
+function nombreAleatoire(n : Integer): Integer;forward;
 
 
 function chargerGrille(num : Integer): TGrille;
@@ -111,7 +116,7 @@ end;
 
 procedure initialisationPartie(var joueurs : TJoueurs;var plateau : TPlateau;var affichage : TAffichage);
 var i,j,num,count : integer;
-  valide,unique,nonVide : Boolean;
+  valide,unique : Boolean;
   res : TRessources;
   r : Tressource;
   cartesTutorat : TCartesTutorat;
@@ -128,16 +133,15 @@ begin
   setlength(noms,4);
   for i:=0 to 3 do
     noms[i] := '';
-  valide := True;
-  unique := true;
-  nonVide := true;
+  
+  affichageFond(affichage);
+  
   repeat
     count := 0;
-    recupererNomsJoueurs(noms,affichage,valide,unique,nonVide);
+    recupererNomsJoueurs(noms,affichage);
 
     valide := True;
     unique := true;
-    nonVide := true;
 
     for i:=0 to length(noms) - 1 do
     begin
@@ -147,19 +151,21 @@ begin
           if (noms[i] = noms[j]) then
             begin
             unique := False;
+            jouerSonValide(affichage,unique);
+            affichageInformation('Il faut des noms différents.',25,FCouleur(255,0,0,255),affichage);
             end;
         if(unique) then
           Inc(count)
-        end
-      else
-        begin
-        nonVide := False;
         end;
     end;
-    if (count < 2) then
+    if ((count < 2)) then
       begin
       valide := False;
-        
+      if(unique)then
+        begin
+        jouerSonValide(affichage,valide);
+        affichageInformation('Il faut au moins 2 joueurs.',25,FCouleur(255,0,0,255),affichage);
+        end;
       end;
   until valide;
   jouerSonValide(affichage,true);
@@ -180,6 +186,7 @@ begin
     end;
   end;
 
+  // on le fait avant sinon ça ne marche pas
   Randomize;
   num :=nombreAleatoire(2);
 
@@ -191,29 +198,27 @@ begin
   cartesTutorat := intialisationTutorat();
   plateau.cartesTutorat := cartesTutorat;
   
-
   affichageTour(plateau, joueurs, 0, affichage);
-  
 
-  for i:=1 to length(joueurs) do
+  for i:=0 to length(joueurs)-1 do
     begin
     // TODO re mettre apres
-    
-    // placementEleve(plateau,affichage,joueurs[i-1]);
-    // placementConnexion(plateau,affichage,joueurs[i-1]);
+    affichageJoueurActuel(joueurs,i,affichage);
+    // placementEleve(plateau,affichage,joueurs[i]);
+    // placementConnexion(plateau,affichage,joueurs[i]);
     
     end;
 
-  for i:=length(joueurs) downto 1 do
+  for i:=length(joueurs)-1 downto 0 do
     begin
     // TODO re mettre apres
-
-    // placementEleve(plateau,affichage,joueurs[i-1]);
-    // placementConnexion(plateau,affichage,joueurs[i-1]);
+    affichageJoueurActuel(joueurs,i,affichage);
+    // placementEleve(plateau,affichage,joueurs[i]);
+    // placementConnexion(plateau,affichage,joueurs[i]);
     end;
 
   // mise a jour de l'affichage
-  affichageTour(plateau, joueurs, 0, affichage);
+  // affichageTour(plateau, joueurs, 0, affichage);
   
 
 end;
@@ -353,7 +358,6 @@ begin
   for i := 0 to length(joueurs)-1 do
     begin
     affichageJoueurActuel(joueurs,i,affichage);
-
     
     gestionDes(joueurs,plateau,affichage);
 
@@ -389,8 +393,6 @@ begin
         begin
         utiliserCarteTutorat(plateau,affichage, joueurs,joueurs[i].id ,valeurBouton);
         end;
-
-
 
     until (finTour);
     affichageJoueurActuel(joueurs,i,affichage);

@@ -17,7 +17,6 @@ type
     utilisee : Integer;
   end;
 
-  // TODO Opti ce type en tableau dynamique de 5 TCarteTutorat (Yann)
   TCartesTutorat = array [0..4] of TCarteTutorat;
 
   // Definition de TCoord
