@@ -104,7 +104,6 @@ end;
 
 
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
-var i : Integer;
 begin
   case choix of
    // ELEVE
@@ -232,7 +231,6 @@ end;
 procedure placementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 var HexagonesCoords: TCoords;
   valide : Boolean;
-  i : Integer;
 begin
 
   repeat
@@ -437,7 +435,7 @@ end;
 procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 var
   HexagonesCoords, ProfesseurCoords: TCoords;
-  indexEleve, nbProfesseurs, i: Integer;
+  indexEleve: Integer;
   valide: Boolean;
 begin
   
@@ -528,16 +526,13 @@ end;
 function compterConnexionSuite(plateau: TPlateau; joueur: TJoueur): Integer;
 var
   nombreDeConnexion1,nombreDeConnexion2 : Integer;
-  coords1,coords2,premiereCoords : TCoords;
   connexionDejaVisite : array of Tconnexion;
-  
 begin
 nombreDeConnexion2 := 0;
 
 nombreDeConnexion1 := compterConnexionAutour(connexionDejaVisite,trouverXemeConnexion(plateau,joueur,1),plateau,joueur);
 if(length(connexionDejaVisite)<nombreConnexionJoueur(plateau,joueur))then
   begin
-  // writeln('en 2 bout  : ',nombreDeConnexion1);
   nombreDeConnexion2 := compterConnexionAutour(connexionDejaVisite,trouverXemeConnexion(plateau,joueur,2),plateau,joueur);
   end;
 
@@ -545,10 +540,6 @@ if(nombreDeConnexion1 > nombreDeConnexion2) then
   compterConnexionSuite := nombreDeConnexion1
 else
   compterConnexionSuite := nombreDeConnexion2;
-
-writeln(joueur.nom);
-writeln('nombreDeConnexion : ',compterConnexionSuite);
-
 end;
 
 
@@ -576,9 +567,7 @@ end;
 
 function compterConnexionAutour(var connexionDejaVisite : Tconnexions;connexion : TConnexion;plateau: TPlateau; joueur: TJoueur): Integer;
 var coords1,coords2 : TCoords;
-  coord1,coord2 : TCoord;
   total: Integer ;
-  coords : TCoords;
   nouvelleConnexion : TConnexion;
 begin
 
@@ -669,7 +658,6 @@ begin
     if(plusDeplacementSouillard) then
       points[j] := points[j] + 2;
     
-    writeln('points : ',points[j]);
     if points[j] >= 10 then
     begin
 
@@ -719,7 +707,6 @@ end;
 
 function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage :TAffichage): Boolean;
 var
-  i: Integer;
   enContactAvecAutreConnexion, enContactAvecPersonne: Boolean;
 begin
   // Initialisation
@@ -790,7 +777,6 @@ end;
 procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 var
   coords: TCoords;
-  i : Integer;
   valide : boolean;
 begin
   affichageInformation('Cliquez sur 2 hexagones entre lesquels vous voulez placer la connexion', 25, FCouleur(0,0,0,255), affichage);
@@ -876,7 +862,7 @@ end;
 
 function aucuneConnexionAdjacente(coords: TCoords; plateau: TPlateau; joueur: TJoueur; var affichage : TAffichage): Boolean;
 var
-  i, j,k: Integer;
+  i: Integer;
   autreCoord, autreCoord2, coord1, coord2, coordRestante: TCoord;
   verif: Boolean;
 begin
@@ -964,7 +950,6 @@ end;
 
 procedure deplacementSouillard(var plateau : TPlateau;var joueurs : TJoueurs ;var affichage : TAffichage);
 var coord : Tcoord;
-  i : Integer;
 begin
   affichageInformation('Cliquez sur 1 hexagones pour deplacer le souillard.', 25, FCouleur(0,0,0,255), affichage);
 
@@ -980,8 +965,7 @@ begin
   affichageInformation('Souillard deplace avec succes !', 25, FCouleur(0,255,0,255), affichage);
 end;
 function enContactConnexionConnexion( coords1: TCoords; coords2: TCoords): Boolean;
-var
-  Coord, autreCoord1, autreCoord2: TCoord;
+var Coord, autreCoord1, autreCoord2: TCoord;
 begin
   enContactConnexionConnexion := False;
 
@@ -1034,7 +1018,6 @@ function enContactConnexions(plateau: TPlateau; coords: TCoords; joueur: TJoueur
 var
   i: Integer;
   coord1, coord2, autreCoord, autreCoord2: TCoord;
-  connexionTrouvee: Boolean;
 begin
   enContactConnexions := False;
   for i := 0 to High(plateau.Connexions) do
