@@ -398,9 +398,6 @@ begin
     affichageJoueurActuel(joueurs,i,affichage);
     affichageCartesTutoratAndRender(joueurs[i],affichage);
     attendre(16);
-
-    // TODO enlever apres
-    verificationMusique(affichage);
     end;
 end;
 

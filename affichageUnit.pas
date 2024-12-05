@@ -207,6 +207,7 @@ var running : Boolean;
     buttonClicked: Boolean;
 begin
     running := True;
+    verificationMusique(affichage);
     while running do
     begin
         attendre(66);
@@ -921,7 +922,6 @@ Postconditions :
 procedure miseAJourRenderer(var affichage :TAffichage);
 var i: Integer;
 begin
-    writeln('Mise à jour du renderer');
     for i:=0 to length(affichage.boutonsSysteme)-1 do
         affichageImageBouton(affichage.boutonsSysteme[i],affichage);
     SDL_RenderPresent(affichage.renderer);
