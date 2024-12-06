@@ -116,7 +116,6 @@ begin
       if(aLesRessources(joueur,COUT_ELEVE)) then
         if(resteEmplacementEleve(affichage,plateau,joueur))then
           begin
-          jouerSonClicAction(affichage);
           enleverRessources(joueur,COUT_ELEVE);
           PlacementEleve(plateau, affichage, joueur);
           end
@@ -136,7 +135,6 @@ begin
       if(aLesRessources(joueur,COUT_CONNEXION)) then
         if(resteEmplacementConnexion(affichage,plateau,joueur))then
           begin
-          jouerSonClicAction(affichage);
           enleverRessources(joueur,COUT_CONNEXION);
           placementConnexion(plateau, affichage, joueur);
           
@@ -161,7 +159,6 @@ begin
 
       
 
-          jouerSonClicAction(affichage);
           enleverRessources(joueur,COUT_PROFESSEUR);
 
           changementProfesseur(plateau, affichage, joueur);
@@ -183,7 +180,6 @@ begin
     if(aLesRessources(joueur,COUT_CARTE_TUTORAT)) then
       if(plateau.cartesTutorat[0].nbr + plateau.cartesTutorat[1].nbr + plateau.cartesTutorat[2].nbr + plateau.cartesTutorat[3].nbr + plateau.cartesTutorat[4].nbr >0) then
         begin
-        jouerSonClicAction(affichage);
         tirerCarteTutorat(plateau.CartesTutorat, joueur);
 
         enleverRessources(joueur,COUT_CARTE_TUTORAT);
