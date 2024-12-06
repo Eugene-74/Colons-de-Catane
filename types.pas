@@ -186,8 +186,18 @@ const
   tailleEleve = tailleHexagone div 3;
   tailleSouillard = tailleHexagone div 2;
 
+  COULEUR_TEXT_ROUGE : TSDL_Color = (r: 255; g: 0; b: 0; a: 255);
+  COULEUR_TEXT_VERT : TSDL_Color = (r: 0; g: 200; b: 0; a: 255);
+
   COULEUR_ROUGE : TSDL_Color = (r: 255; g: 0; b: 0; a: 255);
   COULEUR_VERT : TSDL_Color = (r: 0; g: 255; b: 0; a: 255);
+  COULEUR_JAUNE : TSDL_Color = (r: 255; g: 255; b: 0; a: 255);
+  COULEUR_BLEU : TSDL_Color = (r: 0; g: 0; b: 255; a: 255);
+
+  COULEUR_PREVIEW_ROUGE : TSDL_Color = (r: 155; g: 0; b: 0; a: 255);
+  COULEUR_PREVIEW_VERT : TSDL_Color = (r: 0; g: 155; b: 0; a: 255);
+  COULEUR_PREVIEW_JAUNE : TSDL_Color = (r: 155; g: 155; b: 0; a: 255);
+  COULEUR_PREVIEW_BLEU : TSDL_Color = (r: 0; g: 0; b: 155; a: 255);
 
 implementation
 

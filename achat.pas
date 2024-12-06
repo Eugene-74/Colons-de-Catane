@@ -121,7 +121,7 @@ begin
           end
       else
         begin
-        affichageInformation('Vous n''avez pas d''emplacement pour mettre un élève.', 25, COULEUR_ROUGE, affichage);
+        affichageInformation('Vous n''avez pas d''emplacement pour mettre un élève.', 25, COULEUR_TEXT_ROUGE, affichage);
         jouerSonValide(affichage,false);
         end;
 
@@ -142,7 +142,7 @@ begin
           end
       else
         begin
-        affichageInformation('Vous n''avez pas d''emplacement pour mettre une connexion.', 25, COULEUR_ROUGE, affichage);
+        affichageInformation('Vous n''avez pas d''emplacement pour mettre une connexion.', 25, COULEUR_TEXT_ROUGE, affichage);
         jouerSonValide(affichage,false);
         end;
     
@@ -168,7 +168,7 @@ begin
           end
       else
         begin
-        affichageInformation('Vous n''avez plus d''élève à modifier.', 25, COULEUR_ROUGE, affichage);
+        affichageInformation('Vous n''avez plus d''élève à modifier.', 25, COULEUR_TEXT_ROUGE, affichage);
         jouerSonValide(affichage,false);
         end;
 
@@ -189,12 +189,12 @@ begin
         end
       else
         begin
-        affichageInformation('Impossible d''acheter une carte de tutorat car il n''y en a plus.', 25, COULEUR_ROUGE, affichage);
+        affichageInformation('Impossible d''acheter une carte de tutorat car il n''y en a plus.', 25, COULEUR_TEXT_ROUGE, affichage);
         jouerSonValide(affichage,false);
         end
     else
       begin
-      affichageInformation('Vous n''avez pas les ressources nécessaires pour acheter une carte de tutorat.', 25, COULEUR_ROUGE, affichage);
+      affichageInformation('Vous n''avez pas les ressources nécessaires pour acheter une carte de tutorat.', 25, COULEUR_TEXT_ROUGE, affichage);
       jouerSonValide(affichage,false);
       end;
   end;
@@ -227,7 +227,7 @@ begin
       end;
   joueur.Points:=1+joueur.Points;
 
-  affichageInformation('Eleve place avec succes !', 25, COULEUR_VERT, affichage);
+  affichageInformation('Eleve place avec succes !', 25, COULEUR_TEXT_VERT, affichage);
 
   affichageScoreAndClear(joueur, affichage);
   affichagePlateau(plateau,affichage);
@@ -778,7 +778,7 @@ begin
   plateau.Connexions[length(plateau.Connexions)-1].Position[0] := coords[0];
   plateau.Connexions[length(plateau.Connexions)-1].Position[1] := coords[1];
 
-  affichageInformation('Connexion placee avec succes !', 25, COULEUR_VERT, affichage);
+  affichageInformation('Connexion placee avec succes !', 25, COULEUR_TEXT_VERT, affichage);
 
   affichageScoreAndClear(joueur, affichage);
   affichagePlateau(plateau,affichage);
@@ -944,7 +944,7 @@ begin
   affichagePlateau(plateau,affichage);
   attendre(16);
 
-  affichageInformation('Souillard deplace avec succes !', 25, COULEUR_VERT, affichage);
+  affichageInformation('Souillard deplace avec succes !', 25, COULEUR_TEXT_VERT, affichage);
 end;
 function enContactConnexionConnexion( coords1: TCoords; coords2: TCoords): Boolean;
 var Coord, autreCoord1, autreCoord2: TCoord;
