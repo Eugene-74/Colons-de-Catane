@@ -670,11 +670,9 @@ begin
             text := text + joueurs[id].Nom +' et '
         else
           text := text + joueurs[id].Nom +' ';
-
-        Break;
       end;
-  if (gagnant > 1 )then
-    affichageInformation(text + 'vienent de gagner la partie en dépassant tous les 10 points au même tour', 25, FCouleur(0,0,0,255), affichage)
+  if (nombreDeGagnant > 1 )then
+    affichageInformation(text + 'vienent de gagner la partie en dépassant les 10 points au même tour', 25, FCouleur(0,0,0,255), affichage)
   else
     affichageInformation(text+ 'viens de gagner la partie en dépassant les 10 points', 25, FCouleur(0,0,0,255), affichage);
   
@@ -689,12 +687,9 @@ var text : String;
 begin
 // TODO faire un GIF de  victoire (Yann)
 
-// afficherImageMilieu('Assets/test.gif', affichage);
-
 afficherGIF('Assets/test.gif',affichage);
-// miseAJourRenderer(affichage);
 
-
+attendre(10000);
 end;
 
 

@@ -40,13 +40,16 @@ begin
     joueurs[0].Ressources[Informatique] := 99;
     joueurs[0].Ressources[Humanites] := 99;
     joueurs[0].Ressources[Physique] := 99;
-    joueurs[0].points := 5;
+    joueurs[0].points := 10;
 
     joueurs[1].Ressources[Mathematiques] := 99;
     joueurs[1].Ressources[Chimie] := 99;
     joueurs[1].Ressources[Informatique] := 99;
     joueurs[1].Ressources[Humanites] := 99;
     joueurs[1].Ressources[Physique] := 99;
+    joueurs[1].points := 10;
+
+
     affichageTour(plateau,joueurs,0,affichage);
     // ici
     partie(joueurs,plateau,affichage);
