@@ -977,15 +977,22 @@ end;
 
 
 function CoordsEgales(coords1: TCoords; coords2: TCoords): Boolean;
+var i : Integer;
 begin
   CoordsEgales := False;
 
-  if ((coords1[0].x = coords2[0].x) and (coords1[0].y = coords2[0].y) and
-      (coords1[1].x = coords2[1].x) and (coords1[1].y = coords2[1].y)) or
-     ((coords1[0].x = coords2[1].x) and (coords1[0].y = coords2[1].y) and
-      (coords1[1].x = coords2[0].x) and (coords1[1].y = coords2[0].y)) then
+  if Length(coords1) = Length(coords2) then
   begin
     CoordsEgales := True;
+    for i := 0 to High(coords1) do
+    begin
+      if not ((coords1[i].x = coords2[i].x) and (coords1[i].y = coords2[i].y)) and
+          not ((coords1[i].x = coords2[High(coords2) - i].x) and (coords1[i].y = coords2[High(coords2) - i].y)) then
+      begin
+        CoordsEgales := False;
+        Break;
+      end;
+    end;
   end;
 end;
 
