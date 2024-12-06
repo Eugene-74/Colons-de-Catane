@@ -5,7 +5,6 @@ interface
 uses
   Types, affichageUnit,traitement,sysutils,musique;
 
-function dansLePlateau(plateau : TPlateau; coord : Tcoord): boolean;
 function CoordsEgales(coords1: TCoords; coords2: TCoords): Boolean;
 procedure deplacementSouillard(var plateau : TPlateau; var joueurs : TJoueurs ;var affichage : TAffichage);
 function aLesRessources(joueur : Tjoueur; ressources : TRessources):boolean;
@@ -122,7 +121,7 @@ begin
           end
       else
         begin
-        affichageInformation('Vous n''avez pas d''emplacement pour mettre un élève.', 25, FCouleur(255,0,0,255), affichage);
+        affichageInformation('Vous n''avez pas d''emplacement pour mettre un élève.', 25, COULEUR_ROUGE, affichage);
         jouerSonValide(affichage,false);
         end;
 
@@ -143,7 +142,7 @@ begin
           end
       else
         begin
-        affichageInformation('Vous n''avez pas d''emplacement pour mettre une connexion.', 25, FCouleur(255,0,0,255), affichage);
+        affichageInformation('Vous n''avez pas d''emplacement pour mettre une connexion.', 25, COULEUR_ROUGE, affichage);
         jouerSonValide(affichage,false);
         end;
     
@@ -169,7 +168,7 @@ begin
           end
       else
         begin
-        affichageInformation('Vous n''avez plus d''élève à modifier.', 25, FCouleur(255,0,0,255), affichage);
+        affichageInformation('Vous n''avez plus d''élève à modifier.', 25, COULEUR_ROUGE, affichage);
         jouerSonValide(affichage,false);
         end;
 
@@ -190,48 +189,19 @@ begin
         end
       else
         begin
-        affichageInformation('Impossible d''acheter une carte de tutorat car il n''y en a plus.', 25, FCouleur(255,0,0,255), affichage);
+        affichageInformation('Impossible d''acheter une carte de tutorat car il n''y en a plus.', 25, COULEUR_ROUGE, affichage);
         jouerSonValide(affichage,false);
         end
     else
       begin
-      affichageInformation('Vous n''avez pas les ressources nécessaires pour acheter une carte de tutorat.', 25, FCouleur(255,0,0,255), affichage);
+      affichageInformation('Vous n''avez pas les ressources nécessaires pour acheter une carte de tutorat.', 25, COULEUR_ROUGE, affichage);
       jouerSonValide(affichage,false);
       end;
   end;
 end;
 
 
-function dansLePlateau(plateau : TPlateau; coord : Tcoord): boolean;
-var taille : Integer;
-begin
-  
-  dansLePlateau := True;
-  taille := length(plateau.Grille)- 2;
 
-
-  if(coord.x <= 0) then
-    dansLePlateau := False;
-  if(coord.x > taille) then
-    dansLePlateau := False;
-  if(coord.y <= 0) then
-    dansLePlateau := False;
-  if(coord.y > taille) then
-    dansLePlateau := False;
-
-  if(coord.x <= taille div 2) then
-    begin
-    if ((coord.y > taille) or (coord.y <=taille div 2 +1- coord.x)) then 
-      dansLePlateau := False;
-    end;
-  
-  if(coord.x > taille div 2 +1) then
-    begin
-    if ((coord.y >  taille - coord.x  + taille div 2 +1) or (coord.y <=0)) then 
-      dansLePlateau := False;
-    end;
-
-end;
 
 procedure placementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 var HexagonesCoords: TCoords;
@@ -257,7 +227,7 @@ begin
       end;
   joueur.Points:=1+joueur.Points;
 
-  affichageInformation('Eleve place avec succes !', 25, FCouleur(0,255,0,255), affichage);
+  affichageInformation('Eleve place avec succes !', 25, COULEUR_VERT, affichage);
 
   affichageScoreAndClear(joueur, affichage);
   affichagePlateau(plateau,affichage);
@@ -808,7 +778,7 @@ begin
   plateau.Connexions[length(plateau.Connexions)-1].Position[0] := coords[0];
   plateau.Connexions[length(plateau.Connexions)-1].Position[1] := coords[1];
 
-  affichageInformation('Connexion placee avec succes !', 25, FCouleur(0,255,0,255), affichage);
+  affichageInformation('Connexion placee avec succes !', 25, COULEUR_VERT, affichage);
 
   affichageScoreAndClear(joueur, affichage);
   affichagePlateau(plateau,affichage);
@@ -974,7 +944,7 @@ begin
   affichagePlateau(plateau,affichage);
   attendre(16);
 
-  affichageInformation('Souillard deplace avec succes !', 25, FCouleur(0,255,0,255), affichage);
+  affichageInformation('Souillard deplace avec succes !', 25, COULEUR_VERT, affichage);
 end;
 function enContactConnexionConnexion( coords1: TCoords; coords2: TCoords): Boolean;
 var Coord, autreCoord1, autreCoord2: TCoord;

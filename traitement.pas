@@ -19,6 +19,7 @@ procedure recupererCouleurJoueur(joueurId: Integer; var couleur: TSDL_Color);
 function calculPosPersonne(personne : TPersonne): Tcoord;
 procedure ajouterBoutonTableau(bouton: TBouton; var boutons: TBoutons);
 function nombreAleatoire(n : Integer): Integer;
+function dansLePlateau(plateau : TPlateau; coord : Tcoord): boolean;
 
 
 implementation
@@ -223,6 +224,31 @@ function nombreAleatoire(n : Integer): Integer;
 begin
     nombreAleatoire := Random(n) + 1;
     Randomize();
+end;
+
+
+function dansLePlateau(plateau : TPlateau; coord : Tcoord): boolean;
+var taille : Integer;
+begin
+    dansLePlateau := True;
+    taille := length(plateau.Grille)- 2;
+
+
+    if(coord.x <= 0) then
+        dansLePlateau := False;
+    if(coord.x > taille) then
+        dansLePlateau := False;
+    if(coord.y <= 0) then
+        dansLePlateau := False;
+    if(coord.y > taille) then
+        dansLePlateau := False;
+
+    if(coord.x <= taille div 2) then
+        if ((coord.y > taille) or (coord.y <=taille div 2 +1- coord.x)) then 
+            dansLePlateau := False;
+    if(coord.x > taille div 2 +1) then
+        if ((coord.y >  taille - coord.x  + taille div 2 +1) or (coord.y <=0)) then 
+            dansLePlateau := False;
 end;
 
 end.

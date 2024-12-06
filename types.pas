@@ -185,6 +185,10 @@ const
   tailleHexagone = 180;
   tailleEleve = tailleHexagone div 3;
   tailleSouillard = tailleHexagone div 2;
+
+  COULEUR_ROUGE : TSDL_Color = (r: 255; g: 0; b: 0; a: 255);
+  COULEUR_VERT : TSDL_Color = (r: 0; g: 255; b: 0; a: 255);
+
 implementation
 
 end.
