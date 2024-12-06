@@ -47,20 +47,12 @@ end;
 procedure demarrerMusique(var affichage :TAffichage);
 var
     musique: PMix_Music;
-    musiques: array[0..23] of PChar = (
+    musiques: array[0..15] of PChar = (
         'Assets/Musique/N1 - Jeux.mp3',
         'Assets/Musique/N1 - Jeux (1).mp3',
-        'Assets/Musique/N2 - Jeux.mp3',
-        'Assets/Musique/N2 - Jeux (1).mp3',
         'Assets/Musique/N3 - Jeux.mp3',
         'Assets/Musique/N3 - Jeux (1).mp3',
-        'Assets/Musique/N4 - Jeux.mp3',
-        'Assets/Musique/N4 - Jeux (1).mp3',
-        'Assets/Musique/N5 - Jeux.mp3',
-        'Assets/Musique/N5 - Jeux (1).mp3',
-        'Assets/Musique/N6 - Jeux.mp3',
         'Assets/Musique/N6 - Jeux (1).mp3',
-        'Assets/Musique/N7 - Jeux.mp3',
         'Assets/Musique/N7 - Jeux (1).mp3',
         'Assets/Musique/N8 - Jeux.mp3',
         'Assets/Musique/N8 - Jeux (1).mp3',
@@ -75,20 +67,12 @@ var
 
 
     );
-    musiquesTemps: array[0..23] of Integer = (
+    musiquesTemps: array[0..15] of Integer = (
         4*60,
         4*60,
-        1*60+23,
-        1*60+57,
         4*60,
         4*60,
-        1*60+50,
-        2*60+3,
-        1*60+49,
-        2*60+37,
         4*60,
-        4*60,
-        2*60+7,
         4*60,
         2*60+47,
         4*60,
@@ -114,7 +98,6 @@ begin
 
     Randomize;
     randomIndex := Random(Length(musiques));
-    // writeln('Musique: ', musiques[randomIndex]);
     musique := Mix_LoadMUS(musiques[randomIndex]);
 
     affichage.musiqueActuelle.active := true;

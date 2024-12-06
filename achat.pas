@@ -253,7 +253,6 @@ begin
 
     if  VerifierAdjacencePersonnes(HexagonesCoords,plateau) then
     begin
-        writeln('VerifierAdjacencePersonnes');
         PersonneValide := False;
         exit;
     end
@@ -498,8 +497,6 @@ if(nombreDeConnexion1 > nombreDeConnexion2) then
   compterConnexionSuite := nombreDeConnexion1
 else
   compterConnexionSuite := nombreDeConnexion2;
-
-writeln('compterConnexionSuite : ',compterConnexionSuite);
 end;
 
 
@@ -605,6 +602,9 @@ begin
 
   SetLength(points,Length(joueurs));
   SetLength(longueurRoutes,Length(joueurs));
+  
+  for i := 0 to High(joueurs) do
+    longueurRoutes[i] := compterConnexionSuite(plateau,joueurs[i]);
 
   for id := 0 to length(joueurs)-1 do
   begin
@@ -612,8 +612,6 @@ begin
     
     plusGrandeConnexion := True;
 
-    for i := 0 to High(joueurs) do
-      longueurRoutes[i] := compterConnexionSuite(plateau,joueurs[i]);
 
     if (longueurRoutes[id] >= 5) then
     begin
@@ -916,12 +914,17 @@ end;
 
 procedure deplacementSouillard(var plateau : TPlateau;var joueurs : TJoueurs ;var affichage : TAffichage);
 var coord : Tcoord;
+  valide : Boolean;
 begin
   affichageInformation('Cliquez sur 1 hexagones pour deplacer le souillard.', 25, FCouleur(0,0,0,255), affichage);
 
   repeat
     clicHexagone(affichage, coord);
-  until (dansLePlateau(plateau,coord));
+    valide := dansLePlateau(plateau,coord);
+    if(valide)then
+      jouerSonValide(affichage,False);
+  until (valide);
+  jouerSonValide(affichage,True);
 
   plateau.Souillard.Position := coord;
   
@@ -1018,6 +1021,8 @@ var
   i: Integer;
   connexionsTrouvees: Integer;
 begin
+  enContactEleveConnexions := nil;
+  
   connexionsTrouvees := 0;
   SetLength(enContactEleveConnexions, 6);
   for i := 0 to High(plateau.Connexions) do
