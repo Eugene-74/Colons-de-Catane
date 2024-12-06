@@ -860,6 +860,7 @@ begin
     begin
         if stringTab[i] <> '' then
             bouton.texte := stringTab[i]
+
         else
         begin
             stringTab[i] := '';

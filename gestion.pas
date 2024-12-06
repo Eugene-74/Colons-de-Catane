@@ -32,7 +32,7 @@ procedure utiliserCarte5(var affichage : TAffichage;var joueurs : TJoueurs;id :I
 
 procedure donnerRessources( var joueur : Tjoueur; ressources : TRessources);forward;
 
-function nombreAleatoire(n : Integer): Integer;forward;
+
 
 
 function chargerGrille(num : Integer): TGrille;
@@ -154,9 +154,12 @@ begin
             jouerSonValide(affichage,unique);
             affichageInformation('Il faut des noms différents.',25,FCouleur(255,0,0,255),affichage);
             end;
-        if(unique) then
-          Inc(count)
-        end;
+          if(unique) then
+            Inc(count);
+        end
+      else
+        break;
+        // Dec(count);
     end;
     if ((count < 2)) then
       begin
@@ -217,17 +220,10 @@ begin
     // placementConnexion(plateau,affichage,joueurs[i]);
     end;
 
-  // mise a jour de l'affichage
+  // mise a jour de l'affichage inutile normalement
   // affichageTour(plateau, joueurs, 0, affichage);
   
 
-end;
-
-
-function nombreAleatoire(n : Integer): Integer;
-begin
-  nombreAleatoire := Random(n) + 1;
-  Randomize();
 end;
 
 procedure distributionConnaissance(var joueurs : TJoueurs;var plateau : TPlateau;des : integer);
@@ -358,6 +354,10 @@ begin
   for i := 0 to length(joueurs)-1 do
     begin
     affichageJoueurActuel(joueurs,i,affichage);
+// affichageJoueurActuel(joueurs,i,affichage);
+    affichageCartesTutoratAndRender(joueurs[i],affichage);
+    attendre(16);
+
     gestionDes(joueurs,plateau,affichage);
 
     finTour := False;
@@ -395,9 +395,7 @@ begin
 
     until (finTour);
     attendre(16);
-    affichageJoueurActuel(joueurs,i,affichage);
-    affichageCartesTutoratAndRender(joueurs[i],affichage);
-    attendre(16);
+    
     end;
 end;
 

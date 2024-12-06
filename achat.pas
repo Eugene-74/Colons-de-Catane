@@ -14,15 +14,15 @@ procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; v
 procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 procedure affichageGagnant(joueur: TJoueur; var affichage: TAffichage);
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
-procedure verificationPointsVictoire(plateau : TPlateau; joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer;var affichage : TAffichage);
+procedure verificationPointsVictoire(plateau : TPlateau; var joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer;var affichage : TAffichage);
 procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 function resteEmplacementConnexion(var affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
 
 
 implementation
-procedure placeFauxEleve(affichage : TAffichage;plateau : TPlateau;coords : Tcoords;id : Integer);forward;
-procedure placeFauxConnexion(affichage : TAffichage;plateau : TPlateau;coord1 : Tcoord;coord2 : Tcoord; id : Integer);forward;
-procedure placeFauxProfesseur(affichage : TAffichage;plateau : TPlateau;coords : Tcoords; id : Integer);forward;
+procedure placeFauxEleve(affichage : TAffichage;coords : Tcoords;id : Integer);forward;
+procedure placeFauxConnexion(affichage : TAffichage;coord1 : Tcoord;coord2 : Tcoord; id : Integer);forward;
+procedure placeFauxProfesseur(affichage : TAffichage;coords : Tcoords; id : Integer);forward;
 function compterConnexionAutour(var connexionDejaVisite : Tconnexions;connexion : TConnexion;plateau: TPlateau; joueur: TJoueur): Integer;forward;
 function nombreConnexionJoueur(plateau: TPlateau; joueur: TJoueur): Integer;forward;
 
@@ -621,64 +621,71 @@ end;
 
 
 
-procedure verificationPointsVictoire(plateau : TPlateau; joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer;var affichage : TAffichage);
+procedure verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer;var affichage : TAffichage);
 var
   joueur : TJoueur;
   plusGrandeConnexion,plusDeplacementSouillard : Boolean;
-  i,j : Integer;
+  id,i : Integer;
   points : array of Integer;
 
 begin
-  gagner := False; 
-  gagnant := -1;    
+  gagner := False;
+  gagnant := -1;
 
   SetLength(points,Length(joueurs));
-  j:=0;
-  for joueur in joueurs do
+  for id := 0 to length(joueurs)-1 do
   begin
-
-    points[j] := joueur.points;
-    
+    points[id] := joueurs[id].points;
     
     plusGrandeConnexion := True;
 
-
-    if (compterConnexionSuite(plateau,joueur) >= 5) then
+    if (compterConnexionSuite(plateau,joueurs[id]) >= 5) then
     begin
     for i := 0 to High(joueurs) do
-      if(compterConnexionSuite(plateau,joueur) < compterConnexionSuite(plateau,joueurs[i])) then
+      if(compterConnexionSuite(plateau,joueurs[id]) < compterConnexionSuite(plateau,joueurs[i])) then
+        begin
         plusGrandeConnexion := False;
+        joueurs[id].PlusGrandeConnexion := False;
+        end;
     if plusGrandeConnexion then
       begin
-        writeln('plusGrandeConnexion : ',joueur.nom);
-      points[j] := points[j] + 2;
+      joueurs[id].PlusGrandeConnexion := True;
+      points[id] := points[id] + 2;
       end;
     end;
     
 
     if(joueur.CartesTutorat[1].utilisee >= 3) then
       for i := 0 to High(joueurs) do
-        if(joueur.CartesTutorat[1].utilisee < joueurs[i].CartesTutorat[1].utilisee) then
+        if(joueurs[id].CartesTutorat[1].utilisee < joueurs[i].CartesTutorat[1].utilisee) then
+          begin
           plusDeplacementSouillard := False;
+          joueurs[id].PlusGrandeNombreDeWordReference := False;
+          end;
     if(plusDeplacementSouillard) then
-      points[j] := points[j] + 2;
+      begin
+      points[id] := points[id] + 2;
+      joueurs[id].PlusGrandeNombreDeWordReference := True;
+      end;
     
-    if points[j] >= 10 then
+    affichageScoreAndClear(joueurs[id],affichage);
+    if points[id] >= 10 then
     begin
 
       gagner := True;
-      gagnant := j+1;
-      writeln('gagnant : ',joueur.nom);
-      affichageInformation(joueur.Nom + 'viens de gagner la partie en depassant les 10 points', 25, FCouleur(0,0,0,255), affichage);
+      gagnant := id+1;
+      writeln('gagnant : ',joueurs[id].nom);
+      writeln('point : ',joueurs[id].points);
+      writeln('point : ',points[id]);
+
+
+      affichageInformation(joueurs[id].Nom + 'viens de gagner la partie en depassant les 10 points', 25, FCouleur(0,0,0,255), affichage);
 
       Break;
     end;
-
-    j := j+1;
-
   end;
-
-
+  // TODO normalement pas besoin
+  // miseAJourRenderer(affichage);
 end;
 
 
@@ -1092,18 +1099,18 @@ for i := 0 to High(plateau.Personnes) do
 begin
   if (plateau.Personnes[i].IdJoueur = joueur.Id) and (plateau.Personnes[i].estEleve) then
   begin
-    placeFauxProfesseur(affichage,plateau, plateau.Personnes[i].position,joueur.Id);
+    placeFauxProfesseur(affichage, plateau.Personnes[i].position,joueur.Id);
     resteEleve := True;
   end;
 end;
 miseAJourRenderer(affichage);
 end;
 
-procedure placeFauxConnexion(affichage : TAffichage;plateau : TPlateau;coord1 : Tcoord;coord2 : Tcoord; id : Integer);
+procedure placeFauxConnexion(affichage : TAffichage;coord1 : Tcoord;coord2 : Tcoord; id : Integer);
+var connexion : TConnexion;
 begin
-SetLength(plateau.Connexions, Length(plateau.Connexions) + 1);
 
-with plateau.Connexions[High(plateau.Connexions)] do
+with connexion do
   begin
   SetLength(Position, 2);
   Position[0] := coord1;
@@ -1111,7 +1118,7 @@ with plateau.Connexions[High(plateau.Connexions)] do
 
   IdJoueur := -id-1;
   end;
-affichageConnexion(plateau.Connexions[High(plateau.Connexions)], affichage);
+affichageConnexion(connexion, affichage);
 end;
 
 function resteEmplacementConnexion(var affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
@@ -1138,25 +1145,25 @@ begin
       if(not connexionExisteDeja(plateau, coords1[0],coords1[2]) 
         and (dansLePlateau(plateau,coords1[0]) or dansLePlateau(plateau,coords1[2])))then
         begin
-        placeFauxConnexion(affichage,plateau, coords1[0],coords1[2], joueur.Id);
+        placeFauxConnexion(affichage, coords1[0],coords1[2], joueur.Id);
         resteEmplacementConnexion := True;
         end;
       if(not connexionExisteDeja(plateau, coords1[1],coords1[2])
         and (dansLePlateau(plateau,coords1[1]) or dansLePlateau(plateau,coords1[2])))then
         begin
-        placeFauxConnexion(affichage,plateau, coords1[1],coords1[2], joueur.Id);
+        placeFauxConnexion(affichage, coords1[1],coords1[2], joueur.Id);
         resteEmplacementConnexion := True;
         end;
       if(not connexionExisteDeja(plateau, coords2[0],coords2[2])
         and (dansLePlateau(plateau,coords2[0]) or dansLePlateau(plateau,coords2[2])))then
         begin
-        placeFauxConnexion(affichage,plateau, coords2[0],coords2[2], joueur.Id);
+        placeFauxConnexion(affichage, coords2[0],coords2[2], joueur.Id);
         resteEmplacementConnexion := True;
         end;
       if(not connexionExisteDeja(plateau, coords2[1],coords2[2])
         and (dansLePlateau(plateau,coords2[1]) or dansLePlateau(plateau,coords2[2])))then
         begin
-        placeFauxConnexion(affichage,plateau, coords2[1],coords2[2], joueur.Id);
+        placeFauxConnexion(affichage, coords2[1],coords2[2], joueur.Id);
         resteEmplacementConnexion := True;
         end;
 
@@ -1240,12 +1247,12 @@ begin
 
     if(not VerifierAdjacencePersonnes(coords1,plateau))then
       begin
-      placeFauxEleve(affichage, plateau, coords1,joueur.Id);
+      placeFauxEleve(affichage, coords1,joueur.Id);
       resteEmplacementEleve := True;
       end;
     if(not VerifierAdjacencePersonnes(coords2,plateau))then
       begin
-      placeFauxEleve(affichage, plateau, coords2,joueur.Id);
+      placeFauxEleve(affichage, coords2,joueur.Id);
       resteEmplacementEleve := True;
       end;
     end;
@@ -1256,11 +1263,11 @@ end;
 
 
 
-procedure placeFauxEleve(affichage : TAffichage;plateau : TPlateau;coords : Tcoords; id : Integer);
+procedure placeFauxEleve(affichage : TAffichage;coords : Tcoords; id : Integer);
+var personne : TPersonne;
 begin
 
-SetLength(plateau.Personnes, Length(plateau.Personnes) + 1);
-with plateau.Personnes[High(plateau.Personnes)] do
+with personne do
   begin
   SetLength(Position, 3);
   Position[0] := coords[0];
@@ -1270,14 +1277,13 @@ with plateau.Personnes[High(plateau.Personnes)] do
   estEleve := True;
   IdJoueur := -id-1;
   end;
-affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
+affichagePersonne(personne, affichage);
 end;
 
-procedure placeFauxProfesseur(affichage : TAffichage;plateau : TPlateau;coords : Tcoords; id : Integer);
+procedure placeFauxProfesseur(affichage : TAffichage;coords : Tcoords; id : Integer);
+var personne : TPersonne;
 begin
-
-SetLength(plateau.Personnes, Length(plateau.Personnes) + 1);
-with plateau.Personnes[High(plateau.Personnes)] do
+with personne do
   begin
   SetLength(Position, 3);
   Position[0] := coords[0];
@@ -1287,7 +1293,7 @@ with plateau.Personnes[High(plateau.Personnes)] do
   estEleve := False;
   IdJoueur := -id-1;
   end;
-affichagePersonne(plateau.Personnes[High(plateau.Personnes )], affichage);
+affichagePersonne(personne, affichage);
 end;
 
 function encontactAutreconnexionEleve(plateau: TPlateau; Eleve: TCoords; var joueur: TJoueur): Boolean;

@@ -18,6 +18,8 @@ procedure calculPosConnexion(connexion: TConnexion; var coord: Tcoord; var longu
 procedure recupererCouleurJoueur(joueurId: Integer; var couleur: TSDL_Color);
 function calculPosPersonne(personne : TPersonne): Tcoord;
 procedure ajouterBoutonTableau(bouton: TBouton; var boutons: TBoutons);
+function nombreAleatoire(n : Integer): Integer;
+
 
 implementation
 
@@ -215,6 +217,12 @@ procedure ajouterBoutonTableau(bouton: TBouton; var boutons: TBoutons);
 begin
     setLength(boutons, length(boutons)+1);
     boutons[length(boutons)-1] := bouton;
+end;
+
+function nombreAleatoire(n : Integer): Integer;
+begin
+    nombreAleatoire := Random(n) + 1;
+    Randomize();
 end;
 
 end.
