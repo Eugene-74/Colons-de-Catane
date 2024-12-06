@@ -35,6 +35,9 @@ procedure affichageHexagone(plat: TPlateau; var affichage: TAffichage; coordHexa
 
 procedure affichageFond(var affichage: TAffichage);
 
+
+procedure afficherGIF(const FileName: string; var affichage: TAffichage);
+
 implementation
 
 procedure affichageScore(joueur: TJoueur; var affichage: TAffichage);forward;
@@ -1016,6 +1019,12 @@ begin
     initialisationTextures(affichage);
     initialisationBoutonsAction(affichage);
     initialisationBoutonsSysteme(affichage);
+end;
+
+
+procedure AfficherGIF(const FileName: string; var affichage: TAffichage);
+begin
+writeln('afficher gif : '+filename);
 end;
 
 end.

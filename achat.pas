@@ -12,7 +12,7 @@ procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; v
 procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 procedure affichageGagnant(var affichage: TAffichage);
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
-procedure verificationPointsVictoire(plateau : TPlateau; var joueurs: TJoueurs; var gagnant: Integer;var affichage : TAffichage);
+function verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs; var gagnant: Integer;var affichage : TAffichage):Integer;
 procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 function resteEmplacementConnexion(var affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
 
@@ -590,7 +590,7 @@ end;
 
 
 
-procedure verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs; var gagnant: Integer;var affichage : TAffichage);
+function verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs; var gagnant: Integer;var affichage : TAffichage):Integer;
 var
   plusGrandeConnexion,plusDeplacementSouillard : Boolean;
   id,i,nombreDeGagnant : Integer;
@@ -661,26 +661,27 @@ begin
         writeln('point : ',points[id]);
         
         if(nombreDeGagnant > 1) then
-          if(nombreAleatoire = i)then
+          if(nombreDeGagnant = i)then
           begin
             text := text + joueurs[id].Nom +' ';
             i := i + 1;
           end
           else
-            text := text + joueurs[id].Nom +' et ';
+            text := text + joueurs[id].Nom +' et '
         else
           text := text + joueurs[id].Nom +' ';
 
         Break;
       end;
   if (gagnant > 1 )then
-    affichageInformation(text + 'vienent de gagner la partie en dépassant tous les 10 points au même tour', 25, FCouleur(0,0,0,255), affichage);
+    affichageInformation(text + 'vienent de gagner la partie en dépassant tous les 10 points au même tour', 25, FCouleur(0,0,0,255), affichage)
   else
     affichageInformation(text+ 'viens de gagner la partie en dépassant les 10 points', 25, FCouleur(0,0,0,255), affichage);
   
   affichageGagnant(affichage);
-
+  verificationPointsVictoire := gagnant;
 end;
+
 
 
 procedure affichageGagnant(var affichage: TAffichage);
@@ -688,7 +689,14 @@ var text : String;
 begin
 // TODO faire un GIF de  victoire (Yann)
 
+// afficherImageMilieu('Assets/test.gif', affichage);
+
+afficherGIFMilieu('Assets/test.gif',affichage);
+// miseAJourRenderer(affichage);
+
+
 end;
+
 
 
 function connexionExisteDeja(plateau: TPlateau; coord1: TCoord; coord2: TCoord): Boolean;

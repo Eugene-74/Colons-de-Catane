@@ -407,8 +407,7 @@ var gagnant : integer;
 begin
   repeat
     tour(joueurs,plateau,affichage);
-    gagner := false;
-    gagner := verificationPointsVictoire(plateau,joueurs,gagnant,affichage) <> -1;
+    gagner := (verificationPointsVictoire(plateau,joueurs,gagnant,affichage) <> -1);
   until (gagner);
 
 end;
