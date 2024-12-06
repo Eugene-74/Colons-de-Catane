@@ -564,7 +564,6 @@ if ((connexion.IdJoueur = joueur.Id) and not coordsDansTableau(connexion,connexi
     coords2[1] := connexion.Position[1];
 
     trouver3EmeHexagone(plateau,coords1,coords2,connexion);
-    
 
     total :=0;
 
@@ -596,23 +595,28 @@ var
   joueur : TJoueur;
   plusGrandeConnexion,plusDeplacementSouillard : Boolean;
   id,i : Integer;
-  points : array of Integer;
+  points,longueurRoutes : array of Integer;
 
 begin
   gagner := False;
   gagnant := -1;
 
   SetLength(points,Length(joueurs));
+  SetLength(longueurRoutes,Length(joueurs));
+
   for id := 0 to length(joueurs)-1 do
   begin
     points[id] := joueurs[id].points;
     
     plusGrandeConnexion := True;
 
-    if (compterConnexionSuite(plateau,joueurs[id]) >= 5) then
+    for i := 0 to High(joueurs) do
+      longueurRoutes[i] := compterConnexionSuite(plateau,joueurs[i]);
+
+    if (longueurRoutes[id] >= 5) then
     begin
     for i := 0 to High(joueurs) do
-      if(compterConnexionSuite(plateau,joueurs[id]) < compterConnexionSuite(plateau,joueurs[i])) then
+      if(longueurRoutes[id] < longueurRoutes[i]) then
         begin
         plusGrandeConnexion := False;
         joueurs[id].PlusGrandeConnexion := False;
