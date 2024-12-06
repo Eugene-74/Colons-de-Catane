@@ -174,7 +174,7 @@ begin
         end;
       end;
   until valide;
-  jouerSonValide(affichage,true);
+  // jouerSonValide(affichage,true);
 
   setlength(noms,count);
 
@@ -408,9 +408,8 @@ begin
   repeat
     tour(joueurs,plateau,affichage);
     gagner := false;
-    verificationPointsVictoire(plateau,joueurs,gagner,gagnant,affichage);
+    gagner := verificationPointsVictoire(plateau,joueurs,gagnant,affichage) <> -1;
   until (gagner);
-  affichageGagnant(joueurs[gagnant],affichage);
 
 end;
 
@@ -442,10 +441,10 @@ begin
   selectionDepouiller(ressource,id,idJoueurAVoler,joueurs,affichage);
   
   if(ressource <> Rien) then
-    begin
+  begin
     joueurs[id].ressources[ressource] := joueurs[id].ressources[ressource] + joueurs[idJoueurAVoler].ressources[ressource];
     joueurs[idJoueurAVoler].ressources[ressource] := 0;
-    end;
+  end;
     
   affichageTour(plateau, joueurs, id, affichage);
   jouerSonValide(affichage, true);
@@ -457,15 +456,15 @@ end;
 procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau; var joueurs : Tjoueurs;id : Integer);
 var ressource : TRessource;
 begin
-// CHOISIR 2 CONNAISSANCE
+  // CHOISIR 2 CONNAISSANCE
 
-selectionRessource(affichage,ressource);
-joueurs[id].ressources[ressource] := joueurs[id].ressources[ressource] + 2;
+  selectionRessource(affichage,ressource);
+  joueurs[id].ressources[ressource] := joueurs[id].ressources[ressource] + 2;
 
-affichageTour(plateau, joueurs, Id, affichage);
+  affichageTour(plateau, joueurs, Id, affichage);
   jouerSonValide(affichage, true);
 
-affichageInformation(joueurs[id].Nom +  ' viens de gagner 2 : ' +GetEnumName(TypeInfo(TRessource), Ord(ressource)),25,COULEUR_TEXT_VERT,affichage);
+  affichageInformation(joueurs[id].Nom +  ' viens de gagner 2 : ' +GetEnumName(TypeInfo(TRessource), Ord(ressource)),25,COULEUR_TEXT_VERT,affichage);
 end;
 
 procedure utiliserCarte5(var affichage : TAffichage;var joueurs : TJoueurs;id :Integer);
@@ -487,7 +486,6 @@ for i := 0 to High(plateau.cartesTutorat) do
   end;
 if (i <> -1) and (joueurs[id].CartesTutorat[i].utilisee < joueurs[id].CartesTutorat[i].nbr) then
   begin
-  jouerSonValide(affichage, true);
   case i of
     0:
     begin

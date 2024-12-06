@@ -10,9 +10,9 @@ function aLesRessources(joueur : Tjoueur; ressources : TRessources):boolean;
 procedure enleverRessources( var joueur : Tjoueur; ressources : TRessources);
 procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
-procedure affichageGagnant(joueur: TJoueur; var affichage: TAffichage);
+procedure affichageGagnant(var affichage: TAffichage);
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
-procedure verificationPointsVictoire(plateau : TPlateau; var joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer;var affichage : TAffichage);
+procedure verificationPointsVictoire(plateau : TPlateau; var joueurs: TJoueurs; var gagnant: Integer;var affichage : TAffichage);
 procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 function resteEmplacementConnexion(var affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
 
@@ -69,9 +69,9 @@ procedure clicHexagoneValide(var plateau: TPlateau; var affichage: TAffichage; v
 var valide : boolean;
 begin
     repeat
-        clicHexagone(affichage, coord);
-        valide := dansLePlateau(plateau,coord);
-        jouerSonValide(affichage,valide);
+      clicHexagone(affichage, coord);
+      valide := dansLePlateau(plateau,coord);
+      jouerSonValide(affichage,valide);
     until valide;
 
 end;
@@ -590,26 +590,26 @@ end;
 
 
 
-procedure verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer;var affichage : TAffichage);
+procedure verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs; var gagnant: Integer;var affichage : TAffichage);
 var
   plusGrandeConnexion,plusDeplacementSouillard : Boolean;
-  id,i : Integer;
+  id,i,nombreDeGagnant : Integer;
   points,longueurRoutes : array of Integer;
+  text : String;
 
 begin
-  gagner := False;
   gagnant := -1;
+  nombreDeGagnant := 0;
 
   SetLength(points,Length(joueurs));
   SetLength(longueurRoutes,Length(joueurs));
   
-  for i := 0 to High(joueurs) do
+  for i := 0 to length(joueurs)-1 do
     longueurRoutes[i] := compterConnexionSuite(plateau,joueurs[i]);
 
   for id := 0 to length(joueurs)-1 do
   begin
     points[id] := joueurs[id].points;
-    
     plusGrandeConnexion := True;
 
 
@@ -641,33 +641,53 @@ begin
       points[id] := points[id] + 2;
       joueurs[id].PlusGrandeNombreDeWordReference := True;
       end;
+      if points[id] >= 10 then
+        nombreDeGagnant := nombreDeGagnant +1;
     
     affichageScoreAndClear(joueurs[id],affichage);
-    if points[id] >= 10 then
-    begin
-
-      gagner := True;
-      gagnant := id+1;
-      writeln('gagnant : ',joueurs[id].nom);
-      writeln('point : ',joueurs[id].points);
-      writeln('point : ',points[id]);
-
-
-      affichageInformation(joueurs[id].Nom + 'viens de gagner la partie en depassant les 10 points', 25, FCouleur(0,0,0,255), affichage);
-
-      Break;
-    end;
   end;
-  // TODO normalement pas besoin
-  // miseAJourRenderer(affichage);
+
+  text := '';
+  i:=1;
+
+  for id := 0 to length(joueurs)-1 do
+    if points[id] >= 10 then
+      begin
+        gagnant := id;
+        writeln('gagnant : ',joueurs[id].nom);
+        writeln('point : ',joueurs[id].points);
+        writeln('Grande Connexion : ',joueurs[id].PlusGrandeConnexion);
+        writeln('Word reference : ',joueurs[id].PlusGrandeNombreDeWordReference);
+        writeln('point : ',points[id]);
+        
+        if(nombreDeGagnant > 1) then
+          if(nombreAleatoire = i)then
+          begin
+            text := text + joueurs[id].Nom +' ';
+            i := i + 1;
+          end
+          else
+            text := text + joueurs[id].Nom +' et ';
+        else
+          text := text + joueurs[id].Nom +' ';
+
+        Break;
+      end;
+  if (gagnant > 1 )then
+    affichageInformation(text + 'vienent de gagner la partie en dépassant tous les 10 points au même tour', 25, FCouleur(0,0,0,255), affichage);
+  else
+    affichageInformation(text+ 'viens de gagner la partie en dépassant les 10 points', 25, FCouleur(0,0,0,255), affichage);
+  
+  affichageGagnant(affichage);
+
 end;
 
 
-procedure affichageGagnant(joueur: TJoueur; var affichage: TAffichage);
+procedure affichageGagnant(var affichage: TAffichage);
 var text : String;
 begin
-  text := ('Felicitations, ' + joueur.Nom + ' ! Vous avez gagne la partie avec ' + intToStr(joueur.Points) + ' points.');
-  affichageInformation(text, 25, FCouleur(0,0,0,255), affichage);
+// TODO faire un GIF de  victoire (Yann)
+
 end;
 
 
@@ -921,10 +941,8 @@ begin
   repeat
     clicHexagone(affichage, coord);
     valide := dansLePlateau(plateau,coord);
-    if(valide)then
-      jouerSonValide(affichage,False);
+    jouerSonValide(affichage,valide);
   until (valide);
-  jouerSonValide(affichage,True);
 
   plateau.Souillard.Position := coord;
   
@@ -1022,7 +1040,7 @@ var
   connexionsTrouvees: Integer;
 begin
   enContactEleveConnexions := nil;
-  
+
   connexionsTrouvees := 0;
   SetLength(enContactEleveConnexions, 6);
   for i := 0 to High(plateau.Connexions) do
