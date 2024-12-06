@@ -691,7 +691,7 @@ begin
 
 // afficherImageMilieu('Assets/test.gif', affichage);
 
-afficherGIFMilieu('Assets/test.gif',affichage);
+afficherGIF('Assets/test.gif',affichage);
 // miseAJourRenderer(affichage);
 
 
