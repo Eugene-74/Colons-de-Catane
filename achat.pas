@@ -2,8 +2,7 @@ unit achat;
 
 interface
 
-uses
-  Types, affichageUnit,traitement,sysutils,musique;
+uses Types, affichageUnit,traitement,sysutils,musique;
 
 function CoordsEgales(coords1: TCoords; coords2: TCoords): Boolean;
 procedure deplacementSouillard(var plateau : TPlateau; var joueurs : TJoueurs ;var affichage : TAffichage);
@@ -69,8 +68,6 @@ procedure tirerCarteTutorat(var cartesTutorat : TCartesTutorat;var  joueur : Tjo
 var  i,j,nbrTotal,min,max: Integer;
 begin
   Randomize();
-
-
   nbrTotal :=0;
   for i := 0 to 4 do
     nbrTotal :=nbrTotal  + cartesTutorat[i].nbr;
@@ -99,9 +96,6 @@ begin
 
 end;
 
-
-
-
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
 begin
   case choix of
@@ -116,12 +110,12 @@ begin
           end
         else
           begin
-          affichageInformation('Vous n''avez pas les ressources necessaires pour acheter un eleve.', 25, FCouleur(0,0,0,255), affichage);
+          affichageInformation('Vous n''avez pas d''emplacement pour mettre un élève.', 25, COULEUR_TEXT_ROUGE, affichage);
           jouerSonValide(affichage,false);
           end
       else
         begin
-        affichageInformation('Vous n''avez pas d''emplacement pour mettre un élève.', 25, COULEUR_TEXT_ROUGE, affichage);
+        affichageInformation('Vous n''avez pas les ressources necessaires pour acheter un eleve.', 25, FCouleur(0,0,0,255), affichage);
         jouerSonValide(affichage,false);
         end;
 
@@ -148,7 +142,7 @@ begin
     
 
     // PROFESSEUR
-    3: 
+    3:
       if(aLesRessources(joueur,COUT_PROFESSEUR)) then
         if(resteEleve(affichage,plateau,joueur))then
           begin
@@ -174,7 +168,6 @@ begin
 
     // carte de tutorat
     4:
-    //  verif ressource
     if(aLesRessources(joueur,COUT_CARTE_TUTORAT)) then
       if(plateau.cartesTutorat[0].nbr + plateau.cartesTutorat[1].nbr + plateau.cartesTutorat[2].nbr + plateau.cartesTutorat[3].nbr + plateau.cartesTutorat[4].nbr >0) then
         begin
@@ -199,9 +192,6 @@ begin
       end;
   end;
 end;
-
-
-
 
 procedure placementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 var HexagonesCoords: TCoords;
@@ -234,10 +224,6 @@ begin
   miseAJourRenderer(affichage);
 end;
 
-
-
-
-
 function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur;var affichage : TAffichage): Boolean;
 var
   personneAdjacente: Boolean;
@@ -253,7 +239,6 @@ begin
     // TODO verifier le contact avec une connexion du joueur
     if not enContactEleveConnexion(plateau,HexagonesCoords,joueurActuel) then
     begin
-      writeln('pas en contact avec une connexion');
       PersonneValide:=false;
       exit;
     end;
@@ -266,7 +251,6 @@ begin
     end
     else
         personneAdjacente := True;
-
   // 4. Vérifie si au moins 1 des hexagones est dans le plateau
   if (( not dansLePlateau(plateau,HexagonesCoords[0]) and not dansLePlateau(plateau,HexagonesCoords[1]) and not dansLePlateau(plateau,HexagonesCoords[2]) )
       ) then 
@@ -275,7 +259,6 @@ begin
 
     jouerSonValide(affichage,false);
     affichageInformation('Au moins 1 des hexagones choisis doit etre dans le plateau', 25, FCouleur(0,0,0,255), affichage);
-
     
     Exit;
     end; 
@@ -293,7 +276,6 @@ function ClicPersonne(var affichage: TAffichage; estEleve: Boolean): TCoords;
 var
   i: Integer;
   HexagonesCoords: TCoords;
- 
 begin
   SetLength(HexagonesCoords,3);
   if estEleve then
@@ -331,7 +313,7 @@ begin
       for k := 0 to 2 do
       begin
         if (HexagonesCoords[j].x = plateau.Personnes[i].Position[k].x) and
-           (HexagonesCoords[j].y = plateau.Personnes[i].Position[k].y) then
+            (HexagonesCoords[j].y = plateau.Personnes[i].Position[k].y) then
         begin
           Inc(nombreCommuns);
           Break;
@@ -345,10 +327,6 @@ begin
     end;
   end;
 end;
-
-
-
-
 
 function CountPersonnes(personnes: TPersonnes; estEleve: Boolean; joueur: TJoueur): Integer;
 var
@@ -406,7 +384,6 @@ begin
   end;
 end;
 
-
 procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 var
   HexagonesCoords, ProfesseurCoords: TCoords;
@@ -442,7 +419,6 @@ begin
   end;
   
 end;
-
 
 function trouverXemeConnexion(plateau: TPlateau; joueur: TJoueur;nbr:Integer): TConnexion;
 var
@@ -480,7 +456,6 @@ begin
       nombreConnexionJoueur := nombreConnexionJoueur + 1;
   end;
 end;
-
 
 function coordsDansTableau(connexion: TConnexion; tableau: array of TConnexion): Boolean;
 var
@@ -612,7 +587,6 @@ end;
 
 procedure verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs; var gagner: Boolean; var gagnant: Integer;var affichage : TAffichage);
 var
-  joueur : TJoueur;
   plusGrandeConnexion,plusDeplacementSouillard : Boolean;
   id,i : Integer;
   points,longueurRoutes : array of Integer;
@@ -649,7 +623,7 @@ begin
     end;
     
 
-    if(joueur.CartesTutorat[1].utilisee >= 3) then
+    if(joueurs[id].CartesTutorat[1].utilisee >= 3) then
       for i := 0 to High(joueurs) do
         if(joueurs[id].CartesTutorat[1].utilisee < joueurs[i].CartesTutorat[1].utilisee) then
           begin
@@ -869,7 +843,7 @@ end;
 function aucuneConnexionAdjacente(coords: TCoords; plateau: TPlateau; joueur: TJoueur; var affichage : TAffichage): Boolean;
 var
   i: Integer;
-  autreCoord, autreCoord2, coord1, coord2, coordRestante: TCoord;
+  autreCoord, coord1, coord2, coordRestante: TCoord;
   verif: Boolean;
 begin
 // TODO NE MARCHE PAS REGARDER POURQUOI VORI FONCTION D'AVANT
@@ -886,25 +860,25 @@ begin
       if (coords[0].x = coord1.x) and (coords[0].y = coord1.y) then
       begin
         autreCoord := coords[1];
-        autreCoord2 := coords[0];
+        // autreCoord2 := coords[0];
         coordRestante := coord2;
       end
       else if (coords[1].x = coord1.x) and (coords[1].y = coord1.y) then
       begin
         autreCoord := coords[0];
-        autreCoord2 := coords[1];
+        // autreCoord2 := coords[1];
         coordRestante := coord2;
       end
       else if (coords[0].x = coord2.x) and (coords[0].y = coord2.y) then
       begin
         autreCoord := coords[1];
-        autreCoord2 := coords[0];
+        // autreCoord2 := coords[0];
         coordRestante := coord1;
       end
       else if (coords[1].x = coord2.x) and (coords[1].y = coord2.y) then
       begin
         autreCoord := coords[0];
-        autreCoord2 := coords[1];
+        // autreCoord2 := coords[1];
         coordRestante := coord1;
       end;
 
@@ -971,36 +945,31 @@ begin
   affichageInformation('Souillard deplace avec succes !', 25, COULEUR_TEXT_VERT, affichage);
 end;
 function enContactConnexionConnexion( coords1: TCoords; coords2: TCoords): Boolean;
-var Coord, autreCoord1, autreCoord2: TCoord;
+var autreCoord1, autreCoord2: TCoord;
+    i, j: Integer;
 begin
   enContactConnexionConnexion := False;
 
-  if (coords1[0].x = coords2[0].x) and (coords1[0].y = coords2[0].y) then
+  for i := 0 to 1 do
   begin
-    Coord := coords1[0];
-    autreCoord1 := coords1[1];
-    autreCoord2 := coords2[1];
-  end
-  else if (coords1[0].x = coords2[1].x) and (coords1[0].y = coords2[1].y) then
-  begin
-    Coord := coords1[0];
-    autreCoord1 := coords1[1];
-    autreCoord2 := coords2[0];
-  end
-  else if (coords1[1].x = coords2[0].x) and (coords1[1].y = coords2[0].y) then
-  begin
-    Coord := coords1[1];
-    autreCoord1 := coords1[0];
-    autreCoord2 := coords2[1];
-  end
-  else if (coords1[1].x = coords2[1].x) and (coords1[1].y = coords2[1].y) then
-  begin
-    Coord := coords1[1];
-    autreCoord1 := coords1[0];
-    autreCoord2 := coords2[0];
-  end
-  else
-    Exit;
+    for j := 0 to 1 do
+    begin
+      if (coords1[i].x = coords2[j].x) and (coords1[i].y = coords2[j].y) then
+      begin
+        if i = 0 then
+          autreCoord1 := coords1[1]
+        else
+          autreCoord1 := coords1[0];
+
+        if j = 0 then
+          autreCoord2 := coords2[1]
+        else
+          autreCoord2 := coords2[0];
+
+        Exit;
+      end;
+    end;
+  end;
   if sontAdjacents(autreCoord1, autreCoord2) then
     enContactConnexionConnexion := True;
 end;
