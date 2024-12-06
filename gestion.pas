@@ -211,8 +211,9 @@ begin
     // TODO re mettre apres
     affichageJoueurActuel(joueurs,i,affichage);
     // placementEleve(plateau,affichage,joueurs[i]);
+
+    // placeFauxConnexionAutourJoueur(affichage,plateau,joueurs[i].id);
     // placementConnexion(plateau,affichage,joueurs[i]);
-    
     end;
 
   for i:=length(joueurs)-1 downto 0 do
@@ -220,12 +221,10 @@ begin
     // TODO re mettre apres
     affichageJoueurActuel(joueurs,i,affichage);
     // placementEleve(plateau,affichage,joueurs[i]);
+
+    // placeFauxConnexionAutourJoueur(affichage,plateau,joueurs[i].id);
     // placementConnexion(plateau,affichage,joueurs[i]);
     end;
-
-  // mise a jour de l'affichage inutile normalement
-  // affichageTour(plateau, joueurs, 0, affichage);
-  
 
 end;
 
