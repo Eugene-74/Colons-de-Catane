@@ -515,6 +515,8 @@ if(nombreDeConnexion1 > nombreDeConnexion2) then
   compterConnexionSuite := nombreDeConnexion1
 else
   compterConnexionSuite := nombreDeConnexion2;
+
+writeln('compterConnexionSuite : ',compterConnexionSuite);
 end;
 
 
@@ -543,6 +545,8 @@ end;
 function compterConnexionAutour(var connexionDejaVisite : Tconnexions;connexion : TConnexion;plateau: TPlateau; joueur: TJoueur): Integer;
 var coords1,coords2 : TCoords;
   total: Integer ;
+  nbr1,nbr2,nbr3,nbr4: Integer ;
+
   nouvelleConnexion : TConnexion;
 begin
 
@@ -567,21 +571,37 @@ if ((connexion.IdJoueur = joueur.Id) and not coordsDansTableau(connexion,connexi
 
     total :=0;
 
+    nbr1 := 0;
+    nbr2 := 0;
+    nbr3 := 0;
+    nbr4 := 0;
+
     nouvelleConnexion := trouverConnexion(plateau,coords1[0],coords1[2]);
     if(nouvelleConnexion.IdJoueur <> -1)then
-      total := total + compterConnexionAutour(connexionDejaVisite,nouvelleConnexion ,plateau,joueur);
+      nbr1 := compterConnexionAutour(connexionDejaVisite,nouvelleConnexion ,plateau,joueur);
 
     nouvelleConnexion := trouverConnexion(plateau,coords1[1],coords1[2]);
     if(nouvelleConnexion.IdJoueur <> -1)then
-      total := total + compterConnexionAutour(connexionDejaVisite,nouvelleConnexion ,plateau,joueur);
+      nbr2 := compterConnexionAutour(connexionDejaVisite,nouvelleConnexion ,plateau,joueur);
 
     nouvelleConnexion := trouverConnexion(plateau,coords2[0],coords2[2]);
     if(nouvelleConnexion.IdJoueur <> -1)then
-      total := total + compterConnexionAutour(connexionDejaVisite,nouvelleConnexion ,plateau,joueur);
+      nbr3 := compterConnexionAutour(connexionDejaVisite,nouvelleConnexion ,plateau,joueur);
     
     nouvelleConnexion := trouverConnexion(plateau,coords2[1],coords2[2]);
     if(nouvelleConnexion.IdJoueur <> -1)then
-      total := total + compterConnexionAutour(connexionDejaVisite,nouvelleConnexion ,plateau,joueur);
+      nbr4 := compterConnexionAutour(connexionDejaVisite,nouvelleConnexion ,plateau,joueur);
+
+    if(nbr1 > nbr2) then
+      total := total + nbr1
+    else
+      total := total + nbr2;
+    
+    if(nbr3 > nbr4) then
+      total := total + nbr3
+    else
+      total := total + nbr4;
+    // total := nbr1 + nbr2 + nbr3 + nbr4;
 
     compterConnexionAutour := compterConnexionAutour + total;
 

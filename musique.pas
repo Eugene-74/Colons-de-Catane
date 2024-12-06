@@ -163,11 +163,12 @@ procedure demarrerSon(affichage : TAffichage;son : TSon);
 var pSon: PMix_Chunk;
 begin
     pSon := affichage.sons[son];
-  // Jouer le son sur le premier canal disponible (-1) une seule fois (0)
-  if Mix_PlayChannel(-1, pSon, 0) = -1 then
-  begin
-    WriteLn('Erreur de lecture du son: ', Mix_GetError);
-  end;
+    // Jouer le son sur le premier canal disponible (-1) une seule fois (0)
+    Mix_VolumeChunk(pSon, MIX_MAX_VOLUME div 10); // Réduire le volume à 50%
+    if Mix_PlayChannel(-1, pSon, 0) = -1 then
+    begin
+        WriteLn('Erreur de lecture du son: ', Mix_GetError);
+    end;
 end;
 
 
