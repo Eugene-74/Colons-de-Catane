@@ -17,6 +17,7 @@ procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage;
 function resteEmplacementConnexion(var affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
 
 procedure placeFauxConnexionAutourJoueur(affichage : TAffichage;plateau : TPlateau; id : Integer);
+function conterNombrePersonnes(personnes: TPersonnes; estEleve: Boolean; joueur: TJoueur): Integer;
 
 implementation
 procedure placeFauxEleve(affichage : TAffichage;coords : Tcoords;id : Integer);forward;
@@ -33,7 +34,6 @@ procedure trouver3EmeHexagone(plateau : TPlateau;coords1: TCoords; coords2: TCoo
 procedure ClicConnexion(var affichage : TAffichage;var coords : TCoords);forward;
 function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage : TAffichage): Boolean;forward;
 function ClicPersonne(var affichage: TAffichage; estEleve: Boolean): TCoords;forward;
-function CountPersonnes(personnes:TPersonnes; estEleve: Boolean; joueur: TJoueur): Integer;forward;
 function professeurValide(var affichage: TAffichage; plateau: TPlateau; joueurActuel: TJoueur; HexagonesCoords: TCoords; var ProfesseurCoords: TCoords; var indexEleve: Integer): Boolean;forward;
 function PersonneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur;var affichage : TAffichage): Boolean;forward;
 function VerifierAdjacencePersonnes(HexagonesCoords: TCoords; plateau: TPlateau): Boolean;forward;
@@ -114,16 +114,24 @@ begin
    // ELEVE
     1:
       if(aLesRessources(joueur,COUT_ELEVE)) then
-        if(resteEmplacementEleve(affichage,plateau,joueur))then
+        if (conterNombrePersonnes(plateau.Personnes,true,joueur) < 4)  then
+          if(resteEmplacementEleve(affichage,plateau,joueur))then
           begin
+          writeln(conterNombrePersonnes(plateau.Personnes,true,joueur));
           enleverRessources(joueur,COUT_ELEVE);
           PlacementEleve(plateau, affichage, joueur);
           end
-        else
+          else
           begin
-          affichageInformation('Vous n''avez pas d''emplacement pour mettre un élève.', 25, COULEUR_TEXT_ROUGE, affichage);
-          jouerSonValide(affichage,false);
+            affichageInformation('Vous n''avez pas d''emplacement pour mettre un élève.', 25, COULEUR_TEXT_ROUGE, affichage);
+            jouerSonValide(affichage,false);
           end
+        else
+        begin
+          writeln(conterNombrePersonnes(plateau.Personnes,true,joueur));
+          affichageInformation('Vous avez déjà atteint la limite de 4 élèves.', 25, FCouleur(255, 0, 0, 255), affichage);
+          jouerSonValide(affichage,false);
+        end
       else
         begin
         affichageInformation('Vous n''avez pas les ressources necessaires pour acheter un eleve.', 25, FCouleur(0,0,0,255), affichage);
@@ -154,21 +162,27 @@ begin
     // PROFESSEUR
     3:
       if(aLesRessources(joueur,COUT_PROFESSEUR)) then
-        if(resteEleve(affichage,plateau,joueur))then
+        if (conterNombrePersonnes(plateau.Personnes,false,joueur) < 4) then
+          if(resteEleve(affichage,plateau,joueur))then
           begin
 
       
 
-          enleverRessources(joueur,COUT_PROFESSEUR);
+            enleverRessources(joueur,COUT_PROFESSEUR);
 
-          changementProfesseur(plateau, affichage, joueur);
-          
+            changementProfesseur(plateau, affichage, joueur);
+            
           end
-        else
+          else
           begin
             affichageInformation('Vous n''avez pas les ressources nécessaires pour changer un eleve en professeur.', 25, FCouleur(0,0,0,255), affichage);
             jouerSonValide(affichage,false);
           end
+        else
+        begin
+          affichageInformation('Vous avez déjà atteint la limite de 4 professeurs.', 25, FCouleur(255, 0, 0, 255), affichage);
+          jouerSonValide(affichage,false);
+        end
       else
         begin
         affichageInformation('Vous n''avez plus d''élève à modifier.', 25, COULEUR_TEXT_ROUGE, affichage);
@@ -244,7 +258,6 @@ begin
   end;
 
   if(joueurActuel.Points >=2 ) then
-    // TODO verifier le contact avec une connexion du joueur
     if not enContactEleveConnexion(plateau,HexagonesCoords,joueurActuel) then
     begin
       PersonneValide:=false;
@@ -335,18 +348,20 @@ begin
   end;
 end;
 
-function CountPersonnes(personnes: TPersonnes; estEleve: Boolean; joueur: TJoueur): Integer;
+function conterNombrePersonnes(personnes: TPersonnes; estEleve: Boolean; joueur: TJoueur): Integer;
 var
   i,Result: Integer;
 
 begin
   Result := 0; 
-  for i := 0 to High(personnes)-1 do
+  for i := 0 to length(personnes)-1 do
   begin
+    writeln(personnes[i].IdJoueur);
+
     if (personnes[i].estEleve = estEleve) and (personnes[i].IdJoueur = joueur.Id) then
       Inc(Result); 
   end;
-  CountPersonnes:= Result;
+  conterNombrePersonnes:= Result;
 end;
 
 function professeurValide(var affichage: TAffichage; plateau: TPlateau; joueurActuel: TJoueur; HexagonesCoords: TCoords; var ProfesseurCoords: TCoords; var indexEleve: Integer): Boolean;
@@ -397,14 +412,7 @@ var
   indexEleve: Integer;
   valide: Boolean;
 begin
-  
-  // TODO faire avant ici le joueur a deja payer
-  // nbProfesseurs := CountPersonnes(plateau.Personnes,false,joueurActuel);
-  // if nbProfesseurs > 4 then
-  // begin
-  //   affichageInformation('Vous avez déjà atteint la limite de 4 professeurs.', 25, FCouleur(255, 0, 0, 255), affichage);
-  //   Exit;
-  // end;
+
   repeat
     // ne pas reaficher a chaque fois pour avoir les erreur
     // affichageInformation('Cliquez sur 3 hexagones entre lesquels vous voulez placer le professeur.', 25, FCouleur(0, 0, 0, 255), affichage);
@@ -689,7 +697,6 @@ end;
 
 
 procedure affichageGagnant(var affichage: TAffichage);
-var text : String;
 begin
 // TODO faire un GIF de  victoire (Yann)
 

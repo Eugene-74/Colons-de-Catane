@@ -32,7 +32,7 @@ begin
     plateau.Personnes[0].Position[0] := FCoord(2,3);
     plateau.Personnes[0].Position[1] := FCoord(3,3);
     plateau.Personnes[0].Position[2] := FCoord(2,4);
-    plateau.Personnes[0].estEleve := True;
+    plateau.Personnes[0].estEleve := true;
     plateau.Personnes[0].IdJoueur := 0;
 
     joueurs[0].Ressources[Mathematiques] := 99;
