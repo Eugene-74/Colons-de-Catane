@@ -52,7 +52,7 @@ var
         'Assets/Musique/N1 - Jeux (1).mp3',
         'Assets/Musique/N3 - Jeux.mp3',
         'Assets/Musique/N3 - Jeux (1).mp3',
-        'Assets/Musique/N6 - Jeux (1).mp3',
+        'Assets/Musique/N6 - Jeux.mp3',
         'Assets/Musique/N7 - Jeux (1).mp3',
         'Assets/Musique/N8 - Jeux.mp3',
         'Assets/Musique/N8 - Jeux (1).mp3',

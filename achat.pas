@@ -112,7 +112,6 @@ begin
         if (conterNombrePersonnes(plateau.Personnes,true,joueur) < 5)  then
           if(resteEmplacementEleve(affichage,plateau,joueur))then
           begin
-          writeln(conterNombrePersonnes(plateau.Personnes,true,joueur));
           enleverRessources(joueur,COUT_ELEVE);
           PlacementEleve(plateau, affichage, joueur);
           end
@@ -123,7 +122,6 @@ begin
           end
         else
         begin
-          writeln(conterNombrePersonnes(plateau.Personnes,true,joueur));
           affichageInformation('Vous avez déjà atteint la limite de 5 élèves.', 25, COULEUR_TEXT_ROUGE, affichage);
           jouerSonValide(affichage,false);
         end
@@ -437,7 +435,6 @@ begin
     affichagePlateau(plateau,affichage);
     miseAJourRenderer(affichage);
   end;
-  
 end;
 
 function trouverXemeConnexion(plateau: TPlateau; joueur: TJoueur;nbr:Integer): TConnexion;
