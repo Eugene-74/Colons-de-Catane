@@ -328,14 +328,9 @@ begin
     if(plat.Grille[coordHexa.x,coordHexa.y].Numero <> -1) then
     begin
       tailleT := tailleTexte(IntToStr(plat.Grille[coordHexa.x,coordHexa.y].Numero), 40);
-      coord := FCoord(affichage.xGrid+coordCart.x - tailleT.x div 2,affichage.yGrid+coordCart.y - 50 div 2 - 5);
+      coord := FCoord(affichage.xGrid+coordCart.x - tailleT.x div 2,affichage.yGrid+coordCart.y - 50 div 2 -2);
       affichageTexte(IntToStr(plat.Grille[coordHexa.x,coordHexa.y].Numero), 40, coord, FCouleur(0,0,0,255), affichage)
     end;
-    
-    // if plat.Grille[coordHexa.x,coordHexa.y].Numero div 10 >= 1 then
-    //     affichageTexte(IntToStr(plat.Grille[coordHexa.x,coordHexa.y].Numero), 40, coord, FCouleur(0,0,0,255), affichage)
-    // else if (plat.Grille[coordHexa.x,coordHexa.y].Numero <> -1 )then
-    //     affichageTexte(' ' + IntToStr(plat.Grille[coordHexa.x,coordHexa.y].Numero), 40, coord, FCouleur(0,0,0,255), affichage);
 end;
 
 {Affiche un hexagone à l'ecran
