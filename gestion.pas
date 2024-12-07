@@ -402,15 +402,10 @@ begin
 end;
 
 procedure partie(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
-var gagnant : integer;
-  gagner : boolean;
 begin
   repeat
     tour(joueurs,plateau,affichage);
-    //TODO la partie se finie tout le temps après le premier tour avec cette ligne
-    //gagner := (verificationPointsVictoire(plateau,joueurs,gagnant,affichage) <> -1);
-    gagner := False;
-  until (gagner);
+  until (verificationPointsVictoire(plateau,joueurs,affichage));
 
 end;
 

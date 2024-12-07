@@ -12,7 +12,7 @@ procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; v
 procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 procedure affichageGagnant(var affichage: TAffichage);
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
-function verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs; var gagnant: Integer;var affichage : TAffichage):Integer;
+function verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs;var affichage : TAffichage):Boolean;
 procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 function resteEmplacementConnexion(var affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
 
@@ -590,14 +590,16 @@ end;
 
 
 
-function verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs; var gagnant: Integer;var affichage : TAffichage):Integer;
+function verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs;var affichage : TAffichage):Boolean;
 var
   plusGrandeConnexion,plusDeplacementSouillard : Boolean;
-  id,i,nombreDeGagnant : Integer;
+  id,i,nombreDeGagnant,gagnant : Integer;
   points,longueurRoutes : array of Integer;
   text : String;
 
 begin
+  verificationPointsVictoire := False;
+
   gagnant := -1;
   nombreDeGagnant := 0;
 
@@ -674,11 +676,14 @@ begin
       end;
   if (nombreDeGagnant > 1 )then
     affichageInformation(text + 'vienent de gagner la partie en dépassant les 10 points au même tour', 25, FCouleur(0,0,0,255), affichage)
-  else
+  else if (nombreDeGagnant =1 )then
     affichageInformation(text+ 'viens de gagner la partie en dépassant les 10 points', 25, FCouleur(0,0,0,255), affichage);
   
-  affichageGagnant(affichage);
-  verificationPointsVictoire := gagnant;
+  if(gagnant <> -1) then
+  begin
+    affichageGagnant(affichage);
+    verificationPointsVictoire := True;
+  end;
 end;
 
 
