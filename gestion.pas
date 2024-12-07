@@ -324,11 +324,22 @@ end;
 procedure gestionEchange4Pour1(affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);
 var ressource1,ressource2 : TRessource;
 begin
-  affichageInformation(joueurs[id].Nom+'Veuiller choisir la ressource que vous voulez recevoir.',25,COULEUR_TEXT_VERT,affichage);
-  selectionRessource(affichage,ressource1,'Selectionnez la ressource que vous souhaitez');
+  selectionRessource(affichage,ressource1,'Selectionnez la ressource recevoir (1)',joueurs);
 
-  affichageInformation(joueurs[id].Nom+'Veuiller choisir le type des ressources que vous voulez utiliser.',25,COULEUR_TEXT_VERT,affichage);
-  selectionRessource(affichage,ressource2,'Selectionnez la ressource que vous souhaitez');
+  selectionRessource(affichage,ressource2,'Selectionnez la ressource que vous voulez donner (4)',joueurs);
+
+  if joueurs[id].Ressources[ressource2] >= 4 then
+  begin
+    joueurs[id].Ressources[ressource2] := joueurs[id].Ressources[ressource2] - 4;
+    joueurs[id].Ressources[ressource1] := joueurs[id].Ressources[ressource1] + 1;
+    jouerSonValide(affichage, true);
+    affichageInformation('Echange 4 pour 1 réussi.', 25, COULEUR_TEXT_VERT, affichage);
+  end
+  else
+  begin
+    jouerSonValide(affichage, false);
+    affichageInformation('Echange 4 pour 1 impossible.', 25, COULEUR_TEXT_VERT, affichage);
+  end;
 
   affichageTour(plateau, joueurs, id, affichage);
 end;
@@ -494,7 +505,7 @@ var ressource : TRessource;
 begin
   // CHOISIR 2 CONNAISSANCE
 
-  selectionRessource(affichage,ressource,'Selectionnez la ressource que vous souhaitez');
+  selectionRessource(affichage,ressource,'Selectionnez la ressource que vous souhaitez récupperer 2 fois',joueurs);
   joueurs[id].ressources[ressource] := joueurs[id].ressources[ressource] + 2;
 
   affichageTour(plateau, joueurs, Id, affichage);

@@ -17,7 +17,7 @@ procedure affichageSouillard(plat: TPlateau; var affichage: TAffichage);
 
 procedure affichageConnexion(connexion : TConnexion; var affichage : TAffichage);
 procedure echangeRessources(joueurs: TJoueurs; idJoueurActuel:Integer; var idJoueurEchange: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
-procedure selectionRessource(var affichage: TAffichage; var ressource: TRessource;text: String);
+procedure selectionRessource(var affichage: TAffichage; var ressource: TRessource;text: String;joueurs : Tjoueurs);
 
 procedure selectionDepouiller(var ressource: TRessource; idJoueurActuel:Integer; var idJoueurAVoler: Integer; joueurs: TJoueurs; var affichage: TAffichage;text: String);
 
@@ -41,9 +41,12 @@ procedure affichageFond(var affichage: TAffichage);
 procedure afficherGIF(const FileName: string; var affichage: TAffichage);
 
 implementation
+
+procedure affichageTexteAvecSautsDeLigne(text: String; taille: Integer; coord: TCoord; couleur: TSDL_Color; var affichage: TAffichage; maxWidth: Integer);forward;
+
 function tailleTexte(texte: AnsiString; taille: Integer): Tcoord;forward; 
 
-procedure affichageSelectionRessource(var boutonValider: TBouton; var affichage: TAffichage; var grille: TGrille;text : String);forward;
+procedure affichageSelectionRessource(var boutonValider: TBouton; var affichage: TAffichage; var grille: TGrille;text : String;joueurs : Tjoueurs);forward;
 
 procedure affichageScore(joueur: TJoueur; var affichage: TAffichage);forward;
 procedure affichageCarteTutorat(carteTutorat: TCarteTutorat; idCarte: Integer; coord: TCoord; var affichage: TAffichage);forward;
@@ -432,11 +435,87 @@ begin
 
     affichageZone(coord.x+150,coord.y-10,60,60,2,affichage);
     affichageTexte(IntToStr(carteTutorat.nbr), 25, FCoord(coord.x+160,coord.y-10), FCouleur(0,200,0,255), affichage);
-    //TODO patch (faire un système de détection de retour à la ligne)
     affichageTexte(IntToStr(carteTutorat.utilisee), 25, FCoord(coord.x+160,coord.y+15), FCouleur(200,0,0,255), affichage);
 
     affichageTexte(carteTutorat.nom, 25, FCoord(coord.x+10,coord.y+130), FCouleur(0,0,0,255), affichage);
-    affichageTexte(carteTutorat.description, 17, FCoord(coord.x+10,coord.y+170), FCouleur(0,0,0,255), affichage);
+    //TODO patch (faire un système de détection de retour à la ligne)
+    
+    // affichageTexte(carteTutorat.description, 17, FCoord(coord.x+10,coord.y+170), FCouleur(0,0,0,255), affichage);
+    affichageTexteAvecSautsDeLigne(carteTutorat.description, 17, FCoord(coord.x+10,coord.y+170), FCouleur(0,0,0,255), affichage, 180);
+end;
+
+
+
+procedure affichageTexteAvecSautsDeLigne(text: String; taille: Integer; coord: TCoord; couleur: TSDL_Color; var affichage: TAffichage; maxWidth: Integer);
+var
+  police: PTTF_Font;
+  words: array of String;
+  line, currentLine: AnsiString;
+  i, textWidth, textHeight: Integer;
+  wordCount: Integer;
+begin
+  if TTF_Init() = -1 then
+  begin
+    writeln('Erreur lors de l''initialisation de SDL_ttf : ', TTF_GetError);
+    exit;
+  end;
+
+  police := TTF_OpenFont('Assets/OpenSans-Regular.ttf', taille);
+  if police = nil then
+  begin
+    writeln('Erreur lors de l''ouverture de la police : ', TTF_GetError);
+    TTF_Quit();
+    exit;
+  end;
+
+  // Split the text into words
+  wordCount := 0;
+  for i := 1 to Length(text) do
+    if text[i] = ' ' then
+      Inc(wordCount);
+  SetLength(words, wordCount + 1);
+
+  wordCount := 0;
+  line := '';
+  for i := 1 to Length(text) do
+  begin
+    if text[i] = ' ' then
+    begin
+      words[wordCount] := line;
+      Inc(wordCount);
+      line := '';
+    end
+    else
+      line := line + text[i];
+  end;
+  words[wordCount] := line;
+
+  currentLine := '';
+  for i := 0 to High(words) do
+  begin
+    if currentLine = '' then
+      currentLine := words[i]
+    else
+      currentLine := currentLine + ' ' + words[i];
+
+    TTF_SizeUTF8(police, PChar(currentLine), @textWidth, @textHeight);
+
+    if textWidth > maxWidth then
+    begin
+      currentLine := StringReplace(currentLine, ' ' + words[i], '', []);
+      affichageTexte(currentLine, taille, coord, couleur, affichage);
+      coord.y := coord.y + textHeight;
+      currentLine := words[i];
+    end;
+  end;
+
+  if currentLine <> '' then
+  begin
+    affichageTexte(currentLine, taille, coord, couleur, affichage);
+  end;
+
+  TTF_CloseFont(police);
+  TTF_Quit();
 end;
 
 procedure affichageCartesTutorat(joueur: TJoueur; var affichage: TAffichage);
@@ -708,7 +787,7 @@ begin
   tailleTexte := FCoord(textWidth,textHeight);
 end;
 
-procedure affichageSelectionRessource(var boutonValider: TBouton; var affichage: TAffichage; var grille: TGrille;text : String);
+procedure affichageSelectionRessource(var boutonValider: TBouton; var affichage: TAffichage; var grille: TGrille;text : String;joueurs : TJoueurs);
 var ressource: TRessource;
     coord,coordCart: Tcoord;
     i,j: Integer;
@@ -718,15 +797,18 @@ begin
     affichageFond(affichage);
     attendre(66);
 
+    for i := 0 to High(joueurs) do
+    begin
+      affichageScore(joueurs[i], affichage);
+    end;
+
     coord := FCoord(450,70);
     affichageZone(coord.x,coord.y,1050,930,3,affichage);
 
     affichageTexte('Selection de ressource', 35, FCoord(750,90), FCouleur(0,0,0,255), affichage);
     
     tailleText := tailleTexte(text,25);
-    
-    coord := FCoord((1920 - tailleText.x) div 2, 130);
-    affichageTexte(text, 25, coord, FCouleur(0,0,0,255), affichage);
+    affichageTexte(text, 25,  FCoord((WINDOW_W - tailleText.x) div 2, 130), FCouleur(0,0,0,255), affichage);
 
     coord := FCoord(800,300);
     SetLength(Grille,3,2);
@@ -750,7 +832,7 @@ begin
     affichageImageBouton(boutonValider,affichage);
 end;
 
-procedure selectionRessource(var affichage: TAffichage; var ressource: TRessource;text: String);
+procedure selectionRessource(var affichage: TAffichage; var ressource: TRessource;text: String;joueurs: TJoueurs);
 var coord,coordHexa: Tcoord;
     grille: TGrille;
     valider: Boolean;
@@ -758,7 +840,7 @@ var coord,coordHexa: Tcoord;
 begin
     nettoyageAffichage(affichage);
     attendre(66);
-    affichageSelectionRessource(boutonValider,affichage,grille,text);
+    affichageSelectionRessource(boutonValider,affichage,grille,text,joueurs);
     miseAJourRenderer(affichage);
 
     valider := False;
@@ -785,7 +867,7 @@ var boutonValider: TBouton;
 begin
     nettoyageAffichage(affichage);
     attendre(66);
-    affichageSelectionRessource(boutonValider,affichage,grille,text);
+    affichageSelectionRessource(boutonValider,affichage,grille,text,joueurs);
     affichageJoueurInput(joueurs,idJoueurAVoler,FCoord(800,600),affichage,boutons);
     miseAJourRenderer(affichage);
 
