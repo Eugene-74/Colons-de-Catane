@@ -124,12 +124,12 @@ begin
         else
         begin
           writeln(conterNombrePersonnes(plateau.Personnes,true,joueur));
-          affichageInformation('Vous avez déjà atteint la limite de 5 élèves.', 25, FCouleur(255, 0, 0, 255), affichage);
+          affichageInformation('Vous avez déjà atteint la limite de 5 élèves.', 25, COULEUR_TEXT_ROUGE, affichage);
           jouerSonValide(affichage,false);
         end
       else
         begin
-        affichageInformation('Vous n''avez pas les ressources necessaires pour acheter un eleve.', 25, FCouleur(0,0,0,255), affichage);
+        affichageInformation('Vous n''avez pas les ressources necessaires pour acheter un eleve.', 25,COULEUR_TEXT_ROUGE, affichage);
         jouerSonValide(affichage,false);
         end;
 
@@ -144,7 +144,7 @@ begin
         end
         else
           begin
-            affichageInformation('Vous n''avez pas les ressources necessaires pour acheter une connexion.', 25, FCouleur(0,0,0,255), affichage);
+            affichageInformation('Vous n''avez pas les ressources necessaires pour acheter une connexion.', 25, COULEUR_TEXT_ROUGE, affichage);
             jouerSonValide(affichage,false);
           end
       else
@@ -168,12 +168,12 @@ begin
           end
           else
           begin
-            affichageInformation('Vous n''avez pas les ressources nécessaires pour changer un eleve en professeur.', 25, FCouleur(0,0,0,255), affichage);
+            affichageInformation('Vous n''avez pas les ressources nécessaires pour changer un eleve en professeur.', 25, COULEUR_TEXT_ROUGE, affichage);
             jouerSonValide(affichage,false);
           end
         else
         begin
-          affichageInformation('Vous avez déjà atteint la limite de 4 professeurs.', 25, FCouleur(255, 0, 0, 255), affichage);
+          affichageInformation('Vous avez déjà atteint la limite de 4 professeurs.', 25, COULEUR_TEXT_ROUGE, affichage);
           jouerSonValide(affichage,false);
         end
       else
@@ -220,6 +220,7 @@ begin
     if(not valide)then
       begin
       affichagePlateau(plateau,affichage);
+      resteEmplacementEleve(affichage,plateau,joueur);
       miseAJourRenderer(affichage);
       end;
   until valide;
@@ -269,17 +270,7 @@ begin
     end
     else
         personneAdjacente := True;
-  // 4. Vérifie si au moins 1 des hexagones est dans le plateau
-  if (( not dansLePlateau(plateau,HexagonesCoords[0]) and not dansLePlateau(plateau,HexagonesCoords[1]) and not dansLePlateau(plateau,HexagonesCoords[2]) )
-      ) then 
-    begin
-    PersonneValide:= False;      
 
-    jouerSonValide(affichage,false);
-    affichageInformation('Au moins 1 des hexagones choisis doit etre dans le plateau', 25, FCouleur(0,0,0,255), affichage);
-    
-    Exit;
-    end; 
   if encontactAutreconnexionEleve(plateau,HexagonesCoords,joueurActuel) then
   begin
     PersonneValide:=False;
@@ -297,10 +288,7 @@ var
   valide : Boolean;
 begin
   SetLength(HexagonesCoords,3);
-  if estEleve then
-    affichageInformation('Cliquez sur trois hexagones entre lesquels vous voulez placer l''eleve', 25, FCouleur(0,0,0,255), affichage)
-  else
-    affichageInformation('Cliquez sur trois hexagones entre lesquels vous voulez placer le professeur', 25, FCouleur(0,0,0,255), affichage);
+  
   for i := 0 to 2 do
   begin
     repeat 
@@ -405,7 +393,9 @@ begin
           ProfesseurCoords[2] := HexagonesCoords[2];
           indexEleve := i;
           Exit;
-        end;
+        end
+        else
+          affichageInformation('Il n''y a pas d''élève à vous ici.', 25, FCouleur(255, 0, 0, 255), affichage);
       end;
     end;
   end
@@ -421,7 +411,6 @@ var
   indexEleve: Integer;
   valide: Boolean;
 begin
-
   affichageInformation('Cliquez sur 3 hexagones entre lesquels vous voulez placer le professeur.', 25, FCouleur(0, 0, 0, 255), affichage);
   repeat
     HexagonesCoords := ClicPersonne(affichage,plateau, False);
@@ -429,9 +418,12 @@ begin
     if(not valide)then
       begin
       affichagePlateau(plateau,affichage);
+      resteEleve(affichage,plateau,joueurActuel);
       miseAJourRenderer(affichage);
+      jouerSonValide(affichage,valide);
       end;
   until valide;
+  jouerSonValide(affichage,valide);
   if indexEleve <> -1 then
   begin
     plateau.Personnes[indexEleve].Position := ProfesseurCoords;
@@ -771,13 +763,6 @@ begin
     enContactAvecPersonne := enContactConnexionEleve(plateau, coords, joueur);
     enContactAvecAutreConnexion := not aucuneConnexionAdjacente(coords, plateau, joueur,affichage);
 
-  // 3. Verifie si en contact avec un eleve ou une connexion
-  // if enContactAutreEleveConnexion(plateau,coords,joueur,affichage)  or adjacence3Connexions(coords,plateau,joueur,affichage) then 
-  // begin
-  //   connexionValide:= False;
-  //   exit;
-  // end;
-    // TODO pose probleme de acces violation au  placement de connexion du deuxieme joeuur apres un placement du premier joueur
   if not enContactAvecPersonne then
   begin
     if  not enContactAvecAutreConnexion then
@@ -815,7 +800,6 @@ begin
   begin
     repeat 
       clicHexagone(affichage,HexagonesCoords[i]);
-      writeln('clic, ',HexagonesCoords[i].x,' ',HexagonesCoords[i].y);
       valide := dansLaGrille(plateau,HexagonesCoords[i]);
       if(not valide)then
       begin
