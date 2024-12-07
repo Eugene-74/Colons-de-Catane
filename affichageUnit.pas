@@ -452,7 +452,7 @@ begin
     affichageTexte(IntToStr(carteTutorat.nbr), 15, FCoord(coord.x+160,coord.y-10), FCouleur(0,200,0,255), affichage);
     affichageTexte(IntToStr(carteTutorat.utilisee), 15, FCoord(coord.x+160,coord.y+5), FCouleur(200,0,0,255), affichage);
 
-    affichageTexte(carteTutorat.nom, 20, FCoord(coord.x + 100,coord.y+110), FCouleur(0,0,0,255), affichage);
+    affichageTexte(carteTutorat.nom, 20, FCoord(coord.x +10,coord.y+110), FCouleur(0,0,0,255), affichage);
 
     affichageTexteAvecSautsDeLigne(carteTutorat.description, 14, FCoord(coord.x+10,coord.y+150), FCouleur(0,0,0,255), affichage, 165);
 end;
