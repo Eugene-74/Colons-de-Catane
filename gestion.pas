@@ -213,8 +213,7 @@ begin
     affichageJoueurActuel(joueurs,i,affichage);
     placementEleve(plateau,affichage,joueurs[i]);
 
-    placeFauxConnexionAutourJoueur(affichage,plateau,joueurs[i].id);
-    placementConnexion(plateau,affichage,joueurs[i]);
+    placementConnexion(plateau,affichage,joueurs[i],true);
     end;
 
   for i:=length(joueurs)-1 downto 0 do
@@ -223,8 +222,7 @@ begin
     affichageJoueurActuel(joueurs,i,affichage);
     placementEleve(plateau,affichage,joueurs[i]);
 
-    placeFauxConnexionAutourJoueur(affichage,plateau,joueurs[i].id);
-    placementConnexion(plateau,affichage,joueurs[i]);
+    placementConnexion(plateau,affichage,joueurs[i],true);
     end;
 
 end;
@@ -459,12 +457,12 @@ end;
 
 procedure utiliserCarte1(var plateau : TPlateau; var affichage : TAffichage;joueurs : Tjoueurs;id : Integer);
 begin
-  placementConnexion(plateau,affichage,joueurs[id]);
+  placementConnexion(plateau,affichage,joueurs[id],false);
   attendre(16);
   if (resteEmplacementConnexion(affichage,plateau,joueurs[id]))then
   begin
     attendre(16);
-    placementConnexion(plateau,affichage,joueurs[id]);
+    placementConnexion(plateau,affichage,joueurs[id],false);
   end
   else
   begin

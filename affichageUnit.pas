@@ -33,12 +33,13 @@ procedure affichageScoreAndClear(joueur:TJoueur; var affichage: TAffichage);
 procedure affichageCartesTutoratAndRender(joueur: TJoueur; var affichage: TAffichage);
 procedure affichageCartesTutorat(joueur: TJoueur; var affichage: TAffichage);
 procedure affichageDes(de1,de2:Integer; var affichage: TAffichage);
-procedure affichageHexagone(plat: TPlateau; var affichage: TAffichage; coordHexa: TCoord);
+procedure affichageHexagone(plat: TPlateau; var affichage: TAffichage; coordHexa: TCoord; preview : Boolean);
 
 procedure affichageFond(var affichage: TAffichage);
 
 
 procedure afficherGIF(const FileName: string; var affichage: TAffichage);
+procedure affichageDetailsHexagone(coordHexa,coordCart: TCoord; plat: TPlateau; var affichage: TAffichage;preview : Boolean);
 
 implementation
 
@@ -125,6 +126,9 @@ begin
     affichage.texturePlateau.textureSouillard := chargerTexture(affichage, 'souillard');
     affichage.texturePlateau.textureProfesseur := chargerTexture(affichage, 'professeur');
     affichage.texturePlateau.texturePoint := chargerTexture(affichage, 'point');
+
+    affichage.texturePlateau.texturePreview := chargerTexture(affichage, 'preview');
+
 end;
 
 {Affiche le fond de l'ecran en blanc
@@ -313,7 +317,7 @@ begin
     SDL_RenderCopyEx(affichage.renderer, chargerTexture(affichage, 'DiceFaces/' + IntToStr(de)), nil, @destination_rect, rotation, nil, SDL_FLIP_NONE);
 end;
 
-procedure affichageDetailsHexagone(coordHexa,coordCart: TCoord; plat: TPlateau; var affichage: TAffichage);
+procedure affichageDetailsHexagone(coordHexa,coordCart: TCoord; plat: TPlateau; var affichage: TAffichage;preview : Boolean);
 var coord,tailleT : Tcoord;
     texture: PSDL_Texture;
 begin
@@ -334,6 +338,8 @@ begin
     end;
 end;
 
+
+
 {Affiche un hexagone à l'ecran
 Preconditions :
     - plat : le plateau de jeu
@@ -341,15 +347,21 @@ Preconditions :
     - q,r : les coordonnees de l'hexagone
 Postconditions :
     - affichage : la structure contenant le renderer}
-procedure affichageHexagone(plat: TPlateau; var affichage: TAffichage; coordHexa: TCoord);
+procedure affichageHexagone(plat: TPlateau; var affichage: TAffichage; coordHexa: TCoord; preview : Boolean);
 var coordCart: TCoord;
 begin
     hexaToCart(coordHexa,coordCart,tailleHexagone div 2);
 
-    if (plat.Grille[coordHexa.x,coordHexa.y].ressource <> Aucune) then
+    if(not preview) then
+    begin
+      if (plat.Grille[coordHexa.x,coordHexa.y].ressource <> Aucune) then
         affichageImage(affichage.xGrid+coordCart.x-(tailleHexagone div 2),affichage.yGrid+coordCart.y-(tailleHexagone div 2),tailleHexagone,tailleHexagone,affichage.texturePlateau.textureRessource[plat.Grille[coordHexa.x,coordHexa.y].ressource],affichage);
-    
-    affichageDetailsHexagone(coordHexa,coordCart,plat,affichage);
+      affichageDetailsHexagone(coordHexa,coordCart,plat,affichage,false);
+    end
+    else
+      if (plat.Grille[coordHexa.x,coordHexa.y].ressource <> Aucune) then
+        affichageImage(affichage.xGrid+coordCart.x-(tailleHexagone div 2),affichage.yGrid+coordCart.y-(tailleHexagone div 2),tailleHexagone,tailleHexagone,affichage.texturePlateau.texturePreview,affichage);
+
 end;
 
 {Affiche le souillard à l'ecran
@@ -364,7 +376,7 @@ begin
     hexaToCart(plat.Souillard.Position,coord,tailleHexagone div 2);
     
     affichageImage(affichage.xGrid+coord.x-(tailleSouillard div 2),affichage.yGrid+coord.y-(Round(tailleSouillard*1.3) div 2),tailleSouillard,Round(tailleSouillard*1.3),affichage.texturePlateau.textureSouillard,affichage);
-    affichageDetailsHexagone(plat.Souillard.Position,coord,plat,affichage);
+    affichageDetailsHexagone(plat.Souillard.Position,coord,plat,affichage,false);
 end;
 
 {Affiche la grille à l'ecran
@@ -382,7 +394,7 @@ begin
     for q:=0 to taille-1 do
         for r:=0 to taille-1 do
             if (plat.Grille[q,r].ressource <> Aucune) then
-                affichageHexagone(plat,affichage,FCoord(q,r));
+                affichageHexagone(plat,affichage,FCoord(q,r),false);
 end;
 
 procedure affichageDes(de1,de2:Integer; var affichage: TAffichage);
@@ -601,6 +613,7 @@ begin
     miseAJourRenderer(affichage);
     attendre(50);
 end;
+
 
 procedure affichageJoueurActuel(joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
 begin

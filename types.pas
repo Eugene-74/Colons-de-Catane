@@ -103,6 +103,7 @@ type
     textureSouillard: PSDL_Texture;
     textureProfesseur: PSDL_Texture;
     texturePoint: PSDL_Texture;
+    texturePreview: PSDL_Texture;
   end;
 
   TBouton = record
