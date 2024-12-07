@@ -15,7 +15,7 @@ function FCouleur(r, g, b, a: Integer): TSDL_Color;
 function FRect(x, y, w, h: Integer): TSDL_Rect;
 function FBouton(x, y, w, h: Integer; texte,valeur: String): TBouton;
 procedure calculPosConnexion(connexion: TConnexion; var coord: Tcoord; var longueur: Real; var angle: Real);
-procedure recupererCouleurJoueur(joueurId: Integer; var couleur: TSDL_Color);
+function recupererCouleurJoueur(joueurId: Integer):TSDL_Color;
 function calculPosPersonne(personne : TPersonne): Tcoord;
 procedure ajouterBoutonTableau(bouton: TBouton; var boutons: TBoutons);
 function dansLePlateau(plateau : TPlateau; coord : Tcoord): boolean;
@@ -162,7 +162,8 @@ Preconditions :
     - joueurId : l'identifiant du joueur
 Postconditions :
     - couleur (TSDL_Color) : la couleur associee au joueur}
-procedure recupererCouleurJoueur(joueurId: Integer; var couleur: TSDL_Color);
+function recupererCouleurJoueur(joueurId: Integer):TSDL_Color;
+var couleur: TSDL_Color;
 begin
     case joueurId of
         0:
@@ -182,6 +183,7 @@ begin
         -4:
             couleur := COULEUR_PREVIEW_JAUNE;
     end;
+  recupererCouleurJoueur := couleur;
 end;
 
 {Calcul les coordonnees d'une personne

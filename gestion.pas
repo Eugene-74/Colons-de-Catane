@@ -274,6 +274,7 @@ begin
   plateau.des2 := des2;
 
   affichageDes(plateau.des1,plateau.des2,affichage);
+  tropDeRessources := False;
 
   if(des = 7)then
     begin

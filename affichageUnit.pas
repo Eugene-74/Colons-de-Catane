@@ -169,7 +169,7 @@ var couleur: TSDL_Color;
     colorTexture: PSDL_Texture;
 begin
     epaisseur := 6;
-    recupererCouleurJoueur(connexion.IdJoueur,couleur);
+    couleur := recupererCouleurJoueur(connexion.IdJoueur);
     calculPosConnexion(connexion,coord,longueur,angle);
 
     destination_rect.x:=affichage.xGrid+coord.x-Round(epaisseur*abs(Sin(angle))/2)-tailleHexagone div 4+epaisseur div 2;
@@ -201,7 +201,8 @@ begin
     else
         texture := affichage.texturePlateau.textureProfesseur;
 
-    recupererCouleurJoueur(personne.IdJoueur,couleur);
+    couleur := recupererCouleurJoueur(personne.IdJoueur);
+
     SDL_SetTextureColorMod(texture, couleur.r, couleur.g, couleur.b);
 
     affichageImage(affichage.xGrid + coord.x -(tailleEleve div 2),affichage.yGrid + coord.y -(tailleEleve div 2),tailleEleve,tailleEleve,texture,affichage);
@@ -395,7 +396,8 @@ var coord: Tcoord;
     ressource: TRessource;
 begin
     coord := FCoord(25,25+joueur.id*75);
-    affichageTexte(joueur.Nom + ': ', 25, coord, FCouleur(0,0,0,255), affichage);
+    
+    affichageTexte(joueur.Nom + ': ', 25, coord,  recupererCouleurJoueur(joueur.Id), affichage);
 
     coord.x := coord.x + 13*(length(joueur.Nom)+2);
     affichageImage(coord.x,coord.y+7,25,25,affichage.texturePlateau.texturePoint,affichage);
@@ -603,7 +605,7 @@ end;
 procedure affichageJoueurActuel(joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
 begin
     affichageZone(25,350,300,40,0,affichage);
-    affichageTexte('Tour : ' + joueurs[idJoueurActuel].Nom, 25, FCoord(25,350), FCouleur(0,0,0,255), affichage);
+    affichageTexte('Tour de : ' + joueurs[idJoueurActuel].Nom, 25, FCoord(25,350), recupererCouleurJoueur(idJoueurActuel), affichage);
 end;
 
 procedure clicBouton(var affichage: TAffichage; var boutons: TBoutons; var valeurBouton: String);
