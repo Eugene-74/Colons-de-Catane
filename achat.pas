@@ -79,7 +79,6 @@ end;
 procedure tirerCarteTutorat(var cartesTutorat : TCartesTutorat;var  joueur : Tjoueur);
 var  i,j,nbrTotal,min,max: Integer;
 begin
-  Randomize();
   nbrTotal :=0;
   for i := 0 to 4 do
     nbrTotal :=nbrTotal  + cartesTutorat[i].nbr;
@@ -89,7 +88,9 @@ begin
     Exit;
   end;
 
-  i := Random(nbrTotal) + 1;
+  randomize;
+  i := Random(nbrTotal)+1;
+
   min := 1;
   max := 0;
 
@@ -107,6 +108,9 @@ begin
     end;
 
 end;
+
+
+
 
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
 begin
@@ -165,8 +169,6 @@ begin
         if (conterNombrePersonnes(plateau.Personnes,false,joueur) < 4) then
           if(resteEleve(affichage,plateau,joueur))then
           begin
-
-      
 
             enleverRessources(joueur,COUT_PROFESSEUR);
 
@@ -413,9 +415,8 @@ var
   valide: Boolean;
 begin
 
+  affichageInformation('Cliquez sur 3 hexagones entre lesquels vous voulez placer le professeur.', 25, FCouleur(0, 0, 0, 255), affichage);
   repeat
-    // ne pas reaficher a chaque fois pour avoir les erreur
-    // affichageInformation('Cliquez sur 3 hexagones entre lesquels vous voulez placer le professeur.', 25, FCouleur(0, 0, 0, 255), affichage);
     HexagonesCoords := ClicPersonne(affichage, False);
     valide := professeurValide(affichage, plateau, joueurActuel, HexagonesCoords, ProfesseurCoords, indexEleve);
   until valide;

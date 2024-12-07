@@ -17,8 +17,10 @@ procedure affichageSouillard(plat: TPlateau; var affichage: TAffichage);
 
 procedure affichageConnexion(connexion : TConnexion; var affichage : TAffichage);
 procedure echangeRessources(joueurs: TJoueurs; idJoueurActuel:Integer; var idJoueurEchange: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
-procedure selectionRessource(var affichage: TAffichage; var ressource: TRessource);
-procedure selectionDepouiller(var ressource: TRessource; idJoueurActuel:Integer; var idJoueurAVoler: Integer; joueurs: TJoueurs; var affichage: TAffichage);
+procedure selectionRessource(var affichage: TAffichage; var ressource: TRessource;text: String);
+
+procedure selectionDepouiller(var ressource: TRessource; idJoueurActuel:Integer; var idJoueurAVoler: Integer; joueurs: TJoueurs; var affichage: TAffichage;text: String);
+
 procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
 procedure clicAction(var affichage: TAffichage; var valeurBouton: String);
 
@@ -39,6 +41,9 @@ procedure affichageFond(var affichage: TAffichage);
 procedure afficherGIF(const FileName: string; var affichage: TAffichage);
 
 implementation
+function tailleTexte(texte: AnsiString; taille: Integer): Tcoord;forward; 
+
+procedure affichageSelectionRessource(var boutonValider: TBouton; var affichage: TAffichage; var grille: TGrille;text : String);forward;
 
 procedure affichageScore(joueur: TJoueur; var affichage: TAffichage);forward;
 procedure affichageCarteTutorat(carteTutorat: TCarteTutorat; idCarte: Integer; coord: TCoord; var affichage: TAffichage);forward;
@@ -682,10 +687,33 @@ begin
     end;
 end;
 
-procedure affichageSelectionRessource(var boutonValider: TBouton; var affichage: TAffichage; var grille: TGrille);
+function tailleTexte(texte: AnsiString; taille: Integer): Tcoord;
+var textWidth,textHeight : Integer;
+  font: PTTF_Font;
+begin
+  if TTF_Init() = -1 then
+  begin
+    writeln('Erreur lors de l''initialisation de SDL_ttf : ', TTF_GetError);
+    exit;
+  end;
+  font := TTF_OpenFont('Assets/OpenSans-Regular.ttf', 25);
+  if font = nil then
+  begin
+      writeln('Erreur lors de l''ouverture de la police : ', TTF_GetError);
+      exit;
+  end;
+  TTF_SizeUTF8(font, PChar(texte), @textWidth, @textHeight);
+  TTF_CloseFont(font);
+
+  tailleTexte := FCoord(textWidth,textHeight);
+end;
+
+procedure affichageSelectionRessource(var boutonValider: TBouton; var affichage: TAffichage; var grille: TGrille;text : String);
 var ressource: TRessource;
     coord,coordCart: Tcoord;
     i,j: Integer;
+    tailleText : Tcoord;
+
 begin
     affichageFond(affichage);
     attendre(66);
@@ -694,8 +722,11 @@ begin
     affichageZone(coord.x,coord.y,1050,930,3,affichage);
 
     affichageTexte('Selection de ressource', 35, FCoord(750,90), FCouleur(0,0,0,255), affichage);
-
-    affichageTexte('Selectionnez la ressource que vous souhaitez', 25, FCoord(680,130), FCouleur(0,0,0,255), affichage);
+    
+    tailleText := tailleTexte(text,25);
+    
+    coord := FCoord((1920 - tailleText.x) div 2, 130);
+    affichageTexte(text, 25, coord, FCouleur(0,0,0,255), affichage);
 
     coord := FCoord(800,300);
     SetLength(Grille,3,2);
@@ -719,7 +750,7 @@ begin
     affichageImageBouton(boutonValider,affichage);
 end;
 
-procedure selectionRessource(var affichage: TAffichage; var ressource: TRessource);
+procedure selectionRessource(var affichage: TAffichage; var ressource: TRessource;text: String);
 var coord,coordHexa: Tcoord;
     grille: TGrille;
     valider: Boolean;
@@ -727,7 +758,7 @@ var coord,coordHexa: Tcoord;
 begin
     nettoyageAffichage(affichage);
     attendre(66);
-    affichageSelectionRessource(boutonValider,affichage,grille);
+    affichageSelectionRessource(boutonValider,affichage,grille,text);
     miseAJourRenderer(affichage);
 
     valider := False;
@@ -743,7 +774,7 @@ begin
     end;
 end;
 
-procedure selectionDepouiller(var ressource: TRessource; idJoueurActuel:Integer; var idJoueurAVoler: Integer; joueurs: TJoueurs; var affichage: TAffichage);
+procedure selectionDepouiller(var ressource: TRessource; idJoueurActuel:Integer; var idJoueurAVoler: Integer; joueurs: TJoueurs; var affichage: TAffichage;text: String);
 var boutonValider: TBouton;
     grille: TGrille;
     valider: Boolean;
@@ -754,7 +785,7 @@ var boutonValider: TBouton;
 begin
     nettoyageAffichage(affichage);
     attendre(66);
-    affichageSelectionRessource(boutonValider,affichage,grille);
+    affichageSelectionRessource(boutonValider,affichage,grille,text);
     affichageJoueurInput(joueurs,idJoueurAVoler,FCoord(800,600),affichage,boutons);
     miseAJourRenderer(affichage);
 

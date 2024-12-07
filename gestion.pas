@@ -9,8 +9,10 @@ procedure partie(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffic
 
 
 implementation
+procedure enleverMoitierRessources(var joueur : Tjoueur);forward;
 
 procedure gestionEchange(affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);forward;
+procedure gestionEchange4Pour1(affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);forward;
 
 function chargerGrille(num : Integer): TGrille; forward;
 function chargementPlateau(num : Integer): TPlateau;forward;
@@ -192,9 +194,8 @@ begin
     end;
   end;
 
-  // on le fait avant sinon ça ne marche pas
   Randomize;
-  num :=nombreAleatoire(2);
+  num := random(2)+1;
 
   plateau := chargementPlateau(num);
 
@@ -259,10 +260,14 @@ end;
 
 procedure gestionDes(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 var
-  des,des1,des2,i: Integer;
+  des,des1,des2,i,totalRessources: Integer;
+  res : TRessource;
+  tropDeRessources : Boolean;
 begin
-  des1 := nombreAleatoire(6);
-  des2 := nombreAleatoire(6);
+  randomize;  
+  des1 := random(6)+1;
+  des2 := random(6)+1;
+
   des := des1 + des2;
 
   plateau.des1 := des1;
@@ -272,16 +277,29 @@ begin
 
   if(des = 7)then
     begin
-      deplacementSouillard(plateau,joueurs,affichage)
+      deplacementSouillard(plateau,joueurs,affichage);
+      for i := 0 to Length(joueurs) - 1 do
+      begin
+        totalRessources := 0;
+        for res := Low(TRessource) to High(TRessource) do
+          totalRessources := totalRessources + joueurs[i].ressources[res];
+        if totalRessources > 7 then
+        begin
+          tropDeRessources := True;
+          enleverMoitierRessources(joueurs[i]);
+        end;
+      end;
+      if(tropDeRessources) then
+        affichageInformation('Tout les joueurs qui avaient plus de 7 ressources on perdu la moitier de leur ressources à cause du souillard.',25,COULEUR_TEXT_ROUGE,affichage);
     end
   else
     begin
       distributionConnaissance(joueurs,plateau,des);
-      for i:=0 to length(joueurs)-1 do
-        begin
-        affichageScoreAndClear(joueurs[i],affichage);
-        end;
     end;
+  for i:=0 to length(joueurs)-1 do
+  begin
+    affichageScoreAndClear(joueurs[i],affichage);
+  end;
   miseAJourRenderer(affichage);
 end;
 
@@ -301,6 +319,18 @@ begin
   for res in [Physique..Mathematiques] do
     if( ressources1[res]<> ressources2[res]) then
       ressourcesEgales := False;
+end;
+
+procedure gestionEchange4Pour1(affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);
+var ressource1,ressource2 : TRessource;
+begin
+  affichageInformation(joueurs[id].Nom+'Veuiller choisir la ressource que vous voulez recevoir.',25,COULEUR_TEXT_VERT,affichage);
+  selectionRessource(affichage,ressource1,'Selectionnez la ressource que vous souhaitez');
+
+  affichageInformation(joueurs[id].Nom+'Veuiller choisir le type des ressources que vous voulez utiliser.',25,COULEUR_TEXT_VERT,affichage);
+  selectionRessource(affichage,ressource2,'Selectionnez la ressource que vous souhaitez');
+
+  affichageTour(plateau, joueurs, id, affichage);
 end;
 
 procedure gestionEchange(affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);
@@ -378,8 +408,11 @@ begin
         begin
         achatElements(joueurs[i], plateau, affichage,4);
         end
+      else if(valeurBouton = '4pour1')  then
+        gestionEchange4Pour1(affichage,plateau,joueurs,i)
       else if(valeurBouton = 'echange')  then
-        gestionEchange(affichage,plateau,joueurs,i)
+        // gestionEchange(affichage,plateau,joueurs,i)
+        gestionEchange4Pour1(affichage,plateau,joueurs,i)
       
       else if(valeurBouton = 'demarrer_musique')  then
           demarrerMusique(affichage)
@@ -441,7 +474,7 @@ begin
   else
     idJoueurAVoler := 0;
   
-  selectionDepouiller(ressource,id,idJoueurAVoler,joueurs,affichage);
+  selectionDepouiller(ressource,id,idJoueurAVoler,joueurs,affichage,'Selectionnez la ressource que vous souhaitez dépouiller et le joueur à dépoiller');
   
   if(ressource <> Rien) then
   begin
@@ -461,7 +494,7 @@ var ressource : TRessource;
 begin
   // CHOISIR 2 CONNAISSANCE
 
-  selectionRessource(affichage,ressource);
+  selectionRessource(affichage,ressource,'Selectionnez la ressource que vous souhaitez');
   joueurs[id].ressources[ressource] := joueurs[id].ressources[ressource] + 2;
 
   affichageTour(plateau, joueurs, Id, affichage);
@@ -521,6 +554,40 @@ var res : TRessource;
 begin
   for res in [Physique..Mathematiques] do
     joueur.ressources[res] := joueur.ressources[res] + ressources[res]
+end;
+
+
+
+procedure enleverMoitierRessources(var joueur : Tjoueur);
+var
+  res: TRessource;
+  totalRessources, ressourcesAEnlever, i,j,min,max: Integer;
+begin
+  totalRessources := 0;
+  for res in [Physique..Mathematiques] do
+    totalRessources := totalRessources + joueur.ressources[res];
+
+  ressourcesAEnlever := totalRessources div 2;
+
+  Randomize;
+
+  for j := 0 to ressourcesAEnlever - 1 do
+  begin
+    i := Random(totalRessources);
+    min := 0;
+    max := 0;
+    for res := Physique to Mathematiques do
+    begin
+      max := max + joueur.Ressources[res];
+      if (i >= min) and (i < max) then
+      begin
+        totalRessources := totalRessources - 1;
+        joueur.Ressources[res] := joueur.Ressources[res] - 1;
+        break;
+      end;
+      min := min + joueur.Ressources[res];
+    end;
+  end;
 end;
 
 end.
