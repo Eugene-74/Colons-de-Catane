@@ -114,7 +114,7 @@ begin
    // ELEVE
     1:
       if(aLesRessources(joueur,COUT_ELEVE)) then
-        if (conterNombrePersonnes(plateau.Personnes,true,joueur) < 4)  then
+        if (conterNombrePersonnes(plateau.Personnes,true,joueur) < 5)  then
           if(resteEmplacementEleve(affichage,plateau,joueur))then
           begin
           writeln(conterNombrePersonnes(plateau.Personnes,true,joueur));
@@ -129,7 +129,7 @@ begin
         else
         begin
           writeln(conterNombrePersonnes(plateau.Personnes,true,joueur));
-          affichageInformation('Vous avez déjà atteint la limite de 4 élèves.', 25, FCouleur(255, 0, 0, 255), affichage);
+          affichageInformation('Vous avez déjà atteint la limite de 5 élèves.', 25, FCouleur(255, 0, 0, 255), affichage);
           jouerSonValide(affichage,false);
         end
       else
