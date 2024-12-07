@@ -211,10 +211,9 @@ var running : Boolean;
     buttonClicked: Boolean;
 begin
     running := True;
-    verificationMusique(affichage);
     while running do
     begin
-        attendre(66);
+        attendre(16);
         while SDL_PollEvent(@event) <> 0 do
             case event.type_ of
                 SDL_QUITEV: HALT;
@@ -234,7 +233,6 @@ begin
                     if not buttonClicked then
                     begin
                         running := False;
-                        break;
                     end;
                 end;
             end;
@@ -508,11 +506,11 @@ end;
 
 procedure affichageInformation(texte: String; taille: Integer; couleur: TSDL_Color; var affichage: TAffichage);
 begin
-    attendre(30);
+    attendre(50);
     suppressionInformation(affichage);
     affichageTexte(texte, taille, FCoord(400,1025), couleur, affichage);
     miseAJourRenderer(affichage);
-    attendre(30);
+    attendre(50);
 end;
 
 procedure affichageJoueurActuel(joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
@@ -545,7 +543,6 @@ begin
                 running := False;
                 break;
             end;
-        attendre(66);
     end;
 end;
 
@@ -677,7 +674,6 @@ begin
                     ressources2[ressource] := max(0,ressources2[ressource] - 1);
             end;
         end;
-        //TODO Voir pour pas tout refresh à chaque fois
         nettoyageAffichage(affichage);
         affichageEchangeRessources(joueurs,idJoueurActuel,idJoueurEchange,ressources1,ressources2,affichage,boutons);
         miseAJourRenderer(affichage);
@@ -899,7 +895,7 @@ begin
         while ecritureNom do
         begin
             miseAJourRenderer(affichage);
-            attendre(16);
+            attendre(32);
             while SDL_PollEvent(@event) <> 0 do
             begin
                 if not ecritureNom then
@@ -951,6 +947,7 @@ begin
                                 nom := '';
                                 affichageNomJoueurInput(nom+'_',boutons[StrToInt(valeurBouton)],25,affichage);
                             end;
+                        attendre(16);
                         if ecritureNom = false then
                         begin
                             affichageNomJoueurInput(nom,boutons[StrToInt(valeurBouton)],25,affichage);
@@ -973,6 +970,7 @@ Postconditions :
 procedure miseAJourRenderer(var affichage :TAffichage);
 var i: Integer;
 begin
+    verificationMusique(affichage);
     for i:=0 to length(affichage.boutonsSysteme)-1 do
         affichageImageBouton(affichage.boutonsSysteme[i],affichage);
     SDL_RenderPresent(affichage.renderer);

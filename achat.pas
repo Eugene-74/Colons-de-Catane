@@ -723,6 +723,7 @@ begin
   connexionValide := True;
   enContactAvecAutreConnexion := False;
   // enContactAvecPersonne := False;
+  attendre(16);
 
 
   // 1. Verifie si une connexion existe dejà avec les mêmes coordonnees (independamment de l'ordre)
@@ -770,6 +771,7 @@ begin
 
     Exit;
     end;
+  attendre(16);
 end;
 
 
@@ -787,8 +789,9 @@ var
   coords: TCoords;
   valide : boolean;
 begin
+  attendre(16);
   affichageInformation('Cliquez sur 2 hexagones entre lesquels vous voulez placer la connexion', 25, FCouleur(0,0,0,255), affichage);
-
+  attendre(50);
   repeat
     ClicConnexion(affichage,coords);
     valide := connexionValide(coords, plateau, joueur,affichage);
@@ -803,11 +806,10 @@ begin
   plateau.Connexions[length(plateau.Connexions)-1].Position[0] := coords[0];
   plateau.Connexions[length(plateau.Connexions)-1].Position[1] := coords[1];
 
-  affichageInformation('Connexion placee avec succes !', 25, COULEUR_TEXT_VERT, affichage);
-
   affichageScoreAndClear(joueur, affichage);
   affichagePlateau(plateau,affichage);
-  miseAJourRenderer(affichage);
+  affichageInformation('Connexion placee avec succes !', 25, COULEUR_TEXT_VERT, affichage);
+  attendre(50);
 end;
 
 
@@ -1142,7 +1144,9 @@ begin
   end;
   for i:=0 to length(plateau.personnes)-1 do
     affichagePersonne(plateau.personnes[i],affichage);
+  attendre(16);
   miseAJourRenderer(affichage);
+  attendre(16);
 end;
 
 procedure trouver3EmeHexagone(plateau : TPlateau;coords1: TCoords; coords2: TCoords;connexion : TConnexion);
@@ -1222,7 +1226,7 @@ begin
       end;
     end;
   end;
-
+  attendre(30);
   miseAJourRenderer(affichage);
 end;
 

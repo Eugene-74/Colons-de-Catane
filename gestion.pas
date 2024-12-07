@@ -407,7 +407,9 @@ var gagnant : integer;
 begin
   repeat
     tour(joueurs,plateau,affichage);
-    gagner := (verificationPointsVictoire(plateau,joueurs,gagnant,affichage) <> -1);
+    //TODO la partie se finie tout le temps après le premier tour avec cette ligne
+    //gagner := (verificationPointsVictoire(plateau,joueurs,gagnant,affichage) <> -1);
+    gagner := False;
   until (gagner);
 
 end;
@@ -416,10 +418,17 @@ end;
 procedure utiliserCarte1(var plateau : TPlateau; var affichage : TAffichage;joueurs : Tjoueurs;id : Integer);
 begin
   placementConnexion(plateau,affichage,joueurs[id]);
+  attendre(16);
   if (resteEmplacementConnexion(affichage,plateau,joueurs[id]))then
-    placementConnexion(plateau,affichage,joueurs[id])
+  begin
+    attendre(16);
+    placementConnexion(plateau,affichage,joueurs[id]);
+  end
   else
+  begin
+    attendre(16);
     affichageInformation('Vous n''avez plus d''emplacement pour placer la deuxième connexion',25,COULEUR_TEXT_ROUGE,affichage);
+  end;
 end;
 
 procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueurs : Tjoueurs; id : Integer);
@@ -498,7 +507,7 @@ if (i <> -1) and (joueurs[id].CartesTutorat[i].utilisee < joueurs[id].CartesTuto
     3: utiliserCarte4(affichage, plateau, joueurs, id);
     4: utiliserCarte5(affichage,joueurs, id);
     end;
-  attendre(16);
+  attendre(50);
   joueurs[id].CartesTutorat[i].utilisee := joueurs[id].CartesTutorat[i].utilisee + 1;
 
   affichageScoreAndClear(joueurs[id],affichage);
