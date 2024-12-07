@@ -437,11 +437,9 @@ begin
     affichageTexte(IntToStr(carteTutorat.nbr), 25, FCoord(coord.x+160,coord.y-10), FCouleur(0,200,0,255), affichage);
     affichageTexte(IntToStr(carteTutorat.utilisee), 25, FCoord(coord.x+160,coord.y+15), FCouleur(200,0,0,255), affichage);
 
-    affichageTexte(carteTutorat.nom, 25, FCoord(coord.x+10,coord.y+130), FCouleur(0,0,0,255), affichage);
-    //TODO patch (faire un système de détection de retour à la ligne)
-    
-    // affichageTexte(carteTutorat.description, 17, FCoord(coord.x+10,coord.y+170), FCouleur(0,0,0,255), affichage);
-    affichageTexteAvecSautsDeLigne(carteTutorat.description, 17, FCoord(coord.x+10,coord.y+170), FCouleur(0,0,0,255), affichage, 180);
+    affichageTexte(carteTutorat.nom, 25, FCoord(coord.x+10,coord.y+110), FCouleur(0,0,0,255), affichage);
+
+    affichageTexteAvecSautsDeLigne(carteTutorat.description, 17, FCoord(coord.x+10,coord.y+150), FCouleur(0,0,0,255), affichage, 180);
 end;
 
 
