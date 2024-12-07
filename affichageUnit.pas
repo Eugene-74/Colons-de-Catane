@@ -313,7 +313,7 @@ begin
 end;
 
 procedure affichageDetailsHexagone(coordHexa,coordCart: TCoord; plat: TPlateau; var affichage: TAffichage);
-var coord: Tcoord;
+var coord,tailleT : Tcoord;
     texture: PSDL_Texture;
 begin
     if (plat.Grille[coordHexa.x,coordHexa.y].ressource = Rien) then
@@ -323,11 +323,19 @@ begin
 
     affichageImage(affichage.xGrid+coordCart.x-(Round(tailleHexagone * 1.05) div 2),affichage.yGrid+coordCart.y-(Round(tailleHexagone * 1.05) div 2),Round(tailleHexagone * 1.05),Round(tailleHexagone * 1.05),texture,affichage);
 
-    coord := FCoord(affichage.xGrid+coordCart.x - 40 div 2,affichage.yGrid+coordCart.y - 50 div 2 - 5);
-    if plat.Grille[coordHexa.x,coordHexa.y].Numero div 10 >= 1 then
-        affichageTexte(IntToStr(plat.Grille[coordHexa.x,coordHexa.y].Numero), 40, coord, FCouleur(0,0,0,255), affichage)
-    else if (plat.Grille[coordHexa.x,coordHexa.y].Numero <> -1 )then
-        affichageTexte(' ' + IntToStr(plat.Grille[coordHexa.x,coordHexa.y].Numero), 40, coord, FCouleur(0,0,0,255), affichage);
+
+
+    if(plat.Grille[coordHexa.x,coordHexa.y].Numero <> -1) then
+    begin
+      tailleT := tailleTexte(IntToStr(plat.Grille[coordHexa.x,coordHexa.y].Numero), 40);
+      coord := FCoord(affichage.xGrid+coordCart.x - tailleT.x div 2,affichage.yGrid+coordCart.y - 50 div 2 - 5);
+      affichageTexte(IntToStr(plat.Grille[coordHexa.x,coordHexa.y].Numero), 40, coord, FCouleur(0,0,0,255), affichage)
+    end;
+    
+    // if plat.Grille[coordHexa.x,coordHexa.y].Numero div 10 >= 1 then
+    //     affichageTexte(IntToStr(plat.Grille[coordHexa.x,coordHexa.y].Numero), 40, coord, FCouleur(0,0,0,255), affichage)
+    // else if (plat.Grille[coordHexa.x,coordHexa.y].Numero <> -1 )then
+    //     affichageTexte(' ' + IntToStr(plat.Grille[coordHexa.x,coordHexa.y].Numero), 40, coord, FCouleur(0,0,0,255), affichage);
 end;
 
 {Affiche un hexagone à l'ecran
@@ -429,6 +437,7 @@ begin
 end;
 
 procedure affichageCarteTutorat(carteTutorat: TCarteTutorat; idCarte: Integer; coord: TCoord; var affichage: TAffichage);
+var tailleT: TCoord;
 begin
     affichageZone(coord.x,coord.y,200,300,2,affichage);
     affichageImage(coord.x+75,coord.y+35,50,50,affichage.texturePlateau.textureIconesCartesTutorat[idCarte+1],affichage);
@@ -437,7 +446,8 @@ begin
     affichageTexte(IntToStr(carteTutorat.nbr), 25, FCoord(coord.x+160,coord.y-10), FCouleur(0,200,0,255), affichage);
     affichageTexte(IntToStr(carteTutorat.utilisee), 25, FCoord(coord.x+160,coord.y+15), FCouleur(200,0,0,255), affichage);
 
-    affichageTexte(carteTutorat.nom, 25, FCoord(coord.x+10,coord.y+110), FCouleur(0,0,0,255), affichage);
+    tailleT := tailleTexte(carteTutorat.nom, 25);
+    affichageTexte(carteTutorat.nom, 25, FCoord(coord.x + (200 - tailleT.x)div 2,coord.y+110), FCouleur(0,0,0,255), affichage);
 
     affichageTexteAvecSautsDeLigne(carteTutorat.description, 17, FCoord(coord.x+10,coord.y+150), FCouleur(0,0,0,255), affichage, 180);
 end;
@@ -773,7 +783,7 @@ begin
     writeln('Erreur lors de l''initialisation de SDL_ttf : ', TTF_GetError);
     exit;
   end;
-  font := TTF_OpenFont('Assets/OpenSans-Regular.ttf', 25);
+  font := TTF_OpenFont('Assets/OpenSans-Regular.ttf', taille);
   if font = nil then
   begin
       writeln('Erreur lors de l''ouverture de la police : ', TTF_GetError);
@@ -789,8 +799,7 @@ procedure affichageSelectionRessource(var boutonValider: TBouton; var affichage:
 var ressource: TRessource;
     coord,coordCart: Tcoord;
     i,j: Integer;
-    tailleText : Tcoord;
-
+    tailleT : Tcoord;
 begin
     affichageFond(affichage);
     attendre(66);
@@ -803,10 +812,12 @@ begin
     coord := FCoord(450,70);
     affichageZone(coord.x,coord.y,1050,930,3,affichage);
 
-    affichageTexte('Selection de ressource', 35, FCoord(750,90), FCouleur(0,0,0,255), affichage);
+    tailleT := tailleTexte('Selection de ressource',35);
+    writeln(tailleT.x);
+    affichageTexte('Selection de ressource', 35, FCoord((WINDOW_W - tailleT.x) div 2, 90), FCouleur(0,0,0,255), affichage);
     
-    tailleText := tailleTexte(text,25);
-    affichageTexte(text, 25,  FCoord((WINDOW_W - tailleText.x) div 2, 130), FCouleur(0,0,0,255), affichage);
+    tailleT := tailleTexte(text,25);
+    affichageTexte(text, 25,  FCoord((WINDOW_W - tailleT.x) div 2, 130), FCouleur(0,0,0,255), affichage);
 
     coord := FCoord(800,300);
     SetLength(Grille,3,2);
@@ -962,8 +973,11 @@ var nom,valeurBouton: String;
     bouton: TBouton;
     running,ecritureNom: Boolean;
     event: TSDL_Event;
+    tailleT: Tcoord;
 begin
-    affichageTexte('Entrez les noms des joueurs', 35, FCoord(450,70), FCouleur(0,0,0,255), affichage);
+
+    tailleT := tailleTexte('Entrez les noms des joueurs',35);
+    affichageTexte('Entrez les noms des joueurs', 35, FCoord((WINDOW_W - tailleT.x) div 2 ,70), FCouleur(0,0,0,255), affichage);
 
     setlength(stringTab,4);
     for i:=0 to length(stringTab)-1 do

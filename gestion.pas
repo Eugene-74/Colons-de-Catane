@@ -409,26 +409,28 @@ begin
     
       if(valeurBouton = 'achat_eleve')  then
         achatElements(joueurs[i], plateau, affichage,1)
+
       else if(valeurBouton = 'achat_connexion')  then
         achatElements(joueurs[i], plateau, affichage,2)
+
       else if(valeurBouton = 'changement_en_prof')  then
-        begin
-        achatElements(joueurs[i], plateau, affichage,3);
-        end
+        achatElements(joueurs[i], plateau, affichage,3)
+
       else if(valeurBouton = 'achat_carte_tutorat')  then
-        begin
-        achatElements(joueurs[i], plateau, affichage,4);
-        end
+        achatElements(joueurs[i], plateau, affichage,4)
+
       else if(valeurBouton = '4pour1')  then
         gestionEchange4Pour1(affichage,plateau,joueurs,i)
+
       else if(valeurBouton = 'echange')  then
-        // gestionEchange(affichage,plateau,joueurs,i)
-        gestionEchange4Pour1(affichage,plateau,joueurs,i)
-      
+        gestionEchange(affichage,plateau,joueurs,i)
+
       else if(valeurBouton = 'demarrer_musique')  then
           demarrerMusique(affichage)
+
       else if(valeurBouton = 'arreter_musique')  then
           arreterMusique(affichage)
+
       else if(valeurBouton = 'fin_tour')  then
         begin
         finTour := True;
