@@ -816,6 +816,7 @@ begin
     clicHexagone(affichage,HexagonesCoords[i]); 
     affichageHexagone(plateau,affichage, HexagonesCoords[i],true);
     miseAJourRenderer(affichage);
+    attendre(16);
   end;
   clicConnexion := HexagonesCoords;
 end;
@@ -837,7 +838,6 @@ begin
     if(not valide)then
       begin
       affichagePlateau(plateau,affichage);
-      miseAJourRenderer(affichage);
       end;
   until valide;
 
