@@ -359,9 +359,7 @@ begin
       affichageDetailsHexagone(coordHexa,coordCart,plat,affichage,false);
     end
     else
-      if (plat.Grille[coordHexa.x,coordHexa.y].ressource <> Aucune) then
-        affichageImage(affichage.xGrid+coordCart.x-(tailleHexagone div 2),affichage.yGrid+coordCart.y-(tailleHexagone div 2),tailleHexagone,tailleHexagone,affichage.texturePlateau.texturePreview,affichage);
-
+      affichageImage(affichage.xGrid+coordCart.x-(tailleHexagone div 2),affichage.yGrid+coordCart.y-(tailleHexagone div 2),tailleHexagone,tailleHexagone,affichage.texturePlateau.texturePreview,affichage);
 end;
 
 {Affiche le souillard à l'ecran

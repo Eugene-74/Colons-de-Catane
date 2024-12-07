@@ -66,16 +66,6 @@ begin
   miseAJourRenderer(affichage);
 end;
 
-procedure clicHexagoneValide(var plateau: TPlateau; var affichage: TAffichage; var coord: Tcoord);
-var valide : boolean;
-begin
-    repeat
-      clicHexagone(affichage, coord);
-      valide := dansLePlateau(plateau,coord);
-      jouerSonValide(affichage,valide);
-    until valide;
-
-end;
 
 procedure tirerCarteTutorat(var cartesTutorat : TCartesTutorat;var  joueur : Tjoueur);
 var  i,j,nbrTotal,min,max: Integer;
@@ -222,7 +212,7 @@ procedure placementEleve(var plateau: TPlateau; var affichage: TAffichage; var j
 var HexagonesCoords: TCoords;
   valide : Boolean;
 begin
-
+  affichageInformation('Cliquez sur 3 hexagones entre lesquels vous voulez placer l''élève.', 25, FCouleur(0, 0, 0, 255), affichage);
   repeat
     HexagonesCoords := ClicPersonne(affichage,plateau,True);
     valide := PersonneValide(plateau, HexagonesCoords, True, joueur,affichage);
@@ -304,6 +294,7 @@ function ClicPersonne(var affichage: TAffichage; plateau: TPlateau; estEleve: Bo
 var
   i: Integer;
   HexagonesCoords: TCoords;
+  valide : Boolean;
 begin
   SetLength(HexagonesCoords,3);
   if estEleve then
@@ -312,7 +303,15 @@ begin
     affichageInformation('Cliquez sur trois hexagones entre lesquels vous voulez placer le professeur', 25, FCouleur(0,0,0,255), affichage);
   for i := 0 to 2 do
   begin
-    clicHexagone(affichage,HexagonesCoords[i]); 
+    repeat 
+      clicHexagone(affichage,HexagonesCoords[i]);
+      valide := dansLaGrille(plateau,HexagonesCoords[i]);
+      if(not valide)then
+      begin
+        affichageInformation('Veuillez jouer dans le plateau.', 25, COULEUR_TEXT_ROUGE, affichage);
+        jouerSonValide(affichage,false); 
+      end;
+    until valide;
     affichageHexagone(plateau,affichage, HexagonesCoords[i],true);
     miseAJourRenderer(affichage);
   end;
@@ -756,7 +755,7 @@ begin
   if(connexionExisteDeja(plateau, coords[0],coords[1]))then
     begin
       connexionValide := False;
-      affichageInformation('Position de connexion deja occupee.', 25, FCouleur(0,0,0,255), affichage);
+      affichageInformation('Position de connexion deja occupee.', 25, COULEUR_TEXT_ROUGE, affichage);
       Exit;
     end;
   // end;
@@ -765,7 +764,7 @@ begin
   if not enContact(coords) then
   begin
     connexionValide := False;
-    affichageInformation('Les deux hexagones ne sont pas adjacents.', 25, FCouleur(0,0,0,255), affichage);
+    affichageInformation('Les deux hexagones ne sont pas adjacents.', 25, COULEUR_TEXT_ROUGE, affichage);
 
     Exit;
   end;
@@ -784,7 +783,7 @@ begin
     if  not enContactAvecAutreConnexion then
     begin
       connexionValide := False;
-      affichageInformation('La connexion doit etre adjacente a une autre connexion ou en contact avec un eleve ou un professeur.', 25, FCouleur(0,0,0,255), affichage);
+      affichageInformation('La connexion doit etre adjacente a une autre connexion ou en contact avec un eleve ou un professeur.', 25, COULEUR_TEXT_ROUGE, affichage);
       Exit;
     end;
   end;
@@ -793,7 +792,7 @@ begin
   if (not dansLePlateau(plateau,coords[0]) and not dansLePlateau(plateau,coords[1])) then 
     begin
     connexionValide:= False;
-    affichageInformation('Au moins 1 des hexagones choisis doit etre dans le plateau', 25, FCouleur(0,0,0,255), affichage);
+    affichageInformation('Au moins 1 des hexagones choisis doit etre dans le plateau', 25, COULEUR_TEXT_ROUGE, affichage);
 
     Exit;
     end;
@@ -809,13 +808,24 @@ function clicConnexion(var affichage: TAffichage; plateau: TPlateau): TCoords;
 var
   i: Integer;
   HexagonesCoords: TCoords;
+  valide : Boolean;
 begin
   SetLength(HexagonesCoords,2);
   for i := 0 to 1 do
   begin
-    clicHexagone(affichage,HexagonesCoords[i]); 
+    repeat 
+      clicHexagone(affichage,HexagonesCoords[i]);
+      writeln('clic, ',HexagonesCoords[i].x,' ',HexagonesCoords[i].y);
+      valide := dansLaGrille(plateau,HexagonesCoords[i]);
+      if(not valide)then
+      begin
+        affichageInformation('Veuillez jouer dans le plateau.', 25, COULEUR_TEXT_ROUGE, affichage);
+        jouerSonValide(affichage,false); 
+      end;
+    until valide;
     affichageHexagone(plateau,affichage, HexagonesCoords[i],true);
     miseAJourRenderer(affichage);
+
     attendre(16);
   end;
   clicConnexion := HexagonesCoords;
@@ -838,6 +848,8 @@ begin
     if(not valide)then
       begin
       affichagePlateau(plateau,affichage);
+      resteEmplacementConnexion(affichage,plateau,joueur);
+      miseAJourRenderer(affichage);
       end;
   until valide;
 

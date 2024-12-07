@@ -19,9 +19,12 @@ function recupererCouleurJoueur(joueurId: Integer):TSDL_Color;
 function calculPosPersonne(personne : TPersonne): Tcoord;
 procedure ajouterBoutonTableau(bouton: TBouton; var boutons: TBoutons);
 function dansLePlateau(plateau : TPlateau; coord : Tcoord): boolean;
+function dansLaGrille(plateau : TPlateau; coord : Tcoord): boolean;
 
 
 implementation
+
+
 
 procedure round_hexa(q_f,r_f: Real; var coord_output: TCoord);
 var s: Integer;
@@ -215,27 +218,26 @@ end;
 
 
 function dansLePlateau(plateau : TPlateau; coord : Tcoord): boolean;
-var taille : Integer;
 begin
-    dansLePlateau := True;
-    taille := length(plateau.Grille)- 2;
+  dansLePlateau := false;
 
+  if(coord.x < 0) or (coord.x >= length(plateau.Grille)) or (coord.y < 0) or (coord.y >= length(plateau.Grille)) then
+    exit(false);
 
-    if(coord.x <= 0) then
-        dansLePlateau := False;
-    if(coord.x > taille) then
-        dansLePlateau := False;
-    if(coord.y <= 0) then
-        dansLePlateau := False;
-    if(coord.y > taille) then
-        dansLePlateau := False;
+  if((plateau.Grille[coord.x][coord.y].ressource <> Aucune)
+      and (plateau.Grille[coord.x][coord.y].ressource <> Rien)) then
+    dansLePlateau := true;
+end;
 
-    if(coord.x <= taille div 2) then
-        if ((coord.y > taille) or (coord.y <=taille div 2 +1- coord.x)) then 
-            dansLePlateau := False;
-    if(coord.x > taille div 2 +1) then
-        if ((coord.y >  taille - coord.x  + taille div 2 +1) or (coord.y <=0)) then 
-            dansLePlateau := False;
+function dansLaGrille(plateau : TPlateau; coord : Tcoord): boolean;
+begin
+    dansLaGrille := false;
+
+  if(coord.x < 0) or (coord.x >= length(plateau.Grille)) or (coord.y < 0) or (coord.y >= length(plateau.Grille)) then
+    exit(false);
+
+  if(plateau.Grille[coord.x][coord.y].ressource <> Aucune) then
+    dansLaGrille := true;
 end;
 
 end.
