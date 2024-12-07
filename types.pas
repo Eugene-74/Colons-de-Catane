@@ -181,9 +181,9 @@ const
   );
   POSITION_DES : TCoord = (x: 50; y: 500);
 
-  WINDOW_W = 1920;
-  WINDOW_H = 1080;
-  tailleHexagone = 180;
+  WINDOW_W = 1800;
+  WINDOW_H = 1000;
+  tailleHexagone = 150;
   tailleEleve = tailleHexagone div 3;
   tailleSouillard = tailleHexagone div 2;
 

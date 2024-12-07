@@ -172,7 +172,7 @@ var couleur: TSDL_Color;
     longueur,angle: Real;
     colorTexture: PSDL_Texture;
 begin
-    epaisseur := 6;
+    epaisseur := 4;
     couleur := recupererCouleurJoueur(connexion.IdJoueur);
     calculPosConnexion(connexion,coord,longueur,angle);
 
@@ -446,17 +446,17 @@ end;
 procedure affichageCarteTutorat(carteTutorat: TCarteTutorat; idCarte: Integer; coord: TCoord; var affichage: TAffichage);
 var tailleT: TCoord;
 begin
-    affichageZone(coord.x,coord.y,200,300,2,affichage);
+    affichageZone(coord.x,coord.y,180,270,2,affichage);
     affichageImage(coord.x+75,coord.y+35,50,50,affichage.texturePlateau.textureIconesCartesTutorat[idCarte+1],affichage);
 
-    affichageZone(coord.x+150,coord.y-10,60,60,2,affichage);
-    affichageTexte(IntToStr(carteTutorat.nbr), 25, FCoord(coord.x+160,coord.y-10), FCouleur(0,200,0,255), affichage);
-    affichageTexte(IntToStr(carteTutorat.utilisee), 25, FCoord(coord.x+160,coord.y+15), FCouleur(200,0,0,255), affichage);
+    affichageZone(coord.x+150,coord.y-10,40,40,2,affichage);
+    affichageTexte(IntToStr(carteTutorat.nbr), 15, FCoord(coord.x+160,coord.y-10), FCouleur(0,200,0,255), affichage);
+    affichageTexte(IntToStr(carteTutorat.utilisee), 15, FCoord(coord.x+160,coord.y+5), FCouleur(200,0,0,255), affichage);
 
     tailleT := tailleTexte(carteTutorat.nom, 25);
-    affichageTexte(carteTutorat.nom, 25, FCoord(coord.x + (200 - tailleT.x)div 2,coord.y+110), FCouleur(0,0,0,255), affichage);
+    affichageTexte(carteTutorat.nom, 20, FCoord(coord.x + (200 - tailleT.x)div 2,coord.y+110), FCouleur(0,0,0,255), affichage);
 
-    affichageTexteAvecSautsDeLigne(carteTutorat.description, 17, FCoord(coord.x+10,coord.y+150), FCouleur(0,0,0,255), affichage, 180);
+    affichageTexteAvecSautsDeLigne(carteTutorat.description, 14, FCoord(coord.x+10,coord.y+150), FCouleur(0,0,0,255), affichage, 165);
 end;
 
 
@@ -536,29 +536,29 @@ end;
 procedure affichageCartesTutorat(joueur: TJoueur; var affichage: TAffichage);
 var bouton: TBouton;
 begin
-    bouton := FBouton(1400,25,200,300,'',CARTES_TUTORAT[0].nom);
+    bouton := FBouton(WINDOW_W-500,25,180,270,'',CARTES_TUTORAT[0].nom);
     ajouterBoutonTableau(bouton,affichage.boutonsAction);
-    affichageCarteTutorat(joueur.CartesTutorat[0],0,FCoord(1400,25),affichage);
+    affichageCarteTutorat(joueur.CartesTutorat[0],0,FCoord(WINDOW_W-500,25),affichage);
     
-    bouton.coord := FCoord(1615,25);
+    bouton.coord := FCoord(WINDOW_W-300,25);
     bouton.valeur := CARTES_TUTORAT[1].nom;
     ajouterBoutonTableau(bouton,affichage.boutonsAction);
-    affichageCarteTutorat(joueur.CartesTutorat[1],1,FCoord(1615,25),affichage);
+    affichageCarteTutorat(joueur.CartesTutorat[1],1,FCoord(WINDOW_W-300,25),affichage);
 
-    bouton.coord := FCoord(1400,340);
+    bouton.coord := FCoord(WINDOW_W-500,310);
     bouton.valeur := CARTES_TUTORAT[2].nom;
     ajouterBoutonTableau(bouton,affichage.boutonsAction);
-    affichageCarteTutorat(joueur.CartesTutorat[2],2,FCoord(1400,340),affichage);
+    affichageCarteTutorat(joueur.CartesTutorat[2],2,FCoord(WINDOW_W-500,310),affichage);
 
-    bouton.coord := FCoord(1615,340);
+    bouton.coord := FCoord(WINDOW_W-300,310);
     bouton.valeur := CARTES_TUTORAT[3].nom;
     ajouterBoutonTableau(bouton,affichage.boutonsAction);
-    affichageCarteTutorat(joueur.CartesTutorat[3],3,FCoord(1615,340),affichage);
+    affichageCarteTutorat(joueur.CartesTutorat[3],3,FCoord(WINDOW_W-300,310),affichage);
 
-    bouton.coord := FCoord(1400,655);
+    bouton.coord := FCoord(WINDOW_W-500,595);
     bouton.valeur := CARTES_TUTORAT[4].nom;
     ajouterBoutonTableau(bouton,affichage.boutonsAction);
-    affichageCarteTutorat(joueur.CartesTutorat[4],4,FCoord(1400,655),affichage);
+    affichageCarteTutorat(joueur.CartesTutorat[4],4,FCoord(WINDOW_W-500,595),affichage);
 end;
 
 procedure affichageCartesTutoratAndRender(joueur: TJoueur; var affichage: TAffichage);
@@ -599,7 +599,7 @@ end;
 
 procedure suppressionInformation(var affichage: TAffichage);
 begin
-    affichageZone(400,1025,1500,50,0,affichage);
+    affichageZone(350,WINDOW_H-55,1500,50,0,affichage);
     attendre(66);
 end;
 
@@ -607,7 +607,7 @@ procedure affichageInformation(texte: String; taille: Integer; couleur: TSDL_Col
 begin
     attendre(50);
     suppressionInformation(affichage);
-    affichageTexte(texte, taille, FCoord(400,1025), couleur, affichage);
+    affichageTexte(texte, taille-5, FCoord(350,WINDOW_H-55), couleur, affichage);
     miseAJourRenderer(affichage);
     attendre(50);
 end;
@@ -688,8 +688,8 @@ begin
     affichageFond(affichage);
     attendre(66);
 
-    coord := FCoord(450,70);
-    affichageZone(coord.x,coord.y,1050,930,3,affichage);
+    coord := FCoord(450,50);
+    affichageZone(coord.x,coord.y,1050,900,3,affichage);
     for i:=0 to length(joueurs)-1 do
         affichageScore(joueurs[i],affichage);
 
@@ -714,7 +714,7 @@ begin
         affichageIntegerInput(coord,GetEnumName(TypeInfo(TRessource), Ord(ressource)),'2',ressources2,affichage,boutons);
     end;
 
-    bouton := FBouton(850,450,160,50,'valider','valider_echange');
+    bouton := FBouton(895,450,160,50,'valider','valider_echange');
     affichageImageBouton(bouton,affichage);
     ajouterBoutonTableau(bouton, boutons);
 end;
@@ -807,7 +807,7 @@ procedure affichageSelectionRessource(var boutonValider: TBouton; var affichage:
 var ressource: TRessource;
     coord,coordCart: Tcoord;
     i,j: Integer;
-    tailleT : Tcoord;
+    tailleT: TCoord;
 begin
     affichageFond(affichage);
     attendre(66);
@@ -817,17 +817,13 @@ begin
       affichageScore(joueurs[i], affichage);
     end;
 
-    coord := FCoord(450,70);
-    affichageZone(coord.x,coord.y,1050,930,3,affichage);
-
-    tailleT := tailleTexte('Selection de ressource',35);
-    writeln(tailleT.x);
-    affichageTexte('Selection de ressource', 35, FCoord((WINDOW_W - tailleT.x) div 2, 90), FCouleur(0,0,0,255), affichage);
-    
     tailleT := tailleTexte(text,25);
-    affichageTexte(text, 25,  FCoord((WINDOW_W - tailleT.x) div 2, 130), FCouleur(0,0,0,255), affichage);
+    coord := FCoord(450,50);
+    affichageZone(coord.x,coord.y,1050,900,3,affichage);
+    affichageTexte('Selection de ressource', 35, FCoord(800, 90), FCouleur(0,0,0,255), affichage);
+    affichageTexte(text, 25,  FCoord(975-(tailleT.x div 2), 130), FCouleur(0,0,0,255), affichage);
 
-    coord := FCoord(800,300);
+    coord := FCoord(850,300);
     SetLength(Grille,3,2);
     i := 0;
     j := 0;
@@ -845,7 +841,7 @@ begin
         end;
     end;
 
-    boutonValider := FBouton(900,930,160,50,'valider','Valider');
+    boutonValider := FBouton(895,850,160,50,'valider','Valider');
     affichageImageBouton(boutonValider,affichage);
 end;
 
@@ -1003,7 +999,7 @@ begin
         ajouterBoutonTableau(bouton,boutons);
     end;
 
-    bouton := FBouton(900,930,160,50,'valider','valider');
+    bouton := FBouton(WINDOW_W div 2 - 80,WINDOW_H-200,160,50,'valider','valider');
     affichageImageBouton(bouton,affichage);
     ajouterBoutonTableau(bouton,boutons);
 
@@ -1103,6 +1099,7 @@ Postconditions :
 procedure miseAJourRenderer(var affichage :TAffichage);
 var i: Integer;
 begin
+    attendre(16);
     verificationMusique(affichage);
     for i:=0 to length(affichage.boutonsSysteme)-1 do
         affichageImageBouton(affichage.boutonsSysteme[i],affichage);
@@ -1144,8 +1141,8 @@ procedure initialisationAffichage(var affichage: TAffichage);
 begin
     initialisationSDL(affichage);
 
-    affichage.xGrid := 100;
-    affichage.yGrid := 100;
+    affichage.xGrid := 150;
+    affichage.yGrid := 150;
 
     initialisationTextures(affichage);
     initialisationBoutonsAction(affichage);
