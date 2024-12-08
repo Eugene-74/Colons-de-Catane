@@ -818,7 +818,7 @@ begin
     tailleT := tailleTexte(text,25);
     coord := FCoord(450,50);
     affichageZone(coord.x,coord.y,1050,900,3,affichage);
-    affichageTexte('Selection de ressource', 35, FCoord(800, 90), FCouleur(0,0,0,255), affichage);
+    affichageTexte('Sélection de ressource', 35, FCoord(800, 90), FCouleur(0,0,0,255), affichage);
     affichageTexte(text, 25,  FCoord(975-(tailleT.x div 2), 130), FCouleur(0,0,0,255), affichage);
 
     coord := FCoord(850,300);

@@ -127,7 +127,7 @@ begin
         end
       else
         begin
-        affichageInformation('Vous n''avez pas les ressources necessaires pour acheter un eleve.', 25,COULEUR_TEXT_ROUGE, affichage);
+        affichageInformation('Vous n''avez pas les ressources nécessaires pour acheter un eleve.', 25,COULEUR_TEXT_ROUGE, affichage);
         jouerSonValide(affichage,false);
         end;
 
@@ -142,7 +142,7 @@ begin
         end
         else
           begin
-            affichageInformation('Vous n''avez pas les ressources necessaires pour acheter une connexion.', 25, COULEUR_TEXT_ROUGE, affichage);
+            affichageInformation('Vous n''avez pas les ressources nécessaires pour acheter une connexion.', 25, COULEUR_TEXT_ROUGE, affichage);
             jouerSonValide(affichage,false);
           end
       else
@@ -166,7 +166,7 @@ begin
           end
           else
           begin
-            affichageInformation('Vous n''avez pas les ressources nécessaires pour changer un eleve en professeur.', 25, COULEUR_TEXT_ROUGE, affichage);
+            affichageInformation('Vous n''avez pas les ressources nécessaires pour changer un élève en professeur.', 25, COULEUR_TEXT_ROUGE, affichage);
             jouerSonValide(affichage,false);
           end
         else
@@ -236,7 +236,7 @@ begin
       end;
   joueur.Points:=1+joueur.Points;
 
-  affichageInformation('Eleve place avec succes !', 25, COULEUR_TEXT_VERT, affichage);
+  affichageInformation('Elève placé avec succès !', 25, COULEUR_TEXT_VERT, affichage);
 
   affichageScoreAndClear(joueur, affichage);
   affichagePlateau(plateau,affichage);
@@ -393,7 +393,7 @@ begin
           Exit;
         end
         else
-          affichageInformation('Il n''y a pas d''élève à vous ici.', 25, FCouleur(255, 0, 0, 255), affichage);
+          affichageInformation('Il n''y a pas d''élève vous appartenant ici.', 25, FCouleur(255, 0, 0, 255), affichage);
       end;
     end;
   end
@@ -671,7 +671,7 @@ begin
         writeln('point : ',joueurs[id].points);
         writeln('Grande Connexion : ',joueurs[id].PlusGrandeConnexion);
         writeln('Word reference : ',joueurs[id].PlusGrandeNombreDeWordReference);
-        writeln('point : ',points[id]);
+        writeln('Point : ',points[id]);
         
         if(nombreDeGagnant > 1) then
           if(nombreDeGagnant = i)then
@@ -744,7 +744,7 @@ begin
   if(connexionExisteDeja(plateau, coords[0],coords[1]))then
     begin
       connexionValide := False;
-      affichageInformation('Position de connexion deja occupee.', 25, COULEUR_TEXT_ROUGE, affichage);
+      affichageInformation('Position de connexion déjà occupée.', 25, COULEUR_TEXT_ROUGE, affichage);
       Exit;
     end;
   // end;
@@ -765,7 +765,7 @@ begin
     if  not enContactAvecAutreConnexion then
     begin
       connexionValide := False;
-      affichageInformation('La connexion doit etre adjacente a une autre connexion ou en contact avec un eleve ou un professeur.', 25, COULEUR_TEXT_ROUGE, affichage);
+      affichageInformation('La connexion doit être adjacente à une autre connexion ou en contact avec un élève ou un professeur.', 25, COULEUR_TEXT_ROUGE, affichage);
       Exit;
     end;
   end;
@@ -774,7 +774,7 @@ begin
   if (not dansLePlateau(plateau,coords[0]) and not dansLePlateau(plateau,coords[1])) then 
     begin
     connexionValide:= False;
-    affichageInformation('Au moins 1 des hexagones choisis doit etre dans le plateau', 25, COULEUR_TEXT_ROUGE, affichage);
+    affichageInformation('Au moins 1 des hexagones choisis doit être dans le plateau', 25, COULEUR_TEXT_ROUGE, affichage);
 
     Exit;
     end;
@@ -844,7 +844,7 @@ begin
 
   affichageScoreAndClear(joueur, affichage);
   affichagePlateau(plateau,affichage);
-  affichageInformation('Connexion placee avec succes !', 25, COULEUR_TEXT_VERT, affichage);
+  affichageInformation('Connexion placée avec succès !', 25, COULEUR_TEXT_VERT, affichage);
   attendre(50);
 end;
 
@@ -965,7 +965,7 @@ begin
         if l >= 2 then
         begin
           enContactAutreEleveConnexion := True;
-          affichageInformation('Connexion en contact avec une personne dune autre joueur.', 25, FCouleur(0,0,0,255), affichage);
+          affichageInformation('Connexion en contact avec une personne d''un autre joueur.', 25, FCouleur(0,0,0,255), affichage);
           Exit;
         end;
       end;
@@ -978,7 +978,7 @@ procedure deplacementSouillard(var plateau : TPlateau;var joueurs : TJoueurs ;va
 var coord : Tcoord;
   valide : Boolean;
 begin
-  affichageInformation('Cliquez sur 1 hexagones pour deplacer le souillard.', 25, FCouleur(0,0,0,255), affichage);
+  affichageInformation('Cliquez sur 1 hexagones pour déplacer le souillard.', 25, FCouleur(0,0,0,255), affichage);
 
   repeat
     clicHexagone(affichage, coord);
@@ -991,7 +991,7 @@ begin
   affichagePlateau(plateau,affichage);
   attendre(16);
 
-  affichageInformation('Souillard deplace avec succes !', 25, COULEUR_TEXT_VERT, affichage);
+  affichageInformation('Souillard déplacé avec succès !', 25, COULEUR_TEXT_VERT, affichage);
 end;
 
 function enContactConnexionConnexion( coords1: TCoords; coords2: TCoords): Boolean;

@@ -289,7 +289,7 @@ begin
         end;
       end;
       if(tropDeRessources) then
-        affichageInformation('Tout les joueurs qui avaient plus de 7 ressources on perdu la moitier de leur ressources à cause du souillard.',25,COULEUR_TEXT_ROUGE,affichage);
+        affichageInformation('Tout les joueurs qui avaient plus de 7 ressources on perdu la moitié de leurs ressources à cause du souillard.',25,COULEUR_TEXT_ROUGE,affichage);
     end
   else
     begin
@@ -323,9 +323,9 @@ end;
 procedure gestionEchange4Pour1(affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);
 var ressource1,ressource2 : TRessource;
 begin
-  selectionRessource(affichage,ressource1,'Selectionnez la ressource recevoir (1)',joueurs);
+  selectionRessource(affichage,ressource1,'Sélectionnez la ressource à recevoir (1)',joueurs);
 
-  selectionRessource(affichage,ressource2,'Selectionnez la ressource que vous voulez donner (4)',joueurs);
+  selectionRessource(affichage,ressource2,'Sélectionnez la ressource à donner (4)',joueurs);
 
   if joueurs[id].Ressources[ressource2] >= 4 then
   begin
@@ -358,13 +358,13 @@ echangeRessources(joueurs,id1, id2 ,ressources1,ressources2,affichage);
 if(ressourcesVide(ressources1) and ressourcesVide(ressources2))then
   begin
   affichageTour(plateau, joueurs, id, affichage);
-  affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est vide',25,COULEUR_TEXT_ROUGE,affichage);
+  affichageInformation('l''échange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est vide',25,COULEUR_TEXT_ROUGE,affichage);
   jouerSonValide(affichage,false);
   end
 else if(ressourcesEgales(ressources1,ressources2))then
   begin
   affichageTour(plateau, joueurs, id, affichage);
-  affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est inutile car il ne change rien',25,COULEUR_TEXT_ROUGE,affichage);
+  affichageInformation('l''échange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est inutile car il ne change rien',25,COULEUR_TEXT_ROUGE,affichage);
   jouerSonValide(affichage,false);
   end
 else if(aLesRessources(joueurs[id1],ressources1) and aLesRessources(joueurs[id2],ressources2)) then
@@ -376,13 +376,13 @@ else if(aLesRessources(joueurs[id1],ressources1) and aLesRessources(joueurs[id2]
     donnerRessources(joueurs[id2],ressources1);
 
     affichageTour(plateau, joueurs, id, affichage);
-    affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' a ete valide',25,COULEUR_TEXT_VERT,affichage);
+    affichageInformation('l''échange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' a été validé',25,COULEUR_TEXT_VERT,affichage);
     jouerSonValide(affichage,true);
   end
 else
   begin
     affichageTour(plateau, joueurs, id, affichage);
-    affichageInformation('l''echange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est impossible un des 2 joueurs n''a pas les ressources',25,COULEUR_TEXT_ROUGE,affichage);
+    affichageInformation('l''échange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est impossible, un des 2 joueurs n''a pas les ressources',25,COULEUR_TEXT_ROUGE,affichage);
     jouerSonValide(affichage,false);
 
   end;
@@ -473,7 +473,7 @@ end;
 
 procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueurs : Tjoueurs; id : Integer);
 begin
-  affichageInformation('Deplacement du souillard par le joueur '+joueurs[id].nom,25,FCouleur(0,0,0,255),affichage);
+  affichageInformation('Déplacement du souillard par le joueur '+joueurs[id].nom,25,FCouleur(0,0,0,255),affichage);
   deplacementSouillard(plateau,joueurs,affichage);
 end;
 
@@ -486,7 +486,7 @@ begin
   else
     idJoueurAVoler := 0;
   
-  selectionDepouiller(ressource,id,idJoueurAVoler,joueurs,affichage,'Selectionnez la ressource que vous souhaitez dépouiller et le joueur à dépoiller');
+  selectionDepouiller(ressource,id,idJoueurAVoler,joueurs,affichage,'Sélectionnez la ressource et le joueur à dépouiller');
   
   if(ressource <> Rien) then
   begin
@@ -506,7 +506,7 @@ var ressource : TRessource;
 begin
   // CHOISIR 2 CONNAISSANCE
 
-  selectionRessource(affichage,ressource,'Selectionnez la ressource que vous souhaitez récupperer 2 fois',joueurs);
+  selectionRessource(affichage,ressource,'Sélectionnez la ressource que vous souhaitez récupérer 2 fois',joueurs);
   joueurs[id].ressources[ressource] := joueurs[id].ressources[ressource] + 2;
 
   affichageTour(plateau, joueurs, Id, affichage);
@@ -557,7 +557,7 @@ if (i <> -1) and (joueurs[id].CartesTutorat[i].utilisee < joueurs[id].CartesTuto
 else
   begin
   jouerSonValide(affichage,false);
-  affichageInformation('Vous avez deja utilise toutes vos cartes de ce type',25,COULEUR_TEXT_ROUGE,affichage);
+  affichageInformation('Vous avez deja utilisé toutes vos cartes de ce type',25,COULEUR_TEXT_ROUGE,affichage);
   end;
 end;
 
