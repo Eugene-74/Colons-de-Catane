@@ -351,8 +351,6 @@ begin
   Result := 0; 
   for i := 0 to length(personnes)-1 do
   begin
-    writeln(personnes[i].IdJoueur);
-
     if (personnes[i].estEleve = estEleve) and (personnes[i].IdJoueur = joueur.Id) then
       Inc(Result); 
   end;
