@@ -32,6 +32,7 @@ procedure affichageFond(var affichage: TAffichage);
 procedure affichageDetailsHexagone(coordHexa,coordCart: TCoord; plat: TPlateau; var affichage: TAffichage;preview : Boolean);
 procedure affichageRegles(var affichage: TAffichage);
 procedure suppresionAffichage(var affichage: TAffichage);
+procedure affichageGagnant(var affichage: TAffichage; text: String);
 
 implementation
 
@@ -1109,6 +1110,15 @@ begin
         end;
         SDL_StopTextInput();
     end;
+end;
+
+procedure affichageGagnant(var affichage: TAffichage; text: String);
+begin
+    attendre(66);
+    affichageFond(affichage);
+    affichageTexteAvecSautsDeLigne(text, 50, FCoord(100,300), FCouleur(0,0,0,255), affichage, 1600);
+    miseAJourRenderer(affichage);
+    attendre(3000);
 end;
 
 {Met à jour l'affichage

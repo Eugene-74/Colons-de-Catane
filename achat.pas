@@ -10,7 +10,6 @@ function aLesRessources(joueur : Tjoueur; ressources : TRessources):boolean;
 procedure enleverRessources( var joueur : Tjoueur; ressources : TRessources);
 procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur;debut : Boolean);
 procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
-procedure affichageGagnant(var affichage: TAffichage);
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
 function verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs;var affichage : TAffichage):Boolean;
 procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
@@ -682,27 +681,17 @@ begin
         else
           text := text + joueurs[id].Nom +' ';
       end;
-  if (nombreDeGagnant > 1 )then
-    affichageInformation(text + 'vienent de gagner la partie en dépassant les 10 points au même tour', 25, FCouleur(0,0,0,255), affichage)
-  else if (nombreDeGagnant =1 )then
-    affichageInformation(text+ 'viens de gagner la partie en dépassant les 10 points', 25, FCouleur(0,0,0,255), affichage);
   
   if(gagnant <> -1) then
   begin
-    affichageGagnant(affichage);
+    if (nombreDeGagnant > 1 )then
+      text := text + 'viennent de gagner la partie en dépassant les 10 points au même tour'
+    else if (nombreDeGagnant =1 )then
+      text := text + 'viens de gagner la partie en dépassant les 10 points';
+    
+    affichageGagnant(affichage,text);
     verificationPointsVictoire := True;
   end;
-end;
-
-
-
-procedure affichageGagnant(var affichage: TAffichage);
-begin
-// TODO faire un GIF de  victoire (Yann)
-
-writeln('Gagnant');
-
-attendre(10000);
 end;
 
 
