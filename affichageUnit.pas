@@ -12,43 +12,31 @@ procedure affichagePlateau(plat: TPlateau; var affichage: TAffichage);
 procedure clicHexagone(var affichage: TAffichage; var coord: Tcoord);
 procedure miseAJourRenderer(var affichage :TAffichage);
 procedure affichagePersonne(personne: TPersonne; var affichage: TAffichage);
-
 procedure affichageSouillard(plat: TPlateau; var affichage: TAffichage);
-
 procedure affichageConnexion(connexion : TConnexion; var affichage : TAffichage);
 procedure echangeRessources(joueurs: TJoueurs; idJoueurActuel:Integer; var idJoueurEchange: Integer; var ressources1, ressources2: TRessources; var affichage: TAffichage);
 procedure selectionRessource(var affichage: TAffichage; var ressource: TRessource;text: String;joueurs : Tjoueurs);
-
 procedure selectionDepouiller(var ressource: TRessource; idJoueurActuel:Integer; var idJoueurAVoler: Integer; joueurs: TJoueurs; var affichage: TAffichage;text: String);
-
 procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
 procedure clicAction(var affichage: TAffichage; var valeurBouton: String);
-
 procedure affichageInformation(texte: String; taille: Integer; couleur: TSDL_Color; var affichage: TAffichage);
 procedure affichageJoueurActuel(joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
 procedure suppressionInformation(var affichage: TAffichage);
 procedure attendre(ms: Integer);
-
 procedure affichageScoreAndClear(joueur:TJoueur; var affichage: TAffichage);
 procedure affichageCartesTutoratAndRender(joueur: TJoueur; var affichage: TAffichage);
 procedure affichageCartesTutorat(joueur: TJoueur; var affichage: TAffichage);
 procedure affichageDes(de1,de2:Integer; var affichage: TAffichage);
 procedure affichageHexagone(plat: TPlateau; var affichage: TAffichage; coordHexa: TCoord; preview : Boolean);
-
 procedure affichageFond(var affichage: TAffichage);
-
-
-procedure afficherGIF(const FileName: string; var affichage: TAffichage);
 procedure affichageDetailsHexagone(coordHexa,coordCart: TCoord; plat: TPlateau; var affichage: TAffichage;preview : Boolean);
+procedure affichageRegles(var affichage: TAffichage);
 
 implementation
 
 procedure affichageTexteAvecSautsDeLigne(text: String; taille: Integer; coord: TCoord; couleur: TSDL_Color; var affichage: TAffichage; maxWidth: Integer);forward;
-
 function tailleTexte(texte: AnsiString; taille: Integer): Tcoord;forward; 
-
 procedure affichageSelectionRessource(var boutonValider: TBouton; var affichage: TAffichage; var grille: TGrille;text : String;joueurs : Tjoueurs);forward;
-
 procedure affichageScore(joueur: TJoueur; var affichage: TAffichage);forward;
 procedure affichageCarteTutorat(carteTutorat: TCarteTutorat; idCarte: Integer; coord: TCoord; var affichage: TAffichage);forward;
 procedure suppressionScore(playerId: Integer; var affichage: TAffichage);forward;
@@ -212,6 +200,42 @@ begin
     affichageImage(affichage.xGrid + coord.x -(tailleEleve div 2),affichage.yGrid + coord.y -(tailleEleve div 2),tailleEleve,tailleEleve,texture,affichage);
 end;
 
+procedure affichageImageBouton(bouton: TBouton; var affichage: TAffichage);
+begin
+    affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,chargerTexture(affichage, bouton.texte),affichage);
+end;
+
+procedure affichageRegles(var affichage: TAffichage);
+var bouton: TBouton;
+    event: TSDL_Event;
+    coord: TCoord;
+    running: Boolean;
+begin
+    affichageFond(affichage);
+    attendre(66);
+    
+    affichageImage(0,0,WINDOW_W,WINDOW_H,chargerTexture(affichage,'reglesImage'),affichage);
+    bouton := FBouton((WINDOW_W - 160) div 2,WINDOW_H - 75,160,50,'valider','valider');
+    affichageImageBouton(bouton,affichage);
+
+    miseAJourRenderer(affichage);
+    running := True;
+    while running do
+    begin
+        attendre(16);
+        while (SDL_PollEvent(@event) <> 0) do
+            case event.type_ of
+                SDL_QUITEV: HALT;
+                SDL_MOUSEBUTTONDOWN:
+                begin
+                    coord := FCoord(event.button.x,event.button.y);
+                    if (coord.x >= bouton.coord.x) and (coord.x <= bouton.coord.x + bouton.w) and (coord.y >= bouton.coord.y) and (coord.y <= bouton.coord.y + bouton.h) then
+                        running := False;
+                end;
+            end;
+    end;
+end;
+
 {Retourne les coordonnees du clic de la souris (système cartesien)
 Preconditions :
     - affichage : la structure contenant le renderer
@@ -338,8 +362,6 @@ begin
     end;
 end;
 
-
-
 {Affiche un hexagone à l'ecran
 Preconditions :
     - plat : le plateau de jeu
@@ -456,8 +478,6 @@ begin
 
     affichageTexteAvecSautsDeLigne(carteTutorat.description, 14, FCoord(coord.x+10,coord.y+150), FCouleur(0,0,0,255), affichage, 165);
 end;
-
-
 
 procedure affichageTexteAvecSautsDeLigne(text: String; taille: Integer; coord: TCoord; couleur: TSDL_Color; var affichage: TAffichage; maxWidth: Integer);
 var
@@ -576,19 +596,14 @@ begin
     affichageTexte(' '+bouton.texte, 25, bouton.coord, FCouleur(0,0,0,255), affichage);
 end;
 
-procedure affichageImageBouton(bouton: TBouton; var affichage: TAffichage);
-begin
-    affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,chargerTexture(affichage, bouton.texte),affichage);
-end;
-
 procedure initialisationBoutonsSysteme(var affichage: TAffichage);
 var bouton: TBouton;
 begin
     setLength(affichage.boutonsSysteme, 0);
-    bouton := FBouton(WINDOW_W-160,WINDOW_H-85,60,60,'/IconesMusique/demarrer','musique_play');
+    bouton := FBouton(WINDOW_W-150,WINDOW_H-75,50,50,'/IconesMusique/demarrer','musique_play');
     ajouterBoutonTableau(bouton,affichage.boutonsSysteme);
 
-    bouton := FBouton(WINDOW_W-85,WINDOW_H-85,60,60,'/IconesMusique/arreter','musique_stop');
+    bouton := FBouton(WINDOW_W-75,WINDOW_H-75,50,50,'/IconesMusique/arreter','musique_stop');
     ajouterBoutonTableau(bouton,affichage.boutonsSysteme);
 
     bouton := FBouton(WINDOW_W-75,20,50,50,'croix','quitter');
@@ -1145,12 +1160,6 @@ begin
     initialisationTextures(affichage);
     initialisationBoutonsAction(affichage);
     initialisationBoutonsSysteme(affichage);
-end;
-
-
-procedure AfficherGIF(const FileName: string; var affichage: TAffichage);
-begin
-writeln('afficher gif : '+filename);
 end;
 
 end.

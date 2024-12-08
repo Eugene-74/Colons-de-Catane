@@ -23,6 +23,6 @@ Dès qu’un joueur a *10 points de victoire* la partie s’arrête et ce joueur
 Le jeu comporte aussi des cartes de tutorat, Celles-ci ont des avantages diversent.
 *Discussion* : Permet de placer *2 connexions*.
 *WordReference* : Permet de *déplacer le souillard* 1 fois.
-*Vole de cahier* : Permet de *voler* à un autre joueur toutes ces *ressources d'un certain type*.
-*Annale* : Permet de gagner *2 connaissance* du type choisis.
+*Vol de cahier* : Permet de *voler* à un autre joueur toutes ces *ressources d'un certain type*.
+*Annale* : Permet de gagner *2 connaissances* du type choisis.
 *Majorant* : Permet de gagner *1 point de victoire*.

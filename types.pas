@@ -137,7 +137,6 @@ type
     boutonsSysteme: TBoutons;
     musiqueActuelle : TMusique;
     sons : TSons;
-
   end;
 
 

@@ -130,12 +130,12 @@ begin
   
   initialisationAffichage(affichage);
   initisationMusique(affichage);
-
+  affichageRegles(affichage);
 
   setlength(noms,4);
   for i:=0 to 3 do
     noms[i] := '';
-  
+
   affichageFond(affichage);
   
   repeat

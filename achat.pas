@@ -702,7 +702,7 @@ procedure affichageGagnant(var affichage: TAffichage);
 begin
 // TODO faire un GIF de  victoire (Yann)
 
-afficherGIF('Assets/test.gif',affichage);
+writeln('Gagnant');
 
 attendre(10000);
 end;
