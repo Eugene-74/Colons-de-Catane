@@ -31,12 +31,12 @@ procedure affichageHexagone(plat: TPlateau; var affichage: TAffichage; coordHexa
 procedure affichageFond(var affichage: TAffichage);
 procedure affichageDetailsHexagone(coordHexa,coordCart: TCoord; plat: TPlateau; var affichage: TAffichage;preview : Boolean);
 procedure affichageRegles(var affichage: TAffichage);
+procedure suppresionAffichage(var affichage: TAffichage);
 
 implementation
 
 procedure affichageTexteAvecSautsDeLigne(text: String; taille: Integer; coord: TCoord; couleur: TSDL_Color; var affichage: TAffichage; maxWidth: Integer);forward;
 function tailleTexte(texte: AnsiString; taille: Integer): Tcoord;forward; 
-procedure affichageSelectionRessource(var boutonValider: TBouton; var affichage: TAffichage; var grille: TGrille;text : String;joueurs : Tjoueurs);forward;
 procedure affichageScore(joueur: TJoueur; var affichage: TAffichage);forward;
 procedure affichageCarteTutorat(carteTutorat: TCarteTutorat; idCarte: Integer; coord: TCoord; var affichage: TAffichage);forward;
 procedure suppressionScore(playerId: Integer; var affichage: TAffichage);forward;
@@ -816,19 +816,13 @@ begin
   tailleTexte := FCoord(textWidth,textHeight);
 end;
 
-procedure affichageSelectionRessource(var boutonValider: TBouton; var affichage: TAffichage; var grille: TGrille;text : String;joueurs : TJoueurs);
+procedure affichageSelectionRessource(var boutonValider: TBouton; var affichage: TAffichage; var grille: TGrille; text : String; ressourceSelectionnee: TRessource);
 var ressource: TRessource;
     coord,coordCart: Tcoord;
     i,j: Integer;
     tailleT: TCoord;
 begin
-    affichageFond(affichage);
     attendre(66);
-
-    for i := 0 to High(joueurs) do
-    begin
-      affichageScore(joueurs[i], affichage);
-    end;
 
     tailleT := tailleTexte(text,25);
     coord := FCoord(450,50);
@@ -844,7 +838,11 @@ begin
     begin
         hexaToCart(FCoord(i,j),coordCart,tailleHexagone div 2);
         if ressource <> Rien then
+        begin
             affichageImage(coord.x+coordCart.x-(tailleHexagone div 2),coord.y+coordCart.y-(tailleHexagone div 2),tailleHexagone,tailleHexagone,affichage.texturePlateau.textureRessource[ressource],affichage);
+            if ressource = ressourceSelectionnee then
+                affichageImage(coord.x+coordCart.x-(tailleHexagone div 2),coord.y+coordCart.y-(tailleHexagone div 2),tailleHexagone,tailleHexagone,affichage.texturePlateau.texturePreview,affichage);
+        end;
         grille[i,j].ressource := ressource;
         Inc(i);
         if i > 2 then
@@ -858,25 +856,34 @@ begin
     affichageImageBouton(boutonValider,affichage);
 end;
 
-procedure selectionRessource(var affichage: TAffichage; var ressource: TRessource;text: String;joueurs: TJoueurs);
+procedure selectionRessource(var affichage: TAffichage; var ressource: TRessource; text: String; joueurs: TJoueurs);
 var coord,coordHexa: Tcoord;
     grille: TGrille;
     valider: Boolean;
     boutonValider: TBouton;
+    i: Integer;
 begin
     nettoyageAffichage(affichage);
+    affichageFond(affichage);
     attendre(66);
-    affichageSelectionRessource(boutonValider,affichage,grille,text,joueurs);
+    ressource := Rien;
+    affichageSelectionRessource(boutonValider,affichage,grille,text,ressource);
+    for i := 0 to length(joueurs)-1 do
+      affichageScore(joueurs[i], affichage);
+    
     miseAJourRenderer(affichage);
 
     valider := False;
-    ressource := Rien;
     while not valider do
     begin
         clicCart(affichage,coord);
-        cartToHexa(FCoord(coord.x-800,coord.y-300),coordHexa,tailleHexagone div 2);
+        cartToHexa(FCoord(coord.x-850,coord.y-300),coordHexa,tailleHexagone div 2);
         if (coordHexa.x >= 0) and (coordHexa.x <= 2) and (coordHexa.y >= 0) and (coordHexa.y <= 1) then
+        begin
             ressource := grille[coordHexa.x,coordHexa.y].ressource;
+            affichageSelectionRessource(boutonValider,affichage,grille,text,ressource);
+            miseAJourRenderer(affichage);
+        end;
         if (boutonValider.coord.x <= coord.x) and (coord.x <= boutonValider.coord.x + boutonValider.w) and (boutonValider.coord.y <= coord.y) and (coord.y <= boutonValider.coord.y + boutonValider.h) and (ressource <> Rien) then
             valider := True;
     end;
@@ -892,20 +899,28 @@ var boutonValider: TBouton;
     i: Integer;
 begin
     nettoyageAffichage(affichage);
+    affichageFond(affichage);
     attendre(66);
-    affichageSelectionRessource(boutonValider,affichage,grille,text,joueurs);
+    for i := 0 to length(joueurs)-1 do
+      affichageScore(joueurs[i], affichage);
+    ressource := Rien;
+    affichageSelectionRessource(boutonValider,affichage,grille,text,ressource);
     affichageJoueurInput(joueurs,idJoueurAVoler,FCoord(800,600),affichage,boutons);
     miseAJourRenderer(affichage);
 
     valider := False;
-    ressource := Rien;
     while not valider do
     begin
         clicCart(affichage,coord);
 
-        cartToHexa(FCoord(coord.x-800,coord.y-300),coordHexa,tailleHexagone div 2);
+        cartToHexa(FCoord(coord.x-850,coord.y-300),coordHexa,tailleHexagone div 2);
         if (coordHexa.x >= 0) and (coordHexa.x <= 2) and (coordHexa.y >= 0) and (coordHexa.y <= 1) then
-            ressource := grille[coordHexa.x,coordHexa.y].ressource
+        begin
+            ressource := grille[coordHexa.x,coordHexa.y].ressource;
+            affichageSelectionRessource(boutonValider,affichage,grille,text,ressource);
+            affichageJoueurInput(joueurs,idJoueurAVoler,FCoord(800,600),affichage,boutons);
+            miseAJourRenderer(affichage);
+        end
         else if (boutonValider.coord.x <= coord.x) and (coord.x <= boutonValider.coord.x + boutonValider.w) and (boutonValider.coord.y <= coord.y) and (coord.y <= boutonValider.coord.y + boutonValider.h) and (ressource <> Rien) then
             valider := True
         else
@@ -1130,10 +1145,10 @@ begin
     bouton := FBouton(25,WINDOW_H - 310,270,50,'Achat élève','achat_eleve');
     ajouterBoutonTableau(bouton, affichage.boutonsAction);
 
-    bouton := FBouton(25,WINDOW_H - 250,270,50,'Achat carte tutorat','achat_carte_tutorat');
+    bouton := FBouton(25,WINDOW_H - 250,270,50,'Changement en prof','changement_en_prof');
     ajouterBoutonTableau(bouton, affichage.boutonsAction);
 
-    bouton := FBouton(25,WINDOW_H - 190,270,50,'Changement en prof','changement_en_prof');
+    bouton := FBouton(25,WINDOW_H - 190,270,50,'Achat carte tutorat','achat_carte_tutorat');
     ajouterBoutonTableau(bouton, affichage.boutonsAction);
 
     bouton := FBouton(25,WINDOW_H - 130,270,50,'Échange ressources','echange');
@@ -1160,6 +1175,28 @@ begin
     initialisationTextures(affichage);
     initialisationBoutonsAction(affichage);
     initialisationBoutonsSysteme(affichage);
+end;
+
+procedure suppresionAffichage(var affichage: TAffichage);
+var texture: PSDL_Texture;
+begin
+    for texture in affichage.texturePlateau.textureRessource do
+        SDL_DestroyTexture(texture);
+    for texture in affichage.texturePlateau.textureIconesRessources do
+        SDL_DestroyTexture(texture);
+    for texture in affichage.texturePlateau.textureIconesCartesTutorat do
+        SDL_DestroyTexture(texture);
+    SDL_DestroyTexture(affichage.texturePlateau.textureContourHexagone);
+    SDL_DestroyTexture(affichage.texturePlateau.textureContourVide);
+    SDL_DestroyTexture(affichage.texturePlateau.textureEleve);
+    SDL_DestroyTexture(affichage.texturePlateau.textureSouillard);
+    SDL_DestroyTexture(affichage.texturePlateau.textureProfesseur);
+    SDL_DestroyTexture(affichage.texturePlateau.texturePoint);
+    SDL_DestroyTexture(affichage.texturePlateau.texturePreview);
+
+    SDL_DestroyRenderer(affichage.renderer);
+    SDL_DestroyWindow(affichage.fenetre);
+    SDL_Quit();
 end;
 
 end.

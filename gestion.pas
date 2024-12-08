@@ -451,7 +451,7 @@ begin
   repeat
     tour(joueurs,plateau,affichage);
   until (verificationPointsVictoire(plateau,joueurs,affichage));
-
+  suppresionAffichage(affichage);
 end;
 
 
