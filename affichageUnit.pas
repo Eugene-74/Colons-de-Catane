@@ -205,37 +205,6 @@ begin
     affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,chargerTexture(affichage, bouton.texte),affichage);
 end;
 
-procedure affichageRegles(var affichage: TAffichage);
-var bouton: TBouton;
-    event: TSDL_Event;
-    coord: TCoord;
-    running: Boolean;
-begin
-    affichageFond(affichage);
-    attendre(66);
-    
-    affichageImage(0,0,WINDOW_W,WINDOW_H,chargerTexture(affichage,'reglesImage'),affichage);
-    bouton := FBouton((WINDOW_W - 160) div 2,WINDOW_H - 75,160,50,'valider','valider');
-    affichageImageBouton(bouton,affichage);
-
-    miseAJourRenderer(affichage);
-    running := True;
-    while running do
-    begin
-        attendre(16);
-        while (SDL_PollEvent(@event) <> 0) do
-            case event.type_ of
-                SDL_QUITEV: HALT;
-                SDL_MOUSEBUTTONDOWN:
-                begin
-                    coord := FCoord(event.button.x,event.button.y);
-                    if (coord.x >= bouton.coord.x) and (coord.x <= bouton.coord.x + bouton.w) and (coord.y >= bouton.coord.y) and (coord.y <= bouton.coord.y + bouton.h) then
-                        running := False;
-                end;
-            end;
-    end;
-end;
-
 {Retourne les coordonnees du clic de la souris (système cartesien)
 Preconditions :
     - affichage : la structure contenant le renderer
@@ -273,6 +242,29 @@ begin
                     end;
                 end;
             end;
+    end;
+end;
+
+procedure affichageRegles(var affichage: TAffichage);
+var bouton: TBouton;
+    coord: TCoord;
+    running: Boolean;
+begin
+    affichageFond(affichage);
+    attendre(66);
+    
+    affichageImage(0,0,WINDOW_W,WINDOW_H,chargerTexture(affichage,'reglesImage'),affichage);
+    bouton := FBouton((WINDOW_W - 160) div 2,WINDOW_H - 75,160,50,'valider','valider');
+    affichageImageBouton(bouton,affichage);
+
+    miseAJourRenderer(affichage);
+    running := True;
+    while running do
+    begin
+        attendre(16);
+        clicCart(affichage,coord);
+        if (coord.x >= bouton.coord.x) and (coord.x <= bouton.coord.x + bouton.w) and (coord.y >= bouton.coord.y) and (coord.y <= bouton.coord.y + bouton.h) then
+            running := False;
     end;
 end;
 
@@ -468,7 +460,7 @@ end;
 procedure affichageCarteTutorat(carteTutorat: TCarteTutorat; idCarte: Integer; coord: TCoord; var affichage: TAffichage);
 begin
     affichageZone(coord.x,coord.y,180,270,2,affichage);
-    affichageImage(coord.x+75,coord.y+35,50,50,affichage.texturePlateau.textureIconesCartesTutorat[idCarte+1],affichage);
+    affichageImage(coord.x+40,coord.y+10,100,100,affichage.texturePlateau.textureIconesCartesTutorat[idCarte+1],affichage);
 
     affichageZone(coord.x+150,coord.y-10,40,40,2,affichage);
     affichageTexte(IntToStr(carteTutorat.nbr), 15, FCoord(coord.x+160,coord.y-10), FCouleur(0,200,0,255), affichage);
