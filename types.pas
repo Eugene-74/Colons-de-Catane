@@ -185,7 +185,7 @@ const
     (1), // Humanites
     (0)  // Mathematiques
   );
-  POSITION_DES : TCoord = (x: 50; y: 500);
+  POSITION_DES : TCoord = (x: 50; y: 400);
 
   WINDOW_W = 1800;
   WINDOW_H = 1000;
