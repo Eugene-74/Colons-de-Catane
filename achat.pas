@@ -626,12 +626,12 @@ begin
     if (longueurRoutes[id] >= 5) then
     begin
       for i := 0 to High(joueurs) do
-        if(longueurRoutes[id] < longueurRoutes[i]) then
-          begin
-          plusGrandeConnexion := False;
-          end;
+        if(id <> i )then
+          if(longueurRoutes[id] < longueurRoutes[i]) then
+            plusGrandeConnexion := False;
       if plusGrandeConnexion then
         begin
+        writeln('longueurRoutes[id] : ',longueurRoutes[id]);
         joueurs[id].PlusGrandeConnexion := True;
         points[id] := points[id] + 2;
         end;
@@ -641,17 +641,16 @@ begin
     joueurs[id].PlusGrandeNombreDeWordReference := False;
 
     if(joueurs[id].CartesTutorat[1].utilisee >= 3) then
+    begin
       for i := 0 to High(joueurs) do
         if(joueurs[id].CartesTutorat[1].utilisee < joueurs[i].CartesTutorat[1].utilisee) then
-          begin
           plusDeplacementSouillard := False;
-          if(plusDeplacementSouillard) then
-            begin
-            points[id] := points[id] + 2;
-            joueurs[id].PlusGrandeNombreDeWordReference := True;
-            end;
-          end;
-          
+        if(plusDeplacementSouillard) then
+        begin
+          points[id] := points[id] + 2;
+          joueurs[id].PlusGrandeNombreDeWordReference := True;
+        end;
+    end;
     if points[id] >= 10 then
       nombreDeGagnant := nombreDeGagnant +1;
     affichageScoreAndClear(joueurs[id],affichage);

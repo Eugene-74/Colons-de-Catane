@@ -446,6 +446,7 @@ end;
 procedure affichageScore(joueur:TJoueur; var affichage: TAffichage);
 var coord: Tcoord;
     ressource: TRessource;
+    pointsReel: Integer;
 begin
     coord := FCoord(25,25+joueur.id*75);
     
@@ -453,7 +454,15 @@ begin
 
     coord.x := coord.x + 13*(length(joueur.Nom)+2);
     affichageImage(coord.x,coord.y+7,25,25,affichage.texturePlateau.texturePoint,affichage);
-    affichageTexte(IntToStr(joueur.Points), 25, FCoord(coord.x+30,coord.y), FCouleur(0,0,0,255), affichage);
+
+    pointsReel := joueur.Points;
+
+    if(joueur.PlusGrandeConnexion)then
+        pointsReel := joueur.Points + 2;
+    if(joueur.PlusGrandeNombreDeWordReference)then
+        pointsReel := joueur.Points + 2;
+
+    affichageTexte(IntToStr(pointsReel), 25, FCoord(coord.x+30,coord.y), FCouleur(0,0,0,255), affichage);
 
     coord := FCoord(25,coord.y+35);
     for ressource := Physique to Mathematiques do
