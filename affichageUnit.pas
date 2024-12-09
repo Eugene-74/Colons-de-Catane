@@ -118,6 +118,8 @@ begin
 
     affichage.texturePlateau.texturePreview := chargerTexture(affichage, 'preview');
 
+    for j := 1 to 6 do
+        affichage.texturePlateau.textureDes[j] := chargerTexture(affichage, 'DiceFaces/' + IntToStr(j));
 end;
 
 {Affiche le fond de l'ecran en blanc
@@ -331,7 +333,8 @@ procedure affichageDe(de,rotation:Integer; coord:TCoord; var affichage: TAfficha
 var destination_rect: TSDL_RECT;
 begin
     destination_rect := FRect(coord.x,coord.y,75,75);
-    SDL_RenderCopyEx(affichage.renderer, chargerTexture(affichage, 'DiceFaces/' + IntToStr(de)), nil, @destination_rect, rotation, nil, SDL_FLIP_NONE);
+    
+    SDL_RenderCopyEx(affichage.renderer, affichage.texturePlateau.textureDes[de], nil, @destination_rect, rotation, nil, SDL_FLIP_NONE);
 end;
 
 procedure affichageDetailsHexagone(coordHexa,coordCart: TCoord; plat: TPlateau; var affichage: TAffichage;preview : Boolean);
@@ -1187,6 +1190,8 @@ begin
     for texture in affichage.texturePlateau.textureIconesRessources do
         SDL_DestroyTexture(texture);
     for texture in affichage.texturePlateau.textureIconesCartesTutorat do
+        SDL_DestroyTexture(texture);
+    for texture in affichage.texturePlateau.textureDes do
         SDL_DestroyTexture(texture);
     SDL_DestroyTexture(affichage.texturePlateau.textureContourHexagone);
     SDL_DestroyTexture(affichage.texturePlateau.textureContourVide);

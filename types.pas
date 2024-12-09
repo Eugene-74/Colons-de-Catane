@@ -104,6 +104,7 @@ type
     textureProfesseur: PSDL_Texture;
     texturePoint: PSDL_Texture;
     texturePreview: PSDL_Texture;
+    textureDes : array[1..6] of PSDL_Texture;
   end;
 
   TBouton = record

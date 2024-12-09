@@ -744,8 +744,9 @@ begin
 
     Exit;
   end;
-    enContactAvecPersonne := enContactConnexionEleve(plateau, coords, joueur);
-    enContactAvecAutreConnexion := not aucuneConnexionAdjacente(coords, plateau, joueur,affichage);
+
+  enContactAvecPersonne := enContactConnexionEleve(plateau, coords, joueur);
+  enContactAvecAutreConnexion := not aucuneConnexionAdjacente(coords, plateau, joueur,affichage);
 
   if not enContactAvecPersonne then
   begin
