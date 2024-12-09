@@ -396,7 +396,6 @@ begin
   for i := 0 to length(joueurs)-1 do
     begin
     affichageJoueurActuel(joueurs,i,affichage);
-// affichageJoueurActuel(joueurs,i,affichage);
     affichageCartesTutoratAndRender(joueurs[i],affichage);
     attendre(16);
 

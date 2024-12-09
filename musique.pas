@@ -99,6 +99,13 @@ begin
     randomIndex := Random(Length(musiques));
     musique := Mix_LoadMUS(musiques[randomIndex]);
 
+    if affichage.musiqueActuelle.musique <> nil then
+    begin
+      Mix_FreeMusic(affichage.musiqueActuelle.musique);
+      affichage.musiqueActuelle.musique := nil;
+    end;
+    
+    affichage.musiqueActuelle.musique := musique;
     affichage.musiqueActuelle.active := true;
     affichage.musiqueActuelle.debut := DateTimeToUnix(Now);
     affichage.musiqueActuelle.temps := musiquesTemps[randomIndex];

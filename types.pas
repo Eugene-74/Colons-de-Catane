@@ -105,6 +105,11 @@ type
     texturePoint: PSDL_Texture;
     texturePreview: PSDL_Texture;
     textureDes : array[1..6] of PSDL_Texture;
+    texturesSignes: array[0..1] of PSDL_Texture;
+    texturesMusique: array[0..1] of PSDL_Texture;
+    textureQuitter: PSDL_Texture;
+    textureValider: PSDL_Texture;
+    texturesFleches: array[0..1] of PSDL_Texture;
   end;
 
   TBouton = record
@@ -120,6 +125,7 @@ type
     debut : Int64;
     temps : Int64;
     active : Boolean;
+    musique : PMix_Music;
 
   end;
 

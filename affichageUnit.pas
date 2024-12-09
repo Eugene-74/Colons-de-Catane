@@ -107,6 +107,15 @@ begin
 
     for j := 1 to 5 do
         affichage.texturePlateau.textureIconesCartesTutorat[j] := chargerTexture(affichage, 'IconesCartesTutorat/'+IntToStr(j));
+    
+    affichage.texturePlateau.textureValider := chargerTexture(affichage, 'valider');
+    affichage.texturePlateau.textureQuitter := chargerTexture(affichage, 'croix');
+    affichage.texturePlateau.texturesMusique[0] := chargerTexture(affichage, 'IconesMusique/demarrer');
+    affichage.texturePlateau.texturesMusique[1] := chargerTexture(affichage, 'IconesMusique/arreter');
+    affichage.texturePlateau.texturesFleches[0] := chargerTexture(affichage, 'gauche');
+    affichage.texturePlateau.texturesFleches[1] := chargerTexture(affichage, 'droite');
+    affichage.texturePlateau.texturesSignes[0] := chargerTexture(affichage, 'plus');
+    affichage.texturePlateau.texturesSignes[1] := chargerTexture(affichage, 'moins');
 
     affichage.texturePlateau.textureContourHexagone := chargerTexture(affichage, 'hexagoneCercle');
     affichage.texturePlateau.textureContourVide := chargerTexture(affichage, 'hexagone');
@@ -205,7 +214,22 @@ end;
 
 procedure affichageImageBouton(bouton: TBouton; var affichage: TAffichage);
 begin
-    affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,chargerTexture(affichage, bouton.texte),affichage);
+    if bouton.texte='valider' then
+        affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.textureValider,affichage)
+    else if bouton.texte='croix' then
+        affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.textureQuitter,affichage)
+    else if bouton.texte='/IconesMusique/demarrer' then
+        affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.texturesMusique[0],affichage)
+    else if bouton.texte='/IconesMusique/arreter' then
+        affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.texturesMusique[1],affichage)
+    else if bouton.texte='gauche' then
+        affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.texturesFleches[0],affichage)
+    else if bouton.texte='droite' then
+        affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.texturesFleches[1],affichage)
+    else if bouton.texte='plus' then
+        affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.texturesSignes[0],affichage)
+    else if bouton.texte='moins' then
+        affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.texturesSignes[1],affichage)
 end;
 
 {Retourne les coordonnees du clic de la souris (système cartesien)
@@ -1200,6 +1224,14 @@ begin
     SDL_DestroyTexture(affichage.texturePlateau.textureProfesseur);
     SDL_DestroyTexture(affichage.texturePlateau.texturePoint);
     SDL_DestroyTexture(affichage.texturePlateau.texturePreview);
+    SDL_DestroyTexture(affichage.texturePlateau.textureValider);
+    SDL_DestroyTexture(affichage.texturePlateau.textureQuitter);
+    SDL_DestroyTexture(affichage.texturePlateau.texturesMusique[0]);
+    SDL_DestroyTexture(affichage.texturePlateau.texturesMusique[1]);
+    SDL_DestroyTexture(affichage.texturePlateau.texturesFleches[0]);
+    SDL_DestroyTexture(affichage.texturePlateau.texturesFleches[1]);
+    SDL_DestroyTexture(affichage.texturePlateau.texturesSignes[0]);
+    SDL_DestroyTexture(affichage.texturePlateau.texturesSignes[1]);
 
     SDL_DestroyRenderer(affichage.renderer);
     SDL_DestroyWindow(affichage.fenetre);
