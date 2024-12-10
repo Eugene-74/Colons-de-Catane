@@ -209,20 +209,18 @@ begin
 
   for i:=0 to length(joueurs)-1 do
     begin
-    // TODO re mettre apres
-    // affichageJoueurActuel(joueurs,i,affichage);
-    // placementEleve(plateau,affichage,joueurs[i]);
+    affichageJoueurActuel(joueurs,i,affichage);
+    placementEleve(plateau,affichage,joueurs[i]);
 
-    // placementConnexion(plateau,affichage,joueurs[i],true);
+    placementConnexion(plateau,affichage,joueurs[i],true);
     end;
 
   for i:=length(joueurs)-1 downto 0 do
     begin
-    // TODO re mettre apres
-    // affichageJoueurActuel(joueurs,i,affichage);
-    // placementEleve(plateau,affichage,joueurs[i]);
+    affichageJoueurActuel(joueurs,i,affichage);
+    placementEleve(plateau,affichage,joueurs[i]);
 
-    // placementConnexion(plateau,affichage,joueurs[i],true);
+    placementConnexion(plateau,affichage,joueurs[i],true);
     end;
 
 end;

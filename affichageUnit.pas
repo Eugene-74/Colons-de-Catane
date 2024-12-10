@@ -70,7 +70,6 @@ begin
         writeln('Erreur lors de l''initialisation de la SDL');
         HALT;
     end;
-    //TODO Check si tout est bien initialise
     affichage.fenetre := SDL_CreateWindow('Catan', SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, SDL_WINDOW_BORDERLESS);
     affichage.renderer := SDL_CreateRenderer(affichage.fenetre, -1, SDL_RENDERER_ACCELERATED);
 end;
@@ -796,7 +795,6 @@ begin
             idJoueurEchange := (idJoueurEchange + 1 + 1 * Ord(((idJoueurEchange + 1) mod length(joueurs))=idJoueurActuel)) mod length(joueurs)
         else
         begin
-            //TODO opti la verif de ressources pour limiter aux ressources possedees en max
             valeurBoutonSplit := splitValeur(valeurBouton);
 
             ressource := TRessource(GetEnumValue(TypeInfo(TRessource), valeurBoutonSplit[0]));
