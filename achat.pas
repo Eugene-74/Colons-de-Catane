@@ -653,11 +653,10 @@ begin
     affichageScoreAndClear(joueurs[id],affichage);
   end;
 
-
   for id := 0 to length(joueurs)-1 do
     if points[id] >= 10 then
     begin
-      setlength(verificationPointsVictoire,length(verificationPointsVictoire));
+      setlength(verificationPointsVictoire,length(verificationPointsVictoire)+1);
       verificationPointsVictoire[length(verificationPointsVictoire)-1] := id;
     end;
 end;
