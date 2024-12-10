@@ -564,13 +564,13 @@ begin
   SetLength(clicConnexion,2);
   for i := 0 to 1 do
   begin
-    repeat 
+    repeat
       clicHexagone(affichage,clicConnexion[i]);
       valide := dansLaGrille(plateau,clicConnexion[i]);
       if(not valide)then
       begin
         affichageInformation('Veuillez jouer dans le plateau.', 25, COULEUR_TEXT_ROUGE, affichage);
-        jouerSonValide(affichage,false); 
+        jouerSonValide(affichage,false);
       end;
     until valide;
     attendre(32);

@@ -325,7 +325,7 @@ begin
     textRect := FRect(coord.x,coord.y,0,0);
 	
 	if TTF_INIT=-1 then HALT;
-	
+    
     if text = '' then exit;
 	
 	police := TTF_OpenFont('Assets/OpenSans-Regular.ttf', taille);

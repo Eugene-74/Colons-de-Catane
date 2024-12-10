@@ -187,7 +187,7 @@ begin
   begin
     affichageJoueurActuel(joueurs,i,affichage);
     placementEleve(plateau,affichage,joueurs[i]);
-
+    attendre(32);
     placementConnexion(plateau,affichage,joueurs[i],true);
   end;
 
@@ -195,7 +195,7 @@ begin
   begin
     affichageJoueurActuel(joueurs,i,affichage);
     placementEleve(plateau,affichage,joueurs[i]);
-
+    attendre(32);
     placementConnexion(plateau,affichage,joueurs[i],true);
   end;
 end;
