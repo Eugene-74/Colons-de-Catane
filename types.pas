@@ -9,6 +9,8 @@ type
   TRessource = (Aucune, Physique, Informatique, Chimie, Humanites, Mathematiques, Rien);
 
   TStringTab = array of String;
+  TIntegerTab = array of Integer;
+
 
   TCarteTutorat = record
     nom : String;

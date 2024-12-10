@@ -34,7 +34,7 @@ function ressourcesEgales(ressources1 : TRessources;ressources2 : TRessources):b
 function chargerGrille(num : Integer): TGrille;
 var
   grille: TGrille;
-  numeros: array of array of Integer;
+  numeros: array of TIntegerTab;
   ressources: array of array of TRessource;
   i, j: Integer;
 begin
@@ -391,7 +391,27 @@ begin
   repeat
     tour(joueurs,plateau,affichage);
 // TODO deplacer l'affichage de : verificationPointsVictoire
-  until (verificationPointsVictoire(plateau,joueurs,affichage));
+  until (length(verificationPointsVictoire(plateau,joueurs,affichage))>=1);
+
+  //       if(nombreDeGagnant > 1) then
+  //         if(nombreDeGagnant = i)then
+  //         begin
+  //           text := text + joueurs[id].Nom +' ';
+  //           i := i + 1;
+  //         end
+  //         else
+  //           text := text + joueurs[id].Nom +' et '
+  //       else
+  //         text := text + joueurs[id].Nom +' ';
+  
+  // if(gagnant <> -1) then
+  // begin
+  //   if (nombreDeGagnant > 1 )then
+  //     text := text + 'viennent de gagner la partie en dépassant les 10 points au même tour'
+  //   else if (nombreDeGagnant =1 )then
+  //     text := text + 'viens de gagner la partie en dépassant les 10 points';
+    
+    // affichageGagnant(affichage,text);
   
   suppresionAffichage(affichage);
 end;

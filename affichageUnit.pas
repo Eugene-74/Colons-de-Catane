@@ -510,7 +510,7 @@ end;
 procedure affichageTexteAvecSautsDeLigne(text: String; taille: Integer; coord: TCoord; couleur: TSDL_Color; var affichage: TAffichage; maxWidth: Integer);
 var
   police: PTTF_Font;
-  words: array of String;
+  words: TStringTab;
   line, currentLine: AnsiString;
   i, textWidth, textHeight: Integer;
   wordCount: Integer;

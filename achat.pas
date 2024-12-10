@@ -11,7 +11,7 @@ procedure enleverRessources( var joueur : Tjoueur; ressources : TRessources);
 procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur;debut : Boolean);
 procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
-function verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs;var affichage : TAffichage):Boolean;
+function verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs;var affichage : TAffichage):TIntegerTab;
 procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
 function resteEmplacementConnexion(var affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
 
@@ -597,15 +597,13 @@ end;
 
 
 
-function verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs;var affichage : TAffichage):Boolean;
+function verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs;var affichage : TAffichage):TIntegerTab;
 var
   plusGrandeConnexion,plusDeplacementSouillard : Boolean;
-  id,i,nombreDeGagnant,gagnant : Integer;
-  points,longueurRoutes : array of Integer;
-  text : String;
-
+  id,i,nombreDeGagnant : Integer;
+  points,longueurRoutes : TIntegerTab;
 begin
-  verificationPointsVictoire := False;
+  setlength(verificationPointsVictoire,0);
 
   gagnant := -1;
   nombreDeGagnant := 0;
@@ -656,36 +654,13 @@ begin
     affichageScoreAndClear(joueurs[id],affichage);
   end;
 
-  text := '';
-  i:=1;
 
   for id := 0 to length(joueurs)-1 do
     if points[id] >= 10 then
-      begin
-        gagnant := id;
-
-        if(nombreDeGagnant > 1) then
-          if(nombreDeGagnant = i)then
-          begin
-            text := text + joueurs[id].Nom +' ';
-            i := i + 1;
-          end
-          else
-            text := text + joueurs[id].Nom +' et '
-        else
-          text := text + joueurs[id].Nom +' ';
-      end;
-  
-  if(gagnant <> -1) then
-  begin
-    if (nombreDeGagnant > 1 )then
-      text := text + 'viennent de gagner la partie en dépassant les 10 points au même tour'
-    else if (nombreDeGagnant =1 )then
-      text := text + 'viens de gagner la partie en dépassant les 10 points';
-    
-    affichageGagnant(affichage,text);
-    verificationPointsVictoire := True;
-  end;
+    begin
+      setlength(verificationPointsVictoire,length(verificationPointsVictoire));
+      verificationPointsVictoire[length(verificationPointsVictoire)-1] := id;
+    end;
 end;
 
 function connexionExisteDeja(plateau: TPlateau; coord1: TCoord; coord2: TCoord): Boolean;
