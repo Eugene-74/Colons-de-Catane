@@ -1129,6 +1129,7 @@ begin
                                 affichageNomJoueurInput(nom,boutons[StrToInt(valeurBouton)],25,affichage);
                                 valeurBouton := boutons[i].valeur;
                                 nom := '';
+                                stringTab[StrToInt(valeurBouton)] := nom;
                                 affichageNomJoueurInput(nom+'_',boutons[StrToInt(valeurBouton)],25,affichage);
                             end;
                         attendre(16);

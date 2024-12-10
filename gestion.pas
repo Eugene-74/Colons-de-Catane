@@ -6,34 +6,28 @@ uses Types,affichageUnit,SysUtils,achat,traitement,musique,TypInfo;
 procedure initialisationPartie(var joueurs : TJoueurs;var  plateau : TPlateau;var affichage : TAffichage);
 procedure partie(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 
-
-
 implementation
 procedure enleverMoitierRessources(var joueur : Tjoueur);forward;
-
 procedure gestionEchange(affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);forward;
 procedure gestionEchange4Pour1(affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);forward;
-
-function chargerGrille(num : Integer): TGrille; forward;
-function chargementPlateau(num : Integer): TPlateau;forward;
-
-function intialisationTutorat():TCartesTutorat;forward;
 procedure distributionConnaissance(var joueurs : TJoueurs;var plateau : TPlateau;des : integer);forward;
 procedure gestionDes(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);forward;
-function ressourcesVide(ressources : TRessources):boolean;forward;
-function ressourcesEgales(ressources1 : TRessources;ressources2 : TRessources):boolean;forward;
 procedure tour(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);forward;
+procedure donnerRessources( var joueur : Tjoueur; ressources : TRessources);forward;
 
 procedure utiliserCarteTutorat(var plateau : TPlateau;var affichage : TAffichage;var joueurs : TJoueurs;id : Integer;nom : String);forward;
-
 procedure utiliserCarte1(var plateau : TPlateau; var affichage : TAffichage;joueurs : Tjoueurs; id : Integer);forward;
 procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueurs : Tjoueurs; id : Integer);forward;
 procedure utiliserCarte3(var plateau : TPlateau; var affichage: TAffichage; joueurs : Tjoueurs;id : Integer);forward;
 procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau;var joueurs : Tjoueurs; id : Integer);forward;
 procedure utiliserCarte5(var affichage : TAffichage;var joueurs : TJoueurs;id :Integer);forward;
 
-procedure donnerRessources( var joueur : Tjoueur; ressources : TRessources);forward;
+function intialisationTutorat():TCartesTutorat;forward;
+function chargerGrille(num : Integer): TGrille; forward;
+function chargementPlateau(num : Integer): TPlateau;forward;
 
+function ressourcesVide(ressources : TRessources):boolean;forward;
+function ressourcesEgales(ressources1 : TRessources;ressources2 : TRessources):boolean;forward;
 
 
 
@@ -82,7 +76,6 @@ begin
     end;
 
   end;
-
   for i := 0 to 6 do
     for j := 0 to 6 do
     begin
@@ -93,27 +86,19 @@ begin
   chargerGrille := grille;
 end;
 
-
-
 function chargementPlateau(num : Integer): TPlateau;
 var
-  grille: TGrille;
-  plat : TPlateau;
+  plateau : TPlateau;
 begin
-
-  grille := chargerGrille(num);
-
-  plat.Grille := grille;
-  plat.Souillard.Position.x := 3;
-  plat.Souillard.Position.y := 3;
-  chargementPlateau := plat;
-    
+  plateau.Grille := chargerGrille(num);
+  plateau.Souillard.Position.x := 3;
+  plateau.Souillard.Position.y := 3;
+  chargementPlateau := plateau;
 end;
 
 function intialisationTutorat():TCartesTutorat;
 begin
-
-intialisationTutorat := CARTES_TUTORAT;
+  intialisationTutorat := CARTES_TUTORAT;
 end;
 
 procedure initialisationPartie(var joueurs : TJoueurs;var plateau : TPlateau;var affichage : TAffichage);
@@ -124,20 +109,17 @@ var i,j,num,count : integer;
   cartesTutorat : TCartesTutorat;
   noms : TStringTab;
 begin
-  
   for r := Aucune to Mathematiques do
     res[r] := 0;
-  
   initialisationAffichage(affichage);
   initisationMusique(affichage);
   affichageRegles(affichage);
+
+  affichageFond(affichage);
   
   setlength(noms,4);
   for i:=0 to 3 do
     noms[i] := '';
-
-  affichageFond(affichage);
-  
   repeat
     count := 0;
     recupererNomsJoueurs(noms,affichage);
@@ -146,9 +128,8 @@ begin
     unique := true;
 
     for i:=0 to length(noms) - 1 do
-    begin
       if ((noms[i] <> '') and (noms[i] <> ' ') ) then
-        begin
+      begin
         for j:=i+1 to length(noms) - 1 do
           if (noms[i] = noms[j]) then
             begin
@@ -157,30 +138,27 @@ begin
             affichageInformation('Il faut des noms différents.',25,COULEUR_TEXT_ROUGE,affichage);
             break;
             end;
-          if(unique) then
-            Inc(count)
-          else
-            break;
-        end
+        if(unique) then
+          Inc(count)
+        else
+          break;
+      end
       else
         break;
-        // Dec(count);
-    end;
     if ((count < 2)) then
-      begin
+    begin
       valide := False;
       if(unique)then
-        begin
+      begin
         jouerSonValide(affichage,valide);
         affichageInformation('Il faut au moins 2 joueurs.',25,COULEUR_TEXT_ROUGE,affichage);
-        end;
       end;
+    end;
   until valide;
-  // jouerSonValide(affichage,true);
 
   setlength(noms,count);
 
-  for i:=0 to length(noms) - 1 do
+  for i := 0 to length(noms) - 1 do
   begin
     SetLength(joueurs,i+1);
     joueurs[i].Nom:= noms[i];
@@ -208,50 +186,33 @@ begin
   affichageTour(plateau, joueurs, 0, affichage);
 
   for i:=0 to length(joueurs)-1 do
-    begin
+  begin
     affichageJoueurActuel(joueurs,i,affichage);
     placementEleve(plateau,affichage,joueurs[i]);
 
     placementConnexion(plateau,affichage,joueurs[i],true);
-    end;
+  end;
 
   for i:=length(joueurs)-1 downto 0 do
-    begin
+  begin
     affichageJoueurActuel(joueurs,i,affichage);
     placementEleve(plateau,affichage,joueurs[i]);
 
     placementConnexion(plateau,affichage,joueurs[i],true);
-    end;
-
+  end;
 end;
 
 procedure distributionConnaissance(var joueurs : TJoueurs;var plateau : TPlateau;des : integer);
 var q,r : integer;
   res : Tressource;
-  perso : TPersonne;
+  personne : TPersonne;
   coord,coo : Tcoord;
 begin
-  for r:=0 to length(plateau.Grille) -1 do
-    for q:=0 to length(plateau.Grille)-1 do
-      begin
-        if (plateau.Grille[q,r].Numero = des) then
-          begin
-            
-          res := plateau.Grille[q,r].ressource;
-          coord.x := q;
-          coord.y := r;
-          for perso in plateau.Personnes do
-            begin
-              for coo in perso.Position do
-                begin
-                if((coo.x = coord.x )and (coo.y = coord.y))then
-                  if((plateau.Souillard.Position.x <> coord.x) and (plateau.Souillard.Position.y <> coord.y)) then
-                    joueurs[perso.IdJoueur].Ressources[res] := joueurs[perso.IdJoueur].Ressources[res] +1 ;
-                end;
-            end;
-          end;
-      end;
-
+  for personne in plateau.Personnes do
+    for coo in personne.Position do
+      if (plateau.Grille[coo.x,coo.y].Numero = des) then
+        if((plateau.Souillard.Position.x <> coo.x) and (plateau.Souillard.Position.y <> coo.y)) then
+          joueurs[personne.IdJoueur].Ressources[plateau.Grille[coo.x,coo.y].ressource] := joueurs[personne.IdJoueur].Ressources[plateau.Grille[coo.x,coo.y].ressource] +1 ;
 end;
 
 procedure gestionDes(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
