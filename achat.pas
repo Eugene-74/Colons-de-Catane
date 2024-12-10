@@ -751,19 +751,18 @@ begin
   begin
     if  not enContactAvecAutreConnexion then
     begin
-      connexionValide := False;
+      // connexionValide := False;
       affichageInformation('La connexion doit être adjacente à une autre connexion ou en contact avec un élève ou un professeur.', 25, COULEUR_TEXT_ROUGE, affichage);
-      Exit;
+      Exit(False);
     end;
   end;
 
   // 4. Verifie si au moins 1 des hexagones est dans le plateau
   if (not dansLePlateau(plateau,coords[0]) and not dansLePlateau(plateau,coords[1])) then 
     begin
-    connexionValide:= False;
+    // connexionValide:= False;
     affichageInformation('Au moins 1 des hexagones choisis doit être dans le plateau', 25, COULEUR_TEXT_ROUGE, affichage);
-
-    Exit;
+    Exit(False);
     end;
   attendre(16);
 end;
@@ -881,49 +880,35 @@ begin
 end;
 
 function aucuneConnexionAdjacente(coords: TCoords; plateau: TPlateau; joueur: TJoueur; var affichage : TAffichage): Boolean;
-var
-  i: Integer;
-  autreCoord, coord1, coord2, coordRestante: TCoord;
-  verif: Boolean;
 begin
-  verif := true;
+  setLength(coords1,3);
+  setLength(coords2,3);
+  
+  coords1[0] := connexion.Position[0];
+  coords1[1] := connexion.Position[1];
+  
+  coords2[0] := connexion.Position[0];
+  coords2[1] := connexion.Position[1];
 
-  for i := 0 to High(plateau.Connexions) do
-  begin
-    if plateau.Connexions[i].IdJoueur = joueur.Id then
-    begin
-      coord1 := plateau.Connexions[i].Position[0];
-      coord2 := plateau.Connexions[i].Position[1];
+  trouver3EmeHexagone(plateau,coords1,coords2,connexion);
 
-      if (coords[0].x = coord1.x) and (coords[0].y = coord1.y) then
-      begin
-        autreCoord := coords[1];
-        coordRestante := coord2;
-      end
-      else if (coords[1].x = coord1.x) and (coords[1].y = coord1.y) then
-      begin
-        autreCoord := coords[0];
-        coordRestante := coord2;
-      end
-      else if (coords[0].x = coord2.x) and (coords[0].y = coord2.y) then
-      begin
-        autreCoord := coords[1];
-        coordRestante := coord1;
-      end
-      else if (coords[1].x = coord2.x) and (coords[1].y = coord2.y) then
-      begin
-        autreCoord := coords[0];
-        coordRestante := coord1;
-      end;
+  nouvelleConnexion := trouverConnexion(plateau,coords1[0],coords1[2]);
+  if(nouvelleConnexion.IdJoueur <> -1)then
+    exit(True);
 
-      if sontAdjacents(autreCoord, coordRestante) then
-      begin
-        verif := False;
+  nouvelleConnexion := trouverConnexion(plateau,coords1[1],coords1[2]);
+  if(nouvelleConnexion.IdJoueur <> -1)then
+    exit(True);
 
-      end;
-    end;
-  end;
-  aucuneConnexionAdjacente := verif;
+  nouvelleConnexion := trouverConnexion(plateau,coords2[0],coords2[2]);
+  if(nouvelleConnexion.IdJoueur <> -1)then
+    exit(True);
+  
+  nouvelleConnexion := trouverConnexion(plateau,coords2[1],coords2[2]);
+  if(nouvelleConnexion.IdJoueur <> -1)then
+    exit(True);
+    
+  aucuneConnexionAdjacente := False;
 end;
 
 function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var joueur:TJoueur; var affichage : TAffichage):Boolean;
