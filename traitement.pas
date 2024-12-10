@@ -7,6 +7,9 @@ uses Types,SDL2,Math;
 procedure hexaToCart(coord: TCoord; var coord_output: TCoord; taille:Integer);
 procedure cartToHexa(coord: TCoord; var coord_output: TCoord; taille:Integer);
 procedure round_hexa(q_f,r_f:Real; var coord_output: TCoord);
+procedure ajouterBoutonTableau(bouton: TBouton; var boutons: TBoutons);
+procedure calculPosConnexion(connexion: TConnexion; var coord: Tcoord; var longueur: Real; var angle: Real);
+
 function enContact(hexagones: TCoords): Boolean;
 function sontAdjacents(coord1, coord2: TCoord): Boolean;
 function splitValeur(texte: String): TStringTab;
@@ -14,13 +17,13 @@ function FCoord(x, y: Integer): TCoord;
 function FCouleur(r, g, b, a: Integer): TSDL_Color;
 function FRect(x, y, w, h: Integer): TSDL_Rect;
 function FBouton(x, y, w, h: Integer; texte,valeur: String): TBouton;
-procedure calculPosConnexion(connexion: TConnexion; var coord: Tcoord; var longueur: Real; var angle: Real);
 function recupererCouleurJoueur(joueurId: Integer):TSDL_Color;
 function calculPosPersonne(personne : TPersonne): Tcoord;
-procedure ajouterBoutonTableau(bouton: TBouton; var boutons: TBoutons);
 function dansLePlateau(plateau : TPlateau; coord : Tcoord): boolean;
 function dansLaGrille(plateau : TPlateau; coord : Tcoord): boolean;
-
+function CoordsEgales(coords1: TCoords; coords2: TCoords): Boolean;
+function aLesRessources(joueur : Tjoueur; ressources : TRessources):boolean;
+procedure enleverRessources( var joueur : Tjoueur; ressources : TRessources);
 
 implementation
 
@@ -215,8 +218,6 @@ begin
     boutons[length(boutons)-1] := bouton;
 end;
 
-
-
 function dansLePlateau(plateau : TPlateau; coord : Tcoord): boolean;
 begin
   dansLePlateau := false;
@@ -240,4 +241,33 @@ begin
     dansLaGrille := true;
 end;
 
+function CoordsEgales(coords1: TCoords; coords2: TCoords): Boolean;
+var i : Integer;
+begin
+  CoordsEgales := True;
+
+  if (Length(coords1) <> Length(coords2)) then
+    exit(False);
+
+  for i := 0 to length(coords1) -1 do
+    if not ((coords1[i].x = coords2[i].x) and (coords1[i].y = coords2[i].y)) and
+        not ((coords1[i].x = coords2[length(coords2) -1 - i].x) and (coords1[i].y = coords2[length(coords2) -1 - i].y)) then
+      exit(False);
+end;
+
+function aLesRessources(joueur : Tjoueur; ressources : TRessources):boolean;
+var res : TRessource;
+begin
+  aLesRessources := True;
+  for res in [Physique..Mathematiques] do
+    if(joueur.ressources[res] < ressources[res]) then
+      aLesRessources := False;
+end;
+
+procedure enleverRessources( var joueur : Tjoueur; ressources : TRessources);
+var res : TRessource;
+begin
+  for res in [Physique..Mathematiques] do
+    joueur.ressources[res] := joueur.ressources[res] - ressources[res]
+end;
 end.

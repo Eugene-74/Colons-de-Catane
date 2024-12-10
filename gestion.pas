@@ -30,7 +30,6 @@ function ressourcesVide(ressources : TRessources):boolean;forward;
 function ressourcesEgales(ressources1 : TRessources;ressources2 : TRessources):boolean;forward;
 
 
-
 function chargerGrille(num : Integer): TGrille;
 var
   grille: TGrille;

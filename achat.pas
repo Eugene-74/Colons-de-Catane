@@ -3,18 +3,15 @@ unit achat;
 interface
 uses Types, affichageUnit,traitement,sysutils,musique;
 
+procedure placeFauxConnexionAutourJoueur(affichage : TAffichage;plateau : TPlateau; id : Integer);
 procedure deplacementSouillard(var plateau : TPlateau; var joueurs : TJoueurs ;var affichage : TAffichage);
-procedure enleverRessources( var joueur : Tjoueur; ressources : TRessources);
+procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
 procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur;debut : Boolean);
 procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
-procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
-procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
-procedure placeFauxConnexionAutourJoueur(affichage : TAffichage;plateau : TPlateau; id : Integer);
 
-function CoordsEgales(coords1: TCoords; coords2: TCoords): Boolean;
-function aLesRessources(joueur : Tjoueur; ressources : TRessources):boolean;
-function verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs;var affichage : TAffichage):TIntegerTab;
+
 function resteEmplacementConnexion(var affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
+function verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs;var affichage : TAffichage):TIntegerTab;
 
 implementation
 procedure placeFauxConnexion(affichage : TAffichage;coord1 : Tcoord;coord2 : Tcoord; id : Integer);forward;
@@ -22,13 +19,15 @@ procedure placeFauxPersonne(affichage : TAffichage;coords : Tcoords; id : Intege
 
 procedure trouver3EmeHexagone(plateau : TPlateau;coords1,coords2,coords: TCoords);forward;
 procedure tirerCarteTutorat(var cartesTutorat : TCartesTutorat;var  joueur : Tjoueur);forward;
+procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);forward;
 
+function trouverXemeConnexion(plateau: TPlateau; joueur: TJoueur;nbr:Integer): TConnexion;forward;
 function compterConnexionAutour(var connexionDejaVisite : Tconnexions;connexion : TConnexion;plateau: TPlateau; joueur: TJoueur): Integer;forward;
 function nombreConnexionJoueur(plateau: TPlateau; joueur: TJoueur): Integer;forward;
 function connexionExisteDeja(plateau: TPlateau; coord1: TCoord; coord2: TCoord): Boolean;forward;
 function clicConnexion(var affichage: TAffichage; plateau: TPlateau): TCoords;forward;
-function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage : TAffichage): Boolean;forward;
 function ClicPersonne(var affichage: TAffichage; plateau: TPlateau; estEleve: Boolean): TCoords;forward;
+function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage : TAffichage): Boolean;forward;
 function professeurValide(var affichage: TAffichage; plateau: TPlateau; joueurActuel: TJoueur; HexagonesCoords: TCoords; var ProfesseurCoords: TCoords; var indexEleve: Integer): Boolean;forward;
 function personneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur;var affichage : TAffichage): Boolean;forward;
 function VerifierAdjacencePersonnes(HexagonesCoords: TCoords; plateau: TPlateau): Boolean;forward;
@@ -689,20 +688,6 @@ begin
   affichageInformation('Souillard déplacé avec succès !', 25, COULEUR_TEXT_VERT, affichage);
 end;
 
-function CoordsEgales(coords1: TCoords; coords2: TCoords): Boolean;
-var i : Integer;
-begin
-  CoordsEgales := True;
-
-  if (Length(coords1) <> Length(coords2)) then
-    exit(False);
-
-  for i := 0 to length(coords1) -1 do
-    if not ((coords1[i].x = coords2[i].x) and (coords1[i].y = coords2[i].y)) and
-        not ((coords1[i].x = coords2[length(coords2) -1 - i].x) and (coords1[i].y = coords2[length(coords2) -1 - i].y)) then
-      exit(False);
-end;
-
 function resteEleve(var affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
 var i: Integer;
 begin
@@ -906,22 +891,6 @@ begin
   end;
   if l > 0 then
     encontactAutreconnexionEleve := True;
-end;
-
-function aLesRessources(joueur : Tjoueur; ressources : TRessources):boolean;
-var res : TRessource;
-begin
-  aLesRessources := True;
-  for res in [Physique..Mathematiques] do
-    if(joueur.ressources[res] < ressources[res]) then
-      aLesRessources := False;
-end;
-
-procedure enleverRessources( var joueur : Tjoueur; ressources : TRessources);
-var res : TRessource;
-begin
-  for res in [Physique..Mathematiques] do
-    joueur.ressources[res] := joueur.ressources[res] - ressources[res]
 end;
 
 // TODO simplifier
