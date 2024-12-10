@@ -33,19 +33,19 @@ procedure round_hexa(q_f,r_f: Real; var coord_output: TCoord);
 var s: Integer;
     s_f,dq,dr,ds: Real;
 begin
-    s_f:= -q_f-r_f;
-    coord_output.x:= Round(q_f);
-    coord_output.y:= Round(r_f);
-    s:= Round(s_f);
+  s_f:= -q_f-r_f;
+  coord_output.x:= Round(q_f);
+  coord_output.y:= Round(r_f);
+  s:= Round(s_f);
 
-    dq := Abs(coord_output.x-q_f);
-    dr := Abs(coord_output.y-r_f);
-    ds := Abs(s-s_f);
+  dq := Abs(coord_output.x-q_f);
+  dr := Abs(coord_output.y-r_f);
+  ds := Abs(s-s_f);
 
-    if (dq > dr) and (dq > ds) then
-        coord_output.x := -coord_output.y-s
-    else if (dr > ds) then
-        coord_output.y := -coord_output.x-s;
+  if (dq > dr) and (dq > ds) then
+    coord_output.x := -coord_output.y-s
+  else if (dr > ds) then
+    coord_output.y := -coord_output.x-s;
 end;
 
 procedure hexaToCart(coord: TCoord; var coord_output: TCoord; taille:Integer);
@@ -73,71 +73,63 @@ end;
 function enContact(hexagones: TCoords): Boolean;
 var i,j: Integer;
 begin
-    enContact := True;
-    for i := 0 to length(hexagones) - 1 do
-    begin
-        for j := i + 1 to length(hexagones) - 1 do
-        begin
-            if not sontAdjacents(hexagones[i], hexagones[j]) then
-            begin
-                enContact := False;
-            end;
-        end;
-    end;
+  enContact := True;
+  for i := 0 to length(hexagones) - 1 do
+    for j := i + 1 to length(hexagones) - 1 do
+      if not sontAdjacents(hexagones[i], hexagones[j]) then
+        enContact := False;
 end;
 
 function splitValeur(texte: String): TStringTab;
 var i : Integer;
-    tab: TStringTab;
+  tab: TStringTab;
 begin
-    i := 1;
-    setLength(tab, 1);
-    tab[length(tab)] := '';
-    while i <= Length(texte) do
+  i := 1;
+  setLength(tab, 1);
+  tab[length(tab)] := '';
+  while i <= Length(texte) do
+  begin
+    if texte[i] = '_' then
     begin
-        if texte[i] = '_' then
-        begin
-            setLength(tab, length(tab)+1);
-            tab[length(tab)] := '';
-        end
-        else
-        begin
-            tab[length(tab)-1] := tab[length(tab)-1] + texte[i];
-        end;
-        i := i + 1;
-    end;
-    splitValeur := tab;
+      setLength(tab, length(tab)+1);
+      tab[length(tab)] := '';
+    end
+    else
+      tab[length(tab)-1] := tab[length(tab)-1] + texte[i];
+    i := i + 1;
+  end;
+  splitValeur := tab;
 end;
 
 function FCoord(x, y: Integer): TCoord;
 begin
-    FCoord.x := x;
-    FCoord.y := y;
+  FCoord.x := x;
+  FCoord.y := y;
 end;
 
 function FCouleur(r, g, b, a: Integer): TSDL_Color;
 begin
-    FCouleur.r := r;
-    FCouleur.g := g;
-    FCouleur.b := b;
-    FCouleur.a := a;
+  FCouleur.r := r;
+  FCouleur.g := g;
+  FCouleur.b := b;
+  FCouleur.a := a;
 end;
 
 function FRect(x, y, w, h: Integer): TSDL_Rect;
 begin
-    FRect.x := x;
-    FRect.y := y;
-    FRect.w := w;
-    FRect.h := h;
+  FRect.x := x;
+  FRect.y := y;
+  FRect.w := w;
+  FRect.h := h;
 end;
 
 function FBouton(x, y, w, h: Integer; texte,valeur: String): TBouton;
 begin
-    FBouton.coord := FCoord(x, y);
-    FBouton.w := w;
-    FBouton.h := h;
-    FBouton.texte := texte;
-    FBouton.valeur := valeur;
+  FBouton.coord := FCoord(x, y);
+  FBouton.w := w;
+  FBouton.h := h;
+  FBouton.texte := texte;
+  FBouton.valeur := valeur;
 end;
 
 {Calcul les coordonnees d'une connexion
@@ -149,18 +141,18 @@ Postconditions :
     - angle (Real) : l'angle de la connexion}
 procedure calculPosConnexion(connexion: TConnexion; var coord: Tcoord; var longueur: Real; var angle: Real);
 var dx,dy: Integer;
-    coord2: Tcoord;
+  coord2: Tcoord;
 begin
-    hexaToCart(connexion.Position[0],coord,tailleHexagone div 2);
-    hexaToCart(connexion.Position[1],coord2,tailleHexagone div 2);
+  hexaToCart(connexion.Position[0],coord,tailleHexagone div 2);
+  hexaToCart(connexion.Position[1],coord2,tailleHexagone div 2);
 
-    dx := coord2.x - coord.x;
-    dy := coord2.y - coord.y;
+  dx := coord2.x - coord.x;
+  dy := coord2.y - coord.y;
 
-    coord := FCoord((coord.x + coord2.x) div 2,(coord.y + coord2.y) div 2);
+  coord := FCoord((coord.x + coord2.x) div 2,(coord.y + coord2.y) div 2);
 
-    longueur := tailleHexagone div 2;
-    angle := RadToDeg(arctan2(dy,dx)+PI/2);
+  longueur := tailleHexagone div 2;
+  angle := RadToDeg(arctan2(dy,dx)+PI/2);
 end;
 
 {Renvoie la couleur associe au joueur
@@ -169,27 +161,25 @@ Preconditions :
 Postconditions :
     - couleur (TSDL_Color) : la couleur associee au joueur}
 function recupererCouleurJoueur(joueurId: Integer):TSDL_Color;
-var couleur: TSDL_Color;
 begin
-    case joueurId of
-        0:
-            couleur := COULEUR_ROUGE;
-        1:
-            couleur := COULEUR_VERT;
-        2:
-            couleur := COULEUR_BLEU;
-        3:
-            couleur := COULEUR_JAUNE;
-        -1:
-            couleur := COULEUR_PREVIEW_ROUGE;
-        -2:
-            couleur := COULEUR_PREVIEW_VERT;
-        -3:
-            couleur := COULEUR_PREVIEW_BLEU;
-        -4:
-            couleur := COULEUR_PREVIEW_JAUNE;
-    end;
-  recupererCouleurJoueur := couleur;
+  case joueurId of
+    0:
+      recupererCouleurJoueur := COULEUR_ROUGE;
+    1:
+      recupererCouleurJoueur := COULEUR_VERT;
+    2:
+      recupererCouleurJoueur := COULEUR_BLEU;
+    3:
+      recupererCouleurJoueur := COULEUR_JAUNE;
+    -1:
+      recupererCouleurJoueur := COULEUR_PREVIEW_ROUGE;
+    -2:
+      recupererCouleurJoueur := COULEUR_PREVIEW_VERT;
+    -3:
+      recupererCouleurJoueur := COULEUR_PREVIEW_BLEU;
+    -4:
+      recupererCouleurJoueur := COULEUR_PREVIEW_JAUNE;
+  end;
 end;
 
 {Calcul les coordonnees d'une personne
@@ -199,23 +189,23 @@ Postconditions :
     - TCoord : les coordonnees de la personne}
 function calculPosPersonne(personne : TPersonne): Tcoord;
 var scoord,coord: Tcoord;
-    i: Integer;
+  i: Integer;
 begin
-    scoord := FCoord(0,0);
-    
-    for i:=0 to length(personne.Position)-1 do
-    begin
-        hexaToCart(personne.Position[i],coord,tailleHexagone div 2);
-        scoord := FCoord(scoord.x + coord.x,scoord.y + coord.y);
-    end;
+  scoord := FCoord(0,0);
+  
+  for i:=0 to length(personne.Position)-1 do
+  begin
+    hexaToCart(personne.Position[i],coord,tailleHexagone div 2);
+    scoord := FCoord(scoord.x + coord.x,scoord.y + coord.y);
+  end;
 
-    calculPosPersonne := FCoord(scoord.x div 3,scoord.y div 3);
+  calculPosPersonne := FCoord(scoord.x div 3,scoord.y div 3);
 end;
 
 procedure ajouterBoutonTableau(bouton: TBouton; var boutons: TBoutons);
 begin
-    setLength(boutons, length(boutons)+1);
-    boutons[length(boutons)-1] := bouton;
+  setLength(boutons, length(boutons)+1);
+  boutons[length(boutons)-1] := bouton;
 end;
 
 function dansLePlateau(plateau : TPlateau; coord : Tcoord): boolean;
@@ -232,7 +222,7 @@ end;
 
 function dansLaGrille(plateau : TPlateau; coord : Tcoord): boolean;
 begin
-    dansLaGrille := false;
+  dansLaGrille := false;
 
   if(coord.x < 0) or (coord.x >= length(plateau.Grille)) or (coord.y < 0) or (coord.y >= length(plateau.Grille)) then
     exit(false);
