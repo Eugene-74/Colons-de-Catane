@@ -3,7 +3,7 @@ unit achat;
 interface
 uses Types, affichageUnit,traitement,sysutils,musique;
 
-procedure placeFauxConnexionAutourJoueur(affichage : TAffichage;plateau : TPlateau; id : Integer);
+procedure placeFauxConnexionAutourJoueur(var affichage : TAffichage;plateau : TPlateau; id : Integer);
 procedure deplacementSouillard(var plateau : TPlateau; var joueurs : TJoueurs ;var affichage : TAffichage);
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
 procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur;debut : Boolean);
@@ -14,12 +14,12 @@ function resteEmplacementConnexion(var affichage : TAffichage;plateau: TPlateau;
 function verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs;var affichage : TAffichage):TIntegerTab;
 
 implementation
-procedure placeFauxConnexion(affichage : TAffichage;coord1 : Tcoord;coord2 : Tcoord; id : Integer);forward;
-procedure placeFauxPersonne(affichage : TAffichage;coords : Tcoords; id : Integer;eleve : Boolean);forward;
+procedure placeFauxConnexion(var affichage : TAffichage;coord1 : Tcoord;coord2 : Tcoord; id : Integer);forward;
+procedure placeFauxPersonne(var affichage : TAffichage;coords : Tcoords; id : Integer;eleve : Boolean);forward;
 
 procedure trouver3EmeHexagone(plateau : TPlateau;coords1,coords2,coords: TCoords);forward;
 procedure tirerCarteTutorat(var cartesTutorat : TCartesTutorat;var  joueur : Tjoueur);forward;
-procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);forward;
+procedure ChangementProfesseur(var affichage: TAffichage; var plateau: TPlateau; var joueurActuel: TJoueur);forward;
 
 function trouverXemeConnexion(plateau: TPlateau; joueur: TJoueur;nbr:Integer): TConnexion;forward;
 function compterConnexionAutour(var connexionDejaVisite : Tconnexions;connexion : TConnexion;plateau: TPlateau; joueur: TJoueur): Integer;forward;
@@ -43,7 +43,7 @@ function coordsDansTableau(connexion: TConnexion; tableau: array of TConnexion):
 function conterNombrePersonnes(personnes: TPersonnes; estEleve: Boolean; joueur: TJoueur): Integer;forward;
 
 
-procedure placeFauxConnexionAutourJoueur(affichage : TAffichage; plateau : TPlateau; id : Integer);
+procedure placeFauxConnexionAutourJoueur(var affichage : TAffichage; plateau : TPlateau; id : Integer);
 var coords : Tcoords;
 begin
   coords := plateau.Personnes[length(plateau.personnes)-1].Position;
@@ -130,7 +130,7 @@ begin
           if(resteEleve(affichage,plateau,joueur))then
           begin
             enleverRessources(joueur,COUT_PROFESSEUR);
-            changementProfesseur(plateau, affichage, joueur);
+            changementProfesseur(affichage, plateau, joueur);
           end
           else
           begin
@@ -317,7 +317,7 @@ begin
     affichageInformation('Les hexagones sélectionnés ne sont pas adjacents.', 25, FCouleur(255, 0, 0, 255), affichage);
 end;
 
-procedure ChangementProfesseur(var plateau: TPlateau; var affichage: TAffichage; var joueurActuel: TJoueur);
+procedure ChangementProfesseur(var affichage: TAffichage; var plateau: TPlateau; var joueurActuel: TJoueur);
 var HexagonesCoords, ProfesseurCoords: TCoords;
   indexEleve: Integer;
   valide: Boolean;
@@ -703,7 +703,7 @@ begin
   miseAJourRenderer(affichage);
 end;
 
-procedure placeFauxConnexion(affichage : TAffichage;coord1 : Tcoord;coord2 : Tcoord; id : Integer);
+procedure placeFauxConnexion(var affichage : TAffichage;coord1 : Tcoord;coord2 : Tcoord; id : Integer);
 var connexion : TConnexion;
 begin
   with connexion do
@@ -835,7 +835,7 @@ begin
   miseAJourRenderer(affichage);
 end;
 
-procedure placeFauxPersonne(affichage : TAffichage;coords : Tcoords; id : Integer;eleve : Boolean);
+procedure placeFauxPersonne(var affichage : TAffichage;coords : Tcoords; id : Integer;eleve : Boolean);
 var personne : TPersonne;
 begin
   with personne do

@@ -4,21 +4,21 @@ interface
 uses Types,affichageUnit,SysUtils,achat,traitement,musique,TypInfo;
 
 procedure initialisationPartie(var joueurs : TJoueurs;var  plateau : TPlateau;var affichage : TAffichage);
-procedure partie(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
+procedure partie(var affichage : TAffichage;var joueurs: TJoueurs;var plateau:TPlateau);
 
 implementation
 procedure enleverMoitieRessources(var joueur : Tjoueur);forward;
-procedure gestionEchange(affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);forward;
-procedure gestionEchange4Pour1(affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);forward;
+procedure gestionEchange(var affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);forward;
+procedure gestionEchange4Pour1(var affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);forward;
 procedure distributionConnaissance(var joueurs : TJoueurs;var plateau : TPlateau;des : integer);forward;
 procedure gestionDes(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);forward;
 procedure tour(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);forward;
 procedure donnerRessources( var joueur : Tjoueur; ressources : TRessources);forward;
 
-procedure utiliserCarteTutorat(var plateau : TPlateau;var affichage : TAffichage;var joueurs : TJoueurs;id : Integer;nom : String);forward;
-procedure utiliserCarte1(var plateau : TPlateau; var affichage : TAffichage;joueurs : Tjoueurs; id : Integer);forward;
-procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueurs : Tjoueurs; id : Integer);forward;
-procedure utiliserCarte3(var plateau : TPlateau; var affichage: TAffichage; joueurs : Tjoueurs;id : Integer);forward;
+procedure utiliserCarteTutorat(var affichage : TAffichage;var plateau : TPlateau;var joueurs : TJoueurs;id : Integer;nom : String);forward;
+procedure utiliserCarte1(var affichage : TAffichage; var plateau : TPlateau; joueurs : Tjoueurs; id : Integer);forward;
+procedure utiliserCarte2(var affichage : TAffichage; var plateau : TPlateau; joueurs : Tjoueurs; id : Integer);forward;
+procedure utiliserCarte3(var affichage: TAffichage;var plateau : TPlateau; joueurs : Tjoueurs;id : Integer);forward;
 procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau;var joueurs : Tjoueurs; id : Integer);forward;
 procedure utiliserCarte5(var affichage : TAffichage;var joueurs : TJoueurs;id :Integer);forward;
 
@@ -266,7 +266,7 @@ begin
       exit(False);
 end;
 
-procedure gestionEchange4Pour1(affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);
+procedure gestionEchange4Pour1(var affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);
 var ressource1,ressource2 : TRessource;
 begin
   selectionRessource(affichage,ressource1,'Sélectionnez la ressource à recevoir (1)',joueurs);
@@ -288,7 +288,7 @@ begin
   affichageTour(plateau, joueurs, id, affichage);
 end;
 
-procedure gestionEchange(affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);
+procedure gestionEchange(var affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);
 var id1,id2 : Integer;
   ressources1,ressources2 : TRessources;
 begin
@@ -378,14 +378,14 @@ begin
         jouerSonFinDeTour(affichage);
       end
       else
-        utiliserCarteTutorat(plateau,affichage, joueurs,joueurs[i].id ,valeurBouton);
+        utiliserCarteTutorat(affichage,plateau, joueurs,joueurs[i].id ,valeurBouton);
 
     until (finTour);
     attendre(16);
   end;
 end;
 
-procedure partie(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
+procedure partie(var affichage:TAffichage;var joueurs: TJoueurs;var plateau:TPlateau);
 var gagnants : TIntegerTab;
   id : Integer;
   text : String;
@@ -412,7 +412,7 @@ begin
 end;
 
 
-procedure utiliserCarte1(var plateau : TPlateau; var affichage : TAffichage;joueurs : Tjoueurs;id : Integer);
+procedure utiliserCarte1(var affichage : TAffichage;var plateau : TPlateau; joueurs : Tjoueurs;id : Integer);
 begin
   placementConnexion(plateau,affichage,joueurs[id],false);
   attendre(16);
@@ -428,13 +428,13 @@ begin
   end;
 end;
 
-procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueurs : Tjoueurs; id : Integer);
+procedure utiliserCarte2(var affichage : TAffichage;var plateau : TPlateau;joueurs : Tjoueurs; id : Integer);
 begin
   deplacementSouillard(plateau,joueurs,affichage);
   affichageInformation(joueurs[id].nom + ' viens de déplacer le souillard.',25,FCouleur(0,0,0,255),affichage);
 end;
 
-procedure utiliserCarte3(var plateau : TPlateau; var affichage: TAffichage; joueurs : Tjoueurs; id : Integer);
+procedure utiliserCarte3(var affichage: TAffichage; var plateau : TPlateau; joueurs : Tjoueurs; id : Integer);
 var ressource : TRessource;
   idJoueurAVoler : Integer;
 begin
@@ -475,7 +475,7 @@ begin
   affichageInformation(joueurs[id].Nom +  ' viens de gagner 1 point de victoire.',25,COULEUR_TEXT_VERT,affichage);
 end;
 
-procedure utiliserCarteTutorat(var plateau : TPlateau;var affichage : TAffichage;var joueurs : TJoueurs;id : Integer;nom : String);
+procedure utiliserCarteTutorat(var affichage : TAffichage;var plateau : TPlateau;var joueurs : TJoueurs;id : Integer;nom : String);
 var i : Integer;
 begin
   for i := 0 to length(plateau.cartesTutorat) -1 do
@@ -487,12 +487,12 @@ begin
       0:
       begin
         if(resteEmplacementConnexion(affichage,plateau,joueurs[id]))then
-          utiliserCarte1(plateau, affichage, joueurs, id)
+          utiliserCarte1(affichage, plateau, joueurs, id)
         else
           exit;
       end;
-      1: utiliserCarte2(plateau, affichage, joueurs, id);
-      2: utiliserCarte3(plateau, affichage, joueurs, id);
+      1: utiliserCarte2(affichage, plateau, joueurs, id);
+      2: utiliserCarte3(affichage, plateau, joueurs, id);
       3: utiliserCarte4(affichage, plateau, joueurs, id);
       4: utiliserCarte5(affichage,joueurs, id);
     end;
