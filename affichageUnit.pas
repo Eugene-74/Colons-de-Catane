@@ -1154,7 +1154,7 @@ begin
     affichageFond(affichage);
     affichageTexteAvecSautsDeLigne(text, 50, FCoord(100,300), FCouleur(0,0,0,255), affichage, 1600);
     miseAJourRenderer(affichage);
-    attendre(3000);
+    attendre(10000);
 end;
 
 {Met à jour l'affichage

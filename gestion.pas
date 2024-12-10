@@ -186,18 +186,18 @@ begin
 
   for i:=0 to length(joueurs)-1 do
   begin
-    // affichageJoueurActuel(joueurs,i,affichage);
-    // placementEleve(plateau,affichage,joueurs[i]);
+    affichageJoueurActuel(joueurs,i,affichage);
+    placementEleve(plateau,affichage,joueurs[i]);
 
-    // placementConnexion(plateau,affichage,joueurs[i],true);
+    placementConnexion(plateau,affichage,joueurs[i],true);
   end;
 
   for i:=length(joueurs)-1 downto 0 do
   begin
-    // affichageJoueurActuel(joueurs,i,affichage);
-    // placementEleve(plateau,affichage,joueurs[i]);
+    affichageJoueurActuel(joueurs,i,affichage);
+    placementEleve(plateau,affichage,joueurs[i]);
 
-    // placementConnexion(plateau,affichage,joueurs[i],true);
+    placementConnexion(plateau,affichage,joueurs[i],true);
   end;
 end;
 
@@ -395,7 +395,7 @@ begin
     tour(joueurs,plateau,affichage);
     gagnants := verificationPointsVictoire(plateau,joueurs,affichage);
   until (length(gagnants)>=1);
-  
+
   text := '';
   for id in gagnants do
     if(id = gagnants[length(gagnants)-1])then
