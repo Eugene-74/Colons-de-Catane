@@ -729,23 +729,24 @@ begin
   // 1. Verifie si une connexion existe dejà avec les mêmes coordonnees (independamment de l'ordre)
   if(connexionExisteDeja(plateau, coords[0],coords[1]))then
     begin
-      connexionValide := False;
+      // connexionValide := False;
       affichageInformation('Position de connexion déjà occupée.', 25, COULEUR_TEXT_ROUGE, affichage);
-      Exit;
+      Exit(False);
     end;
   // end;
 
   // 2. Verifie si les deux hexagones sont adjacents
   if not enContact(coords) then
   begin
-    connexionValide := False;
+    // connexionValide := False;
     affichageInformation('Les deux hexagones ne sont pas adjacents.', 25, COULEUR_TEXT_ROUGE, affichage);
-
-    Exit;
+    Exit(False);
   end;
 
   enContactAvecPersonne := enContactConnexionEleve(plateau, coords, joueur);
   enContactAvecAutreConnexion := not aucuneConnexionAdjacente(coords, plateau, joueur,affichage);
+  writeln('enContactAvecPersonne : ',enContactAvecPersonne);
+  writeln('enContactAvecAutreConnexion : ',enContactAvecAutreConnexion);
 
   if not enContactAvecPersonne then
   begin
@@ -817,7 +818,6 @@ begin
       begin
       affichagePlateau(plateau,affichage);
       resteEmplacementConnexion(affichage,plateau,joueur);
-      // miseAJourRenderer(affichage);
       end;
   until valide;
 
