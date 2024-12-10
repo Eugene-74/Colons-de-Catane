@@ -891,22 +891,9 @@ begin
   coords2[1] := connexion.Position[1];
 
   trouver3EmeHexagone(plateau,coords1,coords2,connexion);
-
-  nouvelleConnexion := trouverConnexion(plateau,coords1[0],coords1[2]);
-  if(nouvelleConnexion.IdJoueur <> -1)then
-    exit(True);
-
-  nouvelleConnexion := trouverConnexion(plateau,coords1[1],coords1[2]);
-  if(nouvelleConnexion.IdJoueur <> -1)then
-    exit(True);
-
-  nouvelleConnexion := trouverConnexion(plateau,coords2[0],coords2[2]);
-  if(nouvelleConnexion.IdJoueur <> -1)then
-    exit(True);
-  
-  nouvelleConnexion := trouverConnexion(plateau,coords2[1],coords2[2]);
-  if(nouvelleConnexion.IdJoueur <> -1)then
-    exit(True);
+  for i := 0 to length(plateau.Connexions)-1 do
+    if(CoordsEgales(plateau.Connexions[i].Position,coords1) or CoordsEgales(plateau.Connexions[i].Position,coords2))then
+      exit(True);
     
   aucuneConnexionAdjacente := False;
 end;
