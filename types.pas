@@ -11,21 +11,18 @@ type
   TStringTab = array of String;
   TIntegerTab = array of Integer;
 
-
   TCarteTutorat = record
     nom : String;
     description : String;
     nbr : Integer;
     utilisee : Integer;
   end;
-
   TCartesTutorat = array [0..4] of TCarteTutorat;
 
   // Definition de TCoord
   TCoord = record
     x, y: Integer;
   end;
-
   TCoords = array of TCoord;
 
   // Definition de TRessources (tableau dynamique de TRessourceValeur)
@@ -40,7 +37,6 @@ type
     CartesTutorat: TCartesTutorat;
     PlusGrandeConnexion : Boolean;
     PlusGrandeNombreDeWordReference : Boolean;
-
   end;
 
   // Definition de TJoueurs (tableau dynamique de TJoueur)
@@ -51,7 +47,6 @@ type
     ressource: TRessource;
     Numero: Integer;
   end;
-
 
   // Definition de TGrille (tableau dynamique de THexagones à 2 dimensions)
   TGrille = array of array of THexagone;
@@ -71,8 +66,6 @@ type
     estEleve: Boolean;
     IdJoueur: Integer;
   end;
-
-  // Definition de TPersonnes (tableau dynamique de TPersonne)
   TPersonnes = array of TPersonne;
 
   // Definition de TSouillard
@@ -92,7 +85,6 @@ type
   end;
   
   PWindow = PSDL_Window;
-
   PRenderer = PSDL_Renderer;
 
   TTexturePlateau = record
@@ -120,7 +112,6 @@ type
     texte: String;
     valeur: String;
   end;
-
   TBoutons = array of TBouton;
 
   TMusique = record
@@ -128,11 +119,8 @@ type
     temps : Int64;
     active : Boolean;
     musique : PMix_Music;
-
   end;
-
   TSon = (sonClicHexagone,sonFinDeTour,sonValide,sonInvalide);
-
   TSons = array [sonClicHexagone..sonInvalide] of PMix_Chunk;
 
   // Definition de TAffichage (pour les transferts et mises à jour via SDL)
@@ -149,44 +137,39 @@ type
   end;
 
 
-
 const
   CARTES_TUTORAT: TCartesTutorat = (
       (nom: 'Discussion'; description: 'Une superbe discussion qui vous permettra de faire 2 nouvelles connexions.'; nbr: 10; utilisee : 0),
       (nom: 'WordReference'; description: 'Une recherche sur WordReference qui vous permetra de vous débarasser du souillard pendant un moment.'; nbr: 12; utilisee : 0),
       (nom: 'Vol de cahier'; description: 'Subtiliser en douce le cours d''un camarade pour lui voler ses connaissances dans une matière.'; nbr: 8; utilisee : 0),
       (nom: 'Annale'; description: 'Profiter d''une Annale pour développer vos connaissances dans dans une matière (2 connaissances).'; nbr: 16; utilisee : 0),
-      (nom: 'Majorant'; description: 'En tant que majorant de votre classe vous avez le prestige de gagner un point de victoire.'; nbr: 4; utilisee : 0)
-    
-  );
+      (nom: 'Majorant'; description: 'En tant que majorant de votre classe vous avez le prestige de gagner un point de victoire.'; nbr: 4; utilisee : 0));
+  
   COUT_ELEVE: TRessources = (
     (1), // Physique
     (0), // Informatique
     (1), // Chimie
     (1), // Humanites
-    (1)  // Mathematiques
-  );
+    (1));// Mathematiques
   COUT_PROFESSEUR: TRessources = (
-    (0), // Physique
-    (3), // Informatique
-    (0), // Chimie
-    (0), // Humanites
-    (2)  // Mathematiques
-  );
+    (0),
+    (3),
+    (0),
+    (0),
+    (2));
   COUT_CONNEXION: TRessources = (
-    (0), // Physique
-    (0), // Informatique
-    (1), // Chimie
-    (1), // Humanites
-    (0)  // Mathematiques
-  );
+    (0),
+    (0),
+    (1),
+    (1),
+    (0));
   COUT_CARTE_TUTORAT: TRessources = (
-    (1), // Physique
-    (0), // Informatique
-    (0), // Chimie
-    (1), // Humanites
-    (0)  // Mathematiques
-  );
+    (1),
+    (0),
+    (0),
+    (1),
+    (0));
+
   POSITION_DES : TCoord = (x: 50; y: 400);
 
   WINDOW_W = 1800;
@@ -207,7 +190,5 @@ const
   COULEUR_PREVIEW_VERT : TSDL_Color = (r: 0; g: 100; b: 0; a: 255);
   COULEUR_PREVIEW_JAUNE : TSDL_Color = (r: 100; g: 100; b: 0; a: 255);
   COULEUR_PREVIEW_BLEU : TSDL_Color = (r: 0; g: 100; b: 100; a: 255);
-
 implementation
-
 end.

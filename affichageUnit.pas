@@ -552,7 +552,7 @@ begin
   words[wordCount] := line;
 
   currentLine := '';
-  for i := 0 to High(words) do
+  for i := 0 to length(words) -1 do
   begin
     if currentLine = '' then
       currentLine := words[i]
