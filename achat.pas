@@ -29,7 +29,7 @@ function clicConnexion(var affichage: TAffichage; plateau: TPlateau): TCoords;fo
 function ClicPersonne(var affichage: TAffichage; plateau: TPlateau; estEleve: Boolean): TCoords;forward;
 function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage : TAffichage): Boolean;forward;
 function professeurValide(var affichage: TAffichage; plateau: TPlateau; joueurActuel: TJoueur; HexagonesCoords: TCoords; var ProfesseurCoords: TCoords; var indexEleve: Integer): Boolean;forward;
-function personneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur;var affichage : TAffichage): Boolean;forward;
+function eleveValide(plateau: TPlateau; HexagonesCoords: TCoords; joueurActuel: TJoueur;var affichage : TAffichage): Boolean;forward;
 function VerifierAdjacencePersonnes(HexagonesCoords: TCoords; plateau: TPlateau): Boolean;forward;
 function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;forward;
 function enContactConnexionEleve( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;forward;
@@ -179,7 +179,7 @@ begin
   affichageInformation('Cliquez sur 3 hexagones entre lesquels vous voulez placer l''élève.', 25, FCouleur(0, 0, 0, 255), affichage);
   repeat
     HexagonesCoords := ClicPersonne(affichage,plateau,True);
-    valide := personneValide(plateau, HexagonesCoords, True, joueur,affichage);
+    valide := eleveValide(plateau, HexagonesCoords, joueur,affichage);
     jouerSonValide(affichage,valide);
     if(not valide)then
     begin
@@ -208,20 +208,23 @@ begin
   miseAJourRenderer(affichage);
 end;
 
-function personneValide(plateau: TPlateau; HexagonesCoords: TCoords; estEleve: Boolean; joueurActuel: TJoueur;var affichage : TAffichage): Boolean;
+function eleveValide(plateau: TPlateau; HexagonesCoords: TCoords; joueurActuel: TJoueur;var affichage : TAffichage): Boolean;
 begin
-  personneValide := False;
+  eleveValide := False;
   if not enContact(HexagonesCoords) then
     exit(False);
 
   if(joueurActuel.Points >=2 ) then
-    if not enContactEleveConnexion(plateau,HexagonesCoords,joueurActuel) then
+    if (not enContactEleveConnexion(plateau,HexagonesCoords,joueurActuel)) then
+      begin
+        writeln(False);
       exit(False);
+      end;
 
   if(VerifierAdjacencePersonnes(HexagonesCoords,plateau)) then
     exit(False)
   else
-    personneValide := True;
+    eleveValide := True;
 
   if encontactAutreconnexionEleve(plateau,HexagonesCoords,joueurActuel) then
     exit(False);
@@ -615,13 +618,16 @@ end;
 
 
 function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;
-var i : Integer;
+var i,k,l : Integer;
 begin
   enContactEleveConnexion := False;
-  for i := 0 to length(plateau.Connexions) -1 do
+  for i := 0 to High(plateau.Connexions) do
     if plateau.Connexions[i].IdJoueur = joueur.Id then
-      if(coordsEgales(coords, plateau.Connexions[i].Position)) then
-        exit(True);
+      for k := 0 to 1 do
+        for l := 0 to 1 do
+          if (coords[k].x = plateau.Connexions[i].Position[l].x) and
+              (coords[k].y = plateau.Connexions[i].Position[l].y) then
+            exit(True);
 end;
 
 function aucuneConnexionAdjacente(coords: TCoords; plateau: TPlateau; joueur: TJoueur; var affichage : TAffichage): Boolean;
