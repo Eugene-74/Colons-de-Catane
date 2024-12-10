@@ -79,7 +79,6 @@ begin
     Exit;
   end;
 
-  randomize;
   i := Random(nbrTotal)+1;
 
   min := 1;
@@ -664,12 +663,7 @@ begin
     if points[id] >= 10 then
       begin
         gagnant := id;
-        writeln('gagnant : ',joueurs[id].nom);
-        writeln('point : ',joueurs[id].points);
-        writeln('Grande Connexion : ',joueurs[id].PlusGrandeConnexion);
-        writeln('Word reference : ',joueurs[id].PlusGrandeNombreDeWordReference);
-        writeln('Point : ',points[id]);
-        
+
         if(nombreDeGagnant > 1) then
           if(nombreDeGagnant = i)then
           begin
@@ -693,8 +687,6 @@ begin
     verificationPointsVictoire := True;
   end;
 end;
-
-
 
 function connexionExisteDeja(plateau: TPlateau; coord1: TCoord; coord2: TCoord): Boolean;
 var i : Integer;

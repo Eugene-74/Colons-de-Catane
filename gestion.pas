@@ -7,7 +7,7 @@ procedure initialisationPartie(var joueurs : TJoueurs;var  plateau : TPlateau;va
 procedure partie(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 
 implementation
-procedure enleverMoitierRessources(var joueur : Tjoueur);forward;
+procedure enleverMoitieRessources(var joueur : Tjoueur);forward;
 procedure gestionEchange(affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);forward;
 procedure gestionEchange4Pour1(affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);forward;
 procedure distributionConnaissance(var joueurs : TJoueurs;var plateau : TPlateau;des : integer);forward;
@@ -132,12 +132,12 @@ begin
       begin
         for j:=i+1 to length(noms) - 1 do
           if (noms[i] = noms[j]) then
-            begin
+          begin
             unique := False;
             jouerSonValide(affichage,unique);
             affichageInformation('Il faut des noms différents.',25,COULEUR_TEXT_ROUGE,affichage);
             break;
-            end;
+          end;
         if(unique) then
           Inc(count)
         else
@@ -172,7 +172,6 @@ begin
     end;
   end;
 
-  Randomize;
   num := random(2)+1;
 
   plateau := chargementPlateau(num);
@@ -203,10 +202,8 @@ begin
 end;
 
 procedure distributionConnaissance(var joueurs : TJoueurs;var plateau : TPlateau;des : integer);
-var q,r : integer;
-  res : Tressource;
-  personne : TPersonne;
-  coord,coo : Tcoord;
+var personne : TPersonne;
+  coo : Tcoord;
 begin
   for personne in plateau.Personnes do
     for coo in personne.Position do
@@ -217,47 +214,38 @@ end;
 
 procedure gestionDes(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 var
-  des,des1,des2,i,totalRessources: Integer;
+  des,i,totalRessources: Integer;
   res : TRessource;
   tropDeRessources : Boolean;
 begin
-  randomize;  
-  des1 := random(6)+1;
-  des2 := random(6)+1;
-
-  des := des1 + des2;
-
-  plateau.des1 := des1;
-  plateau.des2 := des2;
-
+  plateau.des1 := random(6)+1;
+  plateau.des2 := random(6)+1;
+  des := plateau.des1 + plateau.des2;
   affichageDes(plateau.des1,plateau.des2,affichage);
-  tropDeRessources := False;
 
   if(des = 7)then
-    begin
-      deplacementSouillard(plateau,joueurs,affichage);
-      for i := 0 to Length(joueurs) - 1 do
-      begin
-        totalRessources := 0;
-        for res := Low(TRessource) to High(TRessource) do
-          totalRessources := totalRessources + joueurs[i].ressources[res];
-        if totalRessources > 7 then
-        begin
-          tropDeRessources := True;
-          enleverMoitierRessources(joueurs[i]);
-        end;
-      end;
-      if(tropDeRessources) then
-        affichageInformation('Tout les joueurs qui avaient plus de 7 ressources on perdu la moitié de leurs ressources à cause du souillard.',25,COULEUR_TEXT_ROUGE,affichage);
-    end
-  else
-    begin
-      distributionConnaissance(joueurs,plateau,des);
-    end;
-  for i:=0 to length(joueurs)-1 do
   begin
+    tropDeRessources := False;
+    deplacementSouillard(plateau,joueurs,affichage);
+    for i := 0 to Length(joueurs) - 1 do
+    begin
+      totalRessources := 0;
+      for res := Physique to Mathematiques do
+        totalRessources := totalRessources + joueurs[i].ressources[res];
+      if totalRessources > 7 then
+      begin
+        tropDeRessources := True;
+        enleverMoitieRessources(joueurs[i]);
+      end;
+    end;
+    if(tropDeRessources) then
+      affichageInformation('Tout les joueurs qui avaient plus de 7 ressources on perdu la moitié de leurs ressources à cause du souillard.',25,COULEUR_TEXT_ROUGE,affichage);
+  end
+  else
+    distributionConnaissance(joueurs,plateau,des);
+
+  for i:=0 to length(joueurs)-1 do
     affichageScoreAndClear(joueurs[i],affichage);
-  end;
   miseAJourRenderer(affichage);
 end;
 
@@ -267,7 +255,7 @@ begin
   ressourcesVide := True;
   for res in [Physique..Mathematiques] do
     if( ressources[res]>=1) then
-      ressourcesVide := False;
+      exit(False);
 end;
 
 function ressourcesEgales(ressources1 : TRessources;ressources2 : TRessources):boolean;
@@ -276,14 +264,13 @@ begin
   ressourcesEgales := True;
   for res in [Physique..Mathematiques] do
     if( ressources1[res]<> ressources2[res]) then
-      ressourcesEgales := False;
+      exit(False);
 end;
 
 procedure gestionEchange4Pour1(affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);
 var ressource1,ressource2 : TRessource;
 begin
   selectionRessource(affichage,ressource1,'Sélectionnez la ressource à recevoir (1)',joueurs);
-
   selectionRessource(affichage,ressource2,'Sélectionnez la ressource à donner (4)',joueurs);
 
   if joueurs[id].Ressources[ressource2] >= 4 then
@@ -305,28 +292,27 @@ end;
 procedure gestionEchange(affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);
 var id1,id2 : Integer;
   ressources1,ressources2 : TRessources;
-
 begin
-id1 := joueurs[id].id;
-if(id1< length(joueurs)-1) then
-  id2 := id1 + 1
-else
-  id2 := 0;
-echangeRessources(joueurs,id1, id2 ,ressources1,ressources2,affichage);
+  id1 := joueurs[id].id;
+  if(id1< length(joueurs)-1) then
+    id2 := id1 + 1
+  else
+    id2 := 0;
+  echangeRessources(joueurs,id1, id2 ,ressources1,ressources2,affichage);
 
-if(ressourcesVide(ressources1) and ressourcesVide(ressources2))then
+  if(ressourcesVide(ressources1) and ressourcesVide(ressources2))then
   begin
-  affichageTour(plateau, joueurs, id, affichage);
-  affichageInformation('l''échange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est vide',25,COULEUR_TEXT_ROUGE,affichage);
-  jouerSonValide(affichage,false);
+    affichageTour(plateau, joueurs, id, affichage);
+    affichageInformation('L''échange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est vide.',25,COULEUR_TEXT_ROUGE,affichage);
+    jouerSonValide(affichage,false);
   end
-else if(ressourcesEgales(ressources1,ressources2))then
+  else if(ressourcesEgales(ressources1,ressources2))then
   begin
-  affichageTour(plateau, joueurs, id, affichage);
-  affichageInformation('l''échange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est inutile car il ne change rien',25,COULEUR_TEXT_ROUGE,affichage);
-  jouerSonValide(affichage,false);
+    affichageTour(plateau, joueurs, id, affichage);
+    affichageInformation('L''échange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est inutile car il ne change rien.',25,COULEUR_TEXT_ROUGE,affichage);
+    jouerSonValide(affichage,false);
   end
-else if(aLesRessources(joueurs[id1],ressources1) and aLesRessources(joueurs[id2],ressources2)) then
+  else if(aLesRessources(joueurs[id1],ressources1) and aLesRessources(joueurs[id2],ressources2)) then
   begin
     enleverRessources(joueurs[id1],ressources1);
     enleverRessources(joueurs[id2],ressources2);
@@ -335,15 +321,14 @@ else if(aLesRessources(joueurs[id1],ressources1) and aLesRessources(joueurs[id2]
     donnerRessources(joueurs[id2],ressources1);
 
     affichageTour(plateau, joueurs, id, affichage);
-    affichageInformation('l''échange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' a été validé',25,COULEUR_TEXT_VERT,affichage);
+    affichageInformation('L''échange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' a été validé.',25,COULEUR_TEXT_VERT,affichage);
     jouerSonValide(affichage,true);
   end
-else
+  else
   begin
     affichageTour(plateau, joueurs, id, affichage);
-    affichageInformation('l''échange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est impossible, un des 2 joueurs n''a pas les ressources',25,COULEUR_TEXT_ROUGE,affichage);
+    affichageInformation('L''échange entre ' + joueurs[id1].Nom +  ' et ' + joueurs[id2].Nom  + ' est impossible, un des 2 joueurs n''a pas assez de ressources.',25,COULEUR_TEXT_ROUGE,affichage);
     jouerSonValide(affichage,false);
-
   end;
 end;
 
@@ -353,7 +338,7 @@ var valeurBouton : String;
   i : Integer;
 begin
   for i := 0 to length(joueurs)-1 do
-    begin
+  begin
     affichageJoueurActuel(joueurs,i,affichage);
     affichageCartesTutoratAndRender(joueurs[i],affichage);
     attendre(16);
@@ -389,26 +374,25 @@ begin
           arreterMusique(affichage)
 
       else if(valeurBouton = 'fin_tour')  then
-        begin
+      begin
         finTour := True;
         jouerSonFinDeTour(affichage);
-        end
+      end
       else
-        begin
         utiliserCarteTutorat(plateau,affichage, joueurs,joueurs[i].id ,valeurBouton);
-        end;
 
     until (finTour);
     attendre(16);
-    
-    end;
+  end;
 end;
 
 procedure partie(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);
 begin
   repeat
     tour(joueurs,plateau,affichage);
+// TODO deplacer l'affichage de : verificationPointsVictoire
   until (verificationPointsVictoire(plateau,joueurs,affichage));
+  
   suppresionAffichage(affichage);
 end;
 
@@ -425,14 +409,14 @@ begin
   else
   begin
     attendre(16);
-    affichageInformation('Vous n''avez plus d''emplacement pour placer la deuxième connexion',25,COULEUR_TEXT_ROUGE,affichage);
+    affichageInformation('Vous n''avez plus d''emplacement pour placer la deuxième connexion.',25,COULEUR_TEXT_ROUGE,affichage);
   end;
 end;
 
 procedure utiliserCarte2(var plateau : TPlateau;var affichage : TAffichage;joueurs : Tjoueurs; id : Integer);
 begin
-  affichageInformation('Déplacement du souillard par le joueur '+joueurs[id].nom,25,FCouleur(0,0,0,255),affichage);
   deplacementSouillard(plateau,joueurs,affichage);
+  affichageInformation(joueurs[id].nom + ' viens de déplacer le souillard.',25,FCouleur(0,0,0,255),affichage);
 end;
 
 procedure utiliserCarte3(var plateau : TPlateau; var affichage: TAffichage; joueurs : Tjoueurs; id : Integer);
@@ -443,7 +427,7 @@ begin
     idJoueurAVoler := id + 1
   else
     idJoueurAVoler := 0;
-  
+
   selectionDepouiller(ressource,id,idJoueurAVoler,joueurs,affichage,'Sélectionnez la ressource et le joueur à dépouiller');
   
   if(ressource <> Rien) then
@@ -455,67 +439,60 @@ begin
   affichageTour(plateau, joueurs, id, affichage);
   jouerSonValide(affichage, true);
   
-  affichageInformation(joueurs[id].Nom +  ' viens de gagner toutes les ressources du type '+ GetEnumName(TypeInfo(TRessource), Ord(ressource)) +' de '+joueurs[idJoueurAVoler].Nom+'.' ,25,COULEUR_TEXT_VERT,affichage);
-
+  affichageInformation(joueurs[id].Nom +  ' viens de gagner toutes les ressources du type '+ GetEnumName(TypeInfo(TRessource), Ord(ressource)) +' de '+joueurs[idJoueurAVoler].Nom + '.' ,25,COULEUR_TEXT_VERT,affichage);
 end;
 
 procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau; var joueurs : Tjoueurs;id : Integer);
 var ressource : TRessource;
 begin
-  // CHOISIR 2 CONNAISSANCE
-
   selectionRessource(affichage,ressource,'Sélectionnez la ressource que vous souhaitez récupérer 2 fois',joueurs);
   joueurs[id].ressources[ressource] := joueurs[id].ressources[ressource] + 2;
 
   affichageTour(plateau, joueurs, Id, affichage);
   jouerSonValide(affichage, true);
 
-  affichageInformation(joueurs[id].Nom +  ' viens de gagner 2 : ' +GetEnumName(TypeInfo(TRessource), Ord(ressource)),25,COULEUR_TEXT_VERT,affichage);
+  affichageInformation(joueurs[id].Nom +  ' viens de gagner 2 : ' +GetEnumName(TypeInfo(TRessource), Ord(ressource)) + '.',25,COULEUR_TEXT_VERT,affichage);
 end;
 
 procedure utiliserCarte5(var affichage : TAffichage;var joueurs : TJoueurs;id :Integer);
 begin
   joueurs[id].Points := joueurs[id].Points + 1;
   affichageInformation(joueurs[id].Nom +  ' viens de gagner 1 point de victoire.',25,COULEUR_TEXT_VERT,affichage);
-
 end;
 
 procedure utiliserCarteTutorat(var plateau : TPlateau;var affichage : TAffichage;var joueurs : TJoueurs;id : Integer;nom : String);
 var i : Integer;
 begin
-
-i := -1;
-for i := 0 to High(plateau.cartesTutorat) do
+  for i := 0 to length(plateau.cartesTutorat) -1 do
+    if (nom = plateau.cartesTutorat[i].nom) then
+      break;
+  if (joueurs[id].CartesTutorat[i].utilisee < joueurs[id].CartesTutorat[i].nbr) then
   begin
-  if (nom = plateau.cartesTutorat[i].nom) then
-    break;
-  end;
-if (i <> -1) and (joueurs[id].CartesTutorat[i].utilisee < joueurs[id].CartesTutorat[i].nbr) then
-  begin
-  case i of
-    0:
-    begin
-    if(resteEmplacementConnexion(affichage,plateau,joueurs[id]))then
-      utiliserCarte1(plateau, affichage, joueurs, id)
-    else
-      exit;
+    case i of
+      0:
+      begin
+        if(resteEmplacementConnexion(affichage,plateau,joueurs[id]))then
+          utiliserCarte1(plateau, affichage, joueurs, id)
+        else
+          exit;
+      end;
+      1: utiliserCarte2(plateau, affichage, joueurs, id);
+      2: utiliserCarte3(plateau, affichage, joueurs, id);
+      3: utiliserCarte4(affichage, plateau, joueurs, id);
+      4: utiliserCarte5(affichage,joueurs, id);
     end;
-    1: utiliserCarte2(plateau, affichage, joueurs, id);
-    2: utiliserCarte3(plateau, affichage, joueurs, id);
-    3: utiliserCarte4(affichage, plateau, joueurs, id);
-    4: utiliserCarte5(affichage,joueurs, id);
-    end;
-  attendre(50);
-  joueurs[id].CartesTutorat[i].utilisee := joueurs[id].CartesTutorat[i].utilisee + 1;
 
-  affichageScoreAndClear(joueurs[id],affichage);
-  affichageCartesTutoratAndRender(joueurs[id],affichage);
-  attendre(16);
+    attendre(50);
+    joueurs[id].CartesTutorat[i].utilisee := joueurs[id].CartesTutorat[i].utilisee + 1;
+
+    affichageScoreAndClear(joueurs[id],affichage);
+    affichageCartesTutoratAndRender(joueurs[id],affichage);
+    attendre(16);
   end
-else
+  else
   begin
-  jouerSonValide(affichage,false);
-  affichageInformation('Vous avez deja utilisé toutes vos cartes de ce type',25,COULEUR_TEXT_ROUGE,affichage);
+    jouerSonValide(affichage,false);
+    affichageInformation('Vous avez déjà utilisé toutes vos cartes de ce type.',25,COULEUR_TEXT_ROUGE,affichage);
   end;
 end;
 
@@ -526,11 +503,8 @@ begin
     joueur.ressources[res] := joueur.ressources[res] + ressources[res]
 end;
 
-
-
-procedure enleverMoitierRessources(var joueur : Tjoueur);
-var
-  res: TRessource;
+procedure enleverMoitieRessources(var joueur : Tjoueur);
+var res: TRessource;
   totalRessources, ressourcesAEnlever, i,j,min,max: Integer;
 begin
   totalRessources := 0;
@@ -538,8 +512,6 @@ begin
     totalRessources := totalRessources + joueur.ressources[res];
 
   ressourcesAEnlever := totalRessources div 2;
-
-  Randomize;
 
   for j := 0 to ressourcesAEnlever - 1 do
   begin
@@ -559,7 +531,4 @@ begin
     end;
   end;
 end;
-
 end.
-
-

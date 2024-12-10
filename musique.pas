@@ -95,7 +95,6 @@ begin
         Exit;
     end;
 
-    Randomize;
     randomIndex := Random(Length(musiques));
     musique := Mix_LoadMUS(musiques[randomIndex]);
 

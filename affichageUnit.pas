@@ -619,9 +619,12 @@ begin
 end;
 
 procedure affichageBouton(bouton: TBouton; var affichage: TAffichage);
+var tailleText: TCoord;
 begin
     affichageZone(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,2,affichage);
-    affichageTexte(' '+bouton.texte, 25, bouton.coord, FCouleur(0,0,0,255), affichage);
+
+    tailleText := tailleTexte(bouton.texte, 25);
+    affichageTexte(bouton.texte, 25, FCoord(bouton.coord.x + (bouton.w - tailleText.x)div 2,bouton.coord.y + (bouton.h - tailleText.y)div 2), FCouleur(0,0,0,255), affichage);
 end;
 
 procedure initialisationBoutonsSysteme(var affichage: TAffichage);
@@ -1018,8 +1021,6 @@ end;
 procedure affichageNomJoueurInput(nomActuel:String; bouton: TBouton; tailleTexte: Integer; var affichage: TAffichage);
 begin
     affichageZone(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,3,affichage);
-    affichageTexte('Nom du joueur : ', tailleTexte, FCoord(bouton.coord.x-210,bouton.coord.y+5), FCouleur(0,0,0,255), affichage);
-
     if nomActuel = '' then
         nomActuel := ' ';
     affichageTexte(nomActuel, tailleTexte, FCoord(bouton.coord.x+5,bouton.coord.y+5), FCouleur(0,0,0,255), affichage);
@@ -1034,7 +1035,6 @@ var nom,valeurBouton: String;
     event: TSDL_Event;
     tailleT: Tcoord;
 begin
-
     tailleT := tailleTexte('Entrez les noms des joueurs',35);
     affichageTexte('Entrez les noms des joueurs', 35, FCoord((WINDOW_W - tailleT.x) div 2 ,70), FCouleur(0,0,0,255), affichage);
 
@@ -1049,7 +1049,7 @@ begin
             stringTab[i] := '';
             bouton.texte := 'Veuillez entrer le nom du joueur ' + IntToStr(i+1);
         end;
-        bouton := FBouton(450,130+55*i,1050,50,bouton.texte,IntToStr(i));
+        bouton := FBouton(400,130+55*i,1000,50,bouton.texte,IntToStr(i));
         affichageNomJoueurInput(bouton.texte,bouton,25,affichage);
         ajouterBoutonTableau(bouton,boutons);
     end;
@@ -1103,6 +1103,7 @@ begin
                                 affichageNomJoueurInput(nom,boutons[StrToInt(valeurBouton)],25,affichage);
                                 valeurBouton := IntToStr(StrToInt(valeurBouton)+1);
                                 nom := '';
+                                stringTab[StrToInt(valeurBouton)] := nom;
                                 affichageNomJoueurInput(nom,boutons[StrToInt(valeurBouton)],25,affichage);
                             end
                             else
