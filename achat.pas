@@ -863,7 +863,7 @@ begin
   trouver3EmeHexagone(plateau,coords1,coords2,coords);
 
   for i := 0 to length(plateau.Connexions)-1 do
-    if(CoordsEgales(coords,coords1) or CoordsEgales(coords,coords2))then
+    if((CoordsEgales(coords,coords1) or CoordsEgales(coords,coords2))and (plateau.Connexions[i].IdJoueur = joueur.id))then
       exit(False);
 end;
 
