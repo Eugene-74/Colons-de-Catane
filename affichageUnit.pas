@@ -142,7 +142,6 @@ var surface : PSDL_Surface;
 begin
     surface := SDL_CreateRGBSurface(0, 1, 1, 32, 0, 0, 0, 0);
     if SDL_FillRect(surface, nil, SDL_MapRGB(surface^.format, couleur.r, couleur.g, couleur.b)) <> 0 then WriteLn('Erreur SDL: ', SDL_GetError());
-
     texture := SDL_CreateTextureFromSurface(affichage.renderer, surface);
     creerTextureCouleur := texture;
 end;
@@ -170,7 +169,6 @@ begin
     destination_rect.w:=Round(longueur);
     destination_rect.h:=epaisseur;
     colorTexture := creerTextureCouleur(affichage,couleur);
-
     if SDL_RenderCopyEx(affichage.renderer, colorTexture, nil, @destination_rect, angle, nil, SDL_FLIP_NONE) <> 0 then WriteLn('Erreur SDL: ', SDL_GetError());
     
     SDL_DestroyTexture(colorTexture);
@@ -328,10 +326,11 @@ begin
 	
 	if TTF_INIT=-1 then HALT;
 	
+    if text = '' then exit;
+	
 	police := TTF_OpenFont('Assets/OpenSans-Regular.ttf', taille);
 	texteTexture := LoadTextureFromText(affichage.renderer,police,text,couleur);
 	SDL_QueryTexture(texteTexture,nil,nil,@textRect.w,@textRect.h);
-	
 	if SDL_RenderCopy(affichage.renderer,texteTexture,nil,@textRect)<>0 then WriteLn('Erreur SDL: ', SDL_GetError());
 	
 	TTF_CloseFont(police);
@@ -1148,19 +1147,22 @@ var bouton: TBouton;
 begin
     setLength(affichage.boutonsAction, 0);
     
-    bouton := FBouton(25,WINDOW_H - 370,270,50,'Achat connexion','achat_connexion');
+    bouton := FBouton(25,WINDOW_H - 430,270,50,'Achat connexion','achat_connexion');
     ajouterBoutonTableau(bouton, affichage.boutonsAction);
 
-    bouton := FBouton(25,WINDOW_H - 310,270,50,'Achat élève','achat_eleve');
+    bouton := FBouton(25,WINDOW_H - 370,270,50,'Achat élève','achat_eleve');
     ajouterBoutonTableau(bouton, affichage.boutonsAction);
 
-    bouton := FBouton(25,WINDOW_H - 250,270,50,'Changement en prof','changement_en_prof');
+    bouton := FBouton(25,WINDOW_H - 310,270,50,'Changement en prof','changement_en_prof');
     ajouterBoutonTableau(bouton, affichage.boutonsAction);
 
-    bouton := FBouton(25,WINDOW_H - 190,270,50,'Achat carte tutorat','achat_carte_tutorat');
+    bouton := FBouton(25,WINDOW_H - 250,270,50,'Achat carte tutorat','achat_carte_tutorat');
     ajouterBoutonTableau(bouton, affichage.boutonsAction);
 
-    bouton := FBouton(25,WINDOW_H - 130,270,50,'Échange ressources','echange');
+    bouton := FBouton(25,WINDOW_H - 190,270,50,'Échange ressources','echange');
+    ajouterBoutonTableau(bouton, affichage.boutonsAction);
+
+    bouton := FBouton(25,WINDOW_H - 130,270,50,'Échange 4 pour 1','4pour1');
     ajouterBoutonTableau(bouton, affichage.boutonsAction);
 
     bouton := FBouton(25,WINDOW_H - 70,270,50,'Fin du tour','fin_tour');

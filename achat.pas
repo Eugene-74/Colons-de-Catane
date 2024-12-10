@@ -202,7 +202,6 @@ begin
   joueur.Points:=1+joueur.Points;
 
   affichageInformation('Elève placé avec succès !', 25, COULEUR_TEXT_VERT, affichage);
-
   affichageScoreAndClear(joueur, affichage);
   affichagePlateau(plateau,affichage);
   miseAJourRenderer(affichage);
@@ -244,8 +243,10 @@ begin
         jouerSonValide(affichage,false); 
       end;
     until valide;
+    attendre(32);
     affichageHexagone(plateau,affichage, ClicPersonne[i],true);
     miseAJourRenderer(affichage);
+    attendre(32);
   end;
 end;
 
@@ -524,7 +525,7 @@ end;
 function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage :TAffichage): Boolean;
 begin
   connexionValide := True;
-  attendre(16);
+  attendre(32);
 
   // 1. Verifie si une connexion existe dejà avec les mêmes coordonnees (independamment de l'ordre)
   if(connexionExisteDeja(plateau, coords[0],coords[1]))then
@@ -572,9 +573,10 @@ begin
         jouerSonValide(affichage,false); 
       end;
     until valide;
+    attendre(32);
     affichageHexagone(plateau,affichage, clicConnexion[i],true);
     miseAJourRenderer(affichage);
-    attendre(16);
+    attendre(32);
   end;
 end;
 
@@ -582,10 +584,11 @@ procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; v
 var coords: TCoords;
   valide : boolean;
 begin
-  attendre(16);
+  attendre(32);
   affichageInformation('Cliquez sur 2 hexagones entre lesquels vous voulez placer la connexion', 25, FCouleur(0,0,0,255), affichage);
   attendre(50);
   repeat
+  attendre(32);
     if(debut)then
       placeFauxConnexionAutourJoueur(affichage,plateau,joueur.id);
     coords := clicConnexion(affichage,plateau);
