@@ -523,6 +523,7 @@ end;
 
 function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage :TAffichage): Boolean;
 begin
+  connexionValide := True;
   attendre(16);
 
   // 1. Verifie si une connexion existe dejà avec les mêmes coordonnees (independamment de l'ordre)
@@ -594,6 +595,7 @@ begin
     begin
       affichagePlateau(plateau,affichage);
       resteEmplacementConnexion(affichage,plateau,joueur);
+      miseAJourRenderer(affichage);
     end;
   until valide;
 

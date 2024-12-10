@@ -27,8 +27,6 @@ procedure enleverRessources( var joueur : Tjoueur; ressources : TRessources);
 
 implementation
 
-
-
 procedure round_hexa(q_f,r_f: Real; var coord_output: TCoord);
 var s: Integer;
     s_f,dq,dr,ds: Real;
