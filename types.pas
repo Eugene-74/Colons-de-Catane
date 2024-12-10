@@ -5,7 +5,6 @@ interface
 uses SDL2, SDL2_image,SDL2_mixer;
 
 type
-  // Definition du type TRessource
   TRessource = (Aucune, Physique, Informatique, Chimie, Humanites, Mathematiques, Rien);
 
   TStringTab = array of String;
@@ -19,16 +18,13 @@ type
   end;
   TCartesTutorat = array [0..4] of TCarteTutorat;
 
-  // Definition de TCoord
   TCoord = record
     x, y: Integer;
   end;
   TCoords = array of TCoord;
 
-  // Definition de TRessources (tableau dynamique de TRessourceValeur)
   TRessources = array [Physique..Mathematiques] of Integer;
 
-  // Definition de TJoueur
   TJoueur = record
     Ressources: TRessources;
     Points: Integer;
@@ -39,41 +35,33 @@ type
     PlusGrandeNombreDeWordReference : Boolean;
   end;
 
-  // Definition de TJoueurs (tableau dynamique de TJoueur)
   TJoueurs = array of TJoueur;
 
-  // Definition de THexagone
   THexagone = record
     ressource: TRessource;
     Numero: Integer;
   end;
 
-  // Definition de TGrille (tableau dynamique de THexagones à 2 dimensions)
   TGrille = array of array of THexagone;
 
-  // Definition de TConnexion
   TConnexion = record
-    Position: array of TCoord;  // Tableau dynamique de 2 TCoord
+    Position: array of TCoord;
     IdJoueur: Integer;
   end;
 
-  // Definition de TConnexions (tableau dynamique de TConnexion)
   TConnexions = array of TConnexion;
 
-  // Definition de TPersonne
   TPersonne = record
-    Position: array of TCoord;  // Tableau dynamique de 3 TCoord
+    Position: array of TCoord;
     estEleve: Boolean;
     IdJoueur: Integer;
   end;
   TPersonnes = array of TPersonne;
 
-  // Definition de TSouillard
   TSouillard = record
     Position: TCoord;
   end;
 
-  // Definition de TPlateau
   TPlateau = record
     Grille: TGrille;
     Souillard: TSouillard;
@@ -123,7 +111,6 @@ type
   TSon = (sonClicHexagone,sonFinDeTour,sonValide,sonInvalide);
   TSons = array [sonClicHexagone..sonInvalide] of PMix_Chunk;
 
-  // Definition de TAffichage (pour les transferts et mises à jour via SDL)
   TAffichage = record
     fenetre: PWindow;
     renderer: PRenderer;
