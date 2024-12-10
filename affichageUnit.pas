@@ -1,6 +1,5 @@
 unit affichageUnit;
 
-
 interface
 
 uses sdl2, sdl2_image, sdl2_ttf, types, sysutils, TypInfo, traitement, Math, musique;
@@ -18,7 +17,7 @@ procedure echangeRessources(joueurs: TJoueurs; idJoueurActuel:Integer; var idJou
 procedure selectionRessource(var affichage: TAffichage; var ressource: TRessource;text: String;joueurs : Tjoueurs);
 procedure selectionDepouiller(var ressource: TRessource; idJoueurActuel:Integer; var idJoueurAVoler: Integer; joueurs: TJoueurs; var affichage: TAffichage;text: String);
 procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
-procedure clicAction(var affichage: TAffichage; var valeurBouton: String);
+procedure clicBouton(var affichage: TAffichage; boutons: TBoutons; var valeurBouton: String);
 procedure affichageInformation(texte: String; taille: Integer; couleur: TSDL_Color; var affichage: TAffichage);
 procedure affichageJoueurActuel(joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
 procedure suppressionInformation(var affichage: TAffichage);
@@ -35,12 +34,6 @@ procedure suppresionAffichage(var affichage: TAffichage);
 procedure affichageGagnant(var affichage: TAffichage; text: String);
 
 implementation
-
-procedure affichageTexteAvecSautsDeLigne(text: String; taille: Integer; coord: TCoord; couleur: TSDL_Color; var affichage: TAffichage; maxWidth: Integer);forward;
-function tailleTexte(texte: AnsiString; taille: Integer): Tcoord;forward; 
-procedure affichageScore(joueur: TJoueur; var affichage: TAffichage);forward;
-procedure affichageCarteTutorat(carteTutorat: TCarteTutorat; idCarte: Integer; coord: TCoord; var affichage: TAffichage);forward;
-procedure suppressionScore(playerId: Integer; var affichage: TAffichage);forward;
 
 procedure attendre(ms: Integer);
 begin
@@ -70,7 +63,7 @@ begin
         writeln('Erreur lors de l''initialisation de la SDL');
         HALT;
     end;
-    affichage.fenetre := SDL_CreateWindow('Catan', SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, SDL_WINDOW_BORDERLESS);
+    affichage.fenetre := SDL_CreateWindow('Catan', SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, SDL_WINDOW_SHOWN);
     affichage.renderer := SDL_CreateRenderer(affichage.fenetre, -1, SDL_RENDERER_ACCELERATED);
 end;
 
@@ -86,7 +79,7 @@ begin
     if SDL_RenderCopy(affichage.renderer,texture,nil,@destination_rect)<>0 then WriteLn('Erreur SDL: ', SDL_GetError());
 end;
 
-{Initialise le plateau de jeu
+{Initialise les textures du jeu
 Preconditions :
     - plat : le plateau de jeu
     - affichage : la structure contenant le renderer
@@ -107,6 +100,9 @@ begin
     for j := 1 to 5 do
         affichage.texturePlateau.textureIconesCartesTutorat[j] := chargerTexture(affichage, 'IconesCartesTutorat/'+IntToStr(j));
     
+    for j := 1 to 6 do
+        affichage.texturePlateau.textureDes[j] := chargerTexture(affichage, 'DiceFaces/' + IntToStr(j));
+    
     affichage.texturePlateau.textureValider := chargerTexture(affichage, 'valider');
     affichage.texturePlateau.textureQuitter := chargerTexture(affichage, 'croix');
     affichage.texturePlateau.texturesMusique[0] := chargerTexture(affichage, 'IconesMusique/demarrer');
@@ -115,22 +111,16 @@ begin
     affichage.texturePlateau.texturesFleches[1] := chargerTexture(affichage, 'droite');
     affichage.texturePlateau.texturesSignes[0] := chargerTexture(affichage, 'plus');
     affichage.texturePlateau.texturesSignes[1] := chargerTexture(affichage, 'moins');
-
     affichage.texturePlateau.textureContourHexagone := chargerTexture(affichage, 'hexagoneCercle');
     affichage.texturePlateau.textureContourVide := chargerTexture(affichage, 'hexagone');
-
     affichage.texturePlateau.textureEleve := chargerTexture(affichage, 'eleve');
     affichage.texturePlateau.textureSouillard := chargerTexture(affichage, 'souillard');
     affichage.texturePlateau.textureProfesseur := chargerTexture(affichage, 'professeur');
     affichage.texturePlateau.texturePoint := chargerTexture(affichage, 'point');
-
     affichage.texturePlateau.texturePreview := chargerTexture(affichage, 'preview');
-
-    for j := 1 to 6 do
-        affichage.texturePlateau.textureDes[j] := chargerTexture(affichage, 'DiceFaces/' + IntToStr(j));
 end;
 
-{Affiche le fond de l'ecran en blanc
+{Fait un ecran blanc et vide le renderer
 Preconditions :
     - affichage : la structure contenant le renderer}
 procedure affichageFond(var affichage: TAffichage);
@@ -157,7 +147,7 @@ begin
     creerTextureCouleur := texture;
 end;
 
-{Affiche la connexion à l'ecran
+{Affiche une connexion à l'ecran
 Preconditions :
     - connexion : la connexion à afficher
     - affichage : la structure contenant le renderer
@@ -186,7 +176,7 @@ begin
     SDL_DestroyTexture(colorTexture);
 end;
 
-{Affiche la personne à l'ecran
+{Affiche une personne à l'ecran
 Preconditions :
     - personne : la personne à afficher
     - affichage : la structure contenant le renderer
@@ -235,7 +225,7 @@ end;
 Preconditions :
     - affichage : la structure contenant le renderer
 Postconditions :
-    - coord (TCoord) : les coordonnees du clic (système cartesien)}
+    - coord (TCoord) : les coordonnees du clic}
 procedure clicCart(var affichage: TAffichage; var coord: Tcoord);
 var running : Boolean;
     event: TSDL_Event;
@@ -263,9 +253,7 @@ begin
                         else if bouton.valeur = 'quitter' then HALT;
                     end;
                     if not buttonClicked then
-                    begin
                         running := False;
-                    end;
                 end;
             end;
     end;
@@ -294,12 +282,12 @@ begin
     end;
 end;
 
-{Renvoie les coordonnees du clic de la souris (système hexagonal)
+{Renvoie les coordonnees du clic de la souris (systeme hexagonal)
 Preconditions :
     - plat : le plateau de jeu
     - affichage : la structure contenant le renderer
 Postconditions :
-    - coord (TCoord): les coordonnees du clic (système hexagonal)}
+    - coord (TCoord): les coordonnees du clic}
 procedure clicHexagone(var affichage: TAffichage; var coord: Tcoord);
 var tempCoord: Tcoord;
 begin
@@ -311,15 +299,14 @@ begin
     attendre(66);
 end;
 
-// Transforme du texte en une texture
 function LoadTextureFromText(renderer:PRenderer; police:PTTF_Font; text:String;color:TSDL_Color):PSDL_Texture;
 var surface : PSDL_Surface;
 	texture : PSDL_Texture;
-	text_compa : Ansistring;
+	text_elementaire : Ansistring;
 begin
-	text_compa := text;
-	surface := TTF_RenderUTF8_Blended(police,PChar(text_compa),color);
-	texture := SDL_CreateTextureFromSurface(renderer,surface); // Cree une surface SDL contenant le texte rendu avec la police specifiee et la couleur donnee
+	text_elementaire := text;
+	surface := TTF_RenderUTF8_Blended(police,PChar(text_elementaire),color);
+	texture := SDL_CreateTextureFromSurface(renderer,surface);
 	LoadTextureFromText := texture;
     SDL_FreeSurface(surface);
 end;
@@ -352,6 +339,27 @@ begin
 	SDL_DestroyTexture(texteTexture);
 end;
 
+function tailleTexte(texte: AnsiString; taille: Integer): Tcoord;
+var textWidth,textHeight : Integer;
+  font: PTTF_Font;
+begin
+  if TTF_Init() = -1 then
+  begin
+    writeln('Erreur lors de l''initialisation de SDL_ttf : ', TTF_GetError);
+    exit;
+  end;
+  font := TTF_OpenFont('Assets/OpenSans-Regular.ttf', taille);
+  if font = nil then
+  begin
+      writeln('Erreur lors de l''ouverture de la police : ', TTF_GetError);
+      exit;
+  end;
+  TTF_SizeUTF8(font, PChar(texte), @textWidth, @textHeight);
+  TTF_CloseFont(font);
+
+  tailleTexte := FCoord(textWidth,textHeight);
+end;
+
 procedure affichageDe(de,rotation:Integer; coord:TCoord; var affichage: TAffichage);
 var destination_rect: TSDL_RECT;
 begin
@@ -370,8 +378,6 @@ begin
         texture := affichage.texturePlateau.textureContourHexagone;
 
     affichageImage(affichage.xGrid+coordCart.x-(Round(tailleHexagone * 1.05) div 2),affichage.yGrid+coordCart.y-(Round(tailleHexagone * 1.05) div 2),Round(tailleHexagone * 1.05),Round(tailleHexagone * 1.05),texture,affichage);
-
-
 
     if(plat.Grille[coordHexa.x,coordHexa.y].Numero <> -1) then
     begin
@@ -427,8 +433,6 @@ Postconditions :
 procedure affichageGrille(plat: TPlateau; var affichage: TAffichage);
 var q,r,taille: Integer;
 begin
-    // affichageFond(affichage);
-
     taille := length(plat.Grille);
     for q:=0 to taille-1 do
         for r:=0 to taille-1 do
@@ -473,12 +477,6 @@ begin
     end;
 end;
 
-procedure affichageScoreAndClear(joueur:TJoueur; var affichage: TAffichage);
-begin
-    suppressionScore(joueur.id,affichage);
-    affichageScore(joueur,affichage);
-end;
-
 procedure affichageZone(x,y,w,h,epaisseurBord: Integer; var affichage: TAffichage);
 var destination_rect: TSDL_Rect;
 begin
@@ -491,20 +489,6 @@ begin
     destination_rect := FRect(x+epaisseurBord,y+epaisseurBord,w-epaisseurBord*2,h-epaisseurBord*2);
     if SDL_RenderFillRect(affichage.renderer, @destination_rect) <> 0 then
         WriteLn('Erreur SDL: ', SDL_GetError());
-end;
-
-procedure affichageCarteTutorat(carteTutorat: TCarteTutorat; idCarte: Integer; coord: TCoord; var affichage: TAffichage);
-begin
-    affichageZone(coord.x,coord.y,180,270,2,affichage);
-    affichageImage(coord.x+40,coord.y+10,100,100,affichage.texturePlateau.textureIconesCartesTutorat[idCarte+1],affichage);
-
-    affichageZone(coord.x+150,coord.y-10,40,40,2,affichage);
-    affichageTexte(IntToStr(carteTutorat.nbr), 15, FCoord(coord.x+160,coord.y-10), FCouleur(0,200,0,255), affichage);
-    affichageTexte(IntToStr(carteTutorat.utilisee), 15, FCoord(coord.x+160,coord.y+5), FCouleur(200,0,0,255), affichage);
-
-    affichageTexte(carteTutorat.nom, 20, FCoord(coord.x +10,coord.y+110), FCouleur(0,0,0,255), affichage);
-
-    affichageTexteAvecSautsDeLigne(carteTutorat.description, 14, FCoord(coord.x+10,coord.y+150), FCouleur(0,0,0,255), affichage, 165);
 end;
 
 procedure affichageTexteAvecSautsDeLigne(text: String; taille: Integer; coord: TCoord; couleur: TSDL_Color; var affichage: TAffichage; maxWidth: Integer);
@@ -529,7 +513,6 @@ begin
     exit;
   end;
 
-  // Split the text into words
   wordCount := 0;
   for i := 1 to Length(text) do
     if text[i] = ' ' then
@@ -579,6 +562,20 @@ begin
   TTF_Quit();
 end;
 
+procedure affichageCarteTutorat(carteTutorat: TCarteTutorat; idCarte: Integer; coord: TCoord; var affichage: TAffichage);
+begin
+    affichageZone(coord.x,coord.y,180,270,2,affichage);
+    affichageImage(coord.x+40,coord.y+10,100,100,affichage.texturePlateau.textureIconesCartesTutorat[idCarte+1],affichage);
+
+    affichageZone(coord.x+150,coord.y-10,40,40,2,affichage);
+    affichageTexte(IntToStr(carteTutorat.nbr), 15, FCoord(coord.x+160,coord.y-10), FCouleur(0,200,0,255), affichage);
+    affichageTexte(IntToStr(carteTutorat.utilisee), 15, FCoord(coord.x+160,coord.y+5), FCouleur(200,0,0,255), affichage);
+
+    affichageTexte(carteTutorat.nom, 20, FCoord(coord.x +10,coord.y+110), FCouleur(0,0,0,255), affichage);
+
+    affichageTexteAvecSautsDeLigne(carteTutorat.description, 14, FCoord(coord.x+10,coord.y+150), FCouleur(0,0,0,255), affichage, 165);
+end;
+
 procedure affichageCartesTutorat(joueur: TJoueur; var affichage: TAffichage);
 var bouton: TBouton;
 begin
@@ -616,6 +613,12 @@ end;
 procedure suppressionScore(playerId: Integer; var affichage: TAffichage);
 begin
     affichageZone(25,25+playerId*75,320,65,0,affichage);
+end;
+
+procedure affichageScoreAndClear(joueur:TJoueur; var affichage: TAffichage);
+begin
+    suppressionScore(joueur.id,affichage);
+    affichageScore(joueur,affichage);
 end;
 
 procedure affichageBouton(bouton: TBouton; var affichage: TAffichage);
@@ -663,7 +666,7 @@ begin
     affichageTexte('Tour de : ' + joueurs[idJoueurActuel].Nom, 25, FCoord(25,350), recupererCouleurJoueur(idJoueurActuel), affichage);
 end;
 
-procedure clicBouton(var affichage: TAffichage; var boutons: TBoutons; var valeurBouton: String);
+procedure clicBouton(var affichage: TAffichage; boutons: TBoutons; var valeurBouton: String);
 var running: Boolean;
     i: Integer;
     coord: Tcoord;
@@ -825,27 +828,6 @@ begin
     end;
 end;
 
-function tailleTexte(texte: AnsiString; taille: Integer): Tcoord;
-var textWidth,textHeight : Integer;
-  font: PTTF_Font;
-begin
-  if TTF_Init() = -1 then
-  begin
-    writeln('Erreur lors de l''initialisation de SDL_ttf : ', TTF_GetError);
-    exit;
-  end;
-  font := TTF_OpenFont('Assets/OpenSans-Regular.ttf', taille);
-  if font = nil then
-  begin
-      writeln('Erreur lors de l''ouverture de la police : ', TTF_GetError);
-      exit;
-  end;
-  TTF_SizeUTF8(font, PChar(texte), @textWidth, @textHeight);
-  TTF_CloseFont(font);
-
-  tailleTexte := FCoord(textWidth,textHeight);
-end;
-
 procedure affichageSelectionRessource(var boutonValider: TBouton; var affichage: TAffichage; var grille: TGrille; text : String; ressourceSelectionnee: TRessource);
 var ressource: TRessource;
     coord,coordCart: Tcoord;
@@ -974,11 +956,6 @@ begin
     end;
 end;
 
-procedure clicAction(var affichage: TAffichage; var valeurBouton: String);
-begin
-    clicBouton(affichage,affichage.boutonsAction,valeurBouton);
-end;
-
 procedure affichagePlateau(plat: TPlateau; var affichage: TAffichage);
 var i: Integer;
 begin
@@ -990,12 +967,6 @@ begin
         affichagePersonne(plat.Personnes[i],affichage);
 end;
 
-{Affiche le tour à l'ecran
-Preconditions :
-    - plat : le plateau de jeu
-    - affichage : la structure contenant le renderer
-Postconditions :
-    - affichage : la structure contenant le renderer}
 procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
 var i: Integer;
 begin

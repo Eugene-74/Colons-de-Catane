@@ -346,7 +346,7 @@ begin
 
     finTour := False;
     repeat
-      clicAction(affichage, valeurBouton);
+      clicBouton(affichage,affichage.boutonsAction,valeurBouton);
     
       if(valeurBouton = 'achat_eleve')  then
         achatElements(joueurs[i], plateau, affichage,1)
