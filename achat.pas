@@ -603,6 +603,7 @@ var
   id,i,nombreDeGagnant : Integer;
   points,longueurRoutes : TIntegerTab;
 begin
+  verificationPointsVictoire := nil;
   setlength(verificationPointsVictoire,0);
 
   nombreDeGagnant := 0;
@@ -1109,9 +1110,8 @@ begin
   for i:=0 to length(plateau.personnes)-1 do
     affichagePersonne(plateau.personnes[i],affichage);
   attendre(16);
-  miseAJourRenderer(affichage);
-  attendre(16);
 end;
+
 
 procedure trouver3EmeHexagone(plateau : TPlateau;coords1,coords2,coords: TCoords);
 var x1,x2,y1,y2: Integer;
