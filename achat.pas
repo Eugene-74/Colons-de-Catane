@@ -605,7 +605,6 @@ var
 begin
   setlength(verificationPointsVictoire,0);
 
-  gagnant := -1;
   nombreDeGagnant := 0;
 
   SetLength(points,Length(joueurs));
