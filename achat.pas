@@ -218,7 +218,7 @@ begin
       begin
       affichagePlateau(plateau,affichage);
       resteEmplacementEleve(affichage,plateau,joueur);
-      miseAJourRenderer(affichage);
+      // miseAJourRenderer(affichage);
       end;
   until valide;
 
@@ -414,7 +414,7 @@ begin
       begin
       affichagePlateau(plateau,affichage);
       resteEleve(affichage,plateau,joueurActuel);
-      miseAJourRenderer(affichage);
+      // miseAJourRenderer(affichage);
       jouerSonValide(affichage,valide);
       end;
   until valide;
@@ -817,7 +817,7 @@ begin
       begin
       affichagePlateau(plateau,affichage);
       resteEmplacementConnexion(affichage,plateau,joueur);
-      miseAJourRenderer(affichage);
+      // miseAJourRenderer(affichage);
       end;
   until valide;
 
