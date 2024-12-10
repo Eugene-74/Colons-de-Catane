@@ -28,7 +28,8 @@ function nombreConnexionJoueur(plateau: TPlateau; joueur: TJoueur): Integer;forw
 
 function connexionExisteDeja(plateau: TPlateau; coord1: TCoord; coord2: TCoord): Boolean;forward;
 
-procedure trouver3EmeHexagone(plateau : TPlateau;coords1: TCoords; coords2: TCoords;connexion : Tconnexion);forward;
+// procedure trouver3EmeHexagone(plateau : TPlateau;coords1: TCoords; coords2: TCoords;connexion : Tconnexion);forward;
+procedure trouver3EmeHexagone(plateau : TPlateau;coords1,coords2,coords: TCoords);forward;
 
 function clicConnexion(var affichage: TAffichage; plateau: TPlateau): TCoords;forward;
 
@@ -554,7 +555,7 @@ if ((connexion.IdJoueur = joueur.Id) and not coordsDansTableau(connexion,connexi
     coords2[0] := connexion.Position[0];
     coords2[1] := connexion.Position[1];
 
-    trouver3EmeHexagone(plateau,coords1,coords2,connexion);
+    trouver3EmeHexagone(plateau,coords1,coords2,connexion.position);
 
     total :=0;
 
@@ -880,22 +881,25 @@ begin
 end;
 
 function aucuneConnexionAdjacente(coords: TCoords; plateau: TPlateau; joueur: TJoueur; var affichage : TAffichage): Boolean;
+var coords1,coords2 : TCoords;
+  i: Integer;
 begin
+  aucuneConnexionAdjacente := True;
+
   setLength(coords1,3);
   setLength(coords2,3);
   
-  coords1[0] := connexion.Position[0];
-  coords1[1] := connexion.Position[1];
+  coords1[0] := coords[0];
+  coords1[1] := coords[1];
   
-  coords2[0] := connexion.Position[0];
-  coords2[1] := connexion.Position[1];
+  coords2[0] := coords[0];
+  coords2[1] := coords[1];
 
-  trouver3EmeHexagone(plateau,coords1,coords2,connexion);
+  trouver3EmeHexagone(plateau,coords1,coords2,coords);
+
   for i := 0 to length(plateau.Connexions)-1 do
-    if(CoordsEgales(plateau.Connexions[i].Position,coords1) or CoordsEgales(plateau.Connexions[i].Position,coords2))then
-      exit(True);
-    
-  aucuneConnexionAdjacente := False;
+    if(CoordsEgales(coords,coords1) or CoordsEgales(coords,coords2))then
+      exit(False);
 end;
 
 function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var joueur:TJoueur; var affichage : TAffichage):Boolean;
@@ -1108,7 +1112,7 @@ begin
       coords2[0] := plateau.connexions[i].Position[0];
       coords2[1] := plateau.connexions[i].Position[1];
 
-      trouver3EmeHexagone(plateau,coords1,coords2,plateau.connexions[i]);
+      trouver3EmeHexagone(plateau,coords1,coords2,plateau.connexions[i].position);
 
 
       if(not connexionExisteDeja(plateau, coords1[0],coords1[2])
@@ -1144,25 +1148,25 @@ begin
   attendre(16);
 end;
 
-procedure trouver3EmeHexagone(plateau : TPlateau;coords1: TCoords; coords2: TCoords;connexion : TConnexion);
+procedure trouver3EmeHexagone(plateau : TPlateau;coords1,coords2,coords: TCoords);
 var x1,x2,y1,y2: Integer;
   j : Boolean;
 begin
 j := false;
 // diagonale 1
-if(connexion.Position[0].x = connexion.Position[1].x)then
+if(coords[0].x = coords[1].x)then
   begin
   x1:=-1; y1:=1;
   x2:=1; y2:=0;
-  if(connexion.Position[0].y < connexion.Position[1].y)then
+  if(coords[0].y < coords[1].y)then
     j:=true;
   end
 // horizontale
-else if(connexion.Position[0].y = connexion.Position[1].y)then
+else if(coords[0].y = coords[1].y)then
   begin
   x1:=1; y1:=-1;
   x2:=0; y2:=1;
-  if(connexion.Position[0].x < connexion.Position[1].x)then
+  if(coords[0].x < coords[1].x)then
     j:=true;
   end
 // diagonale 2
@@ -1170,18 +1174,18 @@ else
   begin
   x1:=1; y1:=0;
   x2:=0; y2:=-1;
-  if(connexion.Position[0].x < connexion.Position[1].x)then
+  if(coords[0].x < coords[1].x)then
     j:=true;
   end;
 if(j)then
   begin
-  coords1[2] := FCoord(connexion.Position[0].x+x1,connexion.Position[0].y+y1);
-  coords2[2] := FCoord(connexion.Position[0].x+x2,connexion.Position[0].y+y2);
+  coords1[2] := FCoord(coords[0].x+x1,coords[0].y+y1);
+  coords2[2] := FCoord(coords[0].x+x2,coords[0].y+y2);
   end
 else
   begin
-  coords1[2] := FCoord(connexion.Position[1].x+x1,connexion.Position[1].y+y1);
-  coords2[2] := FCoord(connexion.Position[1].x+x2,connexion.Position[1].y+y2);
+  coords1[2] := FCoord(coords[1].x+x1,coords[1].y+y1);
+  coords2[2] := FCoord(coords[1].x+x2,coords[1].y+y2);
   end;
 
 end;
@@ -1207,7 +1211,7 @@ begin
     coords2[0] := plateau.connexions[i].Position[0];
     coords2[1] := plateau.connexions[i].Position[1];
 
-    trouver3EmeHexagone(plateau,coords1,coords2,plateau.connexions[i]);
+    trouver3EmeHexagone(plateau,coords1,coords2,plateau.connexions[i].position);
 
     if(not VerifierAdjacencePersonnes(coords1,plateau))then
       begin
