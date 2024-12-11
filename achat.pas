@@ -47,9 +47,13 @@ procedure placeFauxConnexionAutourJoueur(var affichage : TAffichage; plateau : T
 var coords : Tcoords;
 begin
   coords := plateau.Personnes[length(plateau.personnes)-1].Position;
-  placeFauxConnexion(affichage,coords[0],coords[1],id);
-  placeFauxConnexion(affichage,coords[1],coords[2],id);
-  placeFauxConnexion(affichage,coords[0],coords[2],id);
+  if(dansLePlateau(plateau,coords[0]) or dansLePlateau(plateau,coords[1]))then
+    placeFauxConnexion(affichage,coords[0],coords[1],id);
+  if(dansLePlateau(plateau,coords[1]) or dansLePlateau(plateau,coords[2]))then
+    placeFauxConnexion(affichage,coords[1],coords[2],id);
+  if(dansLePlateau(plateau,coords[0]) or dansLePlateau(plateau,coords[2]))then
+    placeFauxConnexion(affichage,coords[0],coords[2],id);
+  
   affichagePersonne(plateau.Personnes[length(plateau.personnes)-1],affichage);
   miseAJourRenderer(affichage);
 end;
