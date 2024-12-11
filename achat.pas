@@ -619,6 +619,7 @@ begin
   attendre(50);
 end;
 
+// TODO corriger
 function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;
 var i,k,l : Integer;
 begin
