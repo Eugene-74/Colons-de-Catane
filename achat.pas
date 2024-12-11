@@ -658,58 +658,16 @@ begin
           or CoordsEgales(plateau.Connexions[i].position,[coords2[0],coords2[2]]) or CoordsEgales(plateau.Connexions[i].position,[coords2[1],coords2[2]]))then
         exit(False);
 end;
-<<<<<<< HEAD
- 
+
 function enContactAutreEleveConnexion(plateau:TPlateau ;connexion: TCoords; var joueur:TJoueur; var affichage : TAffichage):Boolean;
-var
-  i, k: Integer;
-  eleve: Tcoords;
-begin
-  setlength(eleve,2);
-  for i := 0 to length(plateau.Personnes) -1 do
-  begin
-    if plateau.Personnes[i].IdJoueur <> joueur.Id then
-    begin
-      for k := 0 to 1 do
-      begin
-        eleve[0] := plateau.Personnes[i].Position[k] ;
-        eleve[1] := plateau.Personnes[i].Position[k+1] ;
-        if(CoordsEgales(connexion,eleve)) then
-        begin
-          enContactAutreEleveConnexion := True;
-          Exit;
-        end;
-        if (coords[0].x = plateau.Personnes[i].Position[k].x) and
-            (coords[0].y = plateau.Personnes[i].Position[k].y) then
-          Inc(l);
-
-        if (coords[1].x = plateau.Personnes[i].Position[k].x) and
-            (coords[1].y = plateau.Personnes[i].Position[k].y) then
-          Inc(l);
-        if l >= 2 then
-          exit(True);
-      end;
-        eleve[0] := plateau.Personnes[i].Position[0];
-        eleve[1] := plateau.Personnes[i].Position[2] ;
-        if(CoordsEgales(connexion,eleve)) then
-        begin
-          enContactAutreEleveConnexion := True;
-          Exit;
-        end;
-    end;
-  end;
-=======
-
-function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var joueur:TJoueur; var affichage : TAffichage):Boolean;
 var i, k, j : Integer;
 begin
   for i := 0 to length(plateau.Personnes) -1 do
     if plateau.Personnes[i].IdJoueur = joueur.Id then
       for k := 0 to 1 do
         for j := k+1 to 2 do
-          if(CoordsEgales(coords,[plateau.Personnes[i].Position[j],plateau.Personnes[i].Position[k]])) then
+          if(CoordsEgales(connexion,[plateau.Personnes[i].Position[j],plateau.Personnes[i].Position[k]])) then
             exit(True);
->>>>>>> bbe92881cbb7bb07aefce5ea2278645efb395418
    enContactAutreEleveConnexion := False;
 end;
 
