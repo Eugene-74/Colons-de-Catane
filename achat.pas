@@ -886,30 +886,15 @@ begin
   affichagePersonne(personne, affichage);
 end;
 
-// TODO simplifier
 function enContactConnexionEleve( plateau: TPlateau; connexion: TCoords; var joueur: TJoueur): Boolean;
-var
-  i, k: Integer;
-  eleve: Tcoords;
+var i, k, j : Integer;
 begin
-  setlength(eleve,2);
   for i := 0 to length(plateau.Personnes) -1 do
     if plateau.Personnes[i].IdJoueur = joueur.Id then
-    begin
       for k := 0 to 1 do
-      begin
-        eleve[0] := plateau.Personnes[i].Position[k] ;
-        eleve[1] := plateau.Personnes[i].Position[k+1] ;
-        if(CoordsEgales(connexion,eleve)) then
-          exit(True);
-      end;
-      
-      eleve[0] := plateau.Personnes[i].Position[0];
-      eleve[1] := plateau.Personnes[i].Position[2] ;
-      if(CoordsEgales(connexion,eleve)) then
-        exit(True);
-    end;
+        for j := k+1 to 2 do
+          if(CoordsEgales(connexion,[plateau.Personnes[i].Position[j],plateau.Personnes[i].Position[k]])) then
+            exit(True);
    enContactConnexionEleve := False;
 end;
-
 end.
