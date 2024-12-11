@@ -19,6 +19,7 @@ procedure selectionDepouiller(var ressource: TRessource; idJoueurActuel:Integer;
 procedure affichageTour(plat: TPlateau; joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
 procedure clicBouton(var affichage: TAffichage; boutons: TBoutons; var valeurBouton: String);
 procedure affichageInformation(texte: String; taille: Integer; couleur: TSDL_Color; var affichage: TAffichage);
+procedure affichageInformationAndRender(texte: String; taille: Integer; couleur: TSDL_Color; var affichage: TAffichage);
 procedure affichageJoueurActuel(joueurs: TJoueurs; idJoueurActuel: Integer; var affichage: TAffichage);
 procedure suppressionInformation(var affichage: TAffichage);
 procedure attendre(ms: Integer);
@@ -288,6 +289,7 @@ begin
     clicCart(affichage,coord);
     cartToHexa(FCoord(coord.x-affichage.xGrid,coord.y-affichage.yGrid),tempCoord,tailleHexagone div 2);
     coord := tempCoord;
+    writeln(coord.x,' ',coord.y);
 
     jouerSonClic(affichage);
     attendre(66);
@@ -647,8 +649,14 @@ begin
     attendre(50);
     suppressionInformation(affichage);
     affichageTexte(texte, taille-5, FCoord(350,WINDOW_H-55), couleur, affichage);
-    miseAJourRenderer(affichage);
     attendre(50);
+end;
+
+procedure affichageInformationAndRender(texte: String; taille: Integer; couleur: TSDL_Color; var affichage: TAffichage);
+begin
+    affichageInformation(texte,taille,couleur,affichage);
+    miseAJourRenderer(affichage);
+    attendre(16);
 end;
 
 
