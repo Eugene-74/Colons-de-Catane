@@ -96,17 +96,17 @@ begin
           end
           else
           begin
-            affichageInformation('Vous n''avez pas d''emplacement pour mettre un élève.', 25, COULEUR_TEXT_ROUGE, affichage);
+            affichageInformationAndRender('Vous n''avez pas d''emplacement pour mettre un élève.', 25, COULEUR_TEXT_ROUGE, affichage);
             jouerSonValide(affichage,false);
           end
         else
         begin
-          affichageInformation('Vous avez déjà atteint la limite de 5 élèves.', 25, COULEUR_TEXT_ROUGE, affichage);
+          affichageInformationAndRender('Vous avez déjà atteint la limite de 5 élèves.', 25, COULEUR_TEXT_ROUGE, affichage);
           jouerSonValide(affichage,false);
         end
       else
         begin
-        affichageInformation('Vous n''avez pas les ressources nécessaires pour acheter un eleve.', 25,COULEUR_TEXT_ROUGE, affichage);
+        affichageInformationAndRender('Vous n''avez pas les ressources nécessaires pour acheter un eleve.', 25,COULEUR_TEXT_ROUGE, affichage);
         jouerSonValide(affichage,false);
         end;
     // CONNEXION
@@ -119,12 +119,12 @@ begin
         end
         else
         begin
-          affichageInformation('Vous n''avez pas d''emplacement pour mettre une connexion.', 25, COULEUR_TEXT_ROUGE, affichage);
+          affichageInformationAndRender('Vous n''avez pas d''emplacement pour mettre une connexion.', 25, COULEUR_TEXT_ROUGE, affichage);
           jouerSonValide(affichage,false);
         end
       else
       begin
-        affichageInformation('Vous n''avez pas les ressources nécessaires pour acheter une connexion.', 25, COULEUR_TEXT_ROUGE, affichage);
+        affichageInformationAndRender('Vous n''avez pas les ressources nécessaires pour acheter une connexion.', 25, COULEUR_TEXT_ROUGE, affichage);
         jouerSonValide(affichage,false);
       end;
     // PROFESSEUR
@@ -138,17 +138,17 @@ begin
           end
           else
           begin
-            affichageInformation('Vous n''avez pas les ressources nécessaires pour changer un élève en professeur.', 25, COULEUR_TEXT_ROUGE, affichage);
+            affichageInformationAndRender('Vous n''avez pas les ressources nécessaires pour changer un élève en professeur.', 25, COULEUR_TEXT_ROUGE, affichage);
             jouerSonValide(affichage,false);
           end
         else
         begin
-          affichageInformation('Vous avez déjà atteint la limite de 4 professeurs.', 25, COULEUR_TEXT_ROUGE, affichage);
+          affichageInformationAndRender('Vous avez déjà atteint la limite de 4 professeurs.', 25, COULEUR_TEXT_ROUGE, affichage);
           jouerSonValide(affichage,false);
         end
       else
         begin
-        affichageInformation('Vous n''avez plus d''élève à modifier.', 25, COULEUR_TEXT_ROUGE, affichage);
+        affichageInformationAndRender('Vous n''avez plus d''élève à modifier.', 25, COULEUR_TEXT_ROUGE, affichage);
         jouerSonValide(affichage,false);
         end;
     // carte de tutorat
@@ -165,12 +165,12 @@ begin
         end
       else
         begin
-        affichageInformation('Impossible d''acheter une carte de tutorat car il n''y en a plus.', 25, COULEUR_TEXT_ROUGE, affichage);
+        affichageInformationAndRender('Impossible d''acheter une carte de tutorat car il n''y en a plus.', 25, COULEUR_TEXT_ROUGE, affichage);
         jouerSonValide(affichage,false);
         end
     else
       begin
-      affichageInformation('Vous n''avez pas les ressources nécessaires pour acheter une carte de tutorat.', 25, COULEUR_TEXT_ROUGE, affichage);
+      affichageInformationAndRender('Vous n''avez pas les ressources nécessaires pour acheter une carte de tutorat.', 25, COULEUR_TEXT_ROUGE, affichage);
       jouerSonValide(affichage,false);
       end;
   end;
@@ -180,7 +180,7 @@ procedure placementEleve(var plateau: TPlateau; var affichage: TAffichage; var j
 var HexagonesCoords: TCoords;
   valide : Boolean;
 begin
-  affichageInformation('Cliquez sur 3 hexagones entre lesquels vous voulez placer l''élève.', 25, FCouleur(0, 0, 0, 255), affichage);
+  affichageInformationAndRender('Cliquez sur 3 hexagones entre lesquels vous voulez placer l''élève.', 25, FCouleur(0, 0, 0, 255), affichage);
   repeat
     HexagonesCoords := ClicPersonne(affichage,plateau,True);
     valide := eleveValide(plateau, HexagonesCoords, joueur,affichage);
@@ -205,7 +205,7 @@ begin
     end;
   joueur.Points:=1+joueur.Points;
 
-  affichageInformation('Elève placé avec succès !', 25, COULEUR_TEXT_VERT, affichage);
+  affichageInformationAndRender('Elève placé avec succès !', 25, COULEUR_TEXT_VERT, affichage);
   affichageScoreAndClear(joueur, affichage);
   affichagePlateau(plateau,affichage);
   miseAJourRenderer(affichage);
@@ -246,7 +246,7 @@ begin
       valide := dansLaGrille(plateau,ClicPersonne[i]);
       if(not valide)then
       begin
-        affichageInformation('Veuillez jouer dans le plateau.', 25, COULEUR_TEXT_ROUGE, affichage);
+        affichageInformationAndRender('Veuillez jouer dans le plateau.', 25, COULEUR_TEXT_ROUGE, affichage);
         jouerSonValide(affichage,false); 
       end;
     until valide;
@@ -330,7 +330,7 @@ var HexagonesCoords, ProfesseurCoords: TCoords;
   indexEleve: Integer;
   valide: Boolean;
 begin
-  affichageInformation('Cliquez sur 3 hexagones entre lesquels vous voulez placer le professeur.', 25, FCouleur(0, 0, 0, 255), affichage);
+  affichageInformationAndRender('Cliquez sur 3 hexagones entre lesquels vous voulez placer le professeur.', 25, FCouleur(0, 0, 0, 255), affichage);
   repeat
     HexagonesCoords := ClicPersonne(affichage,plateau, False);
     valide := professeurValide(affichage, plateau, joueurActuel, HexagonesCoords, ProfesseurCoords, indexEleve);
@@ -350,7 +350,7 @@ begin
     
     joueurActuel.Points := joueurActuel.Points + 1;
 
-    affichageInformation('Élève converti en professeur avec succès !', 25, FCouleur(0, 255, 0, 255), affichage);
+    affichageInformationAndRender('Élève converti en professeur avec succès !', 25, FCouleur(0, 255, 0, 255), affichage);
     
     affichageScoreAndClear(joueurActuel, affichage);
     affichagePlateau(plateau,affichage);
@@ -576,7 +576,7 @@ begin
       valide := dansLaGrille(plateau,clicConnexion[i]);
       if(not valide)then
       begin
-        affichageInformation('Veuillez jouer dans le plateau.', 25, COULEUR_TEXT_ROUGE, affichage);
+        affichageInformationAndRender('Veuillez jouer dans le plateau.', 25, COULEUR_TEXT_ROUGE, affichage);
         jouerSonValide(affichage,false);
       end;
     until valide;
@@ -592,7 +592,7 @@ var coords: TCoords;
   valide : boolean;
 begin
   attendre(32);
-  affichageInformation('Cliquez sur 2 hexagones entre lesquels vous voulez placer la connexion', 25, FCouleur(0,0,0,255), affichage);
+  affichageInformationAndRender('Cliquez sur 2 hexagones entre lesquels vous voulez placer la connexion', 25, FCouleur(0,0,0,255), affichage);
   attendre(50);
   repeat
   attendre(32);
@@ -619,7 +619,7 @@ begin
 
   affichageScoreAndClear(joueur, affichage);
   affichagePlateau(plateau,affichage);
-  affichageInformation('Connexion placée avec succès !', 25, COULEUR_TEXT_VERT, affichage);
+  affichageInformationAndRender('Connexion placée avec succès !', 25, COULEUR_TEXT_VERT, affichage);
   attendre(50);
 end;
 
@@ -697,10 +697,7 @@ begin
             (coords[1].y = plateau.Personnes[i].Position[k].y) then
           Inc(l);
         if l >= 2 then
-        begin
-          affichageInformation('Connexion en contact avec une personne d''un autre joueur.', 25, FCouleur(0,0,0,255), affichage);
           exit(True);
-        end;
       end;
     end;
 end;
@@ -709,7 +706,7 @@ procedure deplacementSouillard(var plateau : TPlateau;var joueurs : TJoueurs ;va
 var coord : Tcoord;
   valide : Boolean;
 begin
-  affichageInformation('Cliquez sur 1 hexagones pour déplacer le souillard.', 25, FCouleur(0,0,0,255), affichage);
+  affichageInformationAndRender('Cliquez sur 1 hexagones pour déplacer le souillard.', 25, FCouleur(0,0,0,255), affichage);
 
   repeat
     clicHexagone(affichage, coord);
@@ -722,7 +719,7 @@ begin
   affichagePlateau(plateau,affichage);
   attendre(16);
 
-  affichageInformation('Souillard déplacé avec succès !', 25, COULEUR_TEXT_VERT, affichage);
+  affichageInformationAndRender('Souillard déplacé avec succès !', 25, COULEUR_TEXT_VERT, affichage);
 end;
 
 function resteEleve(var affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
