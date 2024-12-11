@@ -104,7 +104,6 @@ begin
         affichage.texturePlateau.textureDes[j] := chargerTexture(affichage, 'DiceFaces/' + IntToStr(j));
     
     affichage.texturePlateau.textureValider := chargerTexture(affichage, 'valider');
-    affichage.texturePlateau.textureQuitter := chargerTexture(affichage, 'croix');
     affichage.texturePlateau.texturesMusique[0] := chargerTexture(affichage, 'IconesMusique/demarrer');
     affichage.texturePlateau.texturesMusique[1] := chargerTexture(affichage, 'IconesMusique/arreter');
     affichage.texturePlateau.texturesFleches[0] := chargerTexture(affichage, 'gauche');
@@ -203,8 +202,6 @@ procedure affichageImageBouton(bouton: TBouton; var affichage: TAffichage);
 begin
     if bouton.texte='valider' then
         affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.textureValider,affichage)
-    else if bouton.texte='croix' then
-        affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.textureQuitter,affichage)
     else if bouton.texte='/IconesMusique/demarrer' then
         affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.texturesMusique[0],affichage)
     else if bouton.texte='/IconesMusique/arreter' then
@@ -241,14 +238,13 @@ begin
                 begin
                     coord := FCoord(event.button.x,event.button.y);
                     buttonClicked := False;
-                    for bouton in affichage.boutonsSysteme do
+                    for bouton in affichage.boutonsMusique do
                     begin
                         if not ((coord.x >= bouton.coord.x) and (coord.x <= bouton.coord.x + bouton.w) and (coord.y >= bouton.coord.y) and (coord.y <= bouton.coord.y + bouton.h)) then
                             continue;
                         buttonClicked := True;
                         if bouton.valeur = 'musique_play' then demarrerMusique(affichage)
                         else if bouton.valeur = 'musique_stop' then arreterMusique(affichage)
-                        else if bouton.valeur = 'quitter' then HALT;
                     end;
                     if not buttonClicked then
                         running := False;
@@ -629,18 +625,15 @@ begin
     affichageTexte(bouton.texte, 25, FCoord(bouton.coord.x + (bouton.w - tailleText.x)div 2,bouton.coord.y + (bouton.h - tailleText.y)div 2), FCouleur(0,0,0,255), affichage);
 end;
 
-procedure initialisationBoutonsSysteme(var affichage: TAffichage);
+procedure initialisationBoutonsMusique(var affichage: TAffichage);
 var bouton: TBouton;
 begin
-    setLength(affichage.boutonsSysteme, 0);
+    setLength(affichage.boutonsMusique, 0);
     bouton := FBouton(WINDOW_W-150,WINDOW_H-75,50,50,'/IconesMusique/demarrer','musique_play');
-    ajouterBoutonTableau(bouton,affichage.boutonsSysteme);
+    ajouterBoutonTableau(bouton,affichage.boutonsMusique);
 
     bouton := FBouton(WINDOW_W-75,WINDOW_H-75,50,50,'/IconesMusique/arreter','musique_stop');
-    ajouterBoutonTableau(bouton,affichage.boutonsSysteme);
-
-    bouton := FBouton(WINDOW_W-75,20,50,50,'croix','quitter');
-    ajouterBoutonTableau(bouton,affichage.boutonsSysteme);
+    ajouterBoutonTableau(bouton,affichage.boutonsMusique);
 end;
 
 procedure suppressionInformation(var affichage: TAffichage);
@@ -1137,8 +1130,8 @@ var i: Integer;
 begin
     attendre(16);
     verificationMusique(affichage);
-    for i:=0 to length(affichage.boutonsSysteme)-1 do
-        affichageImageBouton(affichage.boutonsSysteme[i],affichage);
+    for i:=0 to length(affichage.boutonsMusique)-1 do
+        affichageImageBouton(affichage.boutonsMusique[i],affichage);
     SDL_RenderPresent(affichage.renderer);
 end;
 
@@ -1185,7 +1178,7 @@ begin
 
     initialisationTextures(affichage);
     initialisationBoutonsAction(affichage);
-    initialisationBoutonsSysteme(affichage);
+    initialisationBoutonsMusique(affichage);
 end;
 
 procedure suppresionAffichage(var affichage: TAffichage);
@@ -1207,7 +1200,6 @@ begin
     SDL_DestroyTexture(affichage.texturePlateau.texturePoint);
     SDL_DestroyTexture(affichage.texturePlateau.texturePreview);
     SDL_DestroyTexture(affichage.texturePlateau.textureValider);
-    SDL_DestroyTexture(affichage.texturePlateau.textureQuitter);
     SDL_DestroyTexture(affichage.texturePlateau.texturesMusique[0]);
     SDL_DestroyTexture(affichage.texturePlateau.texturesMusique[1]);
     SDL_DestroyTexture(affichage.texturePlateau.texturesFleches[0]);

@@ -89,7 +89,6 @@ type
     textureDes : array[1..6] of PSDL_Texture;
     texturesSignes: array[0..1] of PSDL_Texture;
     texturesMusique: array[0..1] of PSDL_Texture;
-    textureQuitter: PSDL_Texture;
     textureValider: PSDL_Texture;
     texturesFleches: array[0..1] of PSDL_Texture;
   end;
@@ -118,7 +117,7 @@ type
     yGrid: Integer;
     texturePlateau : TTexturePlateau;
     boutonsAction: TBoutons;
-    boutonsSysteme: TBoutons;
+    boutonsMusique: TBoutons;
     musiqueActuelle : TMusique;
     sons : TSons;
   end;
