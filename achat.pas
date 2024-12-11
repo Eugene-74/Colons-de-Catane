@@ -215,7 +215,7 @@ begin
 
   if(joueurActuel.Points >=2 ) then
     if (not enContactEleveConnexion(plateau,HexagonesCoords,joueurActuel)) then
-      begin
+      begin 
         writeln(False);
       exit(False);
       end;
