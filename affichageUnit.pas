@@ -289,7 +289,6 @@ begin
     clicCart(affichage,coord);
     cartToHexa(FCoord(coord.x-affichage.xGrid,coord.y-affichage.yGrid),tempCoord,tailleHexagone div 2);
     coord := tempCoord;
-    writeln(coord.x,' ',coord.y);
 
     jouerSonClic(affichage);
     attendre(66);
