@@ -38,7 +38,6 @@ function enContactAutreEleveConnexion(plateau:TPlateau ;connexion: TCoords; var 
 function resteEleve(var affichage : TAffichage;plateau:TPlateau; joueur:Tjoueur): Boolean;forward;
 function resteEmplacementEleve(var affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;forward;
 function compterConnexionSuite(plateau: TPlateau; joueur: TJoueur): Integer;forward;
-function encontactAutreconnexionEleve(plateau: TPlateau;Eleve:Tcoords; var joueur:Tjoueur): Boolean;forward;
 function coordsDansTableau(connexion: TConnexion; tableau: array of TConnexion): Boolean;forward;
 function conterNombrePersonnes(personnes: TPersonnes; estEleve: Boolean; joueur: TJoueur): Integer;forward;
 
@@ -205,7 +204,7 @@ begin
     end;
   joueur.Points:=1+joueur.Points;
 
-  affichageInformationAndRender('Elève placé avec succès !', 25, COULEUR_TEXT_VERT, affichage);
+  affichageInformationAndRender('Élève placé avec succès !', 25, COULEUR_TEXT_VERT, affichage);
   affichageScoreAndClear(joueur, affichage);
   affichagePlateau(plateau,affichage);
   miseAJourRenderer(affichage);
@@ -215,22 +214,26 @@ function eleveValide(plateau: TPlateau; HexagonesCoords: TCoords; joueurActuel: 
 begin
   eleveValide := False;
   if not enContact(HexagonesCoords) then
+  begin
+    affichageInformation('Les hexagones ne sont pas adjacents.', 25, COULEUR_TEXT_ROUGE, affichage);
     exit(False);
+  end;
+
 
   if(joueurActuel.Points >=2 ) then
     if (not enContactEleveConnexion(plateau,HexagonesCoords,joueurActuel)) then
-      begin 
-        writeln(False);
+    begin 
+      affichageInformation('L''élève doit être en contact avec une connexion.', 25, COULEUR_TEXT_ROUGE, affichage);
       exit(False);
-      end;
+    end;
 
   if(VerifierAdjacencePersonnes(HexagonesCoords,plateau)) then
     exit(False)
   else
+    begin
+    affichageInformation('L''élève doit être à au moins 2 cases des autres élèves.', 25, COULEUR_TEXT_ROUGE, affichage); 
     eleveValide := True;
-
-  if encontactAutreconnexionEleve(plateau,HexagonesCoords,joueurActuel) then
-    exit(False);
+    end;
 end;
 
 function ClicPersonne(var affichage: TAffichage; plateau: TPlateau; estEleve: Boolean): TCoords;
@@ -625,38 +628,15 @@ end;
 
 
 function enContactEleveConnexion( plateau: TPlateau; eleve: TCoords; var joueur: TJoueur): Boolean;
-var i, l: Integer;
-  coord1, coord2: TCoords;
+var i, k, j : Integer;
 begin
-  enContactEleveConnexion := False;
-  l := 0;
-  SetLength(coord1, 2);
-  SetLength(coord2, 2);
   for i := 0 to length(plateau.Connexions) -1 do
-  begin
     if plateau.Connexions[i].IdJoueur = joueur.Id then
-    begin
-      coord1[0] := plateau.Connexions[i].Position[0];
-      coord1[1] := plateau.Connexions[i].Position[1];
-    for l:=0 to 1 do
-    begin
-      coord2[0] := Eleve[l];
-      coord2[1] := Eleve[l+1];
-      if CoordsEgales(coord2, coord1) then
-      begin
-        enContactEleveConnexion := True;
-        Break;
-      end;
-    end;
-    coord2[0] := Eleve[0];
-    coord2[1] := Eleve[2];
-          if CoordsEgales(coord2, coord1) then
-      begin
-        enContactEleveConnexion := True;
-        Break;
-      end;
-    end;
-  end;
+      for k := 0 to 1 do
+        for j := k+1 to 2 do
+          if(CoordsEgales(plateau.Connexions[i].Position,[eleve[j],eleve[k]])) then
+            exit(True);
+   enContactEleveConnexion := False;
 end;
 
 function aucuneConnexionAdjacente(coords: TCoords; plateau: TPlateau; joueur: TJoueur; var affichage : TAffichage): Boolean;
@@ -678,6 +658,7 @@ begin
           or CoordsEgales(plateau.Connexions[i].position,[coords2[0],coords2[2]]) or CoordsEgales(plateau.Connexions[i].position,[coords2[1],coords2[2]]))then
         exit(False);
 end;
+<<<<<<< HEAD
  
 function enContactAutreEleveConnexion(plateau:TPlateau ;connexion: TCoords; var joueur:TJoueur; var affichage : TAffichage):Boolean;
 var
@@ -717,6 +698,18 @@ begin
         end;
     end;
   end;
+=======
+
+function enContactAutreEleveConnexion(plateau:TPlateau ;coords: TCoords; var joueur:TJoueur; var affichage : TAffichage):Boolean;
+var i, k, j : Integer;
+begin
+  for i := 0 to length(plateau.Personnes) -1 do
+    if plateau.Personnes[i].IdJoueur = joueur.Id then
+      for k := 0 to 1 do
+        for j := k+1 to 2 do
+          if(CoordsEgales(coords,[plateau.Personnes[i].Position[j],plateau.Personnes[i].Position[k]])) then
+            exit(True);
+>>>>>>> bbe92881cbb7bb07aefce5ea2278645efb395418
    enContactAutreEleveConnexion := False;
 end;
 
@@ -903,73 +896,15 @@ begin
   affichagePersonne(personne, affichage);
 end;
 
-// TODO simplifier
-function encontactAutreconnexionEleve(plateau: TPlateau; Eleve: TCoords; var joueur: TJoueur): Boolean;
-var i, l: Integer;
-  coord1, coord2: TCoords;
-begin
-  encontactAutreconnexionEleve := False;
-  l := 0;
-  SetLength(coord1, 2);
-  SetLength(coord2, 2);
-  for i := 0 to length(plateau.Connexions) -1 do
-  begin
-    if plateau.Connexions[i].IdJoueur <> joueur.Id then
-    begin
-      coord1[0] := plateau.Connexions[i].Position[0];
-      coord1[1] := plateau.Connexions[i].Position[1];
-    for l:=0 to 1 do
-    begin
-      coord2[0] := Eleve[l];
-      coord2[1] := Eleve[l+1];
-      if CoordsEgales(coord2, coord1) then
-      begin
-        encontactAutreconnexionEleve := True;
-        Break;
-      end;
-    end;
-    coord2[0] := Eleve[0];
-    coord2[1] := Eleve[2];
-          if CoordsEgales(coord2, coord1) then
-      begin
-        encontactAutreconnexionEleve := True;
-        Break;
-      end;
-    end;
-  end;
-end;
-
-// TODO simplifier
 function enContactConnexionEleve( plateau: TPlateau; connexion: TCoords; var joueur: TJoueur): Boolean;
-var
-  i, k: Integer;
-  eleve: Tcoords;
+var i, k, j : Integer;
 begin
-  setlength(eleve,2);
   for i := 0 to length(plateau.Personnes) -1 do
-  begin
     if plateau.Personnes[i].IdJoueur = joueur.Id then
-    begin
       for k := 0 to 1 do
-      begin
-        eleve[0] := plateau.Personnes[i].Position[k] ;
-        eleve[1] := plateau.Personnes[i].Position[k+1] ;
-        if(CoordsEgales(connexion,eleve)) then
-        begin
-          enContactConnexionEleve := True;
-          Exit;
-        end;
-      end;
-        eleve[0] := plateau.Personnes[i].Position[0];
-        eleve[1] := plateau.Personnes[i].Position[2] ;
-        if(CoordsEgales(connexion,eleve)) then
-        begin
-          enContactConnexionEleve := True;
-          Exit;
-        end;
-    end;
-  end;
+        for j := k+1 to 2 do
+          if(CoordsEgales(connexion,[plateau.Personnes[i].Position[j],plateau.Personnes[i].Position[k]])) then
+            exit(True);
    enContactConnexionEleve := False;
 end;
-
 end.
