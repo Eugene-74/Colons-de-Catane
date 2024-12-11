@@ -207,7 +207,7 @@ begin
   for personne in plateau.Personnes do
     for coo in personne.Position do
       if (plateau.Grille[coo.x,coo.y].Numero = des) then
-        if((plateau.Souillard.Position.x <> coo.x) and (plateau.Souillard.Position.y <> coo.y)) then
+        if(not ((plateau.Souillard.Position.x = coo.x) and (plateau.Souillard.Position.y = coo.y))) then
           joueurs[personne.IdJoueur].Ressources[plateau.Grille[coo.x,coo.y].ressource] := joueurs[personne.IdJoueur].Ressources[plateau.Grille[coo.x,coo.y].ressource] +1 ;
 end;
 
@@ -220,6 +220,7 @@ begin
   plateau.des1 := random(6)+1;
   plateau.des2 := random(6)+1;
   des := plateau.des1 + plateau.des2;
+  writeln('Le joueur ',joueurs[0].Nom,' a fait ',des);
   affichageDes(plateau.des1,plateau.des2,affichage);
 
   if(des = 7)then

@@ -713,7 +713,7 @@ begin
 
   repeat
     clicHexagone(affichage, coord);
-    valide := dansLePlateau(plateau,coord);
+    valide := dansLaGrille(plateau,coord);
     jouerSonValide(affichage,valide);
   until (valide);
 
