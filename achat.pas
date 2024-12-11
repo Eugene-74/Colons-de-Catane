@@ -47,9 +47,13 @@ procedure placeFauxConnexionAutourJoueur(var affichage : TAffichage; plateau : T
 var coords : Tcoords;
 begin
   coords := plateau.Personnes[length(plateau.personnes)-1].Position;
-  placeFauxConnexion(affichage,coords[0],coords[1],id);
-  placeFauxConnexion(affichage,coords[1],coords[2],id);
-  placeFauxConnexion(affichage,coords[0],coords[2],id);
+  if(dansLePlateau(plateau,coords[0]) or dansLePlateau(plateau,coords[1]))then
+    placeFauxConnexion(affichage,coords[0],coords[1],id);
+  if(dansLePlateau(plateau,coords[1]) or dansLePlateau(plateau,coords[2]))then
+    placeFauxConnexion(affichage,coords[1],coords[2],id);
+  if(dansLePlateau(plateau,coords[0]) or dansLePlateau(plateau,coords[2]))then
+    placeFauxConnexion(affichage,coords[0],coords[2],id);
+  
   affichagePersonne(plateau.Personnes[length(plateau.personnes)-1],affichage);
   miseAJourRenderer(affichage);
 end;
@@ -215,7 +219,7 @@ begin
 
   if(joueurActuel.Points >=2 ) then
     if (not enContactEleveConnexion(plateau,HexagonesCoords,joueurActuel)) then
-      begin
+      begin 
         writeln(False);
       exit(False);
       end;
@@ -619,18 +623,37 @@ begin
   attendre(50);
 end;
 
-
+// TODO corriger
 function enContactEleveConnexion( plateau: TPlateau; coords: TCoords; var joueur: TJoueur): Boolean;
 var i,k,l : Integer;
 begin
   enContactEleveConnexion := False;
-  for i := 0 to High(plateau.Connexions) do
-    if plateau.Connexions[i].IdJoueur = joueur.Id then
-      for k := 0 to 1 do
-        for l := 0 to 1 do
-          if (coords[k].x = plateau.Connexions[i].Position[l].x) and
-              (coords[k].y = plateau.Connexions[i].Position[l].y) then
-            exit(True);
+  for i := 0 to High(plateau.Personnes) do
+  begin
+    if plateau.Personnes[i].IdJoueur = joueur.Id then
+    begin
+      l := 0; 
+      for k := 0 to 2 do
+      begin
+        if (coords[0].x = plateau.Personnes[i].Position[k].x) and
+           (coords[0].y = plateau.Personnes[i].Position[k].y) then
+        begin
+          Inc(l);
+        end;
+
+        if (coords[1].x = plateau.Personnes[i].Position[k].x) and
+           (coords[1].y = plateau.Personnes[i].Position[k].y) then
+        begin
+          Inc(l);
+        end;
+        if l >= 2 then
+        begin
+          enContactEleveConnexion := True;
+          Exit;
+        end;
+      end;
+    end;
+  end;
 end;
 
 function aucuneConnexionAdjacente(coords: TCoords; plateau: TPlateau; joueur: TJoueur; var affichage : TAffichage): Boolean;
