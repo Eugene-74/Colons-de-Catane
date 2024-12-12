@@ -217,7 +217,6 @@ begin
   plateau.des1 := random(6)+1;
   plateau.des2 := random(6)+1;
   des := plateau.des1 + plateau.des2;
-  writeln('Le joueur ',joueurs[0].Nom,' a fait ',des);
   affichageDes(plateau.des1,plateau.des2,affichage);
 
   if(des = 7)then
