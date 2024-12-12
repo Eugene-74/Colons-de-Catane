@@ -8,16 +8,7 @@ begin
   randomize;  
   initialisationPartie(joueurs,plateau,affichage);
   
-  joueurs[0].Ressources[Mathematiques] := 99;
-  joueurs[0].Ressources[Chimie] := 99;
-  joueurs[0].Ressources[Informatique] := 99;
-  joueurs[0].Ressources[Humanites] := 99;
-  joueurs[0].Ressources[Physique] := 99;
-
-  joueurs[1].Ressources[Mathematiques] := 99;
-  joueurs[1].Ressources[Chimie] := 99;
-  joueurs[1].Ressources[Informatique] := 99;
-  joueurs[1].Ressources[Humanites] := 99;
-  joueurs[1].Ressources[Physique] := 99;
+  demarrer_musique();
+  
   partie(affichage,joueurs,plateau);
 end.
