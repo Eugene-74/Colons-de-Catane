@@ -3,11 +3,11 @@ unit achat;
 interface
 uses Types, affichageUnit,traitement,sysutils,musique,TypInfo;
 
-procedure placeFauxConnexionAutourJoueur(var affichage : TAffichage;plateau : TPlateau; id : Integer);
 procedure deplacementSouillard(var plateau : TPlateau; var joueurs : TJoueurs ;var affichage : TAffichage);
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
 procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur;debut : Boolean);
 procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
+procedure placeFauxConnexionAutourJoueur(var affichage : TAffichage;plateau : TPlateau; id : Integer);
 procedure utiliserCarteTutorat(var affichage : TAffichage;var plateau : TPlateau;var joueurs : TJoueurs;id : Integer;nom : String);
 
 function resteEmplacementConnexion(var affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;

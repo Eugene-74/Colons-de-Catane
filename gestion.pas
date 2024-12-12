@@ -19,9 +19,6 @@ function intialisationTutorat():TCartesTutorat;forward;
 function chargerGrille(num : Integer): TGrille; forward;
 function chargementPlateau(num : Integer): TPlateau;forward;
 
-function ressourcesVide(ressources : TRessources):boolean;forward;
-function ressourcesEgales(ressources1 : TRessources;ressources2 : TRessources):boolean;forward;
-
 
 function chargerGrille(num : Integer): TGrille;
 var
@@ -105,6 +102,7 @@ begin
     res[r] := 0;
   initialisationAffichage(affichage);
   initisationMusique(affichage);
+  demarrerMusique(affichage);
   affichageRegles(affichage);
 
   affichageFond(affichage);
@@ -241,51 +239,6 @@ begin
   for i:=0 to length(joueurs)-1 do
     affichageScoreAndClear(joueurs[i],affichage);
   miseAJourRenderer(affichage);
-end;
-
-function ressourcesVide(ressources : TRessources):boolean;
-var res : TRessource;
-begin
-  ressourcesVide := True;
-  for res in [Physique..Mathematiques] do
-    if( ressources[res]>=1) then
-      exit(False);
-end;
-
-function ressourcesEgales(ressources1 : TRessources;ressources2 : TRessources):boolean;
-var res : TRessource;
-begin
-  ressourcesEgales := True;
-  for res in [Physique..Mathematiques] do
-    if( ressources1[res]<> ressources2[res]) then
-      exit(False);
-end;
-
-procedure gestionEchange4Pour1(var affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);
-var ressource1,ressource2 : TRessource;
-begin
-  selectionRessource(affichage,ressource2,'Sélectionnez la ressource à donner (4)',joueurs);
-  selectionRessource(affichage,ressource1,'Sélectionnez la ressource à recevoir (1)',joueurs);
-  if(ressource1 <> ressource2) then
-    if joueurs[id].Ressources[ressource2] >= 4 then
-    begin
-      joueurs[id].Ressources[ressource2] := joueurs[id].Ressources[ressource2] - 4;
-      joueurs[id].Ressources[ressource1] := joueurs[id].Ressources[ressource1] + 1;
-      jouerSonValide(affichage, true);
-      affichageInformationAndRender('Echange 4 pour 1 réussi.', 25, COULEUR_TEXT_VERT, affichage);
-    end
-    else
-    begin
-      jouerSonValide(affichage, false);
-      affichageInformationAndRender('Echange 4 pour 1 impossible.', 25, COULEUR_TEXT_VERT, affichage);
-    end
-  else
-  begin
-    jouerSonValide(affichage, false);
-    affichageInformationAndRender('Echange 4 pour 1 inutile.', 25, COULEUR_TEXT_VERT, affichage);
-  end;
-
-  affichageTour(plateau, joueurs, id, affichage);
 end;
 
 procedure gestionEchange(var affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);
@@ -445,5 +398,32 @@ begin
       min := min + joueur.Ressources[res];
     end;
   end;
+end;
+
+procedure gestionEchange4Pour1(var affichage : TAffichage;var plateau:TPlateau;joueurs : TJoueurs;id : Integer);
+var ressource1,ressource2 : TRessource;
+begin
+  selectionRessource(affichage,ressource2,'Sélectionnez la ressource à donner (4)',joueurs);
+  selectionRessource(affichage,ressource1,'Sélectionnez la ressource à recevoir (1)',joueurs);
+  if(ressource1 <> ressource2) then
+    if joueurs[id].Ressources[ressource2] >= 4 then
+    begin
+      joueurs[id].Ressources[ressource2] := joueurs[id].Ressources[ressource2] - 4;
+      joueurs[id].Ressources[ressource1] := joueurs[id].Ressources[ressource1] + 1;
+      jouerSonValide(affichage, true);
+      affichageInformationAndRender('Echange 4 pour 1 réussi.', 25, COULEUR_TEXT_VERT, affichage);
+    end
+    else
+    begin
+      jouerSonValide(affichage, false);
+      affichageInformationAndRender('Echange 4 pour 1 impossible.', 25, COULEUR_TEXT_VERT, affichage);
+    end
+  else
+  begin
+    jouerSonValide(affichage, false);
+    affichageInformationAndRender('Echange 4 pour 1 inutile.', 25, COULEUR_TEXT_VERT, affichage);
+  end;
+
+  affichageTour(plateau, joueurs, id, affichage);
 end;
 end.

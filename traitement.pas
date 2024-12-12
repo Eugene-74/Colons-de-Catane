@@ -24,7 +24,8 @@ function dansLaGrille(plateau : TPlateau; coord : Tcoord): boolean;
 function CoordsEgales(coords1: TCoords; coords2: TCoords): Boolean;
 function aLesRessources(joueur : Tjoueur; ressources : TRessources):boolean;
 procedure enleverRessources( var joueur : Tjoueur; ressources : TRessources);
-
+function ressourcesVide(ressources : TRessources):boolean;
+function ressourcesEgales(ressources1 : TRessources;ressources2 : TRessources):boolean;
 implementation
 
 procedure round_hexa(q_f,r_f: Real; var coord_output: TCoord);
@@ -257,5 +258,23 @@ var res : TRessource;
 begin
   for res in [Physique..Mathematiques] do
     joueur.ressources[res] := joueur.ressources[res] - ressources[res]
+end;
+
+function ressourcesVide(ressources : TRessources):boolean;
+var res : TRessource;
+begin
+  ressourcesVide := True;
+  for res in [Physique..Mathematiques] do
+    if( ressources[res]>=1) then
+      exit(False);
+end;
+
+function ressourcesEgales(ressources1 : TRessources;ressources2 : TRessources):boolean;
+var res : TRessource;
+begin
+  ressourcesEgales := True;
+  for res in [Physique..Mathematiques] do
+    if( ressources1[res]<> ressources2[res]) then
+      exit(False);
 end;
 end.

@@ -5,10 +5,7 @@ var affichage: TAffichage;
   plateau: TPlateau;
   joueurs: TJoueurs;
 begin
-  randomize; 
-   
-  demarrerMusique(affichage);
-  
+  randomize;   
   initialisationPartie(joueurs,plateau,affichage);
 
   partie(affichage,joueurs,plateau);
