@@ -421,21 +421,21 @@ begin
       jouerSonValide(affichage, true);
       affichageTour(plateau, joueurs, id, affichage);
       attendre(50);
-      affichageInformationAndRender('Echange 4 pour 1 réussi.', 25, COULEUR_TEXT_VERT, affichage);
+      affichageInformationAndRender('Échange 4 pour 1 réussi.', 25, COULEUR_TEXT_VERT, affichage);
     end
     else
     begin
       jouerSonValide(affichage, false);
       affichageTour(plateau, joueurs, id, affichage);
       attendre(50);
-      affichageInformationAndRender('Echange 4 pour 1 impossible.', 25, COULEUR_TEXT_ROUGE, affichage);
+      affichageInformationAndRender('Échange 4 pour 1 impossible.', 25, COULEUR_TEXT_ROUGE, affichage);
     end
   else
   begin
     jouerSonValide(affichage, false);
     affichageTour(plateau, joueurs, id, affichage);
     attendre(50);
-    affichageInformationAndRender('Echange 4 pour 1 inutile.', 25, COULEUR_TEXT_ROUGE, affichage);
+    affichageInformationAndRender('Échange 4 pour 1 inutile.', 25, COULEUR_TEXT_ROUGE, affichage);
   end;
 
 end;
