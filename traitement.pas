@@ -342,16 +342,8 @@ begin
       j:=true;
   end;
 
-  if(j)then
-    begin
-    coords1[2] := FCoord(coords[0].x+x1,coords[0].y+y1);
-    coords2[2] := FCoord(coords[0].x+x2,coords[0].y+y2);
-    end
-  else
-    begin
-    coords1[2] := FCoord(coords[1].x+x1,coords[1].y+y1);
-    coords2[2] := FCoord(coords[1].x+x2,coords[1].y+y2);
-    end;
+  coords1[2] := FCoord(coords[1-Ord(j)].x+x1,coords[1-Ord(j)].y+y1);
+  coords2[2] := FCoord(coords[1-Ord(j)].x+x2,coords[1-Ord(j)].y+y2);
 end;
 
 function nombreConnexionJoueur(plateau: TPlateau; joueur: TJoueur): Integer;
