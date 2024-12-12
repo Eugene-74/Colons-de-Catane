@@ -18,7 +18,8 @@ procedure donnerRessources( var joueur : Tjoueur; ressources : TRessources);forw
 function intialisationTutorat():TCartesTutorat;forward;
 function chargerGrille(num : Integer): TGrille; forward;
 function chargementPlateau(num : Integer): TPlateau;forward;
-
+function ressourcesVide(ressources : TRessources):boolean;forward;
+function ressourcesEgales(ressources1 : TRessources;ressources2 : TRessources):boolean;forward;
 
 function chargerGrille(num : Integer): TGrille;
 var
@@ -425,5 +426,23 @@ begin
   end;
 
   affichageTour(plateau, joueurs, id, affichage);
+end;
+
+function ressourcesVide(ressources : TRessources):boolean;
+var res : TRessource;
+begin
+  ressourcesVide := True;
+  for res in [Physique..Mathematiques] do
+    if( ressources[res]>=1) then
+      exit(False);
+end;
+
+function ressourcesEgales(ressources1 : TRessources;ressources2 : TRessources):boolean;
+var res : TRessource;
+begin
+  ressourcesEgales := True;
+  for res in [Physique..Mathematiques] do
+    if( ressources1[res]<> ressources2[res]) then
+      exit(False);
 end;
 end.
