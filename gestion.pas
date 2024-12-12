@@ -179,6 +179,8 @@ begin
   
   affichageTour(plateau, joueurs, 0, affichage);
 
+
+
   for i:=0 to length(joueurs)-1 do
   begin
     affichageJoueurActuel(joueurs,i,affichage);
