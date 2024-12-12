@@ -217,7 +217,6 @@ begin
   plateau.des1 := random(6)+1;
   plateau.des2 := random(6)+1;
   des := plateau.des1 + plateau.des2;
-  writeln('Le joueur ',joueurs[0].Nom,' a fait ',des);
   affichageDes(plateau.des1,plateau.des2,affichage);
 
   if(des = 7)then
@@ -416,20 +415,22 @@ begin
       joueurs[id].Ressources[ressource2] := joueurs[id].Ressources[ressource2] - 4;
       joueurs[id].Ressources[ressource1] := joueurs[id].Ressources[ressource1] + 1;
       jouerSonValide(affichage, true);
-      affichageInformationAndRender('Echange 4 pour 1 réussi.', 25, COULEUR_TEXT_VERT, affichage);
+      affichageInformation('Echange 4 pour 1 réussi.', 25, COULEUR_TEXT_VERT, affichage);
+      affichageTour(plateau, joueurs, id, affichage);
     end
     else
     begin
       jouerSonValide(affichage, false);
-      affichageInformationAndRender('Echange 4 pour 1 impossible.', 25, COULEUR_TEXT_VERT, affichage);
+      affichageInformation('Echange 4 pour 1 impossible.', 25, COULEUR_TEXT_VERT, affichage);
+      affichageTour(plateau, joueurs, id, affichage);
     end
   else
   begin
     jouerSonValide(affichage, false);
-    affichageInformationAndRender('Echange 4 pour 1 inutile.', 25, COULEUR_TEXT_VERT, affichage);
+    affichageInformation('Echange 4 pour 1 inutile.', 25, COULEUR_TEXT_VERT, affichage);
+    affichageTour(plateau, joueurs, id, affichage);
   end;
 
-  affichageTour(plateau, joueurs, id, affichage);
 end;
 
 function ressourcesVide(ressources : TRessources):boolean;
