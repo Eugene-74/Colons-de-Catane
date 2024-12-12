@@ -8,7 +8,7 @@ begin
   randomize;  
   initialisationPartie(joueurs,plateau,affichage);
   
-  demarrer_musique();
-  
+  demarrerMusique(affichage);
+
   partie(affichage,joueurs,plateau);
 end.
