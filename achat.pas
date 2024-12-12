@@ -11,7 +11,6 @@ procedure placeFauxConnexionAutourJoueur(var affichage : TAffichage;plateau : TP
 procedure utiliserCarteTutorat(var affichage : TAffichage;var plateau : TPlateau;var joueurs : TJoueurs;id : Integer;nom : String);
 
 function resteEmplacementConnexion(var affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
-function verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs;var affichage : TAffichage):TIntegerTab;
 
 implementation
 procedure placeFauxConnexion(var affichage : TAffichage;coord1 : Tcoord;coord2 : Tcoord; id : Integer);forward;
@@ -357,60 +356,6 @@ begin
     affichageScoreAndClear(joueurActuel, affichage);
     affichagePlateau(plateau,affichage);
     miseAJourRenderer(affichage);
-  end;
-end;
-
-function verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs;var affichage : TAffichage):TIntegerTab;
-var plusGrandeConnexion,plusDeplacementSouillard : Boolean;
-  id,i : Integer;
-  points,longueurRoutes : TIntegerTab;
-begin
-  verificationPointsVictoire := nil;
-
-  SetLength(points,Length(joueurs));
-  SetLength(longueurRoutes,Length(joueurs));
-  
-  for i := 0 to length(joueurs)-1 do
-    longueurRoutes[i] := compterConnexionSuite(plateau,joueurs[i]);
-
-  for id := 0 to length(joueurs)-1 do
-  begin
-    points[id] := joueurs[id].points;
-    plusGrandeConnexion := True;
-    plusDeplacementSouillard :=True;
-
-    joueurs[id].PlusGrandeConnexion := False;
-    if (longueurRoutes[id] >= 5) then
-    begin
-      for i := 0 to length(joueurs) -1 do
-        if(id <> i )then
-          if(longueurRoutes[id] < longueurRoutes[i]) then
-            plusGrandeConnexion := False;
-      if plusGrandeConnexion then
-        begin
-        joueurs[id].PlusGrandeConnexion := True;
-        points[id] := points[id] + 2;
-        end;
-    end;
-
-    joueurs[id].PlusGrandeNombreDeWordReference := False;
-    if(joueurs[id].CartesTutorat[1].utilisee >= 3) then
-    begin
-      for i := 0 to length(joueurs) -1 do
-        if(joueurs[id].CartesTutorat[1].utilisee < joueurs[i].CartesTutorat[1].utilisee) then
-          plusDeplacementSouillard := False;
-        if(plusDeplacementSouillard) then
-        begin
-          points[id] := points[id] + 2;
-          joueurs[id].PlusGrandeNombreDeWordReference := True;
-        end;
-    end;
-    if points[id] >= 10 then
-    begin
-      setlength(verificationPointsVictoire,length(verificationPointsVictoire)+1);
-      verificationPointsVictoire[length(verificationPointsVictoire)-1] := id;
-    end;
-    affichageScoreAndClear(joueurs[id],affichage);
   end;
 end;
 

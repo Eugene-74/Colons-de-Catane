@@ -28,7 +28,7 @@ function aLesRessources(joueur : Tjoueur; ressources : TRessources):boolean;
 function compterConnexionSuite(plateau: TPlateau; joueur: TJoueur): Integer;
 
 implementation
-function connexionDansTConnexions(connexion: TConnexion; tableau: array of TConnexion): Boolean;forward;
+function connexionDansTConnexions(connexion: TConnexion; tableau: TConnexions): Boolean;forward;
 function trouverConnexion(plateau: TPlateau; coord1, coord2: TCoord): TConnexion;forward;
 function nombreConnexionJoueur(plateau: TPlateau; joueur: TJoueur): Integer;forward;
 function compterConnexionAutour(var connexionDejaVisite : Tconnexions;connexion : TConnexion;plateau: TPlateau; joueur: TJoueur): Integer;forward;
@@ -266,7 +266,7 @@ begin
     joueur.ressources[res] := joueur.ressources[res] - ressources[res]
 end;
 
-function connexionDansTConnexions(connexion: TConnexion; tableau: array of TConnexion): Boolean;
+function connexionDansTConnexions(connexion: TConnexion; tableau: TConnexions): Boolean;
 var i: Integer;
 begin
   connexionDansTConnexions := False;
