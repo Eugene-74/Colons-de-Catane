@@ -730,16 +730,20 @@ var coord: Tcoord;
     bouton: TBouton;
     ressource: TRessource;
     i: Integer;
+    tailleText: TCoord;
+    texte: String;
 begin
     affichageFond(affichage);
     attendre(66);
 
-    coord := FCoord(450,50);
-    affichageZone(coord.x,coord.y,1050,900,3,affichage);
+    coord := FCoord(400,50);
+    affichageZone(coord.x,coord.y,1000,900,3,affichage);
     for i:=0 to length(joueurs)-1 do
         affichageScore(joueurs[i],affichage);
 
-    affichageTexte('Echange', 35, FCoord(890,90), FCouleur(0,0,0,255), affichage);
+    texte := 'Échange (les deux joueurs doivent être d''accord avant de valider l''échange)';
+    tailleText := tailleTexte(texte,25);
+    affichageTexte(texte, 25, FCoord((WINDOW_W-tailleText.x) div 2,90), FCouleur(0,0,0,255), affichage);
 
     coord := FCoord(650,160);
     affichageTexte(joueurs[idJoueurActuel].Nom, 25, coord, FCouleur(0,0,0,255), affichage);
