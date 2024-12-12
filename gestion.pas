@@ -416,19 +416,19 @@ begin
       joueurs[id].Ressources[ressource2] := joueurs[id].Ressources[ressource2] - 4;
       joueurs[id].Ressources[ressource1] := joueurs[id].Ressources[ressource1] + 1;
       jouerSonValide(affichage, true);
-      affichageInformationAndRender('Echange 4 pour 1 réussi.', 25, COULEUR_TEXT_VERT, affichage);
+      affichageInformation('Echange 4 pour 1 réussi.', 25, COULEUR_TEXT_VERT, affichage);
       affichageTour(plateau, joueurs, id, affichage);
     end
     else
     begin
       jouerSonValide(affichage, false);
-      affichageInformationAndRender('Echange 4 pour 1 impossible.', 25, COULEUR_TEXT_VERT, affichage);
+      affichageInformation('Echange 4 pour 1 impossible.', 25, COULEUR_TEXT_VERT, affichage);
       affichageTour(plateau, joueurs, id, affichage);
     end
   else
   begin
     jouerSonValide(affichage, false);
-    affichageInformationAndRender('Echange 4 pour 1 inutile.', 25, COULEUR_TEXT_VERT, affichage);
+    affichageInformation('Echange 4 pour 1 inutile.', 25, COULEUR_TEXT_VERT, affichage);
     affichageTour(plateau, joueurs, id, affichage);
   end;
 
