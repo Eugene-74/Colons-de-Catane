@@ -6,6 +6,5 @@ var affichage: TAffichage;
   joueurs: TJoueurs;
 begin
   initialisationPartie(joueurs,plateau,affichage);
-
   partie(affichage,joueurs,plateau);
 end.

@@ -107,7 +107,7 @@ type
     active : Boolean;
     musique : PMix_Music;
   end;
-  TSon = (sonClicHexagone,sonFinDeTour,sonValide,sonInvalide);
+  TSon = (sonClicHexagone,sonFinDeTour,sonValide,sonFinDePartie,sonInvalide);
   TSons = array [sonClicHexagone..sonInvalide] of PMix_Chunk;
 
   TAffichage = record
