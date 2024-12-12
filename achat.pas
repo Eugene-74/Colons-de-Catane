@@ -1,32 +1,32 @@
 unit achat;
 
 interface
-uses Types, affichageUnit,traitement,sysutils,musique;
+uses Types, affichageUnit,traitement,sysutils,musique,TypInfo;
 
-procedure placeFauxConnexionAutourJoueur(var affichage : TAffichage;plateau : TPlateau; id : Integer);
 procedure deplacementSouillard(var plateau : TPlateau; var joueurs : TJoueurs ;var affichage : TAffichage);
 procedure achatElements(var joueur: TJoueur; var plateau: TPlateau; var affichage: TAffichage; choix : Integer);
 procedure placementConnexion(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur;debut : Boolean);
 procedure PlacementEleve(var plateau: TPlateau; var affichage: TAffichage; var joueur: TJoueur);
-
+procedure placeFauxConnexionAutourJoueur(var affichage : TAffichage;plateau : TPlateau; id : Integer);
+procedure utiliserCarteTutorat(var affichage : TAffichage;var plateau : TPlateau;var joueurs : TJoueurs;id : Integer;nom : String);
 
 function resteEmplacementConnexion(var affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
-function verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs;var affichage : TAffichage):TIntegerTab;
 
 implementation
 procedure placeFauxConnexion(var affichage : TAffichage;coord1 : Tcoord;coord2 : Tcoord; id : Integer);forward;
 procedure placeFauxPersonne(var affichage : TAffichage;coords : Tcoords; id : Integer;eleve : Boolean);forward;
 
-procedure trouver3EmeHexagone(plateau : TPlateau;coords1,coords2,coords: TCoords);forward;
 procedure tirerCarteTutorat(var cartesTutorat : TCartesTutorat;var  joueur : Tjoueur);forward;
 procedure ChangementProfesseur(var affichage: TAffichage; var plateau: TPlateau; var joueurActuel: TJoueur);forward;
+procedure utiliserCarte1(var affichage : TAffichage; var plateau : TPlateau; joueurs : Tjoueurs; id : Integer);forward;
+procedure utiliserCarte2(var affichage : TAffichage; var plateau : TPlateau; joueurs : Tjoueurs; id : Integer);forward;
+procedure utiliserCarte3(var affichage: TAffichage;var plateau : TPlateau; joueurs : Tjoueurs;id : Integer);forward;
+procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau;var joueurs : Tjoueurs; id : Integer);forward;
+procedure utiliserCarte5(var affichage : TAffichage;var joueurs : TJoueurs;id :Integer);forward;
 
-function trouverXemeConnexion(plateau: TPlateau; joueur: TJoueur;nbr:Integer): TConnexion;forward;
-function compterConnexionAutour(var connexionDejaVisite : Tconnexions;connexion : TConnexion;plateau: TPlateau; joueur: TJoueur): Integer;forward;
-function nombreConnexionJoueur(plateau: TPlateau; joueur: TJoueur): Integer;forward;
-function connexionExisteDeja(plateau: TPlateau; coord1: TCoord; coord2: TCoord): Boolean;forward;
 function clicConnexion(var affichage: TAffichage; plateau: TPlateau): TCoords;forward;
 function ClicPersonne(var affichage: TAffichage; plateau: TPlateau; estEleve: Boolean): TCoords;forward;
+function connexionExisteDeja(plateau: TPlateau; coord1: TCoord; coord2: TCoord): Boolean;forward;
 function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage : TAffichage): Boolean;forward;
 function professeurValide(var affichage: TAffichage; plateau: TPlateau; joueurActuel: TJoueur; HexagonesCoords: TCoords; var ProfesseurCoords: TCoords; var indexEleve: Integer): Boolean;forward;
 function eleveValide(plateau: TPlateau; HexagonesCoords: TCoords; joueurActuel: TJoueur;var affichage : TAffichage): Boolean;forward;
@@ -37,9 +37,7 @@ function aucuneConnexionAdjacente(coords: TCoords;  plateau: TPlateau; joueur: T
 function enContactAutreEleveConnexion(plateau:TPlateau ;connexion: TCoords; var joueur:TJoueur; var affichage : TAffichage):Boolean;forward;
 function resteEleve(var affichage : TAffichage;plateau:TPlateau; joueur:Tjoueur): Boolean;forward;
 function resteEmplacementEleve(var affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;forward;
-function compterConnexionSuite(plateau: TPlateau; joueur: TJoueur): Integer;forward;
-function coordsDansTableau(connexion: TConnexion; tableau: array of TConnexion): Boolean;forward;
-function conterNombrePersonnes(personnes: TPersonnes; estEleve: Boolean; joueur: TJoueur): Integer;forward;
+function compterNombrePersonnes(personnes: TPersonnes; estEleve: Boolean; joueur: TJoueur): Integer;forward;
 
 
 procedure placeFauxConnexionAutourJoueur(var affichage : TAffichage; plateau : TPlateau; id : Integer);
@@ -87,7 +85,7 @@ begin
    // ELEVE
     1:
       if(aLesRessources(joueur,COUT_ELEVE)) then
-        if (conterNombrePersonnes(plateau.Personnes,true,joueur) < 5)  then
+        if (compterNombrePersonnes(plateau.Personnes,true,joueur) < 5)  then
           if(resteEmplacementEleve(affichage,plateau,joueur))then
           begin
           enleverRessources(joueur,COUT_ELEVE);
@@ -129,7 +127,7 @@ begin
     // PROFESSEUR
     3:
       if(aLesRessources(joueur,COUT_PROFESSEUR)) then
-        if (conterNombrePersonnes(plateau.Personnes,false,joueur) < 4) then
+        if (compterNombrePersonnes(plateau.Personnes,false,joueur) < 4) then
           if(resteEleve(affichage,plateau,joueur))then
           begin
             enleverRessources(joueur,COUT_PROFESSEUR);
@@ -287,13 +285,13 @@ begin
   end;
 end;
 
-function conterNombrePersonnes(personnes: TPersonnes; estEleve: Boolean; joueur: TJoueur): Integer;
+function compterNombrePersonnes(personnes: TPersonnes; estEleve: Boolean; joueur: TJoueur): Integer;
 var i: Integer;
 begin
-  conterNombrePersonnes := 0; 
+  compterNombrePersonnes := 0; 
   for i := 0 to length(personnes)-1 do
     if (personnes[i].estEleve = estEleve) and (personnes[i].IdJoueur = joueur.Id) then
-      Inc(conterNombrePersonnes); 
+      Inc(compterNombrePersonnes); 
 end;
 
 function professeurValide(var affichage: TAffichage; plateau: TPlateau; joueurActuel: TJoueur; HexagonesCoords: TCoords; var ProfesseurCoords: TCoords; var indexEleve: Integer): Boolean;
@@ -358,168 +356,6 @@ begin
     affichageScoreAndClear(joueurActuel, affichage);
     affichagePlateau(plateau,affichage);
     miseAJourRenderer(affichage);
-  end;
-end;
-
-function trouverXemeConnexion(plateau: TPlateau; joueur: TJoueur;nbr:Integer): TConnexion;
-var i,n: Integer;
-begin
-  trouverXemeConnexion.IdJoueur := -1;
-
-  n := 0;
-  for i := 0 to length(plateau.Connexions) -1 do
-    if plateau.Connexions[i].IdJoueur = joueur.Id then
-    begin
-      n := n + 1;
-      if(n=nbr)then
-        begin
-        SetLength(trouverXemeConnexion.Position, 2);
-        trouverXemeConnexion.position[0] := plateau.Connexions[i].Position[0];
-        trouverXemeConnexion.position[1] := plateau.Connexions[i].Position[1];
-        trouverXemeConnexion.IdJoueur := plateau.Connexions[i].IdJoueur;
-        Exit;
-        end;
-    end;
-end;
-
-function nombreConnexionJoueur(plateau: TPlateau; joueur: TJoueur): Integer;
-var i: Integer;
-begin
-  nombreConnexionJoueur := 0;
-  for i := 0 to length(plateau.Connexions) -1 do
-    if plateau.Connexions[i].IdJoueur = joueur.Id then
-      nombreConnexionJoueur := nombreConnexionJoueur + 1;
-end;
-
-function coordsDansTableau(connexion: TConnexion; tableau: array of TConnexion): Boolean;
-var i: Integer;
-begin
-  coordsDansTableau := False;
-  for i := 0 to length(tableau) -1 do
-    if CoordsEgales(connexion.position, tableau[i].position) then
-      exit(True);
-end;
-
-function compterConnexionSuite(plateau: TPlateau; joueur: TJoueur): Integer;
-var nombreDeConnexion1,nombreDeConnexion2 : Integer;
-  connexionDejaVisite : TConnexions;
-begin
-  nombreDeConnexion2 := 0;
-
-  nombreDeConnexion1 := compterConnexionAutour(connexionDejaVisite,trouverXemeConnexion(plateau,joueur,1),plateau,joueur);
-  if(length(connexionDejaVisite)<nombreConnexionJoueur(plateau,joueur))then
-    nombreDeConnexion2 := compterConnexionAutour(connexionDejaVisite,trouverXemeConnexion(plateau,joueur,2),plateau,joueur);
-
-  if(nombreDeConnexion1 > nombreDeConnexion2) then
-    compterConnexionSuite := nombreDeConnexion1
-  else
-    compterConnexionSuite := nombreDeConnexion2;
-end;
-
-function trouverConnexion(plateau: TPlateau; coord1, coord2: TCoord): TConnexion;
-var i: Integer;
-  coords: TCoords;
-begin
-  SetLength(coords, 2);
-  coords[0] := coord1;
-  coords[1] := coord2;
-
-  for i := 0 to length(plateau.Connexions) -1 do
-    if CoordsEgales(plateau.Connexions[i].Position, coords) then
-      exit(plateau.Connexions[i]);
-  trouverConnexion.IdJoueur := -1;
-end;
-
-
-
-function compterConnexionAutour(var connexionDejaVisite : Tconnexions;connexion : TConnexion;plateau: TPlateau; joueur: TJoueur): Integer;
-var coords1,coords2 : TCoords;
-  nouvelleConnexion : TConnexion;
-begin
-  compterConnexionAutour := 0;
-
-  if ((connexion.IdJoueur = joueur.Id) and not coordsDansTableau(connexion,connexionDejaVisite)) then
-  begin
-    compterConnexionAutour := 1;
-    SetLength(connexionDejaVisite, Length(connexionDejaVisite) + 1);
-    connexionDejaVisite[length(connexionDejaVisite) -1] := connexion;
-
-    coords1 := [connexion.Position[0],connexion.Position[1]];
-    coords2 := [connexion.Position[0],connexion.Position[1]];
-    setLength(coords1,3);
-    setLength(coords2,3);
-
-    trouver3EmeHexagone(plateau,coords1,coords2,connexion.position);
-
-    nouvelleConnexion := trouverConnexion(plateau,coords1[0],coords1[2]);
-    if(nouvelleConnexion.IdJoueur <> -1)then
-      compterConnexionAutour := compterConnexionAutour + compterConnexionAutour(connexionDejaVisite,nouvelleConnexion ,plateau,joueur);
-
-    nouvelleConnexion := trouverConnexion(plateau,coords1[1],coords1[2]);
-    if(nouvelleConnexion.IdJoueur <> -1)then
-      compterConnexionAutour := compterConnexionAutour + compterConnexionAutour(connexionDejaVisite,nouvelleConnexion ,plateau,joueur);
-
-    nouvelleConnexion := trouverConnexion(plateau,coords2[0],coords2[2]);
-    if(nouvelleConnexion.IdJoueur <> -1)then
-      compterConnexionAutour := compterConnexionAutour + compterConnexionAutour(connexionDejaVisite,nouvelleConnexion ,plateau,joueur);
-    
-    nouvelleConnexion := trouverConnexion(plateau,coords2[1],coords2[2]);
-    if(nouvelleConnexion.IdJoueur <> -1)then
-      compterConnexionAutour := compterConnexionAutour + compterConnexionAutour(connexionDejaVisite,nouvelleConnexion ,plateau,joueur);
-  end;
-end;
-
-function verificationPointsVictoire(plateau : TPlateau;var joueurs: TJoueurs;var affichage : TAffichage):TIntegerTab;
-var plusGrandeConnexion,plusDeplacementSouillard : Boolean;
-  id,i : Integer;
-  points,longueurRoutes : TIntegerTab;
-begin
-  verificationPointsVictoire := nil;
-
-  SetLength(points,Length(joueurs));
-  SetLength(longueurRoutes,Length(joueurs));
-  
-  for i := 0 to length(joueurs)-1 do
-    longueurRoutes[i] := compterConnexionSuite(plateau,joueurs[i]);
-
-  for id := 0 to length(joueurs)-1 do
-  begin
-    points[id] := joueurs[id].points;
-    plusGrandeConnexion := True;
-    plusDeplacementSouillard :=True;
-
-    joueurs[id].PlusGrandeConnexion := False;
-    if (longueurRoutes[id] >= 5) then
-    begin
-      for i := 0 to length(joueurs) -1 do
-        if(id <> i )then
-          if(longueurRoutes[id] < longueurRoutes[i]) then
-            plusGrandeConnexion := False;
-      if plusGrandeConnexion then
-        begin
-        joueurs[id].PlusGrandeConnexion := True;
-        points[id] := points[id] + 2;
-        end;
-    end;
-
-    joueurs[id].PlusGrandeNombreDeWordReference := False;
-    if(joueurs[id].CartesTutorat[1].utilisee >= 3) then
-    begin
-      for i := 0 to length(joueurs) -1 do
-        if(joueurs[id].CartesTutorat[1].utilisee < joueurs[i].CartesTutorat[1].utilisee) then
-          plusDeplacementSouillard := False;
-        if(plusDeplacementSouillard) then
-        begin
-          points[id] := points[id] + 2;
-          joueurs[id].PlusGrandeNombreDeWordReference := True;
-        end;
-    end;
-    if points[id] >= 10 then
-    begin
-      setlength(verificationPointsVictoire,length(verificationPointsVictoire)+1);
-      verificationPointsVictoire[length(verificationPointsVictoire)-1] := id;
-    end;
-    affichageScoreAndClear(joueurs[id],affichage);
   end;
 end;
 
@@ -766,48 +602,6 @@ begin
   attendre(16);
 end;
 
-procedure trouver3EmeHexagone(plateau : TPlateau;coords1,coords2,coords: TCoords);
-var x1,x2,y1,y2: Integer;
-  j : Boolean;
-begin
-  j := false;
-  // diagonale 1
-  if(coords[0].x = coords[1].x)then
-  begin
-    x1:=-1; y1:=1;
-    x2:=1; y2:=0;
-    if(coords[0].y < coords[1].y)then
-      j:=true;
-  end
-  // horizontale
-  else if(coords[0].y = coords[1].y)then
-  begin
-    x1:=1; y1:=-1;
-    x2:=0; y2:=1;
-    if(coords[0].x < coords[1].x)then
-      j:=true;
-  end
-  // diagonale 2
-  else
-  begin
-    x1:=1; y1:=0;
-    x2:=0; y2:=-1;
-    if(coords[0].x < coords[1].x)then
-      j:=true;
-  end;
-
-  if(j)then
-    begin
-    coords1[2] := FCoord(coords[0].x+x1,coords[0].y+y1);
-    coords2[2] := FCoord(coords[0].x+x2,coords[0].y+y2);
-    end
-  else
-    begin
-    coords1[2] := FCoord(coords[1].x+x1,coords[1].y+y1);
-    coords2[2] := FCoord(coords[1].x+x2,coords[1].y+y2);
-    end;
-end;
-
 function resteEmplacementEleve(var affichage : TAffichage;plateau: TPlateau; joueur: TJoueur): Boolean;
 var i: Integer;
   coords1,coords2 : Tcoords;
@@ -864,5 +658,104 @@ begin
           if(CoordsEgales(connexion,[plateau.Personnes[i].Position[j],plateau.Personnes[i].Position[k]])) then
             exit(True);
    enContactConnexionEleve := False;
+end;
+
+procedure utiliserCarte1(var affichage : TAffichage;var plateau : TPlateau; joueurs : Tjoueurs;id : Integer);
+begin
+  placementConnexion(plateau,affichage,joueurs[id],false);
+  attendre(16);
+  if (resteEmplacementConnexion(affichage,plateau,joueurs[id]))then
+  begin
+    attendre(16);
+    placementConnexion(plateau,affichage,joueurs[id],false);
+  end
+  else
+  begin
+    attendre(16);
+    affichageInformationAndRender('Vous n''avez plus d''emplacement pour placer la deuxième connexion.',25,COULEUR_TEXT_ROUGE,affichage);
+  end;
+end;
+
+procedure utiliserCarte2(var affichage : TAffichage;var plateau : TPlateau;joueurs : Tjoueurs; id : Integer);
+begin
+  deplacementSouillard(plateau,joueurs,affichage);
+  affichageInformationAndRender(joueurs[id].nom + ' viens de déplacer le souillard.',25,FCouleur(0,0,0,255),affichage);
+end;
+
+procedure utiliserCarte3(var affichage: TAffichage; var plateau : TPlateau; joueurs : Tjoueurs; id : Integer);
+var ressource : TRessource;
+  idJoueurAVoler : Integer;
+begin
+  if(id< length(joueurs)-1) then
+    idJoueurAVoler := id + 1
+  else
+    idJoueurAVoler := 0;
+
+  selectionDepouiller(ressource,id,idJoueurAVoler,joueurs,affichage,'Sélectionnez la ressource et le joueur à dépouiller');
+  
+  if(ressource <> Rien) then
+  begin
+    joueurs[id].ressources[ressource] := joueurs[id].ressources[ressource] + joueurs[idJoueurAVoler].ressources[ressource];
+    joueurs[idJoueurAVoler].ressources[ressource] := 0;
+  end;
+    
+  affichageTour(plateau, joueurs, id, affichage);
+  jouerSonValide(affichage, true);
+  attendre(50);
+  affichageInformationAndRender(joueurs[id].Nom +  ' viens de gagner toutes les ressources du type '+ GetEnumName(TypeInfo(TRessource), Ord(ressource)) +' de '+joueurs[idJoueurAVoler].Nom + '.' ,25,COULEUR_TEXT_VERT,affichage);
+end;
+
+procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau; var joueurs : Tjoueurs;id : Integer);
+var ressource : TRessource;
+begin
+  selectionRessource(affichage,ressource,'Sélectionnez la ressource que vous souhaitez récupérer 2 fois',joueurs);
+  joueurs[id].ressources[ressource] := joueurs[id].ressources[ressource] + 2;
+
+  affichageTour(plateau, joueurs, Id, affichage);
+  jouerSonValide(affichage, true);
+  attendre(50);
+  affichageInformationAndRender(joueurs[id].Nom +  ' viens de gagner 2 : ' +GetEnumName(TypeInfo(TRessource), Ord(ressource)) + '.',25,COULEUR_TEXT_VERT,affichage);
+end;
+
+procedure utiliserCarte5(var affichage : TAffichage;var joueurs : TJoueurs;id :Integer);
+begin
+  joueurs[id].Points := joueurs[id].Points + 1;
+  affichageInformation(joueurs[id].Nom +  ' viens de gagner 1 point de victoire.',25,COULEUR_TEXT_VERT,affichage);
+end;
+
+procedure utiliserCarteTutorat(var affichage : TAffichage;var plateau : TPlateau;var joueurs : TJoueurs;id : Integer;nom : String);
+var i : Integer;
+begin
+  for i := 0 to length(plateau.cartesTutorat) -1 do
+    if (nom = plateau.cartesTutorat[i].nom) then
+      break;
+  if (joueurs[id].CartesTutorat[i].utilisee < joueurs[id].CartesTutorat[i].nbr) then
+  begin
+    case i of
+      0:
+      begin
+        if(resteEmplacementConnexion(affichage,plateau,joueurs[id]))then
+          utiliserCarte1(affichage, plateau, joueurs, id)
+        else
+          exit;
+      end;
+      1: utiliserCarte2(affichage, plateau, joueurs, id);
+      2: utiliserCarte3(affichage, plateau, joueurs, id);
+      3: utiliserCarte4(affichage, plateau, joueurs, id);
+      4: utiliserCarte5(affichage,joueurs, id);
+    end;
+
+    attendre(50);
+    joueurs[id].CartesTutorat[i].utilisee := joueurs[id].CartesTutorat[i].utilisee + 1;
+
+    affichageScoreAndClear(joueurs[id],affichage);
+    affichageCartesTutoratAndRender(joueurs[id],affichage);
+    attendre(16);
+  end
+  else
+  begin
+    jouerSonValide(affichage,false);
+    affichageInformationAndRender('Vous avez déjà utilisé toutes vos cartes de ce type.',25,COULEUR_TEXT_ROUGE,affichage);
+  end;
 end;
 end.
