@@ -7,18 +7,5 @@ var affichage: TAffichage;
 begin
   initialisationPartie(joueurs,plateau,affichage);
 
-    resteEmplacementConnexion(affichage,plateau,joueurs[0]);
-    resteEmplacementConnexion(affichage,plateau,joueurs[0]);
-    resteEmplacementConnexion(affichage,plateau,joueurs[0]);
-    resteEmplacementConnexion(affichage,plateau,joueurs[0]);
-    resteEmplacementConnexion(affichage,plateau,joueurs[0]);
-    resteEmplacementConnexion(affichage,plateau,joueurs[0]);
-    resteEmplacementConnexion(affichage,plateau,joueurs[0]);
-    resteEmplacementConnexion(affichage,plateau,joueurs[0]);
-    resteEmplacementConnexion(affichage,plateau,joueurs[0]);
-    resteEmplacementConnexion(affichage,plateau,joueurs[0]);
-    resteEmplacementConnexion(affichage,plateau,joueurs[0]);
-    resteEmplacementConnexion(affichage,plateau,joueurs[0]);
-
   partie(affichage,joueurs,plateau);
 end.
