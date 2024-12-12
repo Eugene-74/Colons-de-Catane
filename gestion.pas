@@ -15,13 +15,6 @@ procedure gestionDes(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TA
 procedure tour(var joueurs: TJoueurs;var plateau:TPlateau;var affichage:TAffichage);forward;
 procedure donnerRessources( var joueur : Tjoueur; ressources : TRessources);forward;
 
-procedure utiliserCarteTutorat(var affichage : TAffichage;var plateau : TPlateau;var joueurs : TJoueurs;id : Integer;nom : String);forward;
-procedure utiliserCarte1(var affichage : TAffichage; var plateau : TPlateau; joueurs : Tjoueurs; id : Integer);forward;
-procedure utiliserCarte2(var affichage : TAffichage; var plateau : TPlateau; joueurs : Tjoueurs; id : Integer);forward;
-procedure utiliserCarte3(var affichage: TAffichage;var plateau : TPlateau; joueurs : Tjoueurs;id : Integer);forward;
-procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau;var joueurs : Tjoueurs; id : Integer);forward;
-procedure utiliserCarte5(var affichage : TAffichage;var joueurs : TJoueurs;id :Integer);forward;
-
 function intialisationTutorat():TCartesTutorat;forward;
 function chargerGrille(num : Integer): TGrille; forward;
 function chargementPlateau(num : Integer): TPlateau;forward;
@@ -199,7 +192,7 @@ begin
     resteEmplacementConnexion(affichage,plateau,joueurs[i]);
     placementConnexion(plateau,affichage,joueurs[i],true);
   end;
-end;
+end;  
 
 procedure distributionConnaissance(var joueurs : TJoueurs;var plateau : TPlateau;des : integer);
 var personne : TPersonne;
@@ -386,7 +379,7 @@ begin
       end
       else
         utiliserCarteTutorat(affichage,plateau, joueurs,joueurs[i].id ,valeurBouton);
-
+        
     until (finTour);
     attendre(16);
   end;
@@ -416,106 +409,6 @@ begin
   affichageGagnant(affichage,text);
   
   suppresionAffichage(affichage);
-end;
-
-
-procedure utiliserCarte1(var affichage : TAffichage;var plateau : TPlateau; joueurs : Tjoueurs;id : Integer);
-begin
-  placementConnexion(plateau,affichage,joueurs[id],false);
-  attendre(16);
-  if (resteEmplacementConnexion(affichage,plateau,joueurs[id]))then
-  begin
-    attendre(16);
-    placementConnexion(plateau,affichage,joueurs[id],false);
-  end
-  else
-  begin
-    attendre(16);
-    affichageInformationAndRender('Vous n''avez plus d''emplacement pour placer la deuxième connexion.',25,COULEUR_TEXT_ROUGE,affichage);
-  end;
-end;
-
-procedure utiliserCarte2(var affichage : TAffichage;var plateau : TPlateau;joueurs : Tjoueurs; id : Integer);
-begin
-  deplacementSouillard(plateau,joueurs,affichage);
-  affichageInformationAndRender(joueurs[id].nom + ' viens de déplacer le souillard.',25,FCouleur(0,0,0,255),affichage);
-end;
-
-procedure utiliserCarte3(var affichage: TAffichage; var plateau : TPlateau; joueurs : Tjoueurs; id : Integer);
-var ressource : TRessource;
-  idJoueurAVoler : Integer;
-begin
-  if(id< length(joueurs)-1) then
-    idJoueurAVoler := id + 1
-  else
-    idJoueurAVoler := 0;
-
-  selectionDepouiller(ressource,id,idJoueurAVoler,joueurs,affichage,'Sélectionnez la ressource et le joueur à dépouiller');
-  
-  if(ressource <> Rien) then
-  begin
-    joueurs[id].ressources[ressource] := joueurs[id].ressources[ressource] + joueurs[idJoueurAVoler].ressources[ressource];
-    joueurs[idJoueurAVoler].ressources[ressource] := 0;
-  end;
-    
-  affichageTour(plateau, joueurs, id, affichage);
-  jouerSonValide(affichage, true);
-  attendre(50);
-  affichageInformationAndRender(joueurs[id].Nom +  ' viens de gagner toutes les ressources du type '+ GetEnumName(TypeInfo(TRessource), Ord(ressource)) +' de '+joueurs[idJoueurAVoler].Nom + '.' ,25,COULEUR_TEXT_VERT,affichage);
-end;
-
-procedure utiliserCarte4(var affichage : TAffichage;var plateau : TPlateau; var joueurs : Tjoueurs;id : Integer);
-var ressource : TRessource;
-begin
-  selectionRessource(affichage,ressource,'Sélectionnez la ressource que vous souhaitez récupérer 2 fois',joueurs);
-  joueurs[id].ressources[ressource] := joueurs[id].ressources[ressource] + 2;
-
-  affichageTour(plateau, joueurs, Id, affichage);
-  jouerSonValide(affichage, true);
-  attendre(50);
-  affichageInformationAndRender(joueurs[id].Nom +  ' viens de gagner 2 : ' +GetEnumName(TypeInfo(TRessource), Ord(ressource)) + '.',25,COULEUR_TEXT_VERT,affichage);
-end;
-
-procedure utiliserCarte5(var affichage : TAffichage;var joueurs : TJoueurs;id :Integer);
-begin
-  joueurs[id].Points := joueurs[id].Points + 1;
-  affichageInformation(joueurs[id].Nom +  ' viens de gagner 1 point de victoire.',25,COULEUR_TEXT_VERT,affichage);
-end;
-
-procedure utiliserCarteTutorat(var affichage : TAffichage;var plateau : TPlateau;var joueurs : TJoueurs;id : Integer;nom : String);
-var i : Integer;
-begin
-  for i := 0 to length(plateau.cartesTutorat) -1 do
-    if (nom = plateau.cartesTutorat[i].nom) then
-      break;
-  if (joueurs[id].CartesTutorat[i].utilisee < joueurs[id].CartesTutorat[i].nbr) then
-  begin
-    case i of
-      0:
-      begin
-        if(resteEmplacementConnexion(affichage,plateau,joueurs[id]))then
-          utiliserCarte1(affichage, plateau, joueurs, id)
-        else
-          exit;
-      end;
-      1: utiliserCarte2(affichage, plateau, joueurs, id);
-      2: utiliserCarte3(affichage, plateau, joueurs, id);
-      3: utiliserCarte4(affichage, plateau, joueurs, id);
-      4: utiliserCarte5(affichage,joueurs, id);
-    end;
-
-    attendre(50);
-    joueurs[id].CartesTutorat[i].utilisee := joueurs[id].CartesTutorat[i].utilisee + 1;
-
-    affichageScoreAndClear(joueurs[id],affichage);
-    affichageCartesTutoratAndRender(joueurs[id],affichage);
-    attendre(16);
-  end
-  else
-  begin
-    jouerSonValide(affichage,false);
-    affichageInformationAndRender('Vous avez déjà utilisé toutes vos cartes de ce type.',25,COULEUR_TEXT_ROUGE,affichage);
-  end;
 end;
 
 procedure donnerRessources( var joueur : Tjoueur; ressources : TRessources);
