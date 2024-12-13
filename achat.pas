@@ -27,7 +27,7 @@ procedure utiliserCarte5(var affichage : TAffichage;var joueurs : TJoueurs;id :I
 function clicConnexion(var affichage: TAffichage; plateau: TPlateau): TCoords;forward;
 function ClicPersonne(var affichage: TAffichage; plateau: TPlateau; estEleve: Boolean): TCoords;forward;
 function connexionExisteDeja(plateau: TPlateau; coord1: TCoord; coord2: TCoord): Boolean;forward;
-function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage : TAffichage): Boolean;forward;
+function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage : TAffichage; debut : Boolean): Boolean;forward;
 function professeurValide(var affichage: TAffichage; plateau: TPlateau; joueurActuel: TJoueur; HexagonesCoords: TCoords; var ProfesseurCoords: TCoords; var indexEleve: Integer): Boolean;forward;
 function eleveValide(plateau: TPlateau; HexagonesCoords: TCoords; joueurActuel: TJoueur;var affichage : TAffichage): Boolean;forward;
 function VerifierAdjacencePersonnes(HexagonesCoords: TCoords; plateau: TPlateau): Boolean;forward;
@@ -211,6 +211,8 @@ end;
 function eleveValide(plateau: TPlateau; HexagonesCoords: TCoords; joueurActuel: TJoueur;var affichage : TAffichage): Boolean;
 begin
   eleveValide := False;
+
+  // 1. Verifie si les hexagones sont adjacents
   if not enContact(HexagonesCoords) then
   begin
     affichageInformation('Les hexagones ne sont pas adjacents.', 25, COULEUR_TEXT_ROUGE, affichage);
@@ -219,12 +221,14 @@ begin
 
 
   if(joueurActuel.Points >=2 ) then
+    // 2. Vérifie si l'élève est en contact avec une connexion (après l'initialisation)
     if (not enContactEleveConnexion(plateau,HexagonesCoords,joueurActuel)) then
     begin 
       affichageInformation('L''élève doit être en contact avec une connexion.', 25, COULEUR_TEXT_ROUGE, affichage);
       exit(False);
     end;
 
+  // 3. Vérifie si l'élève est à au moins 2 cases des autres élèves
   if(VerifierAdjacencePersonnes(HexagonesCoords,plateau)) then
     exit(False)
   else
@@ -301,6 +305,7 @@ begin
   indexEleve := -1; 
   setLength(ProfesseurCoords, 3);
 
+  // 1.vérifie si les hexagones sont adjacents et qu'il y a un élève a cet emplacement
   if enContact(HexagonesCoords) then
     for i := 0 to length(plateau.Personnes) -1 do
       if (plateau.Personnes[i].IdJoueur = joueurActuel.Id) and (plateau.Personnes[i].estEleve) then
@@ -368,7 +373,7 @@ begin
   connexionExisteDeja := False;
 end;
 
-function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage :TAffichage): Boolean;
+function connexionValide(coords: TCoords; plateau: TPlateau; joueur: TJoueur;var affichage :TAffichage;debut : Boolean): Boolean;
 begin
   connexionValide := True;
   attendre(32);
@@ -387,11 +392,22 @@ begin
     exit(False);
   end;
 
-  if (aucuneConnexionAdjacente(coords, plateau, joueur,affichage) and (not enContactConnexionEleve(plateau, coords, joueur))) then
+  if(not debut)then
   begin
-    affichageInformation('La connexion doit être adjacente à une autre connexion ou en contact avec un élève ou un professeur.', 25, COULEUR_TEXT_ROUGE, affichage);
-    exit(False);
-  end;
+    // 3.1 Verifie si la connexion est adjacente à une autre connexion ou en contact avec un eleve
+    if ((aucuneConnexionAdjacente(coords, plateau, joueur,affichage) and (not enContactConnexionEleve(plateau, coords, joueur)))) then
+    begin
+      affichageInformation('La connexion doit être adjacente à une autre connexion ou en contact avec un élève ou un professeur.', 25, COULEUR_TEXT_ROUGE, affichage);
+      exit(False);
+    end;
+  end
+  else
+    // 3.2 Verifie si la connexion est adjacente à un eleve
+    if (not enContactConnexionEleve(plateau, coords, joueur)) then
+    begin
+      affichageInformation('La connexion doit être adjacente à un élève.', 25, COULEUR_TEXT_ROUGE, affichage);
+      exit(False);
+    end;
 
   // 4. Verifie si au moins 1 des hexagones est dans le plateau
   if (not dansLePlateau(plateau,coords[0]) and not dansLePlateau(plateau,coords[1])) then 
@@ -438,12 +454,13 @@ begin
     if(debut)then
       placeFauxConnexionAutourJoueur(affichage,plateau,joueur.id);
     coords := clicConnexion(affichage,plateau);
-    valide := connexionValide(coords, plateau, joueur,affichage);
+    valide := connexionValide(coords, plateau, joueur,affichage,debut);
     jouerSonValide(affichage,valide);
     if(not valide)then
     begin
       affichagePlateau(plateau,affichage);
-      resteEmplacementConnexion(affichage,plateau,joueur);
+      if(not debut)then
+        resteEmplacementConnexion(affichage,plateau,joueur);
       miseAJourRenderer(affichage);
     end;
   until valide;
@@ -472,7 +489,7 @@ begin
         for j := k+1 to 2 do
           if(CoordsEgales(plateau.Connexions[i].Position,[eleve[j],eleve[k]])) then
             exit(True);
-   enContactEleveConnexion := False;
+  enContactEleveConnexion := False;
 end;
 
 function aucuneConnexionAdjacente(coords: TCoords; plateau: TPlateau; joueur: TJoueur; var affichage : TAffichage): Boolean;
