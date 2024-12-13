@@ -481,7 +481,7 @@ begin
     begin
       for i := 0 to length(joueurs) -1 do
         if(id <> i )then
-          if(longueurRoutes[id] < longueurRoutes[i]) then
+          if(longueurRoutes[id] <= longueurRoutes[i]) then
             plusGrandeConnexion := False;
       if plusGrandeConnexion then
         begin
@@ -494,8 +494,9 @@ begin
     if(joueurs[id].CartesTutorat[1].utilisee >= 3) then
     begin
       for i := 0 to length(joueurs) -1 do
-        if(joueurs[id].CartesTutorat[1].utilisee < joueurs[i].CartesTutorat[1].utilisee) then
-          plusDeplacementSouillard := False;
+        if(id <> i )then
+          if(joueurs[id].CartesTutorat[1].utilisee <= joueurs[i].CartesTutorat[1].utilisee) then
+            plusDeplacementSouillard := False;
         if(plusDeplacementSouillard) then
         begin
           points[id] := points[id] + 2;
