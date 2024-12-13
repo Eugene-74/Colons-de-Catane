@@ -468,7 +468,7 @@ begin
     coord := FCoord(25,coord.y+35);
     for ressource := Physique to Mathematiques do
     begin
-        affichageImage(coord.x,coord.y,25,25,affichage.texturePlateau.textureRessources[ressource],affichage);
+        affichageImage(coord.x,coord.y,25,25,affichage.texturePlateau.textureRessource[ressource],affichage);
         coord.x := coord.x + 25;
         affichageTexte(' ' + IntToStr(joueur.Ressources[ressource]), 25, FCoord(coord.x,coord.y-5), FCouleur(0,0,0,255), affichage);
         coord.x := coord.x + 40;
