@@ -206,17 +206,17 @@ begin
     if bouton.texte='valider' then
         affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.textureValider,affichage)
     else if bouton.texte='/IconesMusique/demarrer' then
-        affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.texturesMusique[0],affichage)
+        affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.textureMusique[0],affichage)
     else if bouton.texte='/IconesMusique/arreter' then
-        affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.texturesMusique[1],affichage)
+        affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.textureMusique[1],affichage)
     else if bouton.texte='gauche' then
-        affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.texturesFleches[0],affichage)
+        affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.textureFleches[0],affichage)
     else if bouton.texte='droite' then
-        affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.texturesFleches[1],affichage)
+        affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.textureFleches[1],affichage)
     else if bouton.texte='plus' then
-        affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.texturesSignes[0],affichage)
+        affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.textureSignes[0],affichage)
     else if bouton.texte='moins' then
-        affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.texturesSignes[1],affichage)
+        affichageImage(bouton.coord.x,bouton.coord.y,bouton.w,bouton.h,affichage.texturePlateau.textureSignes[1],affichage)
 end;
 
 {Retourne les coordonnees du clic de la souris (système cartesien)
