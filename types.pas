@@ -87,10 +87,10 @@ type
     texturePoint: PSDL_Texture;
     texturePreview: PSDL_Texture;
     textureDes : array[1..6] of PSDL_Texture;
-    texturesSignes: array[0..1] of PSDL_Texture;
-    texturesMusique: array[0..1] of PSDL_Texture;
+    textureSignes: array[0..1] of PSDL_Texture;
+    textureMusique: array[0..1] of PSDL_Texture;
     textureValider: PSDL_Texture;
-    texturesFleches: array[0..1] of PSDL_Texture;
+    textureFleches: array[0..1] of PSDL_Texture;
   end;
 
   TBouton = record
