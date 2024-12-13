@@ -94,8 +94,8 @@ begin
     for i:=Physique to Rien do
     begin
         affichage.texturePlateau.textureRessource[i] := chargerTexture(affichage, 'Ressources/'+GetEnumName(TypeInfo(TRessource), Ord(i)));
-        if i <> Rien then
-            affichage.texturePlateau.textureIconesRessources[i] := chargerTexture(affichage, 'Ressources/'+GetEnumName(TypeInfo(TRessource), Ord(i)));
+        // if i <> Rien then
+        //     affichage.texturePlateau.textureIconesRessources[i] := chargerTexture(affichage, 'Ressources/'+GetEnumName(TypeInfo(TRessource), Ord(i)));
 
             // affichage.texturePlateau.textureIconesRessources[i] := chargerTexture(affichage, 'IconesRessources/'+GetEnumName(TypeInfo(TRessource), Ord(i)));
     end;
@@ -468,7 +468,7 @@ begin
     coord := FCoord(25,coord.y+35);
     for ressource := Physique to Mathematiques do
     begin
-        affichageImage(coord.x,coord.y,25,25,affichage.texturePlateau.textureIconesRessources[ressource],affichage);
+        affichageImage(coord.x,coord.y,25,25,affichage.texturePlateau.textureRessources[ressource],affichage);
         coord.x := coord.x + 25;
         affichageTexte(' ' + IntToStr(joueur.Ressources[ressource]), 25, FCoord(coord.x,coord.y-5), FCouleur(0,0,0,255), affichage);
         coord.x := coord.x + 40;
@@ -1199,8 +1199,8 @@ var texture: PSDL_Texture;
 begin
     for texture in affichage.texturePlateau.textureRessource do
         SDL_DestroyTexture(texture);
-    for texture in affichage.texturePlateau.textureIconesRessources do
-        SDL_DestroyTexture(texture);
+    // for texture in affichage.texturePlateau.textureIconesRessources do
+    //     SDL_DestroyTexture(texture);
     for texture in affichage.texturePlateau.textureIconesCartesTutorat do
         SDL_DestroyTexture(texture);
     for texture in affichage.texturePlateau.textureDes do

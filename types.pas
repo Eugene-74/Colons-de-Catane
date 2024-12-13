@@ -77,7 +77,7 @@ type
 
   TTexturePlateau = record
     textureRessource: array[Physique..Rien] of PSDL_Texture;
-    textureIconesRessources: array[Physique..Mathematiques] of PSDL_Texture;
+    // textureIconesRessources: array[Physique..Mathematiques] of PSDL_Texture;
     textureIconesCartesTutorat: array[1..5] of PSDL_Texture;
     textureContourHexagone: PSDL_Texture;
     textureContourVide : PSDL_Texture;
