@@ -358,6 +358,7 @@ end;
 function compterConnexionAutour(var connexionDejaVisite : Tconnexions;connexion : TConnexion;plateau: TPlateau; joueur: TJoueur): Integer;
 var coords1,coords2 : TCoords;
   nouvelleConnexion : TConnexion;
+  i: Integer;
 begin
   compterConnexionAutour := 0;
 
@@ -374,21 +375,16 @@ begin
 
     trouver3EmeHexagone(plateau,coords1,coords2,connexion.position);
 
-    nouvelleConnexion := trouverConnexion(plateau,coords1[0],coords1[2]);
-    if(nouvelleConnexion.IdJoueur <> -1)then
-      compterConnexionAutour := compterConnexionAutour + compterConnexionAutour(connexionDejaVisite,nouvelleConnexion ,plateau,joueur);
+    for i := 0 to 1 do
+    begin
+      nouvelleConnexion := trouverConnexion(plateau, coords1[i], coords1[2]);
+      if nouvelleConnexion.IdJoueur <> -1 then
+        compterConnexionAutour := compterConnexionAutour + compterConnexionAutour(connexionDejaVisite, nouvelleConnexion, plateau, joueur);
 
-    nouvelleConnexion := trouverConnexion(plateau,coords1[1],coords1[2]);
-    if(nouvelleConnexion.IdJoueur <> -1)then
-      compterConnexionAutour := compterConnexionAutour + compterConnexionAutour(connexionDejaVisite,nouvelleConnexion ,plateau,joueur);
-
-    nouvelleConnexion := trouverConnexion(plateau,coords2[0],coords2[2]);
-    if(nouvelleConnexion.IdJoueur <> -1)then
-      compterConnexionAutour := compterConnexionAutour + compterConnexionAutour(connexionDejaVisite,nouvelleConnexion ,plateau,joueur);
-    
-    nouvelleConnexion := trouverConnexion(plateau,coords2[1],coords2[2]);
-    if(nouvelleConnexion.IdJoueur <> -1)then
-      compterConnexionAutour := compterConnexionAutour + compterConnexionAutour(connexionDejaVisite,nouvelleConnexion ,plateau,joueur);
+      nouvelleConnexion := trouverConnexion(plateau, coords2[i], coords2[2]);
+      if nouvelleConnexion.IdJoueur <> -1 then
+        compterConnexionAutour := compterConnexionAutour + compterConnexionAutour(connexionDejaVisite, nouvelleConnexion, plateau, joueur);
+    end;
   end;
 end;
 
