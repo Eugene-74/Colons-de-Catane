@@ -151,7 +151,7 @@ const
     (0));
   COUT_CARTE_TUTORAT: TRessources = (
     (1),
-    (0),
+    (1),
     (0),
     (1),
     (0));

@@ -103,7 +103,7 @@ begin
         end
       else
         begin
-        affichageInformationAndRender('Vous n''avez pas les ressources nécessaires pour acheter un eleve.', 25,COULEUR_TEXT_ROUGE, affichage);
+        affichageInformationAndRender('Vous n''avez pas les ressources nécessaires pour acheter un élève (1 Physique + 1 Chimie + 1 Humanités + 1 Mathématiques).', 25,COULEUR_TEXT_ROUGE, affichage);
         jouerSonValide(affichage,false);
         end;
     // CONNEXION
@@ -121,7 +121,7 @@ begin
         end
       else
       begin
-        affichageInformationAndRender('Vous n''avez pas les ressources nécessaires pour acheter une connexion.', 25, COULEUR_TEXT_ROUGE, affichage);
+        affichageInformationAndRender('Vous n''avez pas les ressources nécessaires pour acheter une connexion (1 Chimie + 1 Humanités).', 25, COULEUR_TEXT_ROUGE, affichage);
         jouerSonValide(affichage,false);
       end;
     // PROFESSEUR
@@ -145,7 +145,7 @@ begin
         end
       else
       begin
-        affichageInformationAndRender('Vous n''avez pas les ressources nécessaires pour changer un élève en professeur.', 25, COULEUR_TEXT_ROUGE, affichage);
+        affichageInformationAndRender('Vous n''avez pas les ressources nécessaires pour changer un élève en professeur (3 Informatique + 2 Mathématiques).', 25, COULEUR_TEXT_ROUGE, affichage);
         jouerSonValide(affichage,false);
       end;
     // carte de tutorat
@@ -167,7 +167,7 @@ begin
         end
     else
       begin
-      affichageInformationAndRender('Vous n''avez pas les ressources nécessaires pour acheter une carte de tutorat.', 25, COULEUR_TEXT_ROUGE, affichage);
+      affichageInformationAndRender('Vous n''avez pas les ressources nécessaires pour acheter une carte de tutorat (1 Physique + 1 Informatique + 1 Humanités).', 25, COULEUR_TEXT_ROUGE, affichage);
       jouerSonValide(affichage,false);
       end;
   end;
