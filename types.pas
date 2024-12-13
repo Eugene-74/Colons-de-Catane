@@ -126,7 +126,7 @@ type
 const
   CARTES_TUTORAT: TCartesTutorat = (
       (nom: 'Discussion'; description: 'Une superbe discussion qui vous permettra de faire 2 nouvelles connexions.'; nbr: 10; utilisee : 0),
-      (nom: 'WordReference'; description: 'Une recherche sur WordReference qui vous permetra de vous débarasser du souillard pendant un moment.'; nbr: 12; utilisee : 0),
+      (nom: 'WordReference'; description: 'Une recherche sur WordReference qui vous permetra de vous débarasser du souillard pendant un moment.'; nbr: 24; utilisee : 0),
       (nom: 'Vol de cahier'; description: 'Subtiliser en douce le cours d''un camarade pour lui voler ses connaissances dans une matière.'; nbr: 8; utilisee : 0),
       (nom: 'Annale'; description: 'Profiter d''une Annale pour développer vos connaissances dans dans une matière (2 connaissances).'; nbr: 16; utilisee : 0),
       (nom: 'Majorant'; description: 'En tant que majorant de votre classe vous avez le prestige de gagner un point de victoire.'; nbr: 4; utilisee : 0));
