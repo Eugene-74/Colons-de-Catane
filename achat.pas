@@ -537,7 +537,7 @@ begin
     if (plateau.Personnes[i].IdJoueur = joueur.Id) and (plateau.Personnes[i].estEleve) then
     begin
       placeFauxPersonne(affichage, plateau.Personnes[i].position,joueur.Id,false);
-      exit(True);
+      resteEleve := True;
     end;
   miseAJourRenderer(affichage);
 end;
