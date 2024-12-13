@@ -135,8 +135,8 @@ begin
           end
           else
           begin
-            affichageInformationAndRender('Vous n''avez pas les ressources nécessaires pour changer un élève en professeur.', 25, COULEUR_TEXT_ROUGE, affichage);
-            jouerSonValide(affichage,false);
+          affichageInformationAndRender('Vous n''avez plus d''élève à modifier.', 25, COULEUR_TEXT_ROUGE, affichage);
+          jouerSonValide(affichage,false);
           end
         else
         begin
@@ -144,10 +144,10 @@ begin
           jouerSonValide(affichage,false);
         end
       else
-        begin
-        affichageInformationAndRender('Vous n''avez plus d''élève à modifier.', 25, COULEUR_TEXT_ROUGE, affichage);
+      begin
+        affichageInformationAndRender('Vous n''avez pas les ressources nécessaires pour changer un élève en professeur.', 25, COULEUR_TEXT_ROUGE, affichage);
         jouerSonValide(affichage,false);
-        end;
+      end;
     // carte de tutorat
     4:
     if(aLesRessources(joueur,COUT_CARTE_TUTORAT)) then

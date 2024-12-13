@@ -1,7 +1,7 @@
 unit musique;
 
 interface
-uses SDL2_mixer,types,SysUtils,DateUtils,TypInfo;
+uses SDL2_mixer,types,SysUtils,DateUtils,TypInfo,SDL2;
 
 procedure initisationMusique(var affichage : TAffichage);
 
@@ -81,6 +81,8 @@ var musique: PMix_Music;
     );
   randomIndex: Integer;
 begin
+  SDL_Delay(500);
+
   randomIndex := Random(Length(musiques));
   musique := Mix_LoadMUS(musiques[randomIndex]);
 

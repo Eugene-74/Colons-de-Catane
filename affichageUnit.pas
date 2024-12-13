@@ -95,7 +95,9 @@ begin
     begin
         affichage.texturePlateau.textureRessource[i] := chargerTexture(affichage, 'Ressources/'+GetEnumName(TypeInfo(TRessource), Ord(i)));
         if i <> Rien then
-            affichage.texturePlateau.textureIconesRessources[i] := chargerTexture(affichage, 'IconesRessources/'+GetEnumName(TypeInfo(TRessource), Ord(i)));
+            affichage.texturePlateau.textureIconesRessources[i] := chargerTexture(affichage, 'Ressources/'+GetEnumName(TypeInfo(TRessource), Ord(i)));
+
+            // affichage.texturePlateau.textureIconesRessources[i] := chargerTexture(affichage, 'IconesRessources/'+GetEnumName(TypeInfo(TRessource), Ord(i)));
     end;
 
     for j := 1 to 5 do
@@ -564,8 +566,8 @@ begin
     affichageImage(coord.x+40,coord.y+10,100,100,affichage.texturePlateau.textureIconesCartesTutorat[idCarte+1],affichage);
 
     affichageZone(coord.x+150,coord.y-10,40,40,2,affichage);
-    affichageTexte(IntToStr(carteTutorat.nbr), 15, FCoord(coord.x+160,coord.y-10), FCouleur(0,200,0,255), affichage);
-    affichageTexte(IntToStr(carteTutorat.utilisee), 15, FCoord(coord.x+160,coord.y+5), FCouleur(200,0,0,255), affichage);
+    affichageTexte(IntToStr(carteTutorat.nbr), 15, FCoord(coord.x+165,coord.y-10), FCouleur(0,200,0,255), affichage);
+    affichageTexte(IntToStr(carteTutorat.utilisee), 15, FCoord(coord.x+165,coord.y+5), FCouleur(200,0,0,255), affichage);
 
     affichageTexte(carteTutorat.nom, 20, FCoord(coord.x +10,coord.y+110), FCouleur(0,0,0,255), affichage);
 
