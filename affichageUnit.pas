@@ -107,12 +107,12 @@ begin
         affichage.texturePlateau.textureDes[j] := chargerTexture(affichage, 'DiceFaces/' + IntToStr(j));
     
     affichage.texturePlateau.textureValider := chargerTexture(affichage, 'valider');
-    affichage.texturePlateau.texturesMusique[0] := chargerTexture(affichage, 'IconesMusique/demarrer');
-    affichage.texturePlateau.texturesMusique[1] := chargerTexture(affichage, 'IconesMusique/arreter');
-    affichage.texturePlateau.texturesFleches[0] := chargerTexture(affichage, 'gauche');
-    affichage.texturePlateau.texturesFleches[1] := chargerTexture(affichage, 'droite');
-    affichage.texturePlateau.texturesSignes[0] := chargerTexture(affichage, 'plus');
-    affichage.texturePlateau.texturesSignes[1] := chargerTexture(affichage, 'moins');
+    affichage.texturePlateau.textureMusique[0] := chargerTexture(affichage, 'IconesMusique/demarrer');
+    affichage.texturePlateau.textureMusique[1] := chargerTexture(affichage, 'IconesMusique/arreter');
+    affichage.texturePlateau.textureFleches[0] := chargerTexture(affichage, 'gauche');
+    affichage.texturePlateau.textureFleches[1] := chargerTexture(affichage, 'droite');
+    affichage.texturePlateau.textureSignes[0] := chargerTexture(affichage, 'plus');
+    affichage.texturePlateau.textureSignes[1] := chargerTexture(affichage, 'moins');
     affichage.texturePlateau.textureContourHexagone := chargerTexture(affichage, 'hexagoneCercle');
     affichage.texturePlateau.textureContourVide := chargerTexture(affichage, 'hexagone');
     affichage.texturePlateau.textureEleve := chargerTexture(affichage, 'eleve');
@@ -1213,12 +1213,12 @@ begin
     SDL_DestroyTexture(affichage.texturePlateau.texturePoint);
     SDL_DestroyTexture(affichage.texturePlateau.texturePreview);
     SDL_DestroyTexture(affichage.texturePlateau.textureValider);
-    SDL_DestroyTexture(affichage.texturePlateau.texturesMusique[0]);
-    SDL_DestroyTexture(affichage.texturePlateau.texturesMusique[1]);
-    SDL_DestroyTexture(affichage.texturePlateau.texturesFleches[0]);
-    SDL_DestroyTexture(affichage.texturePlateau.texturesFleches[1]);
-    SDL_DestroyTexture(affichage.texturePlateau.texturesSignes[0]);
-    SDL_DestroyTexture(affichage.texturePlateau.texturesSignes[1]);
+    SDL_DestroyTexture(affichage.texturePlateau.textureMusique[0]);
+    SDL_DestroyTexture(affichage.texturePlateau.textureMusique[1]);
+    SDL_DestroyTexture(affichage.texturePlateau.textureFleches[0]);
+    SDL_DestroyTexture(affichage.texturePlateau.textureFleches[1]);
+    SDL_DestroyTexture(affichage.texturePlateau.textureSignes[0]);
+    SDL_DestroyTexture(affichage.texturePlateau.textureSignes[1]);
 
     SDL_DestroyRenderer(affichage.renderer);
     SDL_DestroyWindow(affichage.fenetre);
