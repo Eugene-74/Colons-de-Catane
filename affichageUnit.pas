@@ -747,17 +747,17 @@ begin
     tailleText := tailleTexte(texte,25);
     affichageTexte(texte, 25, FCoord((WINDOW_W-tailleText.x) div 2,90), FCouleur(0,0,0,255), affichage);
 
-    coord := FCoord(650,160);
+    coord := FCoord(600,160);
     affichageTexte(joueurs[idJoueurActuel].Nom, 25, coord, FCouleur(0,0,0,255), affichage);
     
-    coord.x := 450;
+    coord.x := 400;
     for ressource := Physique to Mathematiques do
     begin
         coord.y := coord.y + 35;
         affichageIntegerInput(coord,GetEnumName(TypeInfo(TRessource), Ord(ressource)),'1',ressources1,affichage,boutons);
     end;
 
-    coord := FCoord(950,160);
+    coord := FCoord(900,160);
     affichageJoueurInput(joueurs,idJoueurEchange,coord,affichage,boutons);
 
     for ressource := Physique to Mathematiques do
@@ -766,7 +766,7 @@ begin
         affichageIntegerInput(coord,GetEnumName(TypeInfo(TRessource), Ord(ressource)),'2',ressources2,affichage,boutons);
     end;
 
-    bouton := FBouton(895,450,160,50,'valider','valider_echange');
+    bouton := FBouton((WINDOW_W-160) div 2,450,160,50,'valider','valider_echange');
     affichageImageBouton(bouton,affichage);
     ajouterBoutonTableau(bouton, boutons);
 end;
@@ -842,12 +842,12 @@ begin
     attendre(66);
 
     tailleT := tailleTexte(text,25);
-    coord := FCoord(450,50);
-    affichageZone(coord.x,coord.y,1050,900,3,affichage);
-    affichageTexte('Sélection de ressource', 35, FCoord(800, 90), FCouleur(0,0,0,255), affichage);
-    affichageTexte(text, 25,  FCoord(975-(tailleT.x div 2), 130), FCouleur(0,0,0,255), affichage);
+    coord := FCoord(400,50);
+    affichageZone(coord.x,coord.y,1000,900,3,affichage);
+    affichageTexte('Sélection de ressource', 35, FCoord(715, 90), FCouleur(0,0,0,255), affichage);
+    affichageTexte(text, 25,  FCoord((WINDOW_W-tailleT.x) div 2, 130), FCouleur(0,0,0,255), affichage);
 
-    coord := FCoord(850,300);
+    coord := FCoord(775,300);
     SetLength(Grille,3,2);
     i := 0;
     j := 0;
@@ -869,7 +869,7 @@ begin
         end;
     end;
 
-    boutonValider := FBouton(895,850,160,50,'valider','Valider');
+    boutonValider := FBouton((WINDOW_W-160) div 2,850,160,50,'valider','Valider');
     affichageImageBouton(boutonValider,affichage);
 end;
 
@@ -894,7 +894,7 @@ begin
     while not valider do
     begin
         clicCart(affichage,coord);
-        cartToHexa(FCoord(coord.x-850,coord.y-300),coordHexa,tailleHexagone div 2);
+        cartToHexa(FCoord(coord.x-775,coord.y-300),coordHexa,tailleHexagone div 2);
         if (coordHexa.x >= 0) and (coordHexa.x <= 2) and (coordHexa.y >= 0) and (coordHexa.y <= 1) then
         begin
             ressource := grille[coordHexa.x,coordHexa.y].ressource;
