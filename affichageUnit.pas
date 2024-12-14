@@ -1142,10 +1142,10 @@ procedure miseAJourRenderer(var affichage :TAffichage);
 var i: Integer;
 begin
     attendre(16);
-    verificationMusique(affichage);
     for i:=0 to length(affichage.boutonsMusique)-1 do
         affichageImageBouton(affichage.boutonsMusique[i],affichage);
     SDL_RenderPresent(affichage.renderer);
+    verificationMusique(affichage);
 end;
 
 procedure initialisationBoutonsAction(var affichage: TAffichage);

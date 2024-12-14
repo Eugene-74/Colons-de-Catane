@@ -81,7 +81,7 @@ var musique: PMix_Music;
     );
   randomIndex: Integer;
 begin
-  SDL_Delay(500);
+  SDL_Delay(50);
 
   randomIndex := Random(Length(musiques));
   musique := Mix_LoadMUS(musiques[randomIndex]);
