@@ -1,0 +1,3 @@
+fpc demo.pas
+
+demo
